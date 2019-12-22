@@ -63,7 +63,7 @@ class App extends React.Component {
         >
           <div className="ui container">
             <div style={{ color: "white" }}>
-              Pecuniary (C) 2019. All Rights Reserved
+              &copy; {new Date().getFullYear()} Pecuniary. All Rights Reserved
             </div>
           </div>
         </div>
