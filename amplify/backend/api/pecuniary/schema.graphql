@@ -1,0 +1,13 @@
+type Account @model {
+  id: ID!
+  name: String!
+  description: String
+  accountType: AccountType! @connection(name: "AccountType")
+}
+
+type AccountType @model {
+  id: ID!
+  name: String!
+  description: String
+  accounts: [Account] @connection(name: "AccountType")
+}

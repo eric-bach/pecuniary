@@ -1,0 +1,20 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-pecuniary-dev-143545-authRole",
+            "UnauthRoleArn": "arn:aws:iam::524849261220:role/amplify-pecuniary-dev-143545-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::524849261220:role/amplify-pecuniary-dev-143545-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "amplify-pecuniary-dev-143545-deployment",
+            "UnauthRoleName": "amplify-pecuniary-dev-143545-unauthRole",
+            "StackName": "amplify-pecuniary-dev-143545",
+            "StackId": "arn:aws:cloudformation:us-west-2:524849261220:stack/amplify-pecuniary-dev-143545/040ecd70-2503-11ea-a850-0a13a2454304",
+            "AmplifyAppId": "drtnakiblnrs0"
+        },
+        "categories": {
+            "auth": {
+                "pecuniary": {}
+            }
+        }
+    }
+}
