@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 
-class Transaction extends Component {
+class Home extends Component {
   render() {
     return (
       <div className="ui main container" style={{ paddingTop: "20px" }}>
-        Transaction
+        Home
       </div>
     );
   }
 }
-
-export default Transaction;
+export default Home;

@@ -55,7 +55,7 @@ class NewAccount extends Component {
     ));
 
     return (
-      <div className="ui main container">
+      <div className="ui main container" style={{ paddingTop: "20px" }}>
         <form className="ui form" onSubmit={this.handleAddAccount}>
           <h4 className="ui dividing header">Create Account</h4>
           <div className="field">
@@ -63,6 +63,7 @@ class NewAccount extends Component {
             <div className="two fields">
               <div className="field">
                 <input
+                  autoFocus
                   type="text"
                   name="Name"
                   placeholder="Account Name"
