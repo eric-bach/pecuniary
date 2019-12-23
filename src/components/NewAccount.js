@@ -15,8 +15,6 @@ class NewAccount extends Component {
     const result = await API.graphql(graphqlOperation(listAccountTypes));
 
     this.setState({ accountTypes: result.data.listAccountTypes.items });
-
-    console.log(this.state.accountTypes);
   };
 
   handleChangeName = event => {
