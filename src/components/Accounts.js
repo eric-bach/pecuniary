@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import AccountDisplay from "./AccountDisplay";
 import AddAccount from "./AddAccount";
-import AccountEdit from "./AccountEditer";
+import EditAccount from "./EditAccount";
 
 class Accounts extends Component {
   state = {
@@ -42,7 +42,7 @@ class Accounts extends Component {
   renderEdit() {
     return (
       <>
-        <AccountEdit account={this.state.selectedAccount}></AccountEdit>
+        <EditAccount account={this.state.selectedAccount} />
       </>
     );
   }
