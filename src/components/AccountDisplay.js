@@ -5,6 +5,7 @@ import AccountItem from "./AccountItem";
 
 class AccountDisplay extends Component {
   state = {
+    accountId: "",
     accounts: []
   };
 
@@ -14,6 +15,10 @@ class AccountDisplay extends Component {
     this.setState({ accounts: result.data.listAccounts.items });
   };
 
+  handleEditAccountClick = account => {
+    this.props.onEditAccount(account);
+  };
+
   render() {
     const accounts = this.state.accounts;
     return (
@@ -21,7 +26,13 @@ class AccountDisplay extends Component {
         <h3>Accounts</h3>
         <div className="ui middle aligned divided list">
           {accounts.map(account => {
-            return <AccountItem account={account} key={account.id} />;
+            return (
+              <AccountItem
+                account={account}
+                key={account.id}
+                onEditAccount={this.handleEditAccountClick}
+              />
+            );
           })}
         </div>
       </>
