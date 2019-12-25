@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { API, graphqlOperation } from "aws-amplify";
-import { updateAccount } from "../graphql/mutations";
+import { updateAccount, deleteAccount } from "../graphql/mutations";
 import { listAccountTypes } from "../graphql/queries";
 
 class EditAccount extends Component {
@@ -49,6 +49,19 @@ class EditAccount extends Component {
     };
 
     await API.graphql(graphqlOperation(updateAccount, { input }));
+
+    this.setState({ loadingClass: "" });
+    this.props.onDisplayAccount(false);
+  };
+
+  handleDeleteAccount = async event => {
+    const input = {
+      id: this.state.id
+    };
+
+    console.log(input);
+
+    await API.graphql(graphqlOperation(deleteAccount, { input }));
 
     this.setState({ loadingClass: "" });
     this.props.onDisplayAccount(false);
@@ -117,6 +130,12 @@ class EditAccount extends Component {
               type="submit"
             >
               Update
+            </button>
+            <button
+              className={`ui button red ${this.state.loadingClass}`}
+              onClick={this.handleDeleteAccount}
+            >
+              Delete
             </button>
             <button
               className={`ui button ${this.state.loadingClass}`}
