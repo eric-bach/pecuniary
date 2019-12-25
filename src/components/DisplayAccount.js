@@ -19,7 +19,7 @@ class DisplayAccount extends Component {
     return (
       <>
         <h3>Accounts</h3>
-        <div className="ui relaxed list">
+        <div className="ui middle aligned divided list">
           {accounts.map(account => {
             return <AccountItem account={account} key={account.id} />;
           })}

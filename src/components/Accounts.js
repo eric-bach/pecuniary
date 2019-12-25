@@ -9,7 +9,6 @@ class Accounts extends Component {
 
   handleAddAccountClick = () => {
     this.setState({ addAccount: true });
-    console.log("Clicked: " + this.state.addAccount);
   };
 
   handleDisplayAccount = () => {
@@ -31,7 +30,7 @@ class Accounts extends Component {
             </button>
           </>
         ) : (
-          <NewAccount onCancelAddAccount={this.handleDisplayAccount} />
+          <NewAccount onDisplayAccount={this.handleDisplayAccount} />
         )}
       </div>
     );

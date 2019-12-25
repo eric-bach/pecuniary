@@ -47,10 +47,12 @@ class NewAccount extends Component {
 
     this.setState({ name: "", description: "" });
     this.setState({ loadingClass: "" });
+
+    this.props.onDisplayAccount(false);
   };
 
   handleCancelAddAccount = () => {
-    this.props.onCancelAddAccount(false);
+    this.props.onDisplayAccount(false);
   };
 
   render() {
@@ -115,7 +117,6 @@ class NewAccount extends Component {
 
             <button
               className={`ui button ${this.state.loadingClass}`}
-              // TODO propograte to parent Account to set addAccount = false
               onClick={this.handleCancelAddAccount}
             >
               Cancel

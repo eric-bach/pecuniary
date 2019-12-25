@@ -5,8 +5,10 @@ class AccountItem extends Component {
     const account = this.props.account;
     return (
       <div className="item content">
-        <a href="#AccountItem" className="header">
-          {account.name}
+        <a href="#AccountItem">
+          <div className="header">
+            {account.name} | {account.accountType.name}
+          </div>
         </a>
         <div className="description">{account.description}</div>
       </div>
