@@ -9,7 +9,7 @@ class AccountItem extends Component {
     const account = this.props.account;
     return (
       <div className="item content">
-        <a onClick={() => this.handleEditAccountClick(account)}>
+        <a href="#Account" onClick={() => this.handleEditAccountClick(account)}>
           <div className="header">
             {account.name} | {account.accountType.name}
           </div>

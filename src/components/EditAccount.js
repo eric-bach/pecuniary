@@ -59,8 +59,6 @@ class EditAccount extends Component {
   };
 
   render() {
-    const account = this.props.account;
-
     let accountTypeOptionItems = this.state.accountTypes.map(accountType => (
       <option key={accountType.name}>{accountType.name}</option>
     ));
