@@ -108,6 +108,14 @@ class NewAccount extends Component {
             >
               Create
             </button>
+
+            <button
+              className={`ui button ${this.state.loadingClass}`}
+              // TODO propograte to parent Account to set addAccount = false
+              //onClick={this.state.}
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </div>

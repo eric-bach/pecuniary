@@ -1,30 +1,34 @@
 import React, { Component } from "react";
-import { API, graphqlOperation } from "aws-amplify";
-import { listAccounts } from "../graphql/queries";
-import AccountItem from "./AccountItem";
+import DisplayAccount from "./DisplayAccount";
+import NewAccount from "./NewAccount";
 
 class Accounts extends Component {
   state = {
-    accounts: []
+    addAccount: false
   };
 
-  componentDidMount = async () => {
-    const result = await API.graphql(graphqlOperation(listAccounts));
-
-    this.setState({ accounts: result.data.listAccounts.items });
+  handleAddAccountClick = () => {
+    this.setState({ addAccount: true });
+    console.log("Clicked: " + this.state.addAccount);
   };
 
   render() {
-    const accounts = this.state.accounts;
-
     return (
       <div className="ui main container" style={{ paddingTop: "20px" }}>
-        <h3>Accounts</h3>
-        <div className="ui relaxed list">
-          {accounts.map(account => {
-            return <AccountItem account={account} key={account.id} />;
-          })}
-        </div>
+        {!this.state.addAccount ? (
+          <>
+            <DisplayAccount />
+            <button
+              className={`ui labeled icon button primary ${this.state.loadingClass}`}
+              onClick={this.handleAddAccountClick}
+            >
+              <i className="add icon"></i>
+              Account
+            </button>
+          </>
+        ) : (
+          <NewAccount />
+        )}
       </div>
     );
   }
