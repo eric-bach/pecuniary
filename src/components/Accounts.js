@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import DisplayAccount from "./DisplayAccount";
-import NewAccount from "./NewAccount";
+import AccountDisplay from "./AccountDisplay";
+import AddAccount from "./AddAccount";
 
 class Accounts extends Component {
   state = {
@@ -20,7 +20,7 @@ class Accounts extends Component {
       <div className="ui main container" style={{ paddingTop: "20px" }}>
         {!this.state.addAccount ? (
           <>
-            <DisplayAccount />
+            <AccountDisplay />
             <button
               className={`ui labeled icon button primary ${this.state.loadingClass}`}
               onClick={this.handleAddAccountClick}
@@ -30,7 +30,7 @@ class Accounts extends Component {
             </button>
           </>
         ) : (
-          <NewAccount onDisplayAccount={this.handleDisplayAccount} />
+          <AddAccount onDisplayAccount={this.handleDisplayAccount} />
         )}
       </div>
     );

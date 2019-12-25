@@ -3,7 +3,7 @@ import { API, graphqlOperation } from "aws-amplify";
 import { createAccount } from "../graphql/mutations";
 import { listAccountTypes } from "../graphql/queries";
 
-class NewAccount extends Component {
+class AddAccount extends Component {
   state = {
     name: "",
     description: "",
@@ -128,4 +128,4 @@ class NewAccount extends Component {
   }
 }
 
-export default NewAccount;
+export default AddAccount;
