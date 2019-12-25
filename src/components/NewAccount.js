@@ -49,6 +49,10 @@ class NewAccount extends Component {
     this.setState({ loadingClass: "" });
   };
 
+  handleCancelAddAccount = () => {
+    this.props.onCancelAddAccount(false);
+  };
+
   render() {
     let accountTypeOptionItems = this.state.accountTypes.map(accountType => (
       <option key={accountType.name}>{accountType.name}</option>
@@ -112,7 +116,7 @@ class NewAccount extends Component {
             <button
               className={`ui button ${this.state.loadingClass}`}
               // TODO propograte to parent Account to set addAccount = false
-              //onClick={this.state.}
+              onClick={this.handleCancelAddAccount}
             >
               Cancel
             </button>

@@ -12,6 +12,10 @@ class Accounts extends Component {
     console.log("Clicked: " + this.state.addAccount);
   };
 
+  handleDisplayAccount = () => {
+    this.setState({ addAccount: false });
+  };
+
   render() {
     return (
       <div className="ui main container" style={{ paddingTop: "20px" }}>
@@ -27,7 +31,7 @@ class Accounts extends Component {
             </button>
           </>
         ) : (
-          <NewAccount />
+          <NewAccount onCancelAddAccount={this.handleDisplayAccount} />
         )}
       </div>
     );
