@@ -2,10 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { withAuthenticator } from "aws-amplify-react";
 import { Auth } from "aws-amplify";
-import Home from "./components/Home";
-import NewAccount from "./components/NewAccount";
+import Accounts from "./components/Accounts";
 import Transaction from "./components/Transaction";
-import Navbar from "./containers/NavBar";
+import Navbar from "./components/NavBar";
 
 class App extends React.Component {
   state = {
@@ -23,7 +22,7 @@ class App extends React.Component {
         <div className="App">
           <Navbar />
           <Switch>
-            <Route path="/accounts" component={NewAccount} />
+            <Route path="/accounts" component={Accounts} />
             <Route path="/transactions" component={Transaction} />
           </Switch>
         </div>

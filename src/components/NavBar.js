@@ -14,16 +14,16 @@ class Navbar extends Component {
       <div className="App">
         <div className="ui inverted menu">
           <div className="ui container">
-            <a className="header item">
-              <img className="logo" alt="" src="favicon-32x32.png" />
+            <div className="header item">
+              <img className="logo" alt="" src="../favicon-32x32.png" />
               <NavLink to="/">Pecuniary</NavLink>
-            </a>
-            <a className="item">
+            </div>
+            <div className="item">
               <NavLink to="/accounts/">Accounts</NavLink>
-            </a>
-            <a className="item">
+            </div>
+            <div className="item">
               <NavLink to="/transactions/">Transactions</NavLink>
-            </a>
+            </div>
             <a href="/" onClick={this.handleLogout} className="item right menu">
               Logout
             </a>
