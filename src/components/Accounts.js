@@ -42,7 +42,10 @@ class Accounts extends Component {
   renderEdit() {
     return (
       <>
-        <EditAccount account={this.state.selectedAccount} />
+        <EditAccount
+          account={this.state.selectedAccount}
+          onDisplayAccount={this.handleDisplayAccount}
+        />
       </>
     );
   }
