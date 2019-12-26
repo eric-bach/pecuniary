@@ -1,20 +1,38 @@
 {
-	"dev": {
-		"awscloudformation": {
-			"AuthRoleName": "amplify-pecuniary-dev-193020-authRole",
-			"UnauthRoleArn": "arn:aws:iam::524849261220:role/amplify-pecuniary-dev-193020-unauthRole",
-			"AuthRoleArn": "arn:aws:iam::524849261220:role/amplify-pecuniary-dev-193020-authRole",
-			"Region": "us-west-2",
-			"DeploymentBucketName": "amplify-pecuniary-dev-193020-deployment",
-			"UnauthRoleName": "amplify-pecuniary-dev-193020-unauthRole",
-			"StackName": "amplify-pecuniary-dev-193020",
-			"StackId": "arn:aws:cloudformation:us-west-2:524849261220:stack/amplify-pecuniary-dev-193020/aa867c30-2787-11ea-83b5-064751363480",
-			"AmplifyAppId": "d15j6sgkt2ryge"
-		},
-		"categories": {
-			"auth": {
-				"pecuniary": {}
-			}
-		}
-	}
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-pecuniary-dev-193020-authRole",
+            "UnauthRoleArn": "arn:aws:iam::524849261220:role/amplify-pecuniary-dev-193020-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::524849261220:role/amplify-pecuniary-dev-193020-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "amplify-pecuniary-dev-193020-deployment",
+            "UnauthRoleName": "amplify-pecuniary-dev-193020-unauthRole",
+            "StackName": "amplify-pecuniary-dev-193020",
+            "StackId": "arn:aws:cloudformation:us-west-2:524849261220:stack/amplify-pecuniary-dev-193020/aa867c30-2787-11ea-83b5-064751363480",
+            "AmplifyAppId": "d15j6sgkt2ryge"
+        },
+        "categories": {
+            "auth": {
+                "pecuniary": {}
+            }
+        }
+    },
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-pecuniary-prod-123134-authRole",
+            "UnauthRoleArn": "arn:aws:iam::115499684434:role/amplify-pecuniary-prod-123134-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::115499684434:role/amplify-pecuniary-prod-123134-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "amplify-pecuniary-prod-123134-deployment",
+            "UnauthRoleName": "amplify-pecuniary-prod-123134-unauthRole",
+            "StackName": "amplify-pecuniary-prod-123134",
+            "StackId": "arn:aws:cloudformation:us-west-2:115499684434:stack/amplify-pecuniary-prod-123134/546e0770-2816-11ea-8369-020934000518",
+            "AmplifyAppId": "d25lrn5sb8ocev"
+        },
+        "categories": {
+            "auth": {
+                "pecuniary": {}
+            }
+        }
+    }
 }
