@@ -28,6 +28,10 @@ class Accounts extends Component {
     this.setState({ operation: "list" });
   };
 
+  handleAddTransaction = account => {
+    this.props.history.push("/transactions/new", { account: account });
+  };
+
   renderAccount() {
     switch (this.state.operation) {
       case "add":
@@ -59,7 +63,12 @@ class Accounts extends Component {
   }
 
   renderDisplay() {
-    return <AccountDisplay account={this.state.selectedAccount} />;
+    return (
+      <AccountDisplay
+        account={this.state.selectedAccount}
+        onAddTransaction={this.handleAddTransaction}
+      />
+    );
   }
 
   // Display list of Accounts

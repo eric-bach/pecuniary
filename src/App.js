@@ -4,6 +4,7 @@ import { withAuthenticator } from "aws-amplify-react";
 import { Auth } from "aws-amplify";
 import Accounts from "./components/Accounts";
 import Transaction from "./components/Transaction";
+import TransactionAdd from "./components/TransactionAdd";
 import Navbar from "./components/NavBar";
 
 class App extends React.Component {
@@ -22,8 +23,9 @@ class App extends React.Component {
         <div className="App">
           <Navbar />
           <Switch>
-            <Route path="/accounts" component={Accounts} />
-            <Route path="/transactions" component={Transaction} />
+            <Route exact path="/accounts" component={Accounts} />
+            <Route exact path="/transactions" component={Transaction} />
+            <Route exact path="/transactions/new" component={TransactionAdd} />
           </Switch>
         </div>
       </Router>

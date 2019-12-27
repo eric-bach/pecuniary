@@ -2,10 +2,13 @@ import React, { Component } from "react";
 
 class AccountDisplay extends Component {
   state = {
+    account: this.props.account,
     loadingClass: ""
   };
 
-  handleAddTransactionClick = () => {};
+  handleAddTransaction = account => {
+    this.props.onAddTransaction(account);
+  };
 
   render() {
     return (
@@ -18,7 +21,7 @@ class AccountDisplay extends Component {
               <div className="right floated item">
                 <button
                   className={`ui labeled icon button primary ${this.state.loadingClass}`}
-                  onClick={this.handleAddTransactionClick}
+                  onClick={() => this.handleAddTransaction(this.state.account)}
                 >
                   <i className="add icon"></i>
                   Transaction
