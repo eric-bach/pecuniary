@@ -17,6 +17,7 @@ export const getAccount = `query GetAccount($id: ID!) {
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -91,6 +92,7 @@ export const getSecurity = `query GetSecurity($id: ID!) {
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -121,6 +123,7 @@ export const listSecuritys = `query ListSecuritys(
 export const getTransaction = `query GetTransaction($id: ID!) {
   getTransaction(id: $id) {
     id
+    transactionDate
     shares
     price
     commission
@@ -156,6 +159,7 @@ export const listTransactions = `query ListTransactions(
   listTransactions(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
+      transactionDate
       shares
       price
       commission

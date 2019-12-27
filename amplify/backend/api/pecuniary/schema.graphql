@@ -1,3 +1,5 @@
+scalar AWSDate
+
 type Account @model {
   id: ID!
   name: String!
@@ -22,6 +24,7 @@ type Security @model {
 
 type Transaction @model {
   id: ID!
+  transactionDate: AWSDate!
   shares: Int!
   price: Float!
   commission: Float!

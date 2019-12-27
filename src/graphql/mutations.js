@@ -20,6 +20,7 @@ export const createAccount = `mutation CreateAccount(
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -48,6 +49,7 @@ export const updateAccount = `mutation UpdateAccount(
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -76,6 +78,7 @@ export const deleteAccount = `mutation DeleteAccount(
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -153,6 +156,7 @@ export const createSecurity = `mutation CreateSecurity(
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -173,6 +177,7 @@ export const updateSecurity = `mutation UpdateSecurity(
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -193,6 +198,7 @@ export const deleteSecurity = `mutation DeleteSecurity(
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -208,6 +214,7 @@ export const createTransaction = `mutation CreateTransaction(
 ) {
   createTransaction(input: $input, condition: $condition) {
     id
+    transactionDate
     shares
     price
     commission
@@ -241,6 +248,7 @@ export const updateTransaction = `mutation UpdateTransaction(
 ) {
   updateTransaction(input: $input, condition: $condition) {
     id
+    transactionDate
     shares
     price
     commission
@@ -274,6 +282,7 @@ export const deleteTransaction = `mutation DeleteTransaction(
 ) {
   deleteTransaction(input: $input, condition: $condition) {
     id
+    transactionDate
     shares
     price
     commission

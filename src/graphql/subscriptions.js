@@ -17,6 +17,7 @@ export const onCreateAccount = `subscription OnCreateAccount {
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -42,6 +43,7 @@ export const onUpdateAccount = `subscription OnUpdateAccount {
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -67,6 +69,7 @@ export const onDeleteAccount = `subscription OnDeleteAccount {
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -132,6 +135,7 @@ export const onCreateSecurity = `subscription OnCreateSecurity {
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -149,6 +153,7 @@ export const onUpdateSecurity = `subscription OnUpdateSecurity {
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -166,6 +171,7 @@ export const onDeleteSecurity = `subscription OnDeleteSecurity {
     transactions {
       items {
         id
+        transactionDate
         shares
         price
         commission
@@ -178,6 +184,7 @@ export const onDeleteSecurity = `subscription OnDeleteSecurity {
 export const onCreateTransaction = `subscription OnCreateTransaction {
   onCreateTransaction {
     id
+    transactionDate
     shares
     price
     commission
@@ -208,6 +215,7 @@ export const onCreateTransaction = `subscription OnCreateTransaction {
 export const onUpdateTransaction = `subscription OnUpdateTransaction {
   onUpdateTransaction {
     id
+    transactionDate
     shares
     price
     commission
@@ -238,6 +246,7 @@ export const onUpdateTransaction = `subscription OnUpdateTransaction {
 export const onDeleteTransaction = `subscription OnDeleteTransaction {
   onDeleteTransaction {
     id
+    transactionDate
     shares
     price
     commission
