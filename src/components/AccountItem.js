@@ -14,19 +14,19 @@ class AccountItem extends Component {
     return (
       <div className="item content" style={{ padding: "10px" }}>
         <a
+          className="right floated item"
+          href="#AccountEdit"
+          onClick={() => this.handleEditAccountClick(account)}
+        >
+          <i className="edit icon"></i>Edit
+        </a>
+        <a
           href="#Account"
           onClick={() => this.handleDisplayAccountClick(account)}
         >
           <div className="header">
             {account.name} | {account.accountType.name}
           </div>
-        </a>
-        <a
-          className="right floated item"
-          href="#AccountEdit"
-          onClick={() => this.handleEditAccountClick(account)}
-        >
-          <i className="edit icon"></i>Edit
         </a>
         <div className="description">{account.description}</div>
       </div>

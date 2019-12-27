@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import AccountList from "./AccountList";
 import AccountAdd from "./AccountAdd";
+import AccountDisplay from "./AccountDisplay";
 import AccountEdit from "./AccountEdit";
 
 class Accounts extends Component {
   state = {
-    operation: "display", // display, add, edit
+    operation: "list", // list, display, add, edit
     selectedAccount: "" // selected Account
   };
 
@@ -19,11 +20,12 @@ class Accounts extends Component {
   };
 
   handleDisplayAccount = account => {
-    console.log("Display account: " + account.id);
+    this.setState({ selectedAccount: account });
+    this.setState({ operation: "display" });
   };
 
   handleDisplayAllAccounts = () => {
-    this.setState({ operation: "display" });
+    this.setState({ operation: "list" });
   };
 
   renderAccount() {
@@ -32,8 +34,10 @@ class Accounts extends Component {
         return this.renderAdd();
       case "edit":
         return this.renderEdit();
-      default:
+      case "display":
         return this.renderDisplay();
+      default:
+        return this.renderList();
     }
   }
 
@@ -54,8 +58,12 @@ class Accounts extends Component {
     );
   }
 
-  // Display list of Accounts
   renderDisplay() {
+    return <AccountDisplay account={this.state.selectedAccount} />;
+  }
+
+  // Display list of Accounts
+  renderList() {
     return (
       <>
         <AccountList
