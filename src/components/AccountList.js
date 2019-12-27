@@ -3,7 +3,7 @@ import { API, graphqlOperation } from "aws-amplify";
 import { listAccounts } from "../graphql/queries";
 import AccountItem from "./AccountItem";
 
-class AccountDisplay extends Component {
+class AccountList extends Component {
   state = {
     accountId: "",
     accounts: []
@@ -45,4 +45,4 @@ class AccountDisplay extends Component {
   }
 }
 
-export default AccountDisplay;
+export default AccountList;

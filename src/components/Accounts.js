@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import AccountDisplay from "./AccountDisplay";
-import AddAccount from "./AddAccount";
-import EditAccount from "./EditAccount";
+import AccountList from "./AccountList";
+import AccountAdd from "./AccountAdd";
+import AccountEdit from "./AccountEdit";
 
 class Accounts extends Component {
   state = {
@@ -39,14 +39,14 @@ class Accounts extends Component {
 
   // Add Account
   renderAdd() {
-    return <AddAccount onDisplayAccount={this.handleDisplayAllAccounts} />;
+    return <AccountAdd onDisplayAccount={this.handleDisplayAllAccounts} />;
   }
 
   // Edit Account
   renderEdit() {
     return (
       <>
-        <EditAccount
+        <AccountEdit
           account={this.state.selectedAccount}
           onDisplayAccount={this.handleDisplayAllAccounts}
         />
@@ -58,7 +58,7 @@ class Accounts extends Component {
   renderDisplay() {
     return (
       <>
-        <AccountDisplay
+        <AccountList
           onEditAccount={this.handleEditAccount}
           onDisplayAccount={this.handleDisplayAccount}
         />
