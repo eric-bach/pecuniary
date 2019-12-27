@@ -17,6 +17,15 @@ export const createAccount = `mutation CreateAccount(
         nextToken
       }
     }
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -36,6 +45,15 @@ export const updateAccount = `mutation UpdateAccount(
         nextToken
       }
     }
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -54,6 +72,15 @@ export const deleteAccount = `mutation DeleteAccount(
       accounts {
         nextToken
       }
+    }
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
     }
   }
 }
@@ -111,6 +138,165 @@ export const deleteAccountType = `mutation DeleteAccountType(
         description
       }
       nextToken
+    }
+  }
+}
+`;
+export const createSecurity = `mutation CreateSecurity(
+  $input: CreateSecurityInput!
+  $condition: ModelSecurityConditionInput
+) {
+  createSecurity(input: $input, condition: $condition) {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const updateSecurity = `mutation UpdateSecurity(
+  $input: UpdateSecurityInput!
+  $condition: ModelSecurityConditionInput
+) {
+  updateSecurity(input: $input, condition: $condition) {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const deleteSecurity = `mutation DeleteSecurity(
+  $input: DeleteSecurityInput!
+  $condition: ModelSecurityConditionInput
+) {
+  deleteSecurity(input: $input, condition: $condition) {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const createTransaction = `mutation CreateTransaction(
+  $input: CreateTransactionInput!
+  $condition: ModelTransactionConditionInput
+) {
+  createTransaction(input: $input, condition: $condition) {
+    id
+    shares
+    price
+    commission
+    security {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
+    account {
+      id
+      name
+      description
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const updateTransaction = `mutation UpdateTransaction(
+  $input: UpdateTransactionInput!
+  $condition: ModelTransactionConditionInput
+) {
+  updateTransaction(input: $input, condition: $condition) {
+    id
+    shares
+    price
+    commission
+    security {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
+    account {
+      id
+      name
+      description
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const deleteTransaction = `mutation DeleteTransaction(
+  $input: DeleteTransactionInput!
+  $condition: ModelTransactionConditionInput
+) {
+  deleteTransaction(input: $input, condition: $condition) {
+    id
+    shares
+    price
+    commission
+    security {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
+    account {
+      id
+      name
+      description
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
     }
   }
 }

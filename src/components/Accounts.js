@@ -18,7 +18,11 @@ class Accounts extends Component {
     this.setState({ operation: "edit" });
   };
 
-  handleDisplayAccount = () => {
+  handleDisplayAccount = account => {
+    console.log("Display account: " + account.id);
+  };
+
+  handleDisplayAllAccounts = () => {
     this.setState({ operation: "display" });
   };
 
@@ -35,7 +39,7 @@ class Accounts extends Component {
 
   // Add Account
   renderAdd() {
-    return <AddAccount onDisplayAccount={this.handleDisplayAccount} />;
+    return <AddAccount onDisplayAccount={this.handleDisplayAllAccounts} />;
   }
 
   // Edit Account
@@ -44,7 +48,7 @@ class Accounts extends Component {
       <>
         <EditAccount
           account={this.state.selectedAccount}
-          onDisplayAccount={this.handleDisplayAccount}
+          onDisplayAccount={this.handleDisplayAllAccounts}
         />
       </>
     );
@@ -54,7 +58,10 @@ class Accounts extends Component {
   renderDisplay() {
     return (
       <>
-        <AccountDisplay onEditAccount={this.handleEditAccount} />
+        <AccountDisplay
+          onEditAccount={this.handleEditAccount}
+          onDisplayAccount={this.handleDisplayAccount}
+        />
         <button
           className={`ui labeled icon button primary ${this.state.loadingClass}`}
           onClick={this.handleAddAccountClick}

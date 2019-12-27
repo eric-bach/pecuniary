@@ -14,6 +14,15 @@ export const onCreateAccount = `subscription OnCreateAccount {
         nextToken
       }
     }
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -30,6 +39,15 @@ export const onUpdateAccount = `subscription OnUpdateAccount {
         nextToken
       }
     }
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -45,6 +63,15 @@ export const onDeleteAccount = `subscription OnDeleteAccount {
       accounts {
         nextToken
       }
+    }
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
     }
   }
 }
@@ -93,6 +120,147 @@ export const onDeleteAccountType = `subscription OnDeleteAccountType {
         description
       }
       nextToken
+    }
+  }
+}
+`;
+export const onCreateSecurity = `subscription OnCreateSecurity {
+  onCreateSecurity {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const onUpdateSecurity = `subscription OnUpdateSecurity {
+  onUpdateSecurity {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const onDeleteSecurity = `subscription OnDeleteSecurity {
+  onDeleteSecurity {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const onCreateTransaction = `subscription OnCreateTransaction {
+  onCreateTransaction {
+    id
+    shares
+    price
+    commission
+    security {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
+    account {
+      id
+      name
+      description
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onUpdateTransaction = `subscription OnUpdateTransaction {
+  onUpdateTransaction {
+    id
+    shares
+    price
+    commission
+    security {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
+    account {
+      id
+      name
+      description
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onDeleteTransaction = `subscription OnDeleteTransaction {
+  onDeleteTransaction {
+    id
+    shares
+    price
+    commission
+    security {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
+    account {
+      id
+      name
+      description
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
     }
   }
 }

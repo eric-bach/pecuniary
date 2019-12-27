@@ -15,7 +15,11 @@ class AccountDisplay extends Component {
     this.setState({ accounts: result.data.listAccounts.items });
   };
 
-  handleEditAccountClick = account => {
+  handleDisplayAccount = account => {
+    this.props.onDisplayAccount(account);
+  };
+
+  handleEditAccount = account => {
     this.props.onEditAccount(account);
   };
 
@@ -30,7 +34,8 @@ class AccountDisplay extends Component {
               <AccountItem
                 account={account}
                 key={account.id}
-                onEditAccount={this.handleEditAccountClick}
+                onEditAccount={this.handleEditAccount}
+                onDisplayAccount={this.handleDisplayAccount}
               />
             );
           })}

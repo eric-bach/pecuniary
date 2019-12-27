@@ -3,6 +3,7 @@ type Account @model {
   name: String!
   description: String
   accountType: AccountType! @connection(name: "AccountType")
+  transactions: [Transaction] @connection(name: "AccountTransactions")
 }
 
 type AccountType @model {
@@ -10,4 +11,20 @@ type AccountType @model {
   name: String!
   description: String
   accounts: [Account] @connection(name: "AccountType")
+}
+
+type Security @model {
+  id: ID!
+  name: String!
+  description: String!
+  transactions: [Transaction] @connection(name: "TransactionSecurities")
+}
+
+type Transaction @model {
+  id: ID!
+  shares: Int!
+  price: Float!
+  commission: Float!
+  security: Security! @connection(name: "TransactionSecurities")
+  account: Account! @connection(name: "AccountTransactions")
 }
