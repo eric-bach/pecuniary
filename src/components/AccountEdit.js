@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { API, graphqlOperation } from "aws-amplify";
+import { API, Auth, graphqlOperation } from "aws-amplify";
 import { updateAccount, deleteAccount } from "../graphql/mutations";
 import { listAccountTypes } from "../graphql/queries";
 
@@ -7,6 +7,7 @@ class AccountEdit extends Component {
   state = {
     id: this.props.account.id,
     name: this.props.account.name,
+    userId: "",
     description: this.props.account.description,
     accountTypeId: this.props.account.accountType.id,
     accountTypeName: this.props.account.accountType.name,
@@ -15,6 +16,12 @@ class AccountEdit extends Component {
   };
 
   componentDidMount = async () => {
+    await Auth.currentUserInfo().then(user => {
+      this.setState({
+        userId: user.attributes.sub
+      });
+    });
+
     const result = await API.graphql(graphqlOperation(listAccountTypes));
 
     this.setState({ accountTypes: result.data.listAccountTypes.items });
@@ -43,6 +50,7 @@ class AccountEdit extends Component {
 
     const input = {
       id: this.state.id,
+      userId: this.state.userId,
       name: this.state.name,
       description: this.state.description,
       accountAccountTypeId: this.state.accountTypeId

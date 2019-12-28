@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { API, graphqlOperation } from "aws-amplify";
+import { API, Auth, graphqlOperation } from "aws-amplify";
 import { createAccount } from "../graphql/mutations";
 import { listAccountTypes } from "../graphql/queries";
 
 class AccountAdd extends Component {
   state = {
     name: "",
+    userId: "",
     description: "",
     accountTypeId: "",
     accountTypes: [],
@@ -13,6 +14,12 @@ class AccountAdd extends Component {
   };
 
   componentDidMount = async () => {
+    await Auth.currentUserInfo().then(user => {
+      this.setState({
+        userId: user.attributes.sub
+      });
+    });
+
     const result = await API.graphql(graphqlOperation(listAccountTypes));
 
     this.setState({ accountTypes: result.data.listAccountTypes.items });
@@ -39,6 +46,7 @@ class AccountAdd extends Component {
 
     const input = {
       name: this.state.name,
+      userId: this.state.userId,
       description: this.state.description,
       accountAccountTypeId: this.state.accountTypeId
     };

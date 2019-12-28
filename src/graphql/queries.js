@@ -4,6 +4,7 @@
 export const getAccount = `query GetAccount($id: ID!) {
   getAccount(id: $id) {
     id
+    userId
     name
     description
     accountType {
@@ -35,6 +36,7 @@ export const listAccounts = `query ListAccounts(
   listAccounts(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
+      userId
       name
       description
       accountType {
@@ -58,6 +60,7 @@ export const getAccountType = `query GetAccountType($id: ID!) {
     accounts {
       items {
         id
+        userId
         name
         description
       }
@@ -137,6 +140,7 @@ export const getTransaction = `query GetTransaction($id: ID!) {
     }
     account {
       id
+      userId
       name
       description
       accountType {
@@ -170,6 +174,7 @@ export const listTransactions = `query ListTransactions(
       }
       account {
         id
+        userId
         name
         description
       }

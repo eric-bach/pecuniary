@@ -7,6 +7,7 @@ export const createAccount = `mutation CreateAccount(
 ) {
   createAccount(input: $input, condition: $condition) {
     id
+    userId
     name
     description
     accountType {
@@ -36,6 +37,7 @@ export const updateAccount = `mutation UpdateAccount(
 ) {
   updateAccount(input: $input, condition: $condition) {
     id
+    userId
     name
     description
     accountType {
@@ -65,6 +67,7 @@ export const deleteAccount = `mutation DeleteAccount(
 ) {
   deleteAccount(input: $input, condition: $condition) {
     id
+    userId
     name
     description
     accountType {
@@ -99,6 +102,7 @@ export const createAccountType = `mutation CreateAccountType(
     accounts {
       items {
         id
+        userId
         name
         description
       }
@@ -118,6 +122,7 @@ export const updateAccountType = `mutation UpdateAccountType(
     accounts {
       items {
         id
+        userId
         name
         description
       }
@@ -137,6 +142,7 @@ export const deleteAccountType = `mutation DeleteAccountType(
     accounts {
       items {
         id
+        userId
         name
         description
       }
@@ -228,6 +234,7 @@ export const createTransaction = `mutation CreateTransaction(
     }
     account {
       id
+      userId
       name
       description
       accountType {
@@ -262,6 +269,7 @@ export const updateTransaction = `mutation UpdateTransaction(
     }
     account {
       id
+      userId
       name
       description
       accountType {
@@ -296,6 +304,7 @@ export const deleteTransaction = `mutation DeleteTransaction(
     }
     account {
       id
+      userId
       name
       description
       accountType {

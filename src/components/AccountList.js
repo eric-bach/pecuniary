@@ -1,16 +1,31 @@
 import React, { Component } from "react";
-import { API, graphqlOperation } from "aws-amplify";
+import { API, Auth, graphqlOperation } from "aws-amplify";
 import { listAccounts } from "../graphql/queries";
 import AccountItem from "./AccountItem";
 
 class AccountList extends Component {
   state = {
     accountId: "",
+    userId: "",
     accounts: []
   };
 
   componentDidMount = async () => {
-    const result = await API.graphql(graphqlOperation(listAccounts));
+    await Auth.currentUserInfo().then(user => {
+      this.setState({
+        userId: user.attributes.sub
+      });
+    });
+
+    const result = await API.graphql(
+      graphqlOperation(listAccounts, {
+        filter: {
+          userId: {
+            eq: this.state.userId
+          }
+        }
+      })
+    );
 
     this.setState({ accounts: result.data.listAccounts.items });
   };

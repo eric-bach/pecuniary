@@ -4,6 +4,7 @@
 export const onCreateAccount = `subscription OnCreateAccount {
   onCreateAccount {
     id
+    userId
     name
     description
     accountType {
@@ -30,6 +31,7 @@ export const onCreateAccount = `subscription OnCreateAccount {
 export const onUpdateAccount = `subscription OnUpdateAccount {
   onUpdateAccount {
     id
+    userId
     name
     description
     accountType {
@@ -56,6 +58,7 @@ export const onUpdateAccount = `subscription OnUpdateAccount {
 export const onDeleteAccount = `subscription OnDeleteAccount {
   onDeleteAccount {
     id
+    userId
     name
     description
     accountType {
@@ -87,6 +90,7 @@ export const onCreateAccountType = `subscription OnCreateAccountType {
     accounts {
       items {
         id
+        userId
         name
         description
       }
@@ -103,6 +107,7 @@ export const onUpdateAccountType = `subscription OnUpdateAccountType {
     accounts {
       items {
         id
+        userId
         name
         description
       }
@@ -119,6 +124,7 @@ export const onDeleteAccountType = `subscription OnDeleteAccountType {
     accounts {
       items {
         id
+        userId
         name
         description
       }
@@ -198,6 +204,7 @@ export const onCreateTransaction = `subscription OnCreateTransaction {
     }
     account {
       id
+      userId
       name
       description
       accountType {
@@ -229,6 +236,7 @@ export const onUpdateTransaction = `subscription OnUpdateTransaction {
     }
     account {
       id
+      userId
       name
       description
       accountType {
@@ -260,6 +268,7 @@ export const onDeleteTransaction = `subscription OnDeleteTransaction {
     }
     account {
       id
+      userId
       name
       description
       accountType {

@@ -2,6 +2,7 @@ scalar AWSDate
 
 type Account @model {
   id: ID!
+  userId: ID!
   name: String!
   description: String
   accountType: AccountType! @connection(name: "AccountType")
