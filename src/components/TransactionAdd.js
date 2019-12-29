@@ -17,8 +17,6 @@ class TransactionAdd extends Component {
   };
 
   componentDidMount = async () => {
-    console.log(moment(this.state.transactionDate).toISOString());
-
     const result = await API.graphql(graphqlOperation(listTransactionTypes));
     this.setState({ transactionTypes: result.data.listTransactionTypes.items });
   };
@@ -51,9 +49,10 @@ class TransactionAdd extends Component {
       transactionTransactionTypeId: 1,
       transactionSecurityId: 1, // hardcoded for now
       transactionAccountId: this.state.account.id,
+      // Format to AWSDate yyyy-MM-dd-07:00
       transactionDate:
         this.state.transactionDate +
-        "-0" +
+        (new Date().getTimezoneOffset() / 60 < 10 ? "-0" : "-") +
         new Date().getTimezoneOffset() / 60 +
         ":00",
       shares: this.state.shares,

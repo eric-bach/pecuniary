@@ -9,18 +9,12 @@ type Account @model {
   transactions: [Transaction] @connection(name: "AccountTransactions")
 }
 
-type AccountType @model {
-  id: ID!
-  name: String!
-  description: String
-  accounts: [Account] @connection(name: "AccountType")
-}
-
 type Security @model {
   id: ID!
   name: String!
   description: String!
   transactions: [Transaction] @connection(name: "TransactionSecurities")
+  exchangeType: ExchangeType @connection(name: "SecurityExchangeTypes")
 }
 
 type Transaction @model {
@@ -34,9 +28,31 @@ type Transaction @model {
   transactionType: TransactionType! @connection(name: "TransactionTypes")
 }
 
+type AccountType @model {
+  id: ID!
+  name: String!
+  description: String
+  accounts: [Account] @connection(name: "AccountType")
+}
+
 type TransactionType @model {
   id: ID!
   name: String!
   description: String!
   transactions: [Transaction]! @connection(name: "TransactionTypes")
+}
+
+type CurrencyType @model {
+  id: ID!
+  name: String!
+  description: String!
+  exchangeTypes: [ExchangeType]! @connection(name: "ExchangeCurrencyTypes")
+}
+
+type ExchangeType @model {
+  id: ID!
+  name: String!
+  description: String!
+  currencyType: CurrencyType! @connection(name: "ExchangeCurrencyTypes")
+  securitys: [Security]! @connection(name: "SecurityExchangeTypes")
 }

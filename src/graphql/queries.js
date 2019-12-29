@@ -52,41 +52,6 @@ export const listAccounts = `query ListAccounts(
   }
 }
 `;
-export const getAccountType = `query GetAccountType($id: ID!) {
-  getAccountType(id: $id) {
-    id
-    name
-    description
-    accounts {
-      items {
-        id
-        userId
-        name
-        description
-      }
-      nextToken
-    }
-  }
-}
-`;
-export const listAccountTypes = `query ListAccountTypes(
-  $filter: ModelAccountTypeFilterInput
-  $limit: Int
-  $nextToken: String
-) {
-  listAccountTypes(filter: $filter, limit: $limit, nextToken: $nextToken) {
-    items {
-      id
-      name
-      description
-      accounts {
-        nextToken
-      }
-    }
-    nextToken
-  }
-}
-`;
 export const getSecurity = `query GetSecurity($id: ID!) {
   getSecurity(id: $id) {
     id
@@ -101,6 +66,19 @@ export const getSecurity = `query GetSecurity($id: ID!) {
         commission
       }
       nextToken
+    }
+    exchangeType {
+      id
+      name
+      description
+      currencyType {
+        id
+        name
+        description
+      }
+      securitys {
+        nextToken
+      }
     }
   }
 }
@@ -117,6 +95,11 @@ export const listSecuritys = `query ListSecuritys(
       description
       transactions {
         nextToken
+      }
+      exchangeType {
+        id
+        name
+        description
       }
     }
     nextToken
@@ -136,6 +119,11 @@ export const getTransaction = `query GetTransaction($id: ID!) {
       description
       transactions {
         nextToken
+      }
+      exchangeType {
+        id
+        name
+        description
       }
     }
     account {
@@ -196,6 +184,41 @@ export const listTransactions = `query ListTransactions(
   }
 }
 `;
+export const getAccountType = `query GetAccountType($id: ID!) {
+  getAccountType(id: $id) {
+    id
+    name
+    description
+    accounts {
+      items {
+        id
+        userId
+        name
+        description
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const listAccountTypes = `query ListAccountTypes(
+  $filter: ModelAccountTypeFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listAccountTypes(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      description
+      accounts {
+        nextToken
+      }
+    }
+    nextToken
+  }
+}
+`;
 export const getTransactionType = `query GetTransactionType($id: ID!) {
   getTransactionType(id: $id) {
     id
@@ -225,6 +248,87 @@ export const listTransactionTypes = `query ListTransactionTypes(
       name
       description
       transactions {
+        nextToken
+      }
+    }
+    nextToken
+  }
+}
+`;
+export const getCurrencyType = `query GetCurrencyType($id: ID!) {
+  getCurrencyType(id: $id) {
+    id
+    name
+    description
+    exchangeTypes {
+      items {
+        id
+        name
+        description
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const listCurrencyTypes = `query ListCurrencyTypes(
+  $filter: ModelCurrencyTypeFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listCurrencyTypes(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      description
+      exchangeTypes {
+        nextToken
+      }
+    }
+    nextToken
+  }
+}
+`;
+export const getExchangeType = `query GetExchangeType($id: ID!) {
+  getExchangeType(id: $id) {
+    id
+    name
+    description
+    currencyType {
+      id
+      name
+      description
+      exchangeTypes {
+        nextToken
+      }
+    }
+    securitys {
+      items {
+        id
+        name
+        description
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const listExchangeTypes = `query ListExchangeTypes(
+  $filter: ModelExchangeTypeFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listExchangeTypes(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      description
+      currencyType {
+        id
+        name
+        description
+      }
+      securitys {
         nextToken
       }
     }

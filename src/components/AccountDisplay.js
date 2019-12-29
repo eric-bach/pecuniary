@@ -1,9 +1,26 @@
 import React, { Component } from "react";
+import { API, graphqlOperation } from "aws-amplify";
+import { listTransactions } from "../graphql/queries";
 
 class AccountDisplay extends Component {
   state = {
     account: this.props.account,
+    transactions: [],
     loadingClass: ""
+  };
+
+  componentDidMount = async () => {
+    // const transactions = await API.graphql(
+    //   graphqlOperation(listTransactions, {
+    //     filter: {
+    //       transactionAccountId: {
+    //         eq: this.state.account.id
+    //       }
+    //     }
+    //   })
+    // );
+    // this.setState({ transactions: transactions });
+    // console.log(this.state.transactions);
   };
 
   handleAddTransaction = account => {
