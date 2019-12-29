@@ -55,11 +55,11 @@ class AccountAdd extends Component {
     this.setState({ name: "", description: "" });
     this.setState({ loadingClass: "" });
 
-    this.props.onDisplayAccount(false);
+    this.props.onListAccounts();
   };
 
   handleCancelAddAccount = () => {
-    this.props.onDisplayAccount(false);
+    this.props.onListAccounts();
   };
 
   render() {

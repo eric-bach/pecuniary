@@ -10,7 +10,7 @@ class Accounts extends Component {
     selectedAccount: "" // selected Account
   };
 
-  handleAddAccountClick = () => {
+  handleAddAccount = () => {
     this.setState({ operation: "add" });
   };
 
@@ -24,7 +24,7 @@ class Accounts extends Component {
     this.setState({ operation: "display" });
   };
 
-  handleDisplayAllAccounts = () => {
+  handleListAccounts = () => {
     this.setState({ operation: "list" });
   };
 
@@ -47,7 +47,7 @@ class Accounts extends Component {
 
   // Add Account
   renderAdd() {
-    return <AccountAdd onDisplayAccount={this.handleDisplayAllAccounts} />;
+    return <AccountAdd onListAccounts={this.handleListAccounts} />;
   }
 
   // Edit Account
@@ -56,7 +56,7 @@ class Accounts extends Component {
       <>
         <AccountEdit
           account={this.state.selectedAccount}
-          onDisplayAccount={this.handleDisplayAllAccounts}
+          onListAccounts={this.handleListAccounts}
         />
       </>
     );
@@ -81,7 +81,7 @@ class Accounts extends Component {
         />
         <button
           className={`ui labeled icon button primary ${this.state.loadingClass}`}
-          onClick={this.handleAddAccountClick}
+          onClick={this.handleAddAccount}
         >
           <i className="add icon"></i>
           Account

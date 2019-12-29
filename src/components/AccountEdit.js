@@ -59,7 +59,7 @@ class AccountEdit extends Component {
     await API.graphql(graphqlOperation(updateAccount, { input }));
 
     this.setState({ loadingClass: "" });
-    this.props.onDisplayAccount(false);
+    this.props.onListAccounts();
   };
 
   handleDeleteAccount = async event => {
@@ -72,11 +72,11 @@ class AccountEdit extends Component {
     await API.graphql(graphqlOperation(deleteAccount, { input }));
 
     this.setState({ loadingClass: "" });
-    this.props.onDisplayAccount(false);
+    this.props.onListAccounts();
   };
 
   handleCancelEditAccount = () => {
-    this.props.onDisplayAccount(false);
+    this.props.onListAccounts();
   };
 
   render() {
