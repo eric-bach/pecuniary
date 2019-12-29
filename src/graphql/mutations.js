@@ -246,6 +246,14 @@ export const createTransaction = `mutation CreateTransaction(
         nextToken
       }
     }
+    transactionType {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
   }
 }
 `;
@@ -277,6 +285,14 @@ export const updateTransaction = `mutation UpdateTransaction(
         name
         description
       }
+      transactions {
+        nextToken
+      }
+    }
+    transactionType {
+      id
+      name
+      description
       transactions {
         nextToken
       }
@@ -315,6 +331,77 @@ export const deleteTransaction = `mutation DeleteTransaction(
       transactions {
         nextToken
       }
+    }
+    transactionType {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const createTransactionType = `mutation CreateTransactionType(
+  $input: CreateTransactionTypeInput!
+  $condition: ModelTransactionTypeConditionInput
+) {
+  createTransactionType(input: $input, condition: $condition) {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        transactionDate
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const updateTransactionType = `mutation UpdateTransactionType(
+  $input: UpdateTransactionTypeInput!
+  $condition: ModelTransactionTypeConditionInput
+) {
+  updateTransactionType(input: $input, condition: $condition) {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        transactionDate
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const deleteTransactionType = `mutation DeleteTransactionType(
+  $input: DeleteTransactionTypeInput!
+  $condition: ModelTransactionTypeConditionInput
+) {
+  deleteTransactionType(input: $input, condition: $condition) {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        transactionDate
+        shares
+        price
+        commission
+      }
+      nextToken
     }
   }
 }

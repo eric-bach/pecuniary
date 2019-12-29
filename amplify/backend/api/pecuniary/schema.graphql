@@ -31,4 +31,12 @@ type Transaction @model {
   commission: Float!
   security: Security! @connection(name: "TransactionSecurities")
   account: Account! @connection(name: "AccountTransactions")
+  transactionType: TransactionType! @connection(name: "TransactionTypes")
+}
+
+type TransactionType @model {
+  id: ID!
+  name: String!
+  description: String!
+  transactions: [Transaction]! @connection(name: "TransactionTypes")
 }

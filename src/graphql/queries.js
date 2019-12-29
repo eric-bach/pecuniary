@@ -152,6 +152,14 @@ export const getTransaction = `query GetTransaction($id: ID!) {
         nextToken
       }
     }
+    transactionType {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
   }
 }
 `;
@@ -177,6 +185,47 @@ export const listTransactions = `query ListTransactions(
         userId
         name
         description
+      }
+      transactionType {
+        id
+        name
+        description
+      }
+    }
+    nextToken
+  }
+}
+`;
+export const getTransactionType = `query GetTransactionType($id: ID!) {
+  getTransactionType(id: $id) {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        transactionDate
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const listTransactionTypes = `query ListTransactionTypes(
+  $filter: ModelTransactionTypeFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listTransactionTypes(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      description
+      transactions {
+        nextToken
       }
     }
     nextToken

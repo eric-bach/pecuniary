@@ -216,6 +216,14 @@ export const onCreateTransaction = `subscription OnCreateTransaction {
         nextToken
       }
     }
+    transactionType {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
   }
 }
 `;
@@ -244,6 +252,14 @@ export const onUpdateTransaction = `subscription OnUpdateTransaction {
         name
         description
       }
+      transactions {
+        nextToken
+      }
+    }
+    transactionType {
+      id
+      name
+      description
       transactions {
         nextToken
       }
@@ -279,6 +295,68 @@ export const onDeleteTransaction = `subscription OnDeleteTransaction {
       transactions {
         nextToken
       }
+    }
+    transactionType {
+      id
+      name
+      description
+      transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onCreateTransactionType = `subscription OnCreateTransactionType {
+  onCreateTransactionType {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        transactionDate
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const onUpdateTransactionType = `subscription OnUpdateTransactionType {
+  onUpdateTransactionType {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        transactionDate
+        shares
+        price
+        commission
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const onDeleteTransactionType = `subscription OnDeleteTransactionType {
+  onDeleteTransactionType {
+    id
+    name
+    description
+    transactions {
+      items {
+        id
+        transactionDate
+        shares
+        price
+        commission
+      }
+      nextToken
     }
   }
 }

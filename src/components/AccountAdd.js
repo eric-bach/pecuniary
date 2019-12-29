@@ -21,7 +21,6 @@ class AccountAdd extends Component {
     });
 
     const result = await API.graphql(graphqlOperation(listAccountTypes));
-
     this.setState({ accountTypes: result.data.listAccountTypes.items });
   };
 
