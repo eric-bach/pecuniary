@@ -137,7 +137,11 @@ class Reset extends Component {
   };
 
   render() {
-    return <div>Reset database complete</div>;
+    return (
+      <div className="ui main container" style={{ paddingTop: "20px" }}>
+        Database purged and re-seeded with base data
+      </div>
+    );
   }
 }
 

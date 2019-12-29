@@ -46,7 +46,7 @@ class TransactionAdd extends Component {
     this.setState({ loadingClass: "loading" });
 
     const input = {
-      transactionTransactionTypeId: 1,
+      transactionTransactionTypeId: this.state.transactionTypeId,
       transactionSecurityId: 1, // hardcoded for now
       transactionAccountId: this.state.account.id,
       // Format to AWSDate yyyy-MM-dd-07:00
