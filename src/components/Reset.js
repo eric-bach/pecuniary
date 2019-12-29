@@ -22,11 +22,15 @@ import {
 } from "../graphql/queries";
 
 class Reset extends Component {
-  componentDidMount = async () => {
-    this.seed();
+  state = {
+    loadingClass: "",
+    deleted: false,
+    seeded: false
   };
 
-  clearTransactionTables = async () => {
+  deleteData = async () => {
+    this.setState({ loadingClass: "loading" });
+
     // Delete all existing Transactions
     let result = await API.graphql(graphqlOperation(listTransactions));
     result.data.listTransactions.items.map(async t => {
@@ -40,44 +44,23 @@ class Reset extends Component {
       const input = { id: t.id };
       await API.graphql(graphqlOperation(deleteAccount, { input }));
     });
-  };
 
-  seedTransactionTypes = async () => {
     // Delete all existing Transaction Types
-    const result = await API.graphql(graphqlOperation(listTransactionTypes));
+    result = await API.graphql(graphqlOperation(listTransactionTypes));
     result.data.listTransactionTypes.items.map(async t => {
       const input = { id: t.id };
       await API.graphql(graphqlOperation(deleteTransactionType, { input }));
     });
 
-    // Seed base Transaction Types
-    let input = { name: "Buy", description: "Buy" };
-    await API.graphql(graphqlOperation(createTransactionType, { input }));
-    input = { name: "Sell", description: "Sell" };
-    await API.graphql(graphqlOperation(createTransactionType, { input }));
-  };
-
-  seedAccountTypes = async () => {
     // Delete all existing Account Types
-    const result = await API.graphql(graphqlOperation(listAccountTypes));
+    result = await API.graphql(graphqlOperation(listAccountTypes));
     result.data.listAccountTypes.items.map(async t => {
       const input = { id: t.id };
       await API.graphql(graphqlOperation(deleteAccountType, { input }));
     });
 
-    // Seed base Account Types
-    let input = { name: "TFSA", description: "Tax Free Savings Account" };
-    await API.graphql(graphqlOperation(createAccountType, { input }));
-    input = {
-      name: "RRSP",
-      description: "Registered Retirement Savings Account"
-    };
-    await API.graphql(graphqlOperation(createAccountType, { input }));
-  };
-
-  seedExchangeAndCurrencyTypes = async () => {
     // Delete all existing Exchange Types
-    let result = await API.graphql(graphqlOperation(listExchangeTypes));
+    result = await API.graphql(graphqlOperation(listExchangeTypes));
     result.data.listExchangeTypes.items.map(async t => {
       const input = { id: t.id };
       await API.graphql(graphqlOperation(deleteExchangeType, { input }));
@@ -90,15 +73,36 @@ class Reset extends Component {
       await API.graphql(graphqlOperation(deleteCurrencyType, { input }));
     });
 
+    this.setState({ loadingClass: "" });
+    this.setState({ deleted: true });
+  };
+
+  seedData = async () => {
+    this.setState({ loadingClass: "loading" });
+
+    // Seed base Transaction Types
+    let input = { name: "Buy", description: "Buy" };
+    await API.graphql(graphqlOperation(createTransactionType, { input }));
+    input = { name: "Sell", description: "Sell" };
+    await API.graphql(graphqlOperation(createTransactionType, { input }));
+
+    // Seed base Account Types
+    input = { name: "TFSA", description: "Tax Free Savings Account" };
+    await API.graphql(graphqlOperation(createAccountType, { input }));
+    input = {
+      name: "RRSP",
+      description: "Registered Retirement Savings Account"
+    };
+    await API.graphql(graphqlOperation(createAccountType, { input }));
+
     // Seed base Currency Types
-    let input = { name: "CAD", description: "Canadian Dollar" };
+    input = { name: "CAD", description: "Canadian Dollar" };
     await API.graphql(graphqlOperation(createCurrencyType, { input }));
     input = {
       name: "USD",
       description: "US Dollar"
     };
     await API.graphql(graphqlOperation(createCurrencyType, { input }));
-
     // List all existing Currency Types
     const response = await API.graphql(graphqlOperation(listCurrencyTypes));
     const cad = response.data.listCurrencyTypes.items.find(item => {
@@ -107,7 +111,6 @@ class Reset extends Component {
     const usd = response.data.listCurrencyTypes.items.find(item => {
       return item.name === "USD";
     });
-
     // Seed base Exchange Types
     input = {
       name: "TSX",
@@ -127,19 +130,38 @@ class Reset extends Component {
       exchangeTypeCurrencyTypeId: usd.id
     };
     await API.graphql(graphqlOperation(createExchangeType, { input }));
-  };
 
-  seed = async () => {
-    this.clearTransactionTables();
-    this.seedTransactionTypes();
-    this.seedAccountTypes();
-    this.seedExchangeAndCurrencyTypes();
+    this.setState({ loadingClass: "" });
+    this.setState({ seeded: true });
   };
 
   render() {
     return (
       <div className="ui main container" style={{ paddingTop: "20px" }}>
-        Database purged and re-seeded with base data
+        <button
+          className={`ui red button ${this.state.loadingClass}`}
+          onClick={this.deleteData}
+        >
+          Delete Everything
+        </button>
+        <button
+          className={`ui primary button ${this.state.loadingClass}`}
+          onClick={this.seedData}
+        >
+          Populate Tables
+        </button>
+        {this.state.deleted && (
+          <div className="ui message">
+            <div className="header">Success</div>
+            <p>Deleted all data from database</p>
+          </div>
+        )}
+        {this.state.seeded && (
+          <div className="ui message">
+            <div className="header">Success</div>
+            <p>Populated database with seed data</p>
+          </div>
+        )}
       </div>
     );
   }
