@@ -21,6 +21,9 @@ class Navbar extends Component {
             <div className="item">
               <NavLink to="/accounts/">Accounts</NavLink>
             </div>
+            <div className="item">
+              <NavLink to="/reset/">Reset</NavLink>
+            </div>
             <a href="/" onClick={this.handleLogout} className="item right menu">
               Logout
             </a>
