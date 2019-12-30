@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { API, Auth, graphqlOperation } from "aws-amplify";
 import { updateAccount, deleteAccount } from "../graphql/mutations";
 import { listAccountTypes } from "../graphql/queries";
+import { wait } from "@testing-library/react";
 
 class AccountEdit extends Component {
   state = {
@@ -12,7 +13,9 @@ class AccountEdit extends Component {
     accountTypeId: this.props.account.accountType.id,
     accountTypeName: this.props.account.accountType.name,
     accountTypes: [],
-    loadingClass: ""
+    updateButtonClass: "",
+    deleteButtonClass: "",
+    cancelButtonClass: ""
   };
 
   componentDidMount = async () => {
@@ -46,7 +49,11 @@ class AccountEdit extends Component {
 
   handleEditAccount = async event => {
     event.preventDefault();
-    this.setState({ loadingClass: "loading" });
+    this.setState({
+      updateButtonClass: "loading",
+      deleteButtonClass: "disabled",
+      cancelButtonClass: "disabled"
+    });
 
     const input = {
       id: this.state.id,
@@ -58,20 +65,32 @@ class AccountEdit extends Component {
 
     await API.graphql(graphqlOperation(updateAccount, { input }));
 
-    this.setState({ loadingClass: "" });
+    this.setState({
+      updateButtonClass: "",
+      deleteButtonClass: "",
+      cancelButtonClass: ""
+    });
     this.props.onListAccounts();
   };
 
   handleDeleteAccount = async event => {
+    this.setState({
+      updateButtonClass: "disabled",
+      deleteButtonClass: "loading",
+      cancelButtonClass: "disabled"
+    });
+
     const input = {
       id: this.state.id
     };
 
-    console.log(input);
-
     await API.graphql(graphqlOperation(deleteAccount, { input }));
 
-    this.setState({ loadingClass: "" });
+    this.setState({
+      updateButtonClass: "",
+      deleteButtonClass: "",
+      cancelButtonClass: ""
+    });
     this.props.onListAccounts();
   };
 
@@ -134,19 +153,19 @@ class AccountEdit extends Component {
           </div>
           <div>
             <button
-              className={`ui primary button ${this.state.loadingClass}`}
+              className={`ui primary button ${this.state.updateButtonClass}`}
               type="submit"
             >
               Update
             </button>
             <button
-              className={`ui button red ${this.state.loadingClass}`}
+              className={`ui button red ${this.state.deleteButtonClass}`}
               onClick={this.handleDeleteAccount}
             >
               Delete
             </button>
             <button
-              className={`ui button ${this.state.loadingClass}`}
+              className={`ui button ${this.state.cancelButtonClass}`}
               onClick={this.handleCancelEditAccount}
             >
               Cancel

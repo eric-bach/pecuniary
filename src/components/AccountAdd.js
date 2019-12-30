@@ -10,7 +10,8 @@ class AccountAdd extends Component {
     description: "",
     accountTypeId: "",
     accountTypes: [],
-    loadingClass: ""
+    createButtonClass: "",
+    cancelButtonClass: ""
   };
 
   componentDidMount = async () => {
@@ -41,7 +42,10 @@ class AccountAdd extends Component {
 
   handleAddAccount = async event => {
     event.preventDefault();
-    this.setState({ loadingClass: "loading" });
+    this.setState({
+      createButtonClass: "loading",
+      cancelButtonClass: "disabled"
+    });
 
     const input = {
       name: this.state.name,
@@ -53,7 +57,7 @@ class AccountAdd extends Component {
     await API.graphql(graphqlOperation(createAccount, { input }));
 
     this.setState({ name: "", description: "" });
-    this.setState({ loadingClass: "" });
+    this.setState({ createButtonClass: "", cancelButtonClass: "" });
 
     this.props.onListAccounts();
   };
@@ -116,14 +120,14 @@ class AccountAdd extends Component {
           </div>
           <div>
             <button
-              className={`ui primary button ${this.state.loadingClass}`}
+              className={`ui primary button ${this.state.createButtonClass}`}
               type="submit"
             >
               Create
             </button>
 
             <button
-              className={`ui button ${this.state.loadingClass}`}
+              className={`ui button ${this.state.cancelButtonClass}`}
               onClick={this.handleCancelAddAccount}
             >
               Cancel
