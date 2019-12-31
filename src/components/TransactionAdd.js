@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { API, graphqlOperation } from "aws-amplify";
-import { listTransactionTypes } from "../graphql/queries";
+import { listTransactionTypes, listSecuritys } from "../graphql/queries";
 import moment from "moment";
 import { createTransaction } from "../graphql/mutations";
 
 class TransactionAdd extends Component {
   state = {
     account: this.props.location.state.account,
-    security: "",
+    securityId: "",
+    securities: [],
     transactionTypeId: "",
     transactionTypes: [],
     transactionDate: moment().format("YYYY-MM-DD"),
@@ -19,10 +20,9 @@ class TransactionAdd extends Component {
   componentDidMount = async () => {
     const result = await API.graphql(graphqlOperation(listTransactionTypes));
     this.setState({ transactionTypes: result.data.listTransactionTypes.items });
-  };
 
-  handleSecurityChange = event => {
-    this.setState({ security: event.target.value });
+    const securities = await API.graphql(graphqlOperation(listSecuritys));
+    this.setState({ securities: securities.data.listSecuritys.items });
   };
 
   handleTransactionDateChange = event => {
@@ -47,7 +47,7 @@ class TransactionAdd extends Component {
 
     const input = {
       transactionTransactionTypeId: this.state.transactionTypeId,
-      transactionSecurityId: 1, // hardcoded for now
+      transactionSecurityId: this.state.securityId,
       transactionAccountId: this.state.account.id,
       // Format to AWSDate yyyy-MM-dd-07:00
       transactionDate:
@@ -61,8 +61,6 @@ class TransactionAdd extends Component {
       //userId: this.state.userId
     };
 
-    console.log(input);
-
     await API.graphql(graphqlOperation(createTransaction, { input }));
 
     this.setState({ loadingClass: "" });
@@ -75,12 +73,23 @@ class TransactionAdd extends Component {
     this.setState({ transactionTypeId: value[0].id });
   };
 
+  handleSecurityChange = event => {
+    var value = this.state.securities.filter(function(item) {
+      return item.name === event.target.value;
+    });
+    this.setState({ securityId: value[0].id });
+  };
+
   render() {
     let transactionTypeOptionItems = this.state.transactionTypes.map(
       transactionType => (
         <option key={transactionType.name}>{transactionType.name}</option>
       )
     );
+
+    let securityOptionItems = this.state.securities.map(security => (
+      <option key={security.name}>{security.name}</option>
+    ));
 
     return (
       <div className="ui main container" style={{ paddingTop: "20px" }}>
@@ -99,18 +108,16 @@ class TransactionAdd extends Component {
             </div>
           </div>
           <div className="field">
-            <label>Security</label>
             <div className="two fields">
               <div className="field">
-                <input
-                  autoFocus
-                  type="text"
-                  name="security"
-                  placeholder="Security"
-                  required
-                  value={this.state.security}
+                <label>Security</label>
+                <select
+                  className="ui fluid dropdown"
                   onChange={this.handleSecurityChange}
-                />
+                >
+                  <option value="">(Select Security)</option>
+                  {securityOptionItems}
+                </select>
               </div>
             </div>
           </div>
