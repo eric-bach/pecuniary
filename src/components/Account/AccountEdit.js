@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { API, Auth, graphqlOperation } from "aws-amplify";
-import { updateAccount, deleteAccount } from "../graphql/mutations";
-import { listAccountTypes } from "../graphql/queries";
+import { updateAccount, deleteAccount } from "../../graphql/mutations";
+import { listAccountTypes } from "../../graphql/queries";
 
 class AccountEdit extends Component {
   state = {

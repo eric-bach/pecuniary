@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { API, Auth, graphqlOperation } from "aws-amplify";
-import { listAccounts } from "../graphql/queries";
+import { listAccounts } from "../../graphql/queries";
 import AccountItem from "./AccountItem";
 
 class AccountList extends Component {

@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { withAuthenticator } from "aws-amplify-react";
-import Accounts from "./components/Accounts";
+import Accounts from "./components/Account/Accounts";
 import TransactionAdd from "./components/TransactionAdd";
 import Reset from "./components/Reset";
 import Navbar from "./components/NavBar";
