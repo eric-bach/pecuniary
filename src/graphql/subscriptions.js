@@ -87,6 +87,7 @@ export const onCreateSecurity = `subscription OnCreateSecurity {
     id
     name
     description
+    userId
     transactions {
       items {
         id
@@ -118,6 +119,7 @@ export const onUpdateSecurity = `subscription OnUpdateSecurity {
     id
     name
     description
+    userId
     transactions {
       items {
         id
@@ -149,6 +151,7 @@ export const onDeleteSecurity = `subscription OnDeleteSecurity {
     id
     name
     description
+    userId
     transactions {
       items {
         id
@@ -186,6 +189,7 @@ export const onCreateTransaction = `subscription OnCreateTransaction {
       id
       name
       description
+      userId
       transactions {
         nextToken
       }
@@ -231,6 +235,7 @@ export const onUpdateTransaction = `subscription OnUpdateTransaction {
       id
       name
       description
+      userId
       transactions {
         nextToken
       }
@@ -276,6 +281,7 @@ export const onDeleteTransaction = `subscription OnDeleteTransaction {
       id
       name
       description
+      userId
       transactions {
         nextToken
       }
@@ -481,6 +487,7 @@ export const onCreateExchangeType = `subscription OnCreateExchangeType {
         id
         name
         description
+        userId
       }
       nextToken
     }
@@ -505,6 +512,7 @@ export const onUpdateExchangeType = `subscription OnUpdateExchangeType {
         id
         name
         description
+        userId
       }
       nextToken
     }
@@ -529,6 +537,7 @@ export const onDeleteExchangeType = `subscription OnDeleteExchangeType {
         id
         name
         description
+        userId
       }
       nextToken
     }

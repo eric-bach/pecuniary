@@ -13,6 +13,7 @@ type Security @model {
   id: ID!
   name: String!
   description: String!
+  userId: ID!
   transactions: [Transaction] @connection(name: "TransactionSecurities")
   exchangeType: ExchangeType @connection(name: "SecurityExchangeTypes")
 }

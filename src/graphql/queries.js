@@ -57,6 +57,7 @@ export const getSecurity = `query GetSecurity($id: ID!) {
     id
     name
     description
+    userId
     transactions {
       items {
         id
@@ -93,6 +94,7 @@ export const listSecuritys = `query ListSecuritys(
       id
       name
       description
+      userId
       transactions {
         nextToken
       }
@@ -117,6 +119,7 @@ export const getTransaction = `query GetTransaction($id: ID!) {
       id
       name
       description
+      userId
       transactions {
         nextToken
       }
@@ -167,6 +170,7 @@ export const listTransactions = `query ListTransactions(
         id
         name
         description
+        userId
       }
       account {
         id
@@ -307,6 +311,7 @@ export const getExchangeType = `query GetExchangeType($id: ID!) {
         id
         name
         description
+        userId
       }
       nextToken
     }

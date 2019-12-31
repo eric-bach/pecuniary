@@ -99,6 +99,7 @@ export const createSecurity = `mutation CreateSecurity(
     id
     name
     description
+    userId
     transactions {
       items {
         id
@@ -133,6 +134,7 @@ export const updateSecurity = `mutation UpdateSecurity(
     id
     name
     description
+    userId
     transactions {
       items {
         id
@@ -167,6 +169,7 @@ export const deleteSecurity = `mutation DeleteSecurity(
     id
     name
     description
+    userId
     transactions {
       items {
         id
@@ -207,6 +210,7 @@ export const createTransaction = `mutation CreateTransaction(
       id
       name
       description
+      userId
       transactions {
         nextToken
       }
@@ -255,6 +259,7 @@ export const updateTransaction = `mutation UpdateTransaction(
       id
       name
       description
+      userId
       transactions {
         nextToken
       }
@@ -303,6 +308,7 @@ export const deleteTransaction = `mutation DeleteTransaction(
       id
       name
       description
+      userId
       transactions {
         nextToken
       }
@@ -538,6 +544,7 @@ export const createExchangeType = `mutation CreateExchangeType(
         id
         name
         description
+        userId
       }
       nextToken
     }
@@ -565,6 +572,7 @@ export const updateExchangeType = `mutation UpdateExchangeType(
         id
         name
         description
+        userId
       }
       nextToken
     }
@@ -592,6 +600,7 @@ export const deleteExchangeType = `mutation DeleteExchangeType(
         id
         name
         description
+        userId
       }
       nextToken
     }

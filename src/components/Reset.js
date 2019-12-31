@@ -10,7 +10,8 @@ import {
   deleteCurrencyType,
   createCurrencyType,
   deleteExchangeType,
-  createExchangeType
+  createExchangeType,
+  deleteSecurity
 } from "../graphql/mutations";
 import {
   listTransactions,
@@ -18,7 +19,8 @@ import {
   listTransactionTypes,
   listAccountTypes,
   listCurrencyTypes,
-  listExchangeTypes
+  listExchangeTypes,
+  listSecuritys
 } from "../graphql/queries";
 
 class Reset extends Component {
@@ -43,6 +45,13 @@ class Reset extends Component {
     result.data.listAccounts.items.map(async t => {
       const input = { id: t.id };
       await API.graphql(graphqlOperation(deleteAccount, { input }));
+    });
+
+    // Delete all existing Securities
+    result = await API.graphql(graphqlOperation(listSecuritys));
+    result.data.listSecuritys.items.map(async t => {
+      const input = { id: t.id };
+      await API.graphql(graphqlOperation(deleteSecurity, { input }));
     });
 
     // Delete all existing Transaction Types
