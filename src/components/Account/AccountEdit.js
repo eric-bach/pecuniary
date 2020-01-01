@@ -144,6 +144,7 @@ class AccountEdit extends Component {
                 className="ui fluid dropdown"
                 onChange={this.handleAccountTypeChange}
                 value={this.state.accountTypeName}
+                required
               >
                 <option value="">(Select Account Type)</option>
                 {accountTypeOptionItems}

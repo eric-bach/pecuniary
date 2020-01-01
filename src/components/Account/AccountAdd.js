@@ -112,6 +112,7 @@ class AccountAdd extends Component {
               <select
                 className="ui fluid dropdown"
                 onChange={this.handleAccountTypeChange}
+                required
               >
                 <option value="">(Select Account Type)</option>
                 {accountTypeOptionItems}

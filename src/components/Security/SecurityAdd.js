@@ -106,6 +106,7 @@ class SecurityAdd extends Component {
               <select
                 className="ui fluid dropdown"
                 onChange={this.handleExchangeTypeChange}
+                required
               >
                 <option value="">(Select Exchange Type)</option>
                 {exchangeTypeOptionItems}

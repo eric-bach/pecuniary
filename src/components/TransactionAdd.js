@@ -101,6 +101,7 @@ class TransactionAdd extends Component {
               <select
                 className="ui fluid dropdown"
                 onChange={this.handleTransactionTypeChange}
+                required
               >
                 <option value="">(Select Transaction Type)</option>
                 {transactionTypeOptionItems}
@@ -114,6 +115,7 @@ class TransactionAdd extends Component {
                 <select
                   className="ui fluid dropdown"
                   onChange={this.handleSecurityChange}
+                  required
                 >
                   <option value="">(Select Security)</option>
                   {securityOptionItems}
