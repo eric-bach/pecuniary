@@ -115,8 +115,16 @@ class TransactionAdd extends Component {
     });
   };
 
-  handleCreateSecurity = event => {
+  handleCreateSecurity = () => {
     this.setState({ showCreateSecurity: !this.state.showCreateSecurity });
+  };
+
+  securityCreated = () => {
+    this.setState({
+      securityNotFound: false,
+      securityClassName: "",
+      showCreateSecurity: !this.state.showCreateSecurity
+    });
   };
 
   render() {
@@ -238,7 +246,12 @@ class TransactionAdd extends Component {
             </form>
           </div>
           <div className="eight wide column">
-            {this.state.showCreateSecurity && <SecurityAdd />}
+            {this.state.showCreateSecurity && (
+              <SecurityAdd
+                name={this.state.securityName}
+                onSecurityCreated={this.securityCreated}
+              />
+            )}
           </div>
         </div>
       </div>

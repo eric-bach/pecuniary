@@ -5,7 +5,7 @@ import { listExchangeTypes } from "../../graphql/queries";
 
 class SecurityAdd extends Component {
   state = {
-    name: "",
+    name: this.props.name,
     userId: "",
     description: "",
     exchangeTypeId: "",
@@ -58,6 +58,10 @@ class SecurityAdd extends Component {
 
     this.setState({ name: "", description: "" });
     this.setState({ createButtonClass: "", cancelButtonClass: "" });
+
+    if (this.props.onSecurityCreated !== undefined) {
+      this.props.onSecurityCreated();
+    }
   };
 
   render() {
