@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import TransactionList from "../TransactionList";
 
 class AccountDisplay extends Component {
   state = {
@@ -54,7 +55,7 @@ class AccountDisplay extends Component {
             </div>
           </div>
           <div className="item">
-            <h3>Transactions</h3>
+            <TransactionList account={this.state.account} />
           </div>
         </div>
       </div>
