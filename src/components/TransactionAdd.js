@@ -3,6 +3,7 @@ import { Auth, API, graphqlOperation } from "aws-amplify";
 import { listTransactionTypes, listSecuritys } from "../graphql/queries";
 import moment from "moment";
 import { createTransaction } from "../graphql/mutations";
+import SecurityAdd from "./Security/SecurityAdd";
 
 class TransactionAdd extends Component {
   state = {
@@ -17,7 +18,8 @@ class TransactionAdd extends Component {
     shares: "",
     price: "",
     commission: "",
-    userId: ""
+    userId: "",
+    showCreateSecurity: false
   };
 
   componentDidMount = async () => {
@@ -113,6 +115,10 @@ class TransactionAdd extends Component {
     });
   };
 
+  handleCreateSecurity = event => {
+    this.setState({ showCreateSecurity: !this.state.showCreateSecurity });
+  };
+
   render() {
     let transactionTypeOptionItems = this.state.transactionTypes.map(
       transactionType => (
@@ -122,118 +128,119 @@ class TransactionAdd extends Component {
 
     return (
       <div className="ui main container" style={{ paddingTop: "20px" }}>
-        <form className="ui form" onSubmit={this.handleAddTransaction}>
-          <h4 className="ui dividing header">Create Transaction</h4>
-          <div className="two fields">
-            <div className="field">
-              <label>Transaction Type</label>
-              <select
-                className="ui fluid dropdown"
-                onChange={this.handleTransactionTypeChange}
-                required
-              >
-                <option value="">(Select Transaction Type)</option>
-                {transactionTypeOptionItems}
-              </select>
-            </div>
-          </div>
-          <div className="field">
-            <div className="two fields">
+        <div className="ui grid">
+          <div className="eight wide column">
+            <h4 className="ui dividing header">Create Transaction</h4>
+            <form className="ui form" onSubmit={this.handleAddTransaction}>
               <div className="field">
-                <div className={`ui form ${this.state.securityClassName}`}>
-                  <div className="field">
-                    <label>Security</label>
-                  </div>
-                  <input
-                    type="text"
-                    name="security"
-                    required
-                    placeholder="Security"
-                    value={this.state.securityName}
-                    onChange={this.handleSecurityChange}
-                    onBlur={this.handleSecurityBlur}
-                  />
-                  {this.state.securityNotFound && (
-                    <div className="ui warning message">
-                      <div className="header">Security not found</div>
-                      <p>
-                        Security {this.state.securityName} does not exist. Do
-                        you want to create it?
-                      </p>
+                <label>Transaction Type</label>
+                <select
+                  className="ui fluid dropdown"
+                  onChange={this.handleTransactionTypeChange}
+                  required
+                >
+                  <option value="">(Select Transaction Type)</option>
+                  {transactionTypeOptionItems}
+                </select>
+              </div>
+              <div className="field">
+                <div className="field">
+                  <div className={`ui form ${this.state.securityClassName}`}>
+                    <div className="field">
+                      <label>Security</label>
                     </div>
-                  )}
+                    <input
+                      type="text"
+                      name="security"
+                      required
+                      placeholder="Security"
+                      value={this.state.securityName}
+                      onChange={this.handleSecurityChange}
+                      onBlur={this.handleSecurityBlur}
+                    />
+                    {this.state.securityNotFound && (
+                      <div className="ui warning message">
+                        <div className="header">Security not found</div>
+                        <p>
+                          Security {this.state.securityName} does not exist. Do
+                          you want to{" "}
+                          <a
+                            href="#Transaction"
+                            onClick={this.handleCreateSecurity}
+                          >
+                            create it?
+                          </a>
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="field">
-            <label>Transaction Date</label>
-            <div className="two fields">
               <div className="field">
-                <input
-                  type="date"
-                  name="transactionDate"
-                  required
-                  value={this.state.transactionDate}
-                  onChange={this.handleTransactionDateChange}
-                />
+                <label>Transaction Date</label>
+                <div className="field">
+                  <input
+                    type="date"
+                    name="transactionDate"
+                    required
+                    value={this.state.transactionDate}
+                    onChange={this.handleTransactionDateChange}
+                  />
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="field">
-            <label>Shares</label>
-            <div className="two fields">
               <div className="field">
-                <input
-                  type="number"
-                  name="shares"
-                  placeholder="Shares"
-                  required
-                  value={this.state.shares}
-                  onChange={this.handleSharesChange}
-                />
+                <label>Shares</label>
+                <div className="field">
+                  <input
+                    type="number"
+                    name="shares"
+                    placeholder="Shares"
+                    required
+                    value={this.state.shares}
+                    onChange={this.handleSharesChange}
+                  />
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="field">
-            <label>Price</label>
-            <div className="two fields">
               <div className="field">
-                <input
-                  type="number"
-                  name="price"
-                  placeholder="Price"
-                  required
-                  value={this.state.price}
-                  onChange={this.handlePriceChange}
-                />
+                <label>Price</label>
+                <div className="field">
+                  <input
+                    type="number"
+                    name="price"
+                    placeholder="Price"
+                    required
+                    value={this.state.price}
+                    onChange={this.handlePriceChange}
+                  />
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="field">
-            <label>Commission</label>
-            <div className="two fields">
               <div className="field">
-                <input
-                  type="number"
-                  name="commission"
-                  placeholder="Commission"
-                  required
-                  value={this.state.commission}
-                  onChange={this.handleCommissionChange}
-                />
+                <label>Commission</label>
+                <div className="field">
+                  <input
+                    type="number"
+                    name="commission"
+                    placeholder="Commission"
+                    required
+                    value={this.state.commission}
+                    onChange={this.handleCommissionChange}
+                  />
+                </div>
               </div>
-            </div>
+              <div>
+                <button
+                  className={`ui primary button ${this.state.loadingClass}`}
+                  type="submit"
+                >
+                  Create
+                </button>
+              </div>
+            </form>
           </div>
-          <div>
-            <button
-              className={`ui primary button ${this.state.loadingClass}`}
-              type="submit"
-            >
-              Create
-            </button>
+          <div className="eight wide column">
+            {this.state.showCreateSecurity && <SecurityAdd />}
           </div>
-        </form>
+        </div>
       </div>
     );
   }

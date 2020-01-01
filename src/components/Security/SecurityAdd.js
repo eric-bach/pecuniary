@@ -71,47 +71,41 @@ class SecurityAdd extends Component {
           <h4 className="ui dividing header">Create Security</h4>
           <div className="field">
             <label>Name</label>
-            <div className="two fields">
-              <div className="field">
-                <input
-                  autoFocus
-                  type="text"
-                  name="Name"
-                  placeholder="Security Name"
-                  required
-                  value={this.state.name}
-                  onChange={this.handleChangeName}
-                />
-              </div>
+            <div className="field">
+              <input
+                autoFocus
+                type="text"
+                name="Name"
+                placeholder="Security Name"
+                required
+                value={this.state.name}
+                onChange={this.handleChangeName}
+              />
             </div>
           </div>
           <div className="field">
             <label>Description</label>
-            <div className="two fields">
-              <div className="field">
-                <input
-                  type="text"
-                  name="Description"
-                  placeholder="Account Description"
-                  required
-                  value={this.state.description}
-                  onChange={this.handleChangeDescription}
-                />
-              </div>
+            <div className="field">
+              <input
+                type="text"
+                name="Description"
+                placeholder="Account Description"
+                required
+                value={this.state.description}
+                onChange={this.handleChangeDescription}
+              />
             </div>
           </div>
-          <div className="two fields">
-            <div className="field">
-              <label>Type</label>
-              <select
-                className="ui fluid dropdown"
-                onChange={this.handleExchangeTypeChange}
-                required
-              >
-                <option value="">(Select Exchange Type)</option>
-                {exchangeTypeOptionItems}
-              </select>
-            </div>
+          <div className="field">
+            <label>Type</label>
+            <select
+              className="ui fluid dropdown"
+              onChange={this.handleExchangeTypeChange}
+              required
+            >
+              <option value="">(Select Exchange Type)</option>
+              {exchangeTypeOptionItems}
+            </select>
           </div>
           <div>
             <button
