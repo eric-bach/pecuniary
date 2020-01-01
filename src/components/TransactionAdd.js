@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { API, graphqlOperation } from "aws-amplify";
+import { Auth, API, graphqlOperation } from "aws-amplify";
 import { listTransactionTypes, listSecuritys } from "../graphql/queries";
 import moment from "moment";
 import { createTransaction } from "../graphql/mutations";
@@ -7,17 +7,26 @@ import { createTransaction } from "../graphql/mutations";
 class TransactionAdd extends Component {
   state = {
     account: this.props.location.state.account,
-    securityId: "",
-    securities: [],
+    securityName: "",
+    security: "",
+    securityClassName: "",
+    securityNotFound: false,
     transactionTypeId: "",
     transactionTypes: [],
     transactionDate: moment().format("YYYY-MM-DD"),
     shares: "",
     price: "",
-    commission: ""
+    commission: "",
+    userId: ""
   };
 
   componentDidMount = async () => {
+    await Auth.currentUserInfo().then(user => {
+      this.setState({
+        userId: user.attributes.sub
+      });
+    });
+
     const result = await API.graphql(graphqlOperation(listTransactionTypes));
     this.setState({ transactionTypes: result.data.listTransactionTypes.items });
 
@@ -43,11 +52,16 @@ class TransactionAdd extends Component {
 
   handleAddTransaction = async event => {
     event.preventDefault();
+
+    if (this.state.securityNotFound) {
+      return;
+    }
+
     this.setState({ loadingClass: "loading" });
 
     const input = {
       transactionTransactionTypeId: this.state.transactionTypeId,
-      transactionSecurityId: this.state.securityId,
+      transactionSecurityId: this.state.security.id,
       transactionAccountId: this.state.account.id,
       // Format to AWSDate yyyy-MM-dd-07:00
       transactionDate:
@@ -74,10 +88,29 @@ class TransactionAdd extends Component {
   };
 
   handleSecurityChange = event => {
-    var value = this.state.securities.filter(function(item) {
-      return item.name === event.target.value;
+    this.setState({ securityNotFound: false, securityClassName: "" });
+    this.setState({ securityName: event.target.value });
+  };
+
+  handleSecurityBlur = async event => {
+    const result = await API.graphql(
+      graphqlOperation(listSecuritys, {
+        filter: {
+          name: { eq: event.target.value },
+          userId: { eq: this.state.userId }
+        }
+      })
+    );
+
+    if (result.data.listSecuritys.items.length !== 1) {
+      this.setState({ securityNotFound: true, securityClassName: "warning" });
+      return;
+    }
+
+    this.setState({
+      securityNotFound: false,
+      security: result.data.listSecuritys.items[0]
     });
-    this.setState({ securityId: value[0].id });
   };
 
   render() {
@@ -86,10 +119,6 @@ class TransactionAdd extends Component {
         <option key={transactionType.name}>{transactionType.name}</option>
       )
     );
-
-    let securityOptionItems = this.state.securities.map(security => (
-      <option key={security.name}>{security.name}</option>
-    ));
 
     return (
       <div className="ui main container" style={{ paddingTop: "20px" }}>
@@ -111,15 +140,29 @@ class TransactionAdd extends Component {
           <div className="field">
             <div className="two fields">
               <div className="field">
-                <label>Security</label>
-                <select
-                  className="ui fluid dropdown"
-                  onChange={this.handleSecurityChange}
-                  required
-                >
-                  <option value="">(Select Security)</option>
-                  {securityOptionItems}
-                </select>
+                <div className={`ui form ${this.state.securityClassName}`}>
+                  <div className="field">
+                    <label>Security</label>
+                  </div>
+                  <input
+                    type="text"
+                    name="security"
+                    required
+                    placeholder="Security"
+                    value={this.state.securityName}
+                    onChange={this.handleSecurityChange}
+                    onBlur={this.handleSecurityBlur}
+                  />
+                  {this.state.securityNotFound && (
+                    <div className="ui warning message">
+                      <div className="header">Security not found</div>
+                      <p>
+                        Security {this.state.securityName} does not exist. Do
+                        you want to create it?
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -131,7 +174,6 @@ class TransactionAdd extends Component {
                   type="date"
                   name="transactionDate"
                   required
-                  //defaultValue={moment().format("YYYY-MM-DD")}
                   value={this.state.transactionDate}
                   onChange={this.handleTransactionDateChange}
                 />
