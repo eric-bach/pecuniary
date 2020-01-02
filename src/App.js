@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { withAuthenticator } from "aws-amplify-react";
+import Home from "./components/Home";
 import Accounts from "./components/Account/Accounts";
 import TransactionAdd from "./components/TransactionAdd";
 import Reset from "./components/Reset";
@@ -14,6 +15,7 @@ class App extends React.Component {
         <div className="App">
           <Navbar />
           <Switch>
+            <Route exact path="/" component={Home} />
             <Route exact path="/accounts" component={Accounts} />
             <Route exact path="/securities/new" component={SecurityAdd} />
             <Route exact path="/transactions/new" component={TransactionAdd} />
