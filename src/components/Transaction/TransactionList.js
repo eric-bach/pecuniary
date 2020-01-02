@@ -19,8 +19,14 @@ class TransactionList extends Component {
   };
 
   render() {
-    return (
-      <>
+    if (this.state.transactions.length <= 0) {
+      return (
+        <div className="ui middle aligned divided list">
+          No transactions found
+        </div>
+      );
+    } else {
+      return (
         <div className="ui middle aligned divided list">
           <table className="ui striped table">
             <thead>
@@ -52,8 +58,8 @@ class TransactionList extends Component {
             </tbody>
           </table>
         </div>
-      </>
-    );
+      );
+    }
   }
 }
 

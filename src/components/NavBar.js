@@ -34,9 +34,6 @@ class Navbar extends Component {
             </div>
             <div className="right menu">
               <div className="item">
-                <NavLink to="/securities/new">Security</NavLink>
-              </div>
-              <div className="item">
                 <NavLink to="/reset/">Reset</NavLink>
               </div>
               <img
