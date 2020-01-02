@@ -21,7 +21,6 @@ class TransactionList extends Component {
   render() {
     return (
       <>
-        <h3>Transactions</h3>
         <div className="ui middle aligned divided list">
           <table className="ui striped table">
             <thead>
