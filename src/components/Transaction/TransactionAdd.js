@@ -21,6 +21,7 @@ class TransactionAdd extends Component {
     securityName: "",
     security: "",
 
+    createTransactionClass: "",
     securityClassName: "",
     securityNotFound: false,
     showCreateSecurity: false
@@ -51,7 +52,7 @@ class TransactionAdd extends Component {
       return;
     }
 
-    this.setState({ loadingClass: "loading" });
+    this.setState({ createTransactionClass: "loading" });
 
     const input = {
       transactionTransactionTypeId: this.state.transactionTypeId,
@@ -70,7 +71,7 @@ class TransactionAdd extends Component {
 
     await API.graphql(graphqlOperation(createTransaction, { input }));
 
-    this.setState({ loadingClass: "" });
+    this.setState({ createTransactionClass: "" });
   };
 
   handleTransactionTypeChange = event => {
@@ -137,38 +138,94 @@ class TransactionAdd extends Component {
           <div className="ui grid">
             <div className="eight wide column">
               <form className="ui form" onSubmit={this.handleAddTransaction}>
-                <div className="field">
-                  <label>Transaction Type</label>
-                  <select
-                    className="ui fluid dropdown"
-                    onChange={this.handleTransactionTypeChange}
-                    required
-                  >
-                    <option value="">(Select Transaction Type)</option>
-                    {transactionTypeOptionItems}
-                  </select>
-                </div>
-                <div className="field">
-                  <div className="field">
-                    <div className={`ui form ${this.state.securityClassName}`}>
-                      <div className="field">
-                        <label>Security</label>
-                      </div>
+                <div className="fields">
+                  <div className="eight wide field">
+                    <label>Transaction Type</label>
+                    <select
+                      className="ui fluid dropdown"
+                      onChange={this.handleTransactionTypeChange}
+                      required
+                    >
+                      <option value="">(Select Transaction Type)</option>
+                      {transactionTypeOptionItems}
+                    </select>
+                  </div>
+
+                  <div className="eight wide field">
+                    <label>Transaction Date</label>
+                    <div className="field">
                       <input
-                        type="text"
-                        name="security"
+                        type="date"
+                        name="transactionDate"
                         required
-                        placeholder="Security"
-                        value={this.state.securityName}
+                        value={this.state.transactionDate}
                         onChange={this.handleInputChange}
-                        onBlur={this.handleSecurityBlur}
                       />
+                    </div>
+                  </div>
+                </div>
+                <div className="fields">
+                  <div className="four wide field">
+                    <label>Security</label>
+                    <input
+                      type="text"
+                      name="securityName"
+                      required
+                      placeholder="Security"
+                      value={this.state.securityName}
+                      onChange={this.handleInputChange}
+                      onBlur={this.handleSecurityBlur}
+                    />
+                  </div>
+                  <div className="four wide field">
+                    <label>Shares</label>
+                    <div className="field">
+                      <input
+                        type="number"
+                        name="shares"
+                        placeholder="Shares"
+                        required
+                        value={this.state.shares}
+                        onChange={this.handleInputChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="four wide field">
+                    <label>Price</label>
+                    <div className="field">
+                      <input
+                        type="number"
+                        name="price"
+                        placeholder="Price"
+                        required
+                        value={this.state.price}
+                        onChange={this.handleInputChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="four wide field">
+                    <label>Commission</label>
+                    <div className="field">
+                      <input
+                        type="number"
+                        name="commission"
+                        placeholder="Commission"
+                        required
+                        value={this.state.commission}
+                        onChange={this.handleInputChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className={`ui form ${this.state.securityClassName}`}>
+                  <div className="fields">
+                    <div className="sixteen wide field">
                       {this.state.securityNotFound && (
                         <div className="ui warning message">
                           <div className="header">Security not found</div>
                           <p>
                             Security {this.state.securityName} does not exist.
-                            Do you want to{" "}
+                            Do you want to
                             <a
                               href="#Transaction"
                               onClick={this.handleCreateSecurity}
@@ -181,60 +238,9 @@ class TransactionAdd extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="field">
-                  <label>Transaction Date</label>
-                  <div className="field">
-                    <input
-                      type="date"
-                      name="transactionDate"
-                      required
-                      value={this.state.transactionDate}
-                      onChange={this.handleInputChange}
-                    />
-                  </div>
-                </div>
-                <div className="field">
-                  <label>Shares</label>
-                  <div className="field">
-                    <input
-                      type="number"
-                      name="shares"
-                      placeholder="Shares"
-                      required
-                      value={this.state.shares}
-                      onChange={this.handleInputChange}
-                    />
-                  </div>
-                </div>
-                <div className="field">
-                  <label>Price</label>
-                  <div className="field">
-                    <input
-                      type="number"
-                      name="price"
-                      placeholder="Price"
-                      required
-                      value={this.state.price}
-                      onChange={this.handleInputChange}
-                    />
-                  </div>
-                </div>
-                <div className="field">
-                  <label>Commission</label>
-                  <div className="field">
-                    <input
-                      type="number"
-                      name="commission"
-                      placeholder="Commission"
-                      required
-                      value={this.state.commission}
-                      onChange={this.handleInputChange}
-                    />
-                  </div>
-                </div>
                 <div>
                   <button
-                    className={`ui primary button ${this.state.loadingClass}`}
+                    className={`ui primary button ${this.state.createTransactionClass}`}
                     type="submit"
                   >
                     Create
