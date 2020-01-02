@@ -4,8 +4,8 @@ class Home extends Component {
   render() {
     return (
       <div className="ui main container" style={{ paddingTop: "20px" }}>
-        <div class="ui piled segment">
-          <h4 class="ui header">Welcome to Pecuniary</h4>
+        <div className="ui piled segment">
+          <h4 className="ui header">Welcome to Pecuniary</h4>
           <p>
             Te eum doming eirmod, nominati pertinacia argumentum ad his. Ex eam
             alia facete scriptorem, est autem aliquip detraxit at. Usu ocurreret

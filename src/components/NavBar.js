@@ -1,8 +1,19 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import { Auth } from "aws-amplify";
+import faker from "faker";
 
 class Navbar extends Component {
+  state = { userName: "" };
+
+  componentDidMount = async () => {
+    await Auth.currentUserInfo().then(user => {
+      this.setState({
+        userName: user.username
+      });
+    });
+  };
+
   handleLogout = () => {
     Auth.signOut()
       .then(data => console.log(data))
@@ -21,15 +32,24 @@ class Navbar extends Component {
             <div className="item">
               <NavLink to="/accounts/">Accounts</NavLink>
             </div>
-            <div className="item">
-              <NavLink to="/securities/new">Security</NavLink>
+            <div className="right menu">
+              <div className="item">
+                <NavLink to="/securities/new">Security</NavLink>
+              </div>
+              <div className="item">
+                <NavLink to="/reset/">Reset</NavLink>
+              </div>
+              <img
+                className="ui avatar image"
+                alt=""
+                src="../placeholders/square-image.png"
+                style={{ marginTop: "12px" }}
+              />
+              <span className="item">Welcome, {this.state.userName}</span>
+              <a href="/" onClick={this.handleLogout} className="item">
+                Logout
+              </a>
             </div>
-            <div className="item">
-              <NavLink to="/reset/">Reset</NavLink>
-            </div>
-            <a href="/" onClick={this.handleLogout} className="item right menu">
-              Logout
-            </a>
           </div>
         </div>
 
