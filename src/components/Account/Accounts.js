@@ -57,6 +57,7 @@ class Accounts extends Component {
     return (
       <>
         <AccountEdit
+          useId={this.state.userId}
           account={this.state.selectedAccount}
           onListAccounts={this.handleListAccounts}
         />

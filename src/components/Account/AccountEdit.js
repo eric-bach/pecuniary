@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import { API, Auth, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
 import { updateAccount, deleteAccount } from "../../graphql/mutations";
 import { listAccountTypes } from "../../graphql/queries";
 
 class AccountEdit extends Component {
   state = {
+    userId: this.props.userId,
     id: this.props.account.id,
     name: this.props.account.name,
-    userId: "",
     description: this.props.account.description,
     accountTypeId: this.props.account.accountType.id,
     accountTypeName: this.props.account.accountType.name,
@@ -18,23 +18,13 @@ class AccountEdit extends Component {
   };
 
   componentDidMount = async () => {
-    await Auth.currentUserInfo().then(user => {
-      this.setState({
-        userId: user.attributes.sub
-      });
-    });
-
     const result = await API.graphql(graphqlOperation(listAccountTypes));
 
     this.setState({ accountTypes: result.data.listAccountTypes.items });
   };
 
-  handleChangeName = event => {
-    this.setState({ name: event.target.value });
-  };
-
-  handleChangeDescription = event => {
-    this.setState({ description: event.target.value });
+  handleInputChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
   };
 
   handleAccountTypeChange = event => {
@@ -42,12 +32,15 @@ class AccountEdit extends Component {
       return item.name === event.target.value;
     });
 
-    this.setState({ accountTypeId: value[0].id });
-    this.setState({ accountTypeName: value[0].name });
+    this.setState({
+      accountTypeId: value[0].id,
+      accountTypeName: value[0].name
+    });
   };
 
   handleEditAccount = async event => {
     event.preventDefault();
+
     this.setState({
       updateButtonClass: "loading",
       deleteButtonClass: "disabled",
@@ -69,7 +62,8 @@ class AccountEdit extends Component {
       deleteButtonClass: "",
       cancelButtonClass: ""
     });
-    this.props.onListAccounts();
+
+    this.listAccounts();
   };
 
   handleDeleteAccount = async event => {
@@ -90,10 +84,11 @@ class AccountEdit extends Component {
       deleteButtonClass: "",
       cancelButtonClass: ""
     });
-    this.props.onListAccounts();
+
+    this.listAccounts();
   };
 
-  handleCancelEditAccount = () => {
+  listAccounts = () => {
     this.props.onListAccounts();
   };
 
@@ -103,55 +98,50 @@ class AccountEdit extends Component {
     ));
 
     return (
-      <div className="ui main container" style={{ paddingTop: "20px" }}>
-        <form className="ui form" onSubmit={this.handleEditAccount}>
-          <h4 className="ui dividing header">Edit Account</h4>
-          <div className="field">
+      <form className="ui form" onSubmit={this.handleEditAccount}>
+        <div className="fields">
+          <div className="eight wide field">
             <label>Name</label>
-            <div className="two fields">
-              <div className="field">
-                <input
-                  autoFocus
-                  type="text"
-                  name="Name"
-                  placeholder="Account Name"
-                  required
-                  value={this.state.name}
-                  onChange={this.handleChangeName}
-                />
-              </div>
-            </div>
+            <input
+              autoFocus
+              type="text"
+              name="name"
+              placeholder="Account Name"
+              required
+              value={this.state.name}
+              onChange={this.handleInputChange}
+            />
           </div>
-          <div className="field">
+        </div>
+        <div className="fields">
+          <div className="eight wide field">
             <label>Description</label>
-            <div className="two fields">
-              <div className="field">
-                <input
-                  type="text"
-                  name="Description"
-                  placeholder="Account Description"
-                  required
-                  value={this.state.description}
-                  onChange={this.handleChangeDescription}
-                />
-              </div>
-            </div>
+            <input
+              type="text"
+              name="description"
+              placeholder="Account Description"
+              required
+              value={this.state.description}
+              onChange={this.handleInputChange}
+            />
           </div>
-          <div className="two fields">
-            <div className="field">
-              <label>Type</label>
-              <select
-                className="ui fluid dropdown"
-                onChange={this.handleAccountTypeChange}
-                value={this.state.accountTypeName}
-                required
-              >
-                <option value="">(Select Account Type)</option>
-                {accountTypeOptionItems}
-              </select>
-            </div>
+        </div>
+        <div className="fields">
+          <div className="eight wide field">
+            <label>Type</label>
+            <select
+              className="ui fluid dropdown"
+              onChange={this.handleAccountTypeChange}
+              value={this.state.accountTypeName}
+              required
+            >
+              <option value="">(Select Account Type)</option>
+              {accountTypeOptionItems}
+            </select>
           </div>
-          <div>
+        </div>
+        <div className="fields">
+          <div className="eight wide field">
             <button
               className={`ui primary button ${this.state.updateButtonClass}`}
               type="submit"
@@ -166,13 +156,13 @@ class AccountEdit extends Component {
             </button>
             <button
               className={`ui button ${this.state.cancelButtonClass}`}
-              onClick={this.handleCancelEditAccount}
+              onClick={this.listAccounts}
             >
               Cancel
             </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     );
   }
 }
