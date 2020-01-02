@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { API, graphqlOperation } from "aws-amplify";
-import { listTransactions } from "../graphql/queries";
+import { listTransactions } from "../../graphql/queries";
 
 class TransactionList extends Component {
   state = {

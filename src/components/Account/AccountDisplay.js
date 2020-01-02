@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import TransactionList from "../TransactionList";
+import TransactionList from "../Tranasction/TransactionList";
 
 class AccountDisplay extends Component {
   state = {

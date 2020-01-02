@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Auth, API, graphqlOperation } from "aws-amplify";
-import { listTransactionTypes, listSecuritys } from "../graphql/queries";
+import { listTransactionTypes, listSecuritys } from "../../graphql/queries";
 import moment from "moment";
-import { createTransaction } from "../graphql/mutations";
-import SecurityAdd from "./Security/SecurityAdd";
+import { createTransaction } from "../../graphql/mutations";
+import SecurityAdd from "../Security/SecurityAdd";
 
 class TransactionAdd extends Component {
   state = {
