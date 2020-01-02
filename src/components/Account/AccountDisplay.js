@@ -14,7 +14,6 @@ class AccountDisplay extends Component {
   render() {
     return (
       <div>
-        <h3>Account</h3>
         <div className="ui list">
           <div className="item">
             <i className="chart line icon" />

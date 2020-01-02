@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Auth } from "aws-amplify";
 import AccountList from "./AccountList";
 import AccountAdd from "./AccountAdd";
 import AccountDisplay from "./AccountDisplay";
@@ -6,8 +7,19 @@ import AccountEdit from "./AccountEdit";
 
 class Accounts extends Component {
   state = {
+    userId: "",
+    userName: "",
+    isLoading: true,
     operation: "list", // list, display, add, edit
     selectedAccount: "" // selected Account
+  };
+
+  componentDidMount = async () => {
+    await Auth.currentUserInfo().then(user => {
+      this.setState({ userId: user.attributes.sub, userName: user.username });
+    });
+
+    this.setState({ isLoading: !this.state.isLoading });
   };
 
   handleAddAccount = () => {
@@ -15,13 +27,11 @@ class Accounts extends Component {
   };
 
   handleEditAccount = account => {
-    this.setState({ selectedAccount: account });
-    this.setState({ operation: "edit" });
+    this.setState({ selectedAccount: account, operation: "edit" });
   };
 
   handleDisplayAccount = account => {
-    this.setState({ selectedAccount: account });
-    this.setState({ operation: "display" });
+    this.setState({ selectedAccount: account, operation: "display" });
   };
 
   handleListAccounts = () => {
@@ -31,19 +41,6 @@ class Accounts extends Component {
   handleAddTransaction = account => {
     this.props.history.push("/transactions/new", { account: account });
   };
-
-  renderAccount() {
-    switch (this.state.operation) {
-      case "add":
-        return this.renderAdd();
-      case "edit":
-        return this.renderEdit();
-      case "display":
-        return this.renderDisplay();
-      default:
-        return this.renderList();
-    }
-  }
 
   // Add Account
   renderAdd() {
@@ -62,6 +59,7 @@ class Accounts extends Component {
     );
   }
 
+  // Display single Account
   renderDisplay() {
     return (
       <AccountDisplay
@@ -75,10 +73,6 @@ class Accounts extends Component {
   renderList() {
     return (
       <>
-        <AccountList
-          onEditAccount={this.handleEditAccount}
-          onDisplayAccount={this.handleDisplayAccount}
-        />
         <button
           className={`ui labeled icon button primary ${this.state.loadingClass}`}
           onClick={this.handleAddAccount}
@@ -86,16 +80,39 @@ class Accounts extends Component {
           <i className="add icon"></i>
           Account
         </button>
+        <AccountList
+          userId={this.state.userId}
+          onEditAccount={this.handleEditAccount}
+          onDisplayAccount={this.handleDisplayAccount}
+        />
       </>
     );
   }
 
+  renderAccount() {
+    switch (this.state.operation) {
+      case "add":
+        return this.renderAdd();
+      case "edit":
+        return this.renderEdit();
+      case "display":
+        return this.renderDisplay();
+      default:
+        return this.renderList();
+    }
+  }
+
   render() {
-    return (
-      <div className="ui main container" style={{ paddingTop: "20px" }}>
-        {this.renderAccount()}
-      </div>
-    );
+    if (this.state.isLoading) {
+      return <div>Loading</div>;
+    } else {
+      return (
+        <div className="ui main container" style={{ paddingTop: "20px" }}>
+          <h4 className="ui dividing header">Accounts</h4>
+          {this.renderAccount()}
+        </div>
+      );
+    }
   }
 }
 

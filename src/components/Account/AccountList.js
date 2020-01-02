@@ -1,23 +1,17 @@
 import React, { Component } from "react";
-import { API, Auth, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
 import { listAccounts } from "../../graphql/queries";
-import AccountItem from "./AccountItem";
+import "./AccountList.css";
 
 class AccountList extends Component {
   state = {
-    accountId: "",
-    userId: "",
-    accounts: []
+    userId: this.props.userId,
+    accounts: [] // list of accounts owned by the userId
   };
 
   componentDidMount = async () => {
-    await Auth.currentUserInfo().then(user => {
-      this.setState({
-        userId: user.attributes.sub
-      });
-    });
-
-    const result = await API.graphql(
+    // TODO Write a new query to get list of accounts by user id instead of filtering after
+    await API.graphql(
       graphqlOperation(listAccounts, {
         filter: {
           userId: {
@@ -25,9 +19,9 @@ class AccountList extends Component {
           }
         }
       })
+    ).then(result =>
+      this.setState({ accounts: result.data.listAccounts.items })
     );
-
-    this.setState({ accounts: result.data.listAccounts.items });
   };
 
   handleDisplayAccount = account => {
@@ -39,23 +33,32 @@ class AccountList extends Component {
   };
 
   render() {
-    const accounts = this.state.accounts;
     return (
-      <>
-        <h3>Accounts</h3>
-        <div className="ui middle aligned divided list">
-          {accounts.map(account => {
-            return (
-              <AccountItem
-                account={account}
-                key={account.id}
-                onEditAccount={this.handleEditAccount}
-                onDisplayAccount={this.handleDisplayAccount}
-              />
-            );
-          })}
-        </div>
-      </>
+      <div className="ui middle aligned divided list">
+        {this.state.accounts.map(account => {
+          return (
+            <div
+              className="item content"
+              key={account.id}
+              style={{ padding: "10px" }}
+            >
+              <div
+                className="right floated item link"
+                onClick={() => this.handleEditAccount(account)}
+              >
+                <i className="edit icon"></i>Edit
+              </div>
+              <div
+                className="header link"
+                onClick={() => this.handleDisplayAccount(account)}
+              >
+                {account.name} | {account.accountType.name}
+              </div>
+              <div className="description">{account.description}</div>
+            </div>
+          );
+        })}
+      </div>
     );
   }
 }
