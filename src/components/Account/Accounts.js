@@ -114,7 +114,7 @@ class Accounts extends Component {
     } else {
       return (
         <div className="ui main container" style={{ paddingTop: "20px" }}>
-          <h4 className="ui dividing header">Accounts</h4>
+          <h4 className="ui dividing header">Account</h4>
           {this.renderAccount()}
         </div>
       );
