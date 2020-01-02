@@ -42,7 +42,8 @@ class Navbar extends Component {
               <img
                 className="ui avatar image"
                 alt=""
-                src="../placeholders/square-image.png"
+                // src="../placeholders/square-image.png"
+                src={faker.image.avatar()}
                 style={{ marginTop: "12px" }}
               />
               <span className="item">Welcome, {this.state.userName}</span>
