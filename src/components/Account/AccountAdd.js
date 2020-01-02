@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { API, Auth, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
 import { createAccount } from "../../graphql/mutations";
 import { listAccountTypes } from "../../graphql/queries";
 
 class AccountAdd extends Component {
   state = {
+    userId: this.props.userId,
     name: "",
-    userId: "",
     description: "",
     accountTypeId: "",
     accountTypes: [],
@@ -15,33 +15,26 @@ class AccountAdd extends Component {
   };
 
   componentDidMount = async () => {
-    await Auth.currentUserInfo().then(user => {
-      this.setState({
-        userId: user.attributes.sub
-      });
+    await API.graphql(graphqlOperation(listAccountTypes)).then(result => {
+      this.setState({ accountTypes: result.data.listAccountTypes.items });
     });
-
-    const result = await API.graphql(graphqlOperation(listAccountTypes));
-    this.setState({ accountTypes: result.data.listAccountTypes.items });
   };
 
-  handleChangeName = event => {
-    this.setState({ name: event.target.value });
-  };
-
-  handleChangeDescription = event => {
-    this.setState({ description: event.target.value });
+  handleInputChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
   };
 
   handleAccountTypeChange = event => {
     var value = this.state.accountTypes.filter(function(item) {
       return item.name === event.target.value;
     });
+
     this.setState({ accountTypeId: value[0].id });
   };
 
   handleAddAccount = async event => {
     event.preventDefault();
+
     this.setState({
       createButtonClass: "loading",
       cancelButtonClass: "disabled"
@@ -56,86 +49,85 @@ class AccountAdd extends Component {
 
     await API.graphql(graphqlOperation(createAccount, { input }));
 
-    this.setState({ name: "", description: "" });
-    this.setState({ createButtonClass: "", cancelButtonClass: "" });
+    this.setState({
+      name: "",
+      description: "",
+      accountTYpeId: "",
+      createButtonClass: "",
+      cancelButtonClass: ""
+    });
 
-    this.props.onListAccounts();
+    this.listAccounts();
   };
 
-  handleCancelAddAccount = () => {
+  listAccounts = () => {
     this.props.onListAccounts();
   };
 
   render() {
-    let accountTypeOptionItems = this.state.accountTypes.map(accountType => (
-      <option key={accountType.name}>{accountType.name}</option>
+    let accountTypeItems = this.state.accountTypes.map(accountType => (
+      <option key={accountType.id}>{accountType.name}</option>
     ));
 
     return (
-      <div className="ui main container" style={{ paddingTop: "20px" }}>
-        <form className="ui form" onSubmit={this.handleAddAccount}>
-          <h4 className="ui dividing header">Create Account</h4>
-          <div className="field">
+      <form className="ui form" onSubmit={this.handleAddAccount}>
+        <div className="fields">
+          <div className="eight wide field">
             <label>Name</label>
-            <div className="two fields">
-              <div className="field">
-                <input
-                  autoFocus
-                  type="text"
-                  name="Name"
-                  placeholder="Account Name"
-                  required
-                  value={this.state.name}
-                  onChange={this.handleChangeName}
-                />
-              </div>
-            </div>
+            <input
+              autoFocus
+              type="text"
+              name="name"
+              placeholder="Account Name"
+              required
+              value={this.state.name}
+              onChange={this.handleInputChange}
+            />
           </div>
-          <div className="field">
+        </div>
+        <div className="fields">
+          <div className="eight wide field">
             <label>Description</label>
-            <div className="two fields">
-              <div className="field">
-                <input
-                  type="text"
-                  name="Description"
-                  placeholder="Account Description"
-                  required
-                  value={this.state.description}
-                  onChange={this.handleChangeDescription}
-                />
-              </div>
-            </div>
+            <input
+              type="text"
+              name="description"
+              placeholder="Account Description"
+              required
+              value={this.state.description}
+              onChange={this.handleInputChange}
+            />
           </div>
-          <div className="two fields">
-            <div className="field">
-              <label>Type</label>
-              <select
-                className="ui fluid dropdown"
-                onChange={this.handleAccountTypeChange}
-                required
-              >
-                <option value="">(Select Account Type)</option>
-                {accountTypeOptionItems}
-              </select>
-            </div>
+        </div>
+        <div className="fields">
+          <div className="eight wide field">
+            <label>Type</label>
+            <select
+              className="ui fluid dropdown"
+              onChange={this.handleAccountTypeChange}
+              required
+            >
+              <option value="">(Select Account Type)</option>
+              {accountTypeItems}
+            </select>
           </div>
-          <div>
+        </div>
+        <div className="fields">
+          <div className="eight wide field">
             <button
               className={`ui primary button ${this.state.createButtonClass}`}
               type="submit"
             >
               Create
             </button>
-
             <button
               className={`ui button ${this.state.cancelButtonClass}`}
-              onClick={this.handleCancelAddAccount}
+              onClick={this.listAccounts}
             >
               Cancel
             </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     );
   }
 }

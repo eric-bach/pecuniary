@@ -44,7 +44,12 @@ class Accounts extends Component {
 
   // Add Account
   renderAdd() {
-    return <AccountAdd onListAccounts={this.handleListAccounts} />;
+    return (
+      <AccountAdd
+        userId={this.state.userId}
+        onListAccounts={this.handleListAccounts}
+      />
+    );
   }
 
   // Edit Account
