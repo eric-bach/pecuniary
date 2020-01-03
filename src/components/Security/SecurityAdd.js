@@ -1,35 +1,25 @@
 import React, { Component } from "react";
-import { API, Auth, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
 import { createSecurity } from "../../graphql/mutations";
 import { listExchangeTypes } from "../../graphql/queries";
 
 class SecurityAdd extends Component {
   state = {
+    userId: this.props.userId,
     name: this.props.name,
-    userId: "",
     description: "",
-    exchangeTypeId: "",
     exchangeTypes: [],
+    exchangeTypeId: "",
     createButtonClass: ""
   };
 
   componentDidMount = async () => {
-    await Auth.currentUserInfo().then(user => {
-      this.setState({
-        userId: user.attributes.sub
-      });
-    });
-
     const result = await API.graphql(graphqlOperation(listExchangeTypes));
     this.setState({ exchangeTypes: result.data.listExchangeTypes.items });
   };
 
-  handleChangeName = event => {
-    this.setState({ name: event.target.value });
-  };
-
-  handleChangeDescription = event => {
-    this.setState({ description: event.target.value });
+  handleInputChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
   };
 
   handleExchangeTypeChange = event => {
@@ -42,10 +32,7 @@ class SecurityAdd extends Component {
   handleAddSecurity = async event => {
     event.preventDefault();
 
-    this.setState({
-      createButtonClass: "loading",
-      cancelButtonClass: "disabled"
-    });
+    this.setState({ createButtonClass: "loading" });
 
     const input = {
       name: this.state.name,
@@ -56,8 +43,7 @@ class SecurityAdd extends Component {
 
     await API.graphql(graphqlOperation(createSecurity, { input }));
 
-    this.setState({ name: "", description: "" });
-    this.setState({ createButtonClass: "", cancelButtonClass: "" });
+    this.setState({ name: "", description: "", createButtonClass: "" });
 
     if (this.props.onSecurityCreated !== undefined) {
       this.props.onSecurityCreated();
@@ -70,37 +56,37 @@ class SecurityAdd extends Component {
     ));
 
     return (
-      <div className="ui main container" style={{ paddingTop: "20px" }}>
-        <form className="ui form" onSubmit={this.handleAddSecurity}>
-          <h4 className="ui dividing header">Create Security</h4>
-          <div className="field">
+      <form className="ui form" onSubmit={this.handleAddSecurity}>
+        <h4 className="ui dividing header">Create Security</h4>
+        <div className="fields">
+          <div className="sixteen wide field">
             <label>Name</label>
-            <div className="field">
-              <input
-                autoFocus
-                type="text"
-                name="Name"
-                placeholder="Security Name"
-                required
-                value={this.state.name}
-                onChange={this.handleChangeName}
-              />
-            </div>
+            <input
+              autoFocus
+              type="text"
+              name="name"
+              placeholder="Security Name"
+              required
+              value={this.state.name}
+              onChange={this.handleInputChange}
+            />
           </div>
-          <div className="field">
+        </div>
+        <div className="fields">
+          <div className="sixteen wide field">
             <label>Description</label>
-            <div className="field">
-              <input
-                type="text"
-                name="Description"
-                placeholder="Account Description"
-                required
-                value={this.state.description}
-                onChange={this.handleChangeDescription}
-              />
-            </div>
+            <input
+              type="text"
+              name="description"
+              placeholder="Security Description"
+              required
+              value={this.state.description}
+              onChange={this.handleInputChange}
+            />
           </div>
-          <div className="field">
+        </div>
+        <div className="fields">
+          <div className="sixteen wide field">
             <label>Type</label>
             <select
               className="ui fluid dropdown"
@@ -111,16 +97,16 @@ class SecurityAdd extends Component {
               {exchangeTypeOptionItems}
             </select>
           </div>
-          <div>
-            <button
-              className={`ui primary button ${this.state.createButtonClass}`}
-              type="submit"
-            >
-              Create
-            </button>
-          </div>
-        </form>
-      </div>
+        </div>
+        <div>
+          <button
+            className={`ui primary button ${this.state.createButtonClass}`}
+            type="submit"
+          >
+            Create
+          </button>
+        </div>
+      </form>
     );
   }
 }

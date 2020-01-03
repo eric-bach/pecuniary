@@ -134,9 +134,9 @@ class TransactionAdd extends Component {
 
       return (
         <div className="ui main container" style={{ paddingTop: "20px" }}>
-          <h4 className="ui dividing header">Transaction</h4>
           <div className="ui grid">
             <div className="eight wide column">
+              <h4 className="ui dividing header">Transaction</h4>
               <form className="ui form" onSubmit={this.handleAddTransaction}>
                 <div className="fields">
                   <div className="eight wide field">
@@ -225,7 +225,7 @@ class TransactionAdd extends Component {
                           <div className="header">Security not found</div>
                           <p>
                             Security {this.state.securityName} does not exist.
-                            Do you want to
+                            Do you want to{" "}
                             <a
                               href="#Transaction"
                               onClick={this.handleCreateSecurity}
@@ -251,6 +251,7 @@ class TransactionAdd extends Component {
             <div className="eight wide column">
               {this.state.showCreateSecurity && (
                 <SecurityAdd
+                  userId={this.state.userId}
                   name={this.state.securityName}
                   onSecurityCreated={this.securityCreated}
                 />
