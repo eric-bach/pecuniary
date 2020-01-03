@@ -73,6 +73,8 @@ class TransactionAdd extends Component {
     await API.graphql(graphqlOperation(createTransaction, { input }));
 
     this.setState({ createTransactionClass: "" });
+
+    this.props.history.push("/accounts");
   };
 
   handleTransactionTypeChange = event => {
@@ -91,10 +93,14 @@ class TransactionAdd extends Component {
   };
 
   handleSecurityBlur = async event => {
+    this.getSecurity(event.target.value);
+  };
+
+  getSecurity = async name => {
     const result = await API.graphql(
       graphqlOperation(listSecuritys, {
         filter: {
-          name: { eq: event.target.value },
+          name: { eq: name },
           userId: { eq: this.state.userId }
         }
       })
@@ -116,8 +122,9 @@ class TransactionAdd extends Component {
   };
 
   securityCreated = () => {
+    this.getSecurity(this.state.securityName);
+
     this.setState({
-      securityNotFound: false,
       securityClassName: "",
       showCreateSecurity: !this.state.showCreateSecurity
     });
