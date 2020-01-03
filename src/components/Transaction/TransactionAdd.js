@@ -4,6 +4,7 @@ import { listTransactionTypes, listSecuritys } from "../../graphql/queries";
 import moment from "moment";
 import { createTransaction } from "../../graphql/mutations";
 import SecurityAdd from "../Security/SecurityAdd";
+import "./TransactionAdd.css";
 
 class TransactionAdd extends Component {
   state = {
@@ -226,12 +227,13 @@ class TransactionAdd extends Component {
                           <p>
                             Security {this.state.securityName} does not exist.
                             Do you want to{" "}
-                            <a
-                              href="#Transaction"
+                            <span
+                              className="custom-link"
                               onClick={this.handleCreateSecurity}
                             >
-                              create it?
-                            </a>
+                              create it
+                            </span>
+                            ?
                           </p>
                         </div>
                       )}
