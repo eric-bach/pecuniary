@@ -44,7 +44,12 @@ class Navbar extends Component {
                 style={{ marginTop: "12px" }}
               />
               <span className="item">Welcome, {this.state.userName}</span>
-              <a href="/" onClick={this.handleLogout} className="item">
+              <a
+                href="/"
+                onClick={this.handleLogout}
+                className="item"
+                data-test="sign-out-button"
+              >
                 Logout
               </a>
             </div>
