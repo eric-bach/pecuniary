@@ -67,6 +67,8 @@ class AccountEdit extends Component {
   };
 
   handleDeleteAccount = async event => {
+    event.preventDefault();
+
     this.setState({
       updateButtonClass: "disabled",
       deleteButtonClass: "loading",
