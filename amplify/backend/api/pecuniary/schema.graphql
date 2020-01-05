@@ -55,5 +55,5 @@ type ExchangeType @model {
   name: String!
   description: String!
   currencyType: CurrencyType! @connection(name: "ExchangeCurrencyTypes")
-  securitys: [Security]! @connection(name: "SecurityExchangeTypes")
+  securities: [Security]! @connection(name: "SecurityExchangeTypes")
 }

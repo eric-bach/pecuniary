@@ -77,7 +77,7 @@ export const getSecurity = `query GetSecurity($id: ID!) {
         name
         description
       }
-      securitys {
+      securities {
         nextToken
       }
     }
@@ -306,7 +306,7 @@ export const getExchangeType = `query GetExchangeType($id: ID!) {
         nextToken
       }
     }
-    securitys {
+    securities {
       items {
         id
         name
@@ -333,7 +333,7 @@ export const listExchangeTypes = `query ListExchangeTypes(
         name
         description
       }
-      securitys {
+      securities {
         nextToken
       }
     }

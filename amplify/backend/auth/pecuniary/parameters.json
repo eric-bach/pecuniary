@@ -1,12 +1,12 @@
 {
     "identityPoolName": "pecuniary_identitypool",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "pecuni362da7f6",
+    "resourceNameTruncated": "pecunibabe5032",
     "userPoolName": "pecuniary_userpool",
     "autoVerifiedAttributes": [
         "email"
     ],
-    "mfaConfiguration": "ON",
+    "mfaConfiguration": "OFF",
     "mfaTypes": [
         "SMS Text Message"
     ],
@@ -28,7 +28,7 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "pecuni362da7f6_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "pecunibabe5032_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
     "useDefault": "manual",
     "authSelections": "identityPoolAndUserPool",

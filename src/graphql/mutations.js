@@ -119,7 +119,7 @@ export const createSecurity = `mutation CreateSecurity(
         name
         description
       }
-      securitys {
+      securities {
         nextToken
       }
     }
@@ -154,7 +154,7 @@ export const updateSecurity = `mutation UpdateSecurity(
         name
         description
       }
-      securitys {
+      securities {
         nextToken
       }
     }
@@ -189,7 +189,7 @@ export const deleteSecurity = `mutation DeleteSecurity(
         name
         description
       }
-      securitys {
+      securities {
         nextToken
       }
     }
@@ -539,7 +539,7 @@ export const createExchangeType = `mutation CreateExchangeType(
         nextToken
       }
     }
-    securitys {
+    securities {
       items {
         id
         name
@@ -567,7 +567,7 @@ export const updateExchangeType = `mutation UpdateExchangeType(
         nextToken
       }
     }
-    securitys {
+    securities {
       items {
         id
         name
@@ -595,7 +595,7 @@ export const deleteExchangeType = `mutation DeleteExchangeType(
         nextToken
       }
     }
-    securitys {
+    securities {
       items {
         id
         name

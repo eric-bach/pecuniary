@@ -1893,7 +1893,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "securitys",
+          "name" : "securities",
           "description" : null,
           "args" : [ {
             "name" : "filter",

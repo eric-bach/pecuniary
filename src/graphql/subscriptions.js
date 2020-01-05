@@ -107,7 +107,7 @@ export const onCreateSecurity = `subscription OnCreateSecurity {
         name
         description
       }
-      securitys {
+      securities {
         nextToken
       }
     }
@@ -139,7 +139,7 @@ export const onUpdateSecurity = `subscription OnUpdateSecurity {
         name
         description
       }
-      securitys {
+      securities {
         nextToken
       }
     }
@@ -171,7 +171,7 @@ export const onDeleteSecurity = `subscription OnDeleteSecurity {
         name
         description
       }
-      securitys {
+      securities {
         nextToken
       }
     }
@@ -482,7 +482,7 @@ export const onCreateExchangeType = `subscription OnCreateExchangeType {
         nextToken
       }
     }
-    securitys {
+    securities {
       items {
         id
         name
@@ -507,7 +507,7 @@ export const onUpdateExchangeType = `subscription OnUpdateExchangeType {
         nextToken
       }
     }
-    securitys {
+    securities {
       items {
         id
         name
@@ -532,7 +532,7 @@ export const onDeleteExchangeType = `subscription OnDeleteExchangeType {
         nextToken
       }
     }
-    securitys {
+    securities {
       items {
         id
         name
