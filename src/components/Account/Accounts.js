@@ -110,7 +110,7 @@ class Accounts extends Component {
 
   render() {
     if (this.state.isLoading) {
-      return <div>Loading</div>;
+      return <div className="ui active centered inline loader"></div>;
     } else {
       return (
         <div className="ui main container" style={{ paddingTop: "20px" }}>

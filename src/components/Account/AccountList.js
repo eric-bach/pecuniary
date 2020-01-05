@@ -6,10 +6,13 @@ import "./AccountList.css";
 class AccountList extends Component {
   state = {
     userId: this.props.userId,
-    accounts: [] // list of accounts owned by the userId
+    accounts: [], // list of accounts owned by the userId,
+    isLoading: false
   };
 
   componentDidMount = async () => {
+    this.setState({ isLoading: !this.state.isLoading });
+
     // TODO Write a new query to get list of accounts by user id instead of filtering after
     await API.graphql(
       graphqlOperation(listAccounts, {
@@ -22,6 +25,8 @@ class AccountList extends Component {
     ).then(result =>
       this.setState({ accounts: result.data.listAccounts.items })
     );
+
+    this.setState({ isLoading: !this.state.isLoading });
   };
 
   handleDisplayAccount = account => {
@@ -35,29 +40,33 @@ class AccountList extends Component {
   render() {
     return (
       <div className="ui middle aligned divided list">
-        {this.state.accounts.map(account => {
-          return (
-            <div
-              className="item content"
-              key={account.id}
-              style={{ padding: "10px" }}
-            >
+        {this.state.isLoading ? (
+          <div className="ui active centered inline loader"></div>
+        ) : (
+          this.state.accounts.map(account => {
+            return (
               <div
-                className="right floated item link"
-                onClick={() => this.handleEditAccount(account)}
+                className="item content"
+                key={account.id}
+                style={{ padding: "10px" }}
               >
-                <i className="edit icon"></i>Edit
+                <div
+                  className="right floated item link"
+                  onClick={() => this.handleEditAccount(account)}
+                >
+                  <i className="edit icon"></i>Edit
+                </div>
+                <div
+                  className="header link"
+                  onClick={() => this.handleDisplayAccount(account)}
+                >
+                  {account.name} | {account.accountType.name}
+                </div>
+                <div className="description">{account.description}</div>
               </div>
-              <div
-                className="header link"
-                onClick={() => this.handleDisplayAccount(account)}
-              >
-                {account.name} | {account.accountType.name}
-              </div>
-              <div className="description">{account.description}</div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     );
   }
