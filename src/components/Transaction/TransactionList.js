@@ -4,22 +4,30 @@ import { listTransactions } from "../../graphql/queries";
 
 class TransactionList extends Component {
   state = {
+    isLoading: false,
     account: this.props.account,
     transactions: []
   };
 
   componentDidMount = async () => {
+    this.setState({ isLoading: !this.state.isLoading });
+
     // TODO Find a better way to select transactions for an account
     const result = await API.graphql(graphqlOperation(listTransactions));
     const transactions = result.data.listTransactions.items.filter(
       t => t.account.id === this.state.account.id
     );
 
-    this.setState({ transactions: transactions });
+    this.setState({
+      transactions: transactions,
+      isLoading: !this.state.isLoading
+    });
   };
 
   render() {
-    if (this.state.transactions.length <= 0) {
+    if (this.state.isLoading) {
+      return <div className="ui active centered inline loader"></div>;
+    } else if (this.state.transactions.length <= 0) {
       return (
         <div className="ui middle aligned divided list">
           No transactions found

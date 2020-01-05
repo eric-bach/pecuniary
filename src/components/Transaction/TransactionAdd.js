@@ -8,9 +8,9 @@ import "./TransactionAdd.css";
 
 class TransactionAdd extends Component {
   state = {
+    isLoading: false,
     userId: "",
     account: this.props.location.state.account,
-    isLoading: true,
 
     transactionTypes: [],
     transactionTypeId: "",
@@ -29,6 +29,8 @@ class TransactionAdd extends Component {
   };
 
   componentDidMount = async () => {
+    this.setState({ isLoading: !this.state.isLoading });
+
     await Auth.currentUserInfo().then(user => {
       this.setState({ userId: user.attributes.sub, userName: user.username });
     });
@@ -132,7 +134,7 @@ class TransactionAdd extends Component {
 
   render() {
     if (this.state.isLoading) {
-      return <div>Loading</div>;
+      return <div className="ui active centered inline loader"></div>;
     } else {
       let transactionTypeOptionItems = this.state.transactionTypes.map(
         transactionType => (
