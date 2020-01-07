@@ -9,17 +9,17 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install
+        - yarn install
     build:
       commands:
-        - npm run test && npm run build
+        - yarn run build
   artifacts:
     baseDirectory: build
     files:
       - "**/*"
   cache:
     paths:
-      - ~/.cache
+      - node_modules/**/*
 test:
   artifacts:
     baseDirectory: cypress
@@ -36,7 +36,7 @@ test:
         - "npm start & npx wait-on http://localhost:3000"
     test:
       commands:
-        - 'npx cypress run --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"'
+        - 'npx cypress run --config video=false --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"'
     postTest:
       commands:
         - npx mochawesome-merge --reportDir cypress/report/mochawesome-report > cypress/report/mochawesome.json
