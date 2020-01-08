@@ -20,7 +20,6 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
-      # - ~/.cache
 test:
   artifacts:
     baseDirectory: cypress
@@ -40,5 +39,6 @@ test:
         - 'npx cypress run --reporter mochawesome --reporter-options "reportDir=cypress/report/mochawesome-report,overwrite=false,html=false,json=true,timestamp=mmddyyyy_HHMMss"'
     postTest:
       commands:
+        # Disabled -reportDir as it fails with the mochawesome 4.0 - https://github.com/aws-amplify/amplify-console/issues/347
         # - npx mochawesome-merge --reportDir cypress/report/mochawesome-report > cypress/report/mochawesome.json
         - npx mochawesome-merge cypress/report/mochawesome-report/mochawesome*.json > cypress/report/mochawesome.json
