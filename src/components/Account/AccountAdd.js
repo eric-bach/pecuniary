@@ -82,6 +82,7 @@ class AccountAdd extends Component {
               required
               value={this.state.name}
               onChange={this.handleInputChange}
+              data-test="account-name-input"
             />
           </div>
         </div>
@@ -95,6 +96,7 @@ class AccountAdd extends Component {
               required
               value={this.state.description}
               onChange={this.handleInputChange}
+              data-test="account-description-input"
             />
           </div>
         </div>
@@ -105,6 +107,7 @@ class AccountAdd extends Component {
               className="ui fluid dropdown"
               onChange={this.handleAccountTypeChange}
               required
+              data-test="account-type-selector"
             >
               <option value="">(Select Account Type)</option>
               {accountTypeItems}
@@ -115,12 +118,14 @@ class AccountAdd extends Component {
           <div className="eight wide field">
             <button
               className={`ui primary button ${this.state.createButtonClass}`}
+              data-test="create-account-button"
               type="submit"
             >
               Create
             </button>
             <button
               className={`ui button ${this.state.cancelButtonClass}`}
+              data-test="cancel-create-account-button"
               onClick={this.listAccounts}
             >
               Cancel

@@ -23,3 +23,20 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+Cypress.Commands.add("login", user => {
+  cy.visit("/");
+  cy.get(selectors.usernameInput).type(user.username);
+  cy.get(selectors.signInPasswordInput).type(user.password);
+  cy.get(selectors.signInSignInButton)
+    .contains("Sign In")
+    .click();
+  cy.get(selectors.signOutButton).contains("Logout");
+});
+
+export const selectors = {
+  // Auth component classes
+  usernameInput: '[data-test="username-input"]',
+  signInPasswordInput: '[data-test="sign-in-password-input"]',
+  signInSignInButton: '[data-test="sign-in-sign-in-button"]',
+  signOutButton: '[data-test="sign-out-button"]'
+};

@@ -81,6 +81,7 @@ class Accounts extends Component {
       <>
         <button
           className={`ui labeled icon button primary ${this.state.loadingClass}`}
+          data-test="add-account-button"
           onClick={this.handleAddAccount}
         >
           <i className="add icon"></i>

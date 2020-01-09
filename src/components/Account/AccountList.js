@@ -58,11 +58,14 @@ class AccountList extends Component {
                 </div>
                 <div
                   className="header link"
+                  data-test="account-label"
                   onClick={() => this.handleDisplayAccount(account)}
                 >
                   {account.name} | {account.accountType.name}
                 </div>
-                <div className="description">{account.description}</div>
+                <div className="description" data-test="account-description">
+                  {account.description}
+                </div>
               </div>
             );
           })
