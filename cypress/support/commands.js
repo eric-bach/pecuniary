@@ -33,10 +33,40 @@ Cypress.Commands.add("login", user => {
   cy.get(selectors.signOutButton).contains("Logout");
 });
 
+Cypress.Commands.add("createAccount", account => {
+  cy.visit("/accounts");
+  cy.url().should("include", "/accounts");
+
+  const name = "My Account";
+  const description = "My Account Description";
+  const type = "RRSP";
+
+  // Create a new Account
+  cy.contains("button", "Account").should("be.visible");
+  cy.get(selectors.addAccountButton).click();
+  cy.contains("button", "Create").should("be.visible");
+  cy.contains("button", "Cancel").should("be.visible");
+  cy.get(selectors.accountNameInput)
+    .type(name)
+    .should("have.value", name);
+  cy.get(selectors.accountDescriptionInput)
+    .type(description)
+    .should("have.value", description);
+  cy.get(selectors.accountTypeSelector)
+    .select(type)
+    .should("have.value", type);
+  cy.get(selectors.createAccountButton).click();
+});
+
 export const selectors = {
   // Auth component classes
   usernameInput: '[data-test="username-input"]',
   signInPasswordInput: '[data-test="sign-in-password-input"]',
   signInSignInButton: '[data-test="sign-in-sign-in-button"]',
-  signOutButton: '[data-test="sign-out-button"]'
+  signOutButton: '[data-test="sign-out-button"]',
+  addAccountButton: '[data-test="add-account-button"]',
+  accountNameInput: '[data-test="account-name-input"]',
+  accountDescriptionInput: '[data-test="account-description-input"]',
+  accountTypeSelector: '[data-test="account-type-selector"]',
+  createAccountButton: '[data-test="create-account-button"]'
 };

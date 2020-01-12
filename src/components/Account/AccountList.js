@@ -39,38 +39,41 @@ class AccountList extends Component {
 
   render() {
     return (
-      <div className="ui middle aligned divided list">
+      <>
         {this.state.isLoading ? (
           <div className="ui active centered inline loader"></div>
         ) : (
-          this.state.accounts.map(account => {
-            return (
-              <div
-                className="item content"
-                key={account.id}
-                style={{ padding: "10px" }}
-              >
+          <div className="ui divided selection list">
+            {this.state.accounts.map(account => {
+              return (
                 <div
-                  className="right floated item link"
-                  onClick={() => this.handleEditAccount(account)}
-                >
-                  <i className="edit icon"></i>Edit
-                </div>
-                <div
-                  className="header link"
+                  className="item"
+                  key={account.id}
                   data-test="account-label"
                   onClick={() => this.handleDisplayAccount(account)}
                 >
-                  {account.name} | {account.accountType.name}
+                  <div className="header">
+                    <div className={`ui horizontal red label`}>
+                      {account.accountType.name}
+                    </div>
+                    {account.name}
+                  </div>
+                  <div className="content">
+                    {/* <div
+                      className="right floated item link"
+                      onClick={() => this.handleEditAccount(account)}
+                    >
+                      <i className="edit icon"></i>Edit
+                    </div> */}
+
+                    <div>{account.description}</div>
+                  </div>
                 </div>
-                <div className="description" data-test="account-description">
-                  {account.description}
-                </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
-      </div>
+      </>
     );
   }
 }

@@ -154,6 +154,7 @@ class TransactionAdd extends Component {
                     <select
                       className="ui fluid dropdown"
                       onChange={this.handleTransactionTypeChange}
+                      data-test="transaction-type-selector"
                       required
                     >
                       <option value="">(Select Transaction Type)</option>
@@ -167,6 +168,7 @@ class TransactionAdd extends Component {
                       <input
                         type="date"
                         name="transactionDate"
+                        data-test="transaction-date-input"
                         required
                         value={this.state.transactionDate}
                         onChange={this.handleInputChange}
@@ -185,6 +187,7 @@ class TransactionAdd extends Component {
                       value={this.state.securityName}
                       onChange={this.handleInputChange}
                       onBlur={this.handleSecurityBlur}
+                      data-test="security-input"
                     />
                   </div>
                   <div className="four wide field">
@@ -197,6 +200,7 @@ class TransactionAdd extends Component {
                         required
                         value={this.state.shares}
                         onChange={this.handleInputChange}
+                        data-test="shares-input"
                       />
                     </div>
                   </div>
@@ -210,6 +214,7 @@ class TransactionAdd extends Component {
                         required
                         value={this.state.price}
                         onChange={this.handleInputChange}
+                        data-test="price-input"
                       />
                     </div>
                   </div>
@@ -223,6 +228,7 @@ class TransactionAdd extends Component {
                         required
                         value={this.state.commission}
                         onChange={this.handleInputChange}
+                        data-test="commission-input"
                       />
                     </div>
                   </div>
@@ -239,6 +245,7 @@ class TransactionAdd extends Component {
                             <span
                               className="custom-link"
                               onClick={this.handleCreateSecurity}
+                              data-test="create-security-link"
                             >
                               create it
                             </span>
@@ -253,6 +260,7 @@ class TransactionAdd extends Component {
                   <button
                     className={`ui primary button ${this.state.createTransactionClass}`}
                     type="submit"
+                    data-test="create-transation-button"
                   >
                     Create
                   </button>

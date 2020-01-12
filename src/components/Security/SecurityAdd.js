@@ -69,6 +69,7 @@ class SecurityAdd extends Component {
               required
               value={this.state.name}
               onChange={this.handleInputChange}
+              data-test="security-name-input"
             />
           </div>
         </div>
@@ -82,6 +83,7 @@ class SecurityAdd extends Component {
               required
               value={this.state.description}
               onChange={this.handleInputChange}
+              data-test="security-description-input"
             />
           </div>
         </div>
@@ -91,6 +93,7 @@ class SecurityAdd extends Component {
             <select
               className="ui fluid dropdown"
               onChange={this.handleExchangeTypeChange}
+              data-test="security-exchange-type-selector"
               required
             >
               <option value="">(Select Exchange Type)</option>
@@ -101,6 +104,7 @@ class SecurityAdd extends Component {
         <div>
           <button
             className={`ui primary button ${this.state.createButtonClass}`}
+            data-test="create-security-button"
             type="submit"
           >
             Create
