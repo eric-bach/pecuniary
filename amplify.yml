@@ -8,8 +8,8 @@ backend:
     postBuild:
       commands:
         - aws --version
-        - $functionName = "pecuniary212471e1-" + $USER_BRANCH
-        - aws lambda invoke --function-name $functionName response.json
+        # - $functionName = "pecuniary212471e1-" + $USER_BRANCH
+        - aws lambda invoke --function-name pecuniary212471e1-$USER_BRANCH response.json
 frontend:
   phases:
     preBuild:
