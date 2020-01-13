@@ -33,10 +33,6 @@ class AccountList extends Component {
     this.props.onDisplayAccount(account);
   };
 
-  handleEditAccount = account => {
-    this.props.onEditAccount(account);
-  };
-
   render() {
     return (
       <>
@@ -59,13 +55,6 @@ class AccountList extends Component {
                     {account.name}
                   </div>
                   <div className="content">
-                    {/* <div
-                      className="right floated item link"
-                      onClick={() => this.handleEditAccount(account)}
-                    >
-                      <i className="edit icon"></i>Edit
-                    </div> */}
-
                     <div>{account.description}</div>
                   </div>
                 </div>

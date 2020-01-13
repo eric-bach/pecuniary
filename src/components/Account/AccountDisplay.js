@@ -30,14 +30,17 @@ class AccountDisplay extends Component {
           </div>
 
           <div className="item">
-            <i className="chart line icon" />
-            <div className="content">
-              <div className="header">{this.props.account.name}</div>
-              <div className="description">
-                {this.props.account.description}
+            <div className="header">
+              <div className={`ui horizontal red label`}>
+                {this.props.account.accountType.name}
               </div>
+              {this.props.account.name}
+            </div>
+            <div className="content">
+              <div>{this.props.account.description}</div>
             </div>
           </div>
+
           <h4 className="ui dividing header">Performance</h4>
           <h4 className="ui dividing header">Transactions</h4>
           <div className="item">
