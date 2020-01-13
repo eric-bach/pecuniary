@@ -5,6 +5,9 @@ backend:
       commands:
         - "# Execute Amplify CLI with the helper script"
         - amplifyPush --simple
+    postBuild:
+      commands:
+        - aws lambda invoke --function-name pecuniary212471e1-exp response.json
 frontend:
   phases:
     preBuild:

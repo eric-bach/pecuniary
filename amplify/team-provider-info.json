@@ -34,5 +34,23 @@
                 "pecuniary": {}
             }
         }
+    },
+    "exp": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-pecuniary-exp-194137-authRole",
+            "UnauthRoleArn": "arn:aws:iam::524849261220:role/amplify-pecuniary-exp-194137-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::524849261220:role/amplify-pecuniary-exp-194137-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "amplify-pecuniary-exp-194137-deployment",
+            "UnauthRoleName": "amplify-pecuniary-exp-194137-unauthRole",
+            "StackName": "amplify-pecuniary-exp-194137",
+            "StackId": "arn:aws:cloudformation:us-west-2:524849261220:stack/amplify-pecuniary-exp-194137/391a0690-35ae-11ea-a773-0686cac6f814",
+            "AmplifyAppId": "d2xnculff4m8o7"
+        },
+        "categories": {
+            "auth": {
+                "pecuniary": {}
+            }
+        }
     }
 }
