@@ -152,7 +152,7 @@ class Reset extends Component {
           className={`ui red button ${this.state.loadingClass}`}
           onClick={this.deleteData}
         >
-          Delete Everything
+          Delete Tables
         </button>
         <button
           className={`ui primary button ${this.state.loadingClass}`}
