@@ -90,24 +90,26 @@ class Reset extends Component {
     this.setState({ loadingClass: "loading" });
 
     // Seed base Transaction Types
-    let input = { name: "Buy", description: "Buy" };
+    let input = { id: 1, name: "Buy", description: "Buy" };
     await API.graphql(graphqlOperation(createTransactionType, { input }));
-    input = { name: "Sell", description: "Sell" };
+    input = { id: 2, name: "Sell", description: "Sell" };
     await API.graphql(graphqlOperation(createTransactionType, { input }));
 
     // Seed base Account Types
-    input = { name: "TFSA", description: "Tax Free Savings Account" };
+    input = { id: 1, name: "TFSA", description: "Tax Free Savings Account" };
     await API.graphql(graphqlOperation(createAccountType, { input }));
     input = {
+      id: 2,
       name: "RRSP",
       description: "Registered Retirement Savings Account"
     };
     await API.graphql(graphqlOperation(createAccountType, { input }));
 
     // Seed base Currency Types
-    input = { name: "CAD", description: "Canadian Dollar" };
+    input = { id: 1, name: "CAD", description: "Canadian Dollar" };
     await API.graphql(graphqlOperation(createCurrencyType, { input }));
     input = {
+      id: 2,
       name: "USD",
       description: "US Dollar"
     };
@@ -122,18 +124,21 @@ class Reset extends Component {
     });
     // Seed base Exchange Types
     input = {
+      id: 1,
       name: "TSX",
       description: "Toronto Stock Exchange",
       exchangeTypeCurrencyTypeId: cad.id
     };
     await API.graphql(graphqlOperation(createExchangeType, { input }));
     input = {
+      id: 2,
       name: "NYSE",
       description: "New York Stock Exchange",
       exchangeTypeCurrencyTypeId: usd.id
     };
     await API.graphql(graphqlOperation(createExchangeType, { input }));
     input = {
+      id: 3,
       name: "NASDAQ",
       description: "NASDAQ",
       exchangeTypeCurrencyTypeId: usd.id
