@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import AccountSummary from "./AccountSummary";
 import TransactionList from "../Transaction/TransactionList";
 
 class AccountDisplay extends Component {
@@ -30,15 +31,7 @@ class AccountDisplay extends Component {
           </div>
 
           <div className="item">
-            <div className="header">
-              <div className={`ui horizontal red label`}>
-                {this.props.account.accountType.name}
-              </div>
-              {this.props.account.name}
-            </div>
-            <div className="content">
-              <div>{this.props.account.description}</div>
-            </div>
+            <AccountSummary account={this.props.account} />
           </div>
 
           <h4 className="ui dividing header">Performance</h4>

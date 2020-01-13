@@ -4,6 +4,7 @@ import { listTransactionTypes, listSecuritys } from "../../graphql/queries";
 import moment from "moment";
 import { createTransaction } from "../../graphql/mutations";
 import SecurityAdd from "../Security/SecurityAdd";
+import AccountSummary from "../Account/AccountSummary";
 import "./TransactionAdd.css";
 
 class TransactionAdd extends Component {
@@ -146,6 +147,13 @@ class TransactionAdd extends Component {
         <div className="ui main container" style={{ paddingTop: "20px" }}>
           <div className="ui grid">
             <div className="eight wide column">
+              <h4 className="ui dividing header">Account</h4>
+              <div className="ui list">
+                <div className="item">
+                  <AccountSummary account={this.state.account} />
+                </div>
+              </div>
+
               <h4 className="ui dividing header">Transaction</h4>
               <form className="ui form" onSubmit={this.handleAddTransaction}>
                 <div className="fields">

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { API, graphqlOperation } from "aws-amplify";
 import { listAccounts } from "../../graphql/queries";
+import AccountSummary from "./AccountSummary";
 import "./AccountList.css";
 
 class AccountList extends Component {
@@ -48,15 +49,7 @@ class AccountList extends Component {
                   data-test="account-label"
                   onClick={() => this.handleDisplayAccount(account)}
                 >
-                  <div className="header">
-                    <div className={`ui horizontal red label`}>
-                      {account.accountType.name}
-                    </div>
-                    {account.name}
-                  </div>
-                  <div className="content">
-                    <div>{account.description}</div>
-                  </div>
+                  <AccountSummary account={account} />
                 </div>
               );
             })}
