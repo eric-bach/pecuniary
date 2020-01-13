@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { API, graphqlOperation } from "aws-amplify";
 import {
-  deleteTransaction,
-  deleteAccount,
   createTransactionType,
   deleteTransactionType,
   deleteAccountType,
@@ -10,17 +8,13 @@ import {
   deleteCurrencyType,
   createCurrencyType,
   deleteExchangeType,
-  createExchangeType,
-  deleteSecurity
+  createExchangeType
 } from "../graphql/mutations";
 import {
-  listTransactions,
-  listAccounts,
   listTransactionTypes,
   listAccountTypes,
   listCurrencyTypes,
-  listExchangeTypes,
-  listSecuritys
+  listExchangeTypes
 } from "../graphql/queries";
 
 class Reset extends Component {
@@ -34,28 +28,28 @@ class Reset extends Component {
     this.setState({ loadingClass: "loading" });
 
     // Delete all existing Transactions
-    let result = await API.graphql(graphqlOperation(listTransactions));
-    result.data.listTransactions.items.map(async t => {
-      const input = { id: t.id };
-      await API.graphql(graphqlOperation(deleteTransaction, { input }));
-    });
+    // let result = await API.graphql(graphqlOperation(listTransactions));
+    // result.data.listTransactions.items.map(async t => {
+    //   const input = { id: t.id };
+    //   await API.graphql(graphqlOperation(deleteTransaction, { input }));
+    // });
 
     // Delete all existing Accounts
-    result = await API.graphql(graphqlOperation(listAccounts));
-    result.data.listAccounts.items.map(async t => {
-      const input = { id: t.id };
-      await API.graphql(graphqlOperation(deleteAccount, { input }));
-    });
+    // result = await API.graphql(graphqlOperation(listAccounts));
+    // result.data.listAccounts.items.map(async t => {
+    //   const input = { id: t.id };
+    //   await API.graphql(graphqlOperation(deleteAccount, { input }));
+    // });
 
     // Delete all existing Securities
-    result = await API.graphql(graphqlOperation(listSecuritys));
-    result.data.listSecuritys.items.map(async t => {
-      const input = { id: t.id };
-      await API.graphql(graphqlOperation(deleteSecurity, { input }));
-    });
+    // result = await API.graphql(graphqlOperation(listSecuritys));
+    // result.data.listSecuritys.items.map(async t => {
+    //   const input = { id: t.id };
+    //   await API.graphql(graphqlOperation(deleteSecurity, { input }));
+    // });
 
     // Delete all existing Transaction Types
-    result = await API.graphql(graphqlOperation(listTransactionTypes));
+    let result = await API.graphql(graphqlOperation(listTransactionTypes));
     result.data.listTransactionTypes.items.map(async t => {
       const input = { id: t.id };
       await API.graphql(graphqlOperation(deleteTransactionType, { input }));
@@ -114,14 +108,16 @@ class Reset extends Component {
       description: "US Dollar"
     };
     await API.graphql(graphqlOperation(createCurrencyType, { input }));
+
     // List all existing Currency Types
     const response = await API.graphql(graphqlOperation(listCurrencyTypes));
     const cad = response.data.listCurrencyTypes.items.find(item => {
-      return item.name === "CAD";
+      return item.id === 1;
     });
     const usd = response.data.listCurrencyTypes.items.find(item => {
-      return item.name === "USD";
+      return item.id === 2;
     });
+
     // Seed base Exchange Types
     input = {
       id: 1,
