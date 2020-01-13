@@ -24,6 +24,7 @@ class TransactionAdd extends Component {
     security: "",
 
     createTransactionClass: "",
+    cancelTransactionClass: "",
     securityClassName: "",
     securityNotFound: false,
     showCreateSecurity: false
@@ -56,7 +57,10 @@ class TransactionAdd extends Component {
       return;
     }
 
-    this.setState({ createTransactionClass: "loading" });
+    this.setState({
+      createTransactionClass: "loading",
+      cancelTransactionClass: "disabled"
+    });
 
     const input = {
       transactionTransactionTypeId: this.state.transactionTypeId,
@@ -75,7 +79,7 @@ class TransactionAdd extends Component {
 
     await API.graphql(graphqlOperation(createTransaction, { input }));
 
-    this.setState({ createTransactionClass: "" });
+    this.setState({ createTransactionClass: "", cancelTransactionClass: "" });
 
     this.props.history.push("/accounts");
   };
@@ -131,6 +135,10 @@ class TransactionAdd extends Component {
       securityClassName: "",
       showCreateSecurity: !this.state.showCreateSecurity
     });
+  };
+
+  listAccounts = () => {
+    this.props.history.push("/accounts");
   };
 
   render() {
@@ -271,6 +279,14 @@ class TransactionAdd extends Component {
                     data-test="create-transation-button"
                   >
                     Create
+                  </button>
+
+                  <button
+                    className={`ui button ${this.state.cancelTransactionClass}`}
+                    onClick={this.listAccounts}
+                    data-test="cancel-create-transation-button"
+                  >
+                    Cancel
                   </button>
                 </div>
               </form>
