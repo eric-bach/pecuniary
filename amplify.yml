@@ -7,6 +7,7 @@ backend:
         - amplifyPush --simple
     postBuild:
       commands:
+        - aws --version
         - aws lambda invoke --function-name pecuniary212471e1-exp response.json
 frontend:
   phases:
