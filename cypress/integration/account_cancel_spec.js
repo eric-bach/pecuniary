@@ -1,4 +1,4 @@
-describe("AccountDisplay:", function() {
+describe("Cancel Creation of Account:", function() {
   beforeEach(function() {
     // Login
     cy.login({ username: "cypress", password: "amplifyTesting" });

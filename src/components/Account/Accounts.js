@@ -71,6 +71,7 @@ class Accounts extends Component {
       <AccountDisplay
         account={this.state.selectedAccount}
         onAddTransaction={this.handleAddTransaction}
+        onEditAccount={this.handleEditAccount}
       />
     );
   }
@@ -89,7 +90,6 @@ class Accounts extends Component {
         </button>
         <AccountList
           userId={this.state.userId}
-          onEditAccount={this.handleEditAccount}
           onDisplayAccount={this.handleDisplayAccount}
         />
       </>

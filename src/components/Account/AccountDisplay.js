@@ -11,10 +11,24 @@ class AccountDisplay extends Component {
     this.props.onAddTransaction(account);
   };
 
+  handleEditAccount = account => {
+    this.props.onEditAccount(account);
+  };
+
   render() {
     return (
       <div>
         <div className="ui list">
+          <div className="item">
+            <button
+              className={`ui button primary ${this.state.loadingClass}`}
+              onClick={() => this.handleEditAccount(this.state.account)}
+              data-test="edit-account-button"
+            >
+              Edit
+            </button>
+          </div>
+
           <div className="item">
             <i className="chart line icon" />
             <div className="content">
