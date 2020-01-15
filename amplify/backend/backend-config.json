@@ -30,10 +30,20 @@
 		}
 	},
 	"function": {
-		"pecuniary212471e1": {
+		"pecSeed": {
 			"service": "Lambda",
 			"providerPlugin": "awscloudformation",
-			"build": true
+			"build": true,
+			"dependsOn": [
+				{
+					"category": "api",
+					"resourceName": "pecuniary",
+					"attributes": [
+						"GraphQLAPIIdOutput",
+						"GraphQLAPIEndpointOutput"
+					]
+				}
+			]
 		}
 	}
 }

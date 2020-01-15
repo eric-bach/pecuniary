@@ -4,6 +4,14 @@
 	"Parameters": {
 		"env": {
 			"Type": "String"
+		},
+		"apipecuniaryGraphQLAPIIdOutput": {
+			"Type": "String",
+			"Default": "apipecuniaryGraphQLAPIIdOutput"
+		},
+		"apipecuniaryGraphQLAPIEndpointOutput": {
+			"Type": "String",
+			"Default": "apipecuniaryGraphQLAPIEndpointOutput"
 		}
 	},
 	"Conditions": {
@@ -28,12 +36,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary212471e1",
+						"pecuniary-seed",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary212471e1",
+									"pecuniary-seed",
 									"-",
 									{
 										"Ref": "env"
@@ -50,6 +58,12 @@
 						},
 						"REGION": {
 							"Ref": "AWS::Region"
+						},
+						"API_PECUNIARY_GRAPHQLAPIIDOUTPUT": {
+							"Ref": "apipecuniaryGraphQLAPIIdOutput"
+						},
+						"API_PECUNIARY_GRAPHQLAPIENDPOINTOUTPUT": {
+							"Ref": "apipecuniaryGraphQLAPIEndpointOutput"
 						}
 					}
 				},
@@ -63,7 +77,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-exp-194137-deployment",
-					"S3Key": "amplify-builds/pecuniary212471e1-63305867734449727762-build.zip"
+					"S3Key": "amplify-builds/pecSeed-74744644657533613954-build.zip"
 				}
 			}
 		},
@@ -73,12 +87,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRoleea43c4a7",
+						"pecuniaryLambdaRolee90e5a03",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRoleea43c4a7",
+									"pecuniaryLambdaRolee90e5a03",
 									"-",
 									{
 										"Ref": "env"
@@ -144,6 +158,59 @@
 									}
 								]
 							}
+						}
+					]
+				}
+			}
+		},
+		"AmplifyResourcesPolicy": {
+			"DependsOn": [
+				"LambdaExecutionRole"
+			],
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "amplify-lambda-execution-policy",
+				"Roles": [
+					{
+						"Ref": "LambdaExecutionRole"
+					}
+				],
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": [
+								"appsync:Create*",
+								"appsync:StartSchemaCreation",
+								"appsync:GraphQL",
+								"appsync:Get*",
+								"appsync:List*",
+								"appsync:Update*",
+								"appsync:Delete*"
+							],
+							"Resource": [
+								{
+									"Fn::Join": [
+										"",
+										[
+											"arn:aws:appsync:",
+											{
+												"Ref": "AWS::Region"
+											},
+											":",
+											{
+												"Ref": "AWS::AccountId"
+											},
+											":apis/",
+											{
+												"Ref": "apipecuniaryGraphQLAPIIdOutput"
+											},
+											"/*"
+										]
+									]
+								}
+							]
 						}
 					]
 				}
