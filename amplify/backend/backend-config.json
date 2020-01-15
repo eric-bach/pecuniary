@@ -14,17 +14,17 @@
 				"authConfig": {
 					"additionalAuthenticationProviders": [
 						{
-							"authenticationType": "API_KEY",
-							"apiKeyConfig": {
-								"description": "pecuniaryapikey",
-								"apiKeyExpirationDays": "365"
+							"authenticationType": "AMAZON_COGNITO_USER_POOLS",
+							"userPoolConfig": {
+								"userPoolId": "authpecuniary"
 							}
 						}
 					],
 					"defaultAuthentication": {
-						"authenticationType": "AMAZON_COGNITO_USER_POOLS",
-						"userPoolConfig": {
-							"userPoolId": "authpecuniary"
+						"authenticationType": "API_KEY",
+						"apiKeyConfig": {
+							"description": "pecuniaryapikey",
+							"apiKeyExpirationDays": "365"
 						}
 					}
 				}
@@ -37,21 +37,5 @@
 			"providerPlugin": "awscloudformation"
 		}
 	},
-	"function": {
-		"pecuniarySeed": {
-			"service": "Lambda",
-			"providerPlugin": "awscloudformation",
-			"build": true,
-			"dependsOn": [
-				{
-					"category": "api",
-					"resourceName": "pecuniary",
-					"attributes": [
-						"GraphQLAPIIdOutput",
-						"GraphQLAPIEndpointOutput"
-					]
-				}
-			]
-		}
-	}
+	"function": {}
 }
