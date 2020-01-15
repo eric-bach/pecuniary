@@ -1,9 +1,7 @@
 const https = require("https");
 const AWS = require("aws-sdk");
 const urlParse = require("url").URL;
-const appsyncUrl = process.env.API_PECUNIARY_GRAPHQLAPIIDOUTPUT;
-const apiPecuniaryGraphQLAPIEndpointOutput =
-  process.env.API_PECUNIARY_GRAPHQLAPIENDPOINTOUTPUT;
+const appsyncUrl = process.env.API_PECUNIARY_GRAPHQLAPIENDPOINTOUTPUT;
 const region = process.env.REGION;
 const endpoint = new urlParse(appsyncUrl).hostname.toString();
 const graphqlQuery = require("./query.js").mutation;
