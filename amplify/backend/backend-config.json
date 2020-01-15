@@ -12,7 +12,15 @@
 			"providerPlugin": "awscloudformation",
 			"output": {
 				"authConfig": {
-					"additionalAuthenticationProviders": [],
+					"additionalAuthenticationProviders": [
+						{
+							"authenticationType": "API_KEY",
+							"apiKeyConfig": {
+								"description": "pecuniaryapikey",
+								"apiKeyExpirationDays": "365"
+							}
+						}
+					],
 					"defaultAuthentication": {
 						"authenticationType": "AMAZON_COGNITO_USER_POOLS",
 						"userPoolConfig": {
@@ -30,7 +38,7 @@
 		}
 	},
 	"function": {
-		"pecSeed": {
+		"pecuniarySeed": {
 			"service": "Lambda",
 			"providerPlugin": "awscloudformation",
 			"build": true,
