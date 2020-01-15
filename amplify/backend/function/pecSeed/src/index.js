@@ -16,6 +16,8 @@ const graphqlQuery = require("./query.js").mutation;
 const apiKey = process.env.API_KEY;
 
 exports.handler = async event => {
+  console.log("Starting to seed Pecuniary database");
+
   const req = new AWS.HttpRequest(appsyncUrl, region);
 
   const item = {
