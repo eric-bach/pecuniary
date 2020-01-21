@@ -1,0 +1,12 @@
+{
+    "permissions": {
+        "api": {
+            "pecuniary": [
+                "create",
+                "read",
+                "update",
+                "delete"
+            ]
+        }
+    }
+}
