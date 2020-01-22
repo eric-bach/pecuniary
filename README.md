@@ -20,8 +20,8 @@
   <a href="https://gitter.im/pecuniary/community">
     <img src="https://img.shields.io/gitter/room/pecuniary/community" alt="Gitter"/>
   </a>
-  <img alt="CodeFactor Grade" src="https://img.shields.io/codefactor/grade/github/eric-bach/pecuniary">
-  <a href="https://pecuniary.ca">
+  <a href="https://www.codefactor.io/repository/github/eric-bach/pecuniary"><img src="https://www.codefactor.io/repository/github/eric-bach/pecuniary/badge" alt="CodeFactor" /></a>
+  <a href="https://cypress.io">
     <img src="https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square" alt="cypress"/>
   </a>
 </p>
