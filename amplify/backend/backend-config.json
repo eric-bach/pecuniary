@@ -70,5 +70,10 @@
       "service": "S3AndCloudFront",
       "providerPlugin": "awscloudformation"
     }
+  },
+  "sns": {
+    "eventBus": {
+      "providerPlugin": "awscloudformation"
+    }
   }
 }
