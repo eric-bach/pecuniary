@@ -30,7 +30,6 @@ Cypress.Commands.add("login", user => {
   cy.get(selectors.signInSignInButton)
     .contains("Sign In")
     .click();
-  cy.wait(100);
   cy.get(selectors.signOutButton).contains("Logout");
 });
 
