@@ -21,6 +21,9 @@ describe("Transactions:", function() {
   });
 
   afterEach(function() {
+    // Temp - delay due to eventual consistency
+    cy.wait(200);
+
     cy.deleteAccount();
   });
 

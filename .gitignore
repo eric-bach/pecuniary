@@ -36,3 +36,7 @@ awsconfiguration.json
 amplifyconfiguration.json
 amplify-gradle-config.json
 amplifyxc.config
+
+# cypress
+cypress/screenshots/
+cypress/videos/
