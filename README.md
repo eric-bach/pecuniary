@@ -26,6 +26,10 @@
   </a>
 </p>
 
+## Architecture
+
+![Pecuniary](https://github.com/eric-bach/pecuniary/tree/master/doc/architecture.jpg)
+
 ## Getting Started
 
 1. Clone project and install dependencies
