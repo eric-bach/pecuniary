@@ -9,6 +9,9 @@ describe("Transactions:", function() {
 
     cy.createAccount();
 
+    // Temp - deplay due to eventual consistency
+    cy.delay(200);
+
     // Display Account
     cy.get('[data-test="account-label"]')
       .first()
