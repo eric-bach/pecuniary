@@ -1,4 +1,4 @@
-scalar AWSDateTime
+#scalar AWSDateTime
 
 # Event Store
 type Event @model {
