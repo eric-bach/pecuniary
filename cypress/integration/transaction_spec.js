@@ -21,8 +21,10 @@ describe("Transactions:", function() {
   });
 
   afterEach(function() {
-    // Temp - delay due to eventual consistency
-    cy.wait(200);
+    // Temp - deplay due to eventual consistency
+    cy.visit("/");
+    cy.wait(500);
+    cy.visit("/accounts");
 
     cy.deleteAccount();
   });
