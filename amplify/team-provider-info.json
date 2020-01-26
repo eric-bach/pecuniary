@@ -18,7 +18,8 @@
             "function": {
                 "accountCreatedEvent": {},
                 "seed": {},
-                "eventBus": {}
+                "eventBus": {},
+                "accountUpdatedEvent": {}
             }
         }
     },

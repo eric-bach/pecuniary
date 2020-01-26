@@ -65,7 +65,10 @@
         {
           "category": "sns",
           "resourceName": "eventBus",
-          "attributes": ["AccountCreatedEventTopicArn"]
+          "attributes": [
+            "AccountCreatedEventTopicArn",
+            "AccountUpdatedEventTopicArn"
+          ]
         }
       ]
     },
@@ -87,6 +90,27 @@
           "category": "sns",
           "resourceName": "eventBus",
           "attributes": ["AccountCreatedEventTopicArn"]
+        }
+      ]
+    },
+    "accountUpdatedEvent": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation",
+      "build": true,
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "pecuniary",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ]
+        },
+        {
+          "category": "sns",
+          "resourceName": "eventBus",
+          "attributes": ["AccountUpdatedEventTopicArn"]
         }
       ]
     }

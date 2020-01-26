@@ -1,12 +1,8 @@
-const https = require("https");
 const AWS = require("aws-sdk");
-const urlParse = require("url").URL;
-const appsyncUrl = process.env.API_PECUNIARY_GRAPHQLAPIENDPOINTOUTPUT;
-const region = process.env.REGION;
-const endpoint = new urlParse(appsyncUrl).hostname.toString();
-const apiKey = process.env.API_PECUNIARY_GRAPHQLAPIKEYOUTPUT;
 const accountCreatedEventTopic =
   process.env.SNS_EVENTBUS_ACCOUNTCREATEDEVENTTOPICARN;
+const accountUpdatedEventTopic =
+  process.env.SNS_EVENTBUS_ACCOUNTUPDATEDEVENTTOPICARN;
 
 exports.handler = async (event, context) => {
   var sns = new AWS.SNS({ apiVersion: "2010-03-31", region: "us-west-2" });
@@ -41,6 +37,7 @@ exports.handler = async (event, context) => {
     console.log("User Id: %j", userId);
 
     // TODO Dynamically change this value
+    const type = "json";
     var topic;
     var message;
     if (eventName === "AccountCreatedEvent") {
@@ -52,18 +49,16 @@ exports.handler = async (event, context) => {
         userId: userId,
         data: data
       };
-      // message =
-      //   '{ "aggregateId": "' +
-      //   aggregateId +
-      //   '", "version": "' +
-      //   version +
-      //   '", "userId": "' +
-      //   userId +
-      //   '", "data": ' +
-      //   JSON.stringify(data) +
-      //   "}";
+    } else if (eventName === "AccountUpdatedEvent") {
+      topic = accountUpdatedEventTopic;
+
+      message = {
+        aggregateId: aggregateId,
+        version: version,
+        userId: userId,
+        data: data
+      };
     }
-    const type = "json";
 
     console.log("Sending event to SNS for further processing");
     console.log("Message: %j", message);

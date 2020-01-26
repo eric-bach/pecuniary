@@ -88,7 +88,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/accountCreatedEvent-70334a414e63384c7830-build.zip"
+					"S3Key": "amplify-builds/accountCreatedEvent-444c6c72757a46354730-build.zip"
 				}
 			}
 		},
@@ -253,11 +253,7 @@
 							"Action": [
 								"appsync:Create*",
 								"appsync:StartSchemaCreation",
-								"appsync:GraphQL",
-								"appsync:Get*",
-								"appsync:List*",
-								"appsync:Update*",
-								"appsync:Delete*"
+								"appsync:GraphQL"
 							],
 							"Resource": [
 								{

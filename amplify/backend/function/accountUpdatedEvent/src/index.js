@@ -15,24 +15,23 @@ exports.handler = async event => {
 
   console.log("Saving event to read store:", event);
 
-  let mutation = `mutation createAccountReadModel {
-           createAccountReadModel(input: {
+  let mutation = `mutation updateAccountReadModel {
+           updateAccountReadModel(input: {
+             id: "${event.data.id}"
              aggregateId: "${event.aggregateId}"
              version: ${event.version}
              userId: "${event.userId}"
              name: "${event.data.name}"
              description: "${event.data.description}"
              accountReadModelAccountTypeId: ${event.data.accountAccountTypeId}
-             createdDate: "${event.data.createdDate}"
            })
            {
              aggregateId
            }
          }`;
 
-  console.debug("Mutation: %j", mutation);
-
-  await graphqlOperation(mutation, "createAccountReadModel");
+  console.debug("Mutation/Query: %j", mutation);
+  await graphqlOperation(mutation, "updateAccountReadModel");
 };
 
 async function graphqlOperation(query, operationName) {
