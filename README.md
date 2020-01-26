@@ -2,18 +2,12 @@
   Pecuniary
 </h1>
 
-<p align="center">
-  <a href="#">Documentation</a> |
-  <a href="#">Changelog</a> |
-  <a href="#">Roadmap</a>
-</p>
-
 <h3 align="center">
-  Event-source and CQRS demo application
+  Event-sourced and CQRS web application
 </h3>
 
 <p align="center">
-  A serverless event-driven web application built with <a href="https://github.com/aws/aws-amplify">aws-amplify</a> and <a href="https://github.com/cypress-io/cypress">cypress</a>
+  A serverless event-driven microservices web application built with <a href="https://github.com/aws/aws-amplify">aws-amplify</a> and <a href="https://github.com/cypress-io/cypress">cypress</a>
 </p>
 
 <p align="center">
@@ -24,11 +18,14 @@
   <a href="https://cypress.io">
     <img src="https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square" alt="cypress"/>
   </a>
+  <a href="https://github.com/eric-bach/pecuniary/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" />
+  </a>
 </p>
 
 ## Architecture
 
-![Pecuniary](https://github.com/eric-bach/pecuniary/tree/master/doc/architecture.jpg)
+![Top Level](diagrams/toplevel.jpg)
 
 ## Getting Started
 
@@ -53,7 +50,5 @@ http://localhost:3000/
 ```
 
 ## License
-
-[![license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/eric-bach/pecuniary/blob/master/LICENSE)
 
 This project is licensed under the terms of the [MIT license](/LICENSE).
