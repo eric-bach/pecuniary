@@ -17,7 +17,8 @@
             },
             "function": {
                 "pecuniarySeed": {},
-                "pecuniaryEvents": {}
+                "pecuniaryEvents": {},
+                "pecuniaryAccountCreated": {}
             }
         }
     },

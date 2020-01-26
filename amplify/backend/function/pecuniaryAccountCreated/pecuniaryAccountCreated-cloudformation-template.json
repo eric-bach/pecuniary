@@ -13,10 +13,6 @@
 			"Type": "String",
 			"Default": "apipecuniaryGraphQLAPIEndpointOutput"
 		},
-		"apipecuniaryGraphQLAPIKeyOutput": {
-			"Type": "String",
-			"Default": "apipecuniaryGraphQLAPIKeyOutput"
-		},
 		"snseventBusAccountCreatedEventTopicArn": {
 			"Type": "String",
 			"Default": "snsEventBusAccountCreatedEventTopicArn"
@@ -33,27 +29,6 @@
 		}
 	},
 	"Resources": {
-		"EventSourceMapping": {
-			"Type": "AWS::Lambda::EventSourceMapping",
-			"DependsOn": [
-				"LambdaExecutionRole",
-				"CustomPolicyForTableStreamSubscription"
-			],
-			"Properties": {
-				"EventSourceArn": {
-					"Fn::ImportValue": {
-						"Fn::Sub": "${apipecuniaryGraphQLAPIIdOutput}:GetAtt:EventTable:StreamArn"
-					}
-				},
-				"FunctionName": {
-					"Fn::GetAtt": [
-						"LambdaFunction",
-						"Arn"
-					]
-				},
-				"StartingPosition": "TRIM_HORIZON"
-			}
-		},
 		"LambdaFunction": {
 			"Type": "AWS::Lambda::Function",
 			"Metadata": {
@@ -65,12 +40,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-events",
+						"pecuniary-account-created",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-events",
+									"pecuniary-account-created",
 									"-",
 									{
 										"Ref": "env"
@@ -93,12 +68,6 @@
 						},
 						"API_PECUNIARY_GRAPHQLAPIENDPOINTOUTPUT": {
 							"Ref": "apipecuniaryGraphQLAPIEndpointOutput"
-						},
-						"API_PECUNIARY_GRAPHQLAPIKEYOUTPUT": {
-							"Ref": "apipecuniaryGraphQLAPIKeyOutput"
-						},
-						"SNS_EVENTBUS_ACCOUNTCREATEDEVENTTOPICARN": {
-							"Ref": "snseventBusAccountCreatedEventTopicArn"
 						}
 					}
 				},
@@ -112,7 +81,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/pecuniaryEvents-3179676368464d41414d-build.zip"
+					"S3Key": "amplify-builds/pecuniaryAccountCreated-3970635a33486c424746-build.zip"
 				}
 			}
 		},
@@ -122,12 +91,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRoled4afc074",
+						"pecuniaryLambdaRole9539cd8c",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRoled4afc074",
+									"pecuniaryLambdaRole9539cd8c",
 									"-",
 									{
 										"Ref": "env"
@@ -137,6 +106,9 @@
 						}
 					]
 				},
+				"ManagedPolicyArns": [
+					"arn:aws:iam::aws:policy/AmazonSNSReadOnlyAccess"
+				],
 				"AssumeRolePolicyDocument": {
 					"Version": "2012-10-17",
 					"Statement": [
@@ -150,6 +122,62 @@
 							"Action": [
 								"sts:AssumeRole"
 							]
+						}
+					]
+				}
+			}
+		},
+		"LambdaSubscription": {
+			"Type": "AWS::SNS::Subscription",
+			"Properties": {
+				"Endpoint": {
+					"Fn::GetAtt": [
+						"LambdaFunction",
+						"Arn"
+					]
+				},
+				"Protocol": "lambda",
+				"TopicArn": {
+					"Ref": "snseventBusAccountCreatedEventTopicArn"
+				}
+			}
+		},
+		"LambdaPermission": {
+			"Type": "AWS::Lambda::Permission",
+			"Properties": {
+				"FunctionName": {
+					"Fn::GetAtt": [
+						"LambdaFunction",
+						"Arn"
+					]
+				},
+				"Principal": "sns.amazonaws.com",
+				"Action": "lambda:InvokeFunction",
+				"SourceArn": {
+					"Ref": "snseventBusAccountCreatedEventTopicArn"
+				}
+			}
+		},
+		"LambdaSubscriptionPolicy": {
+			"Type": "AWS::SNS::TopicPolicy",
+			"Properties": {
+				"Topics": [
+					{
+						"Ref": "snseventBusAccountCreatedEventTopicArn"
+					}
+				],
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": "sns:Publish",
+							"Resource": {
+								"Ref": "snseventBusAccountCreatedEventTopicArn"
+							},
+							"Principal": {
+								"AWS": "*"
+							}
 						}
 					]
 				}
@@ -193,50 +221,6 @@
 									}
 								]
 							}
-						}
-					]
-				}
-			}
-		},
-		"CustomPolicyForTableStreamSubscription": {
-			"Type": "AWS::IAM::Policy",
-			"DependsOn": [
-				"LambdaExecutionRole"
-			],
-			"Properties": {
-				"PolicyName": "dynamodb-stream-permission",
-				"Roles": [
-					{
-						"Ref": "LambdaExecutionRole"
-					}
-				],
-				"PolicyDocument": {
-					"Version": "2012-10-17",
-					"Statement": [
-						{
-							"Effect": "Allow",
-							"Action": [
-								"dynamodb:GetRecords",
-								"dynamodb:GetShardIterator",
-								"dynamodb:DescribeStream",
-								"dynamodb:ListStreams"
-							],
-							"Resource": [
-								{
-									"Fn::ImportValue": {
-										"Fn::Sub": "${apipecuniaryGraphQLAPIIdOutput}:GetAtt:EventTable:StreamArn"
-									}
-								}
-							]
-						},
-						{
-							"Effect": "Allow",
-							"Action": "sns:Publish",
-							"Resource": [
-								{
-									"Ref": "snseventBusAccountCreatedEventTopicArn"
-								}
-							]
 						}
 					]
 				}
