@@ -1,107 +1,101 @@
 {
-	"auth": {
-		"cognito": {
-			"service": "Cognito",
-			"providerPlugin": "awscloudformation",
-			"dependsOn": []
-		}
-	},
-	"api": {
-		"pecuniary": {
-			"service": "AppSync",
-			"providerPlugin": "awscloudformation",
-			"output": {
-				"authConfig": {
-					"additionalAuthenticationProviders": [
-						{
-							"authenticationType": "AMAZON_COGNITO_USER_POOLS",
-							"userPoolConfig": {
-								"userPoolId": "authcognito"
-							}
-						}
-					],
-					"defaultAuthentication": {
-						"authenticationType": "API_KEY",
-						"apiKeyConfig": {
-							"description": "pecuniaryApiKey",
-							"apiKeyExpirationDays": "365"
-						}
-					}
-				}
-			}
-		}
-	},
-	"function": {
-		"pecuniaryEvents": {
-			"service": "Lambda",
-			"providerPlugin": "awscloudformation",
-			"build": true,
-			"dependsOn": [
-				{
-					"category": "api",
-					"resourceName": "pecuniary",
-					"attributes": [
-						"GraphQLAPIIdOutput",
-						"GraphQLAPIEndpointOutput",
-						"GraphQLAPIKeyOutput"
-					]
-				},
-				{
-					"category": "sns",
-					"resourceName": "eventBus",
-					"attributes": [
-						"AccountCreatedEventTopicArn"
-					]
-				}
-			]
-		},
-		"pecuniaryAccountCreated": {
-			"service": "Lambda",
-			"providerPlugin": "awscloudformation",
-			"build": true,
-			"dependsOn": [
-				{
-					"category": "api",
-					"resourceName": "pecuniary",
-					"attributes": [
-						"GraphQLAPIIdOutput",
-						"GraphQLAPIEndpointOutput"
-					]
-				},
-				{
-					"category": "sns",
-					"resourceName": "eventBus",
-					"attributes": [
-						"AccountCreatedEventTopicArn"
-					]
-				}
-			]
-		},
-		"seed": {
-			"service": "Lambda",
-			"providerPlugin": "awscloudformation",
-			"build": true,
-			"dependsOn": [
-				{
-					"category": "api",
-					"resourceName": "pecuniary",
-					"attributes": [
-						"GraphQLAPIIdOutput",
-						"GraphQLAPIEndpointOutput"
-					]
-				}
-			]
-		}
-	},
-	"hosting": {
-		"S3AndCloudFront": {
-			"service": "S3AndCloudFront",
-			"providerPlugin": "awscloudformation"
-		}
-	},
-	"sns": {
-		"eventBus": {
-			"providerPlugin": "awscloudformation"
-		}
-	}
+  "auth": {
+    "cognito": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": []
+    }
+  },
+  "api": {
+    "pecuniary": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authcognito"
+              }
+            }
+          ],
+          "defaultAuthentication": {
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "description": "pecuniaryApiKey",
+              "apiKeyExpirationDays": "365"
+            }
+          }
+        }
+      }
+    }
+  },
+  "function": {
+    "seed": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation",
+      "build": true,
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "pecuniary",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ]
+        }
+      ]
+    },
+    "eventBus": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation",
+      "build": true,
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "pecuniary",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ]
+        },
+        {
+          "category": "sns",
+          "resourceName": "eventBus",
+          "attributes": ["AccountCreatedEventTopicArn"]
+        }
+      ]
+    },
+    "accountCreatedEvent": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation",
+      "build": true,
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "pecuniary",
+          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput"]
+        },
+        {
+          "category": "sns",
+          "resourceName": "eventBus",
+          "attributes": ["AccountCreatedEventTopicArn"]
+        }
+      ]
+    }
+  },
+  "hosting": {
+    "S3AndCloudFront": {
+      "service": "S3AndCloudFront",
+      "providerPlugin": "awscloudformation"
+    }
+  },
+  "sns": {
+    "eventBus": {
+      "providerPlugin": "awscloudformation"
+    }
+  }
 }

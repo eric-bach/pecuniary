@@ -65,12 +65,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-events",
+						"pecuniary-event-bus",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-events",
+									"pecuniary-event-bus",
 									"-",
 									{
 										"Ref": "env"
@@ -112,7 +112,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/pecuniaryEvents-3179676368464d41414d-build.zip"
+					"S3Key": "amplify-builds/eventBus-3179676368464d41414d-build.zip"
 				}
 			}
 		},
@@ -122,12 +122,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRoled4afc074",
+						"pecuniaryLambdaRoled77535bb",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRoled4afc074",
+									"pecuniaryLambdaRoled77535bb",
 									"-",
 									{
 										"Ref": "env"
@@ -260,13 +260,8 @@
 						{
 							"Effect": "Allow",
 							"Action": [
-								"appsync:Create*",
-								"appsync:StartSchemaCreation",
-								"appsync:GraphQL",
 								"appsync:Get*",
-								"appsync:List*",
-								"appsync:Update*",
-								"appsync:Delete*"
+								"appsync:List*"
 							],
 							"Resource": [
 								{

@@ -16,8 +16,7 @@
                 "cognito": {}
             },
             "function": {
-                "pecuniaryEvents": {},
-                "pecuniaryAccountCreated": {}
+                "accountCreatedEvent": {}
             }
         }
     },
