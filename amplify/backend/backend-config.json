@@ -68,7 +68,8 @@
           "attributes": [
             "AccountCreatedEventTopicArn",
             "AccountUpdatedEventTopicArn",
-            "AccountDeletedEventTopicArn"
+            "AccountDeletedEventTopicArn",
+            "TransactionCreatedEventTopicArn"
           ]
         }
       ]
@@ -133,6 +134,27 @@
           "category": "sns",
           "resourceName": "eventBus",
           "attributes": ["AccountDeletedEventTopicArn"]
+        }
+      ]
+    },
+    "tranasctionCreatedEvent": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation",
+      "build": true,
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "pecuniary",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ]
+        },
+        {
+          "category": "sns",
+          "resourceName": "eventBus",
+          "attributes": ["TransactionCreatedEventTopicArn"]
         }
       ]
     }
