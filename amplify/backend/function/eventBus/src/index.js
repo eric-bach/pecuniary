@@ -41,38 +41,40 @@ exports.handler = async (event, context) => {
     console.log("User Id: %j", userId);
 
     // TODO Dynamically change this value
-    var topic = accountCreatedEventTopic;
+    var topic;
+    var message;
+    if (eventName === "AccountCreatedEvent") {
+      topic = accountCreatedEventTopic;
+
+      message = {
+        aggregateId: aggregateId,
+        version: version,
+        userId: userId,
+        data: data
+      };
+      // message =
+      //   '{ "aggregateId": "' +
+      //   aggregateId +
+      //   '", "version": "' +
+      //   version +
+      //   '", "userId": "' +
+      //   userId +
+      //   '", "data": ' +
+      //   JSON.stringify(data) +
+      //   "}";
+    }
     const type = "json";
 
-    console.log("Sending even to SNS for further processing");
+    console.log("Sending event to SNS for further processing");
+    console.log("Message: %j", message);
+    console.log("Topic: %j", topic);
 
     const params = {
-      Message: JSON.stringify({ data, type }),
+      Message: JSON.stringify({ message, type }),
       TopicArn: topic
     };
 
     await sns.publish(params).promise();
-
-    /* Ref: https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/javascript/example_code/sns/sns_publishtotopic.js
-    // Create publish parameters
-    var params = {
-      Message: 'MESSAGE_TEXT',
-      TopicArn: 'TOPIC_ARN'
-    };
-
-    // Create promise and SNS service object
-    var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
-
-    // Handle promise's fulfilled/rejected states
-    publishTextPromise.then(
-      function(data) {
-        console.log(`Message ${params.Message} send sent to the topic ${params.TopicArn}`);
-        console.log("MessageID is " + data.MessageId);
-      }).catch(
-        function(err) {
-        console.error(err, err.stack);
-      });
-    */
   }
 
   console.log("Stream processing complete");

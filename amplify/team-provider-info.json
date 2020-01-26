@@ -16,7 +16,9 @@
                 "cognito": {}
             },
             "function": {
-                "accountCreatedEvent": {}
+                "accountCreatedEvent": {},
+                "seed": {},
+                "eventBus": {}
             }
         }
     },

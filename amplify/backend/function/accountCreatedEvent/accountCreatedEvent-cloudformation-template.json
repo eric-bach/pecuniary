@@ -13,6 +13,10 @@
 			"Type": "String",
 			"Default": "apipecuniaryGraphQLAPIEndpointOutput"
 		},
+		"apipecuniaryGraphQLAPIKeyOutput": {
+			"Type": "String",
+			"Default": "apipecuniaryGraphQLAPIKeyOutput"
+		},
 		"snseventBusAccountCreatedEventTopicArn": {
 			"Type": "String",
 			"Default": "snseventBusAccountCreatedEventTopicArn"
@@ -68,6 +72,9 @@
 						},
 						"API_PECUNIARY_GRAPHQLAPIENDPOINTOUTPUT": {
 							"Ref": "apipecuniaryGraphQLAPIEndpointOutput"
+						},
+						"API_PECUNIARY_GRAPHQLAPIKEYOUTPUT": {
+							"Ref": "apipecuniaryGraphQLAPIKeyOutput"
 						}
 					}
 				},
@@ -81,7 +88,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/accountCreatedEvent-3970635a33486c424746-build.zip"
+					"S3Key": "amplify-builds/accountCreatedEvent-70334a414e63384c7830-build.zip"
 				}
 			}
 		},

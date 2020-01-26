@@ -77,7 +77,11 @@
         {
           "category": "api",
           "resourceName": "pecuniary",
-          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput"]
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ]
         },
         {
           "category": "sns",
