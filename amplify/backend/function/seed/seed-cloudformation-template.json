@@ -84,7 +84,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/pecuniarySeed-455446484d466f734b68-build.zip"
+					"S3Key": "amplify-builds/seed-455446484d466f734b68-build.zip"
 				}
 			}
 		},
@@ -94,12 +94,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRole88fb7e10",
+						"pecuniaryLambdaRole31899d9f",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRole88fb7e10",
+									"pecuniaryLambdaRole31899d9f",
 									"-",
 									{
 										"Ref": "env"
