@@ -19,7 +19,8 @@
                 "accountCreatedEvent": {},
                 "seed": {},
                 "eventBus": {},
-                "accountUpdatedEvent": {}
+                "accountUpdatedEvent": {},
+                "accountDeletedEvent": {}
             }
         }
     },

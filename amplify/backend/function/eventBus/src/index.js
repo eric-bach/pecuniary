@@ -3,6 +3,8 @@ const accountCreatedEventTopic =
   process.env.SNS_EVENTBUS_ACCOUNTCREATEDEVENTTOPICARN;
 const accountUpdatedEventTopic =
   process.env.SNS_EVENTBUS_ACCOUNTUPDATEDEVENTTOPICARN;
+const accountDeletedEventTopic =
+  process.env.SNS_EVENTBUS_ACCOUNTDELETEDEVENTTOPICARN;
 
 exports.handler = async (event, context) => {
   var sns = new AWS.SNS({ apiVersion: "2010-03-31", region: "us-west-2" });
@@ -51,6 +53,15 @@ exports.handler = async (event, context) => {
       };
     } else if (eventName === "AccountUpdatedEvent") {
       topic = accountUpdatedEventTopic;
+
+      message = {
+        aggregateId: aggregateId,
+        version: version,
+        userId: userId,
+        data: data
+      };
+    } else if (eventName === "AccountDeletedEvent") {
+      topic = accountDeletedEventTopic;
 
       message = {
         aggregateId: aggregateId,

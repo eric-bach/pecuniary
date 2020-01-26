@@ -17,17 +17,9 @@
 			"Type": "String",
 			"Default": "apipecuniaryGraphQLAPIKeyOutput"
 		},
-		"snseventBusAccountCreatedEventTopicArn": {
-			"Type": "String",
-			"Default": "snsEventBusAccountCreatedEventTopicArn"
-		},
-		"snseventBusAccountUpdatedEventTopicArn": {
-			"Type": "String",
-			"Default": "snsEventBusAccountUpdatedEventTopicArn"
-		},
 		"snseventBusAccountDeletedEventTopicArn": {
 			"Type": "String",
-			"Default": "snsEventBusAccountDeletedEventTopicArn"
+			"Default": "snseventBusAccountDeletedEventTopicArn"
 		}
 	},
 	"Conditions": {
@@ -41,27 +33,6 @@
 		}
 	},
 	"Resources": {
-		"EventSourceMapping": {
-			"Type": "AWS::Lambda::EventSourceMapping",
-			"DependsOn": [
-				"LambdaExecutionRole",
-				"CustomPolicyForTableStreamSubscription"
-			],
-			"Properties": {
-				"EventSourceArn": {
-					"Fn::ImportValue": {
-						"Fn::Sub": "${apipecuniaryGraphQLAPIIdOutput}:GetAtt:EventTable:StreamArn"
-					}
-				},
-				"FunctionName": {
-					"Fn::GetAtt": [
-						"LambdaFunction",
-						"Arn"
-					]
-				},
-				"StartingPosition": "TRIM_HORIZON"
-			}
-		},
 		"LambdaFunction": {
 			"Type": "AWS::Lambda::Function",
 			"Metadata": {
@@ -73,12 +44,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-event-bus",
+						"pecuniary-account-deleted",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-event-bus",
+									"pecuniary-account-deleted",
 									"-",
 									{
 										"Ref": "env"
@@ -104,15 +75,6 @@
 						},
 						"API_PECUNIARY_GRAPHQLAPIKEYOUTPUT": {
 							"Ref": "apipecuniaryGraphQLAPIKeyOutput"
-						},
-						"SNS_EVENTBUS_ACCOUNTCREATEDEVENTTOPICARN": {
-							"Ref": "snseventBusAccountCreatedEventTopicArn"
-						},
-						"SNS_EVENTBUS_ACCOUNTUPDATEDEVENTTOPICARN": {
-							"Ref": "snseventBusAccountUpdatedEventTopicArn"
-						},
-						"SNS_EVENTBUS_ACCOUNTDELETEDEVENTTOPICARN": {
-							"Ref": "snseventBusAccountDeletedEventTopicArn"
 						}
 					}
 				},
@@ -126,7 +88,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/eventBus-57766552704a384c2b4f-build.zip"
+					"S3Key": "amplify-builds/accountDeletedEvent-6546364139796450476b-build.zip"
 				}
 			}
 		},
@@ -136,12 +98,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRoled77535bb",
+						"pecuniaryLambdaRole638713c8",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRoled77535bb",
+									"pecuniaryLambdaRole638713c8",
 									"-",
 									{
 										"Ref": "env"
@@ -151,6 +113,9 @@
 						}
 					]
 				},
+				"ManagedPolicyArns": [
+					"arn:aws:iam::aws:policy/AmazonSNSReadOnlyAccess"
+				],
 				"AssumeRolePolicyDocument": {
 					"Version": "2012-10-17",
 					"Statement": [
@@ -164,6 +129,62 @@
 							"Action": [
 								"sts:AssumeRole"
 							]
+						}
+					]
+				}
+			}
+		},
+		"LambdaSubscription": {
+			"Type": "AWS::SNS::Subscription",
+			"Properties": {
+				"Endpoint": {
+					"Fn::GetAtt": [
+						"LambdaFunction",
+						"Arn"
+					]
+				},
+				"Protocol": "lambda",
+				"TopicArn": {
+					"Ref": "snseventBusAccountDeletedEventTopicArn"
+				}
+			}
+		},
+		"LambdaPermission": {
+			"Type": "AWS::Lambda::Permission",
+			"Properties": {
+				"FunctionName": {
+					"Fn::GetAtt": [
+						"LambdaFunction",
+						"Arn"
+					]
+				},
+				"Principal": "sns.amazonaws.com",
+				"Action": "lambda:InvokeFunction",
+				"SourceArn": {
+					"Ref": "snseventBusAccountDeletedEventTopicArn"
+				}
+			}
+		},
+		"LambdaSubscriptionPolicy": {
+			"Type": "AWS::SNS::TopicPolicy",
+			"Properties": {
+				"Topics": [
+					{
+						"Ref": "snseventBusAccountDeletedEventTopicArn"
+					}
+				],
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": "sns:Publish",
+							"Resource": {
+								"Ref": "snseventBusAccountDeletedEventTopicArn"
+							},
+							"Principal": {
+								"AWS": "*"
+							}
 						}
 					]
 				}
@@ -212,56 +233,6 @@
 				}
 			}
 		},
-		"CustomPolicyForTableStreamSubscription": {
-			"Type": "AWS::IAM::Policy",
-			"DependsOn": [
-				"LambdaExecutionRole"
-			],
-			"Properties": {
-				"PolicyName": "dynamodb-stream-permission",
-				"Roles": [
-					{
-						"Ref": "LambdaExecutionRole"
-					}
-				],
-				"PolicyDocument": {
-					"Version": "2012-10-17",
-					"Statement": [
-						{
-							"Effect": "Allow",
-							"Action": [
-								"dynamodb:GetRecords",
-								"dynamodb:GetShardIterator",
-								"dynamodb:DescribeStream",
-								"dynamodb:ListStreams"
-							],
-							"Resource": [
-								{
-									"Fn::ImportValue": {
-										"Fn::Sub": "${apipecuniaryGraphQLAPIIdOutput}:GetAtt:EventTable:StreamArn"
-									}
-								}
-							]
-						},
-						{
-							"Effect": "Allow",
-							"Action": "sns:Publish",
-							"Resource": [
-								{
-									"Ref": "snseventBusAccountCreatedEventTopicArn"
-								},
-								{
-									"Ref": "snseventBusAccountUpdatedEventTopicArn"
-								},
-								{
-									"Ref": "snseventBusAccountDeletedEventTopicArn"
-								}
-							]
-						}
-					]
-				}
-			}
-		},
 		"AmplifyResourcesPolicy": {
 			"DependsOn": [
 				"LambdaExecutionRole"
@@ -280,8 +251,9 @@
 						{
 							"Effect": "Allow",
 							"Action": [
-								"appsync:Get*",
-								"appsync:List*"
+								"appsync:Delete*",
+								"appsync:Get",
+								"appsync:List"
 							],
 							"Resource": [
 								{
