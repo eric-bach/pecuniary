@@ -32,7 +32,7 @@
     }
   },
   "function": {
-    "pecuniarySeed": {
+    "seed": {
       "service": "Lambda",
       "providerPlugin": "awscloudformation",
       "build": true,
@@ -48,7 +48,7 @@
         }
       ]
     },
-    "pecuniaryEvents": {
+    "eventBus": {
       "service": "Lambda",
       "providerPlugin": "awscloudformation",
       "build": true,
@@ -69,7 +69,7 @@
         }
       ]
     },
-    "pecuniaryAccountCreated": {
+    "accountCreatedEvent": {
       "service": "Lambda",
       "providerPlugin": "awscloudformation",
       "build": true,
