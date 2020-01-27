@@ -1,13 +1,22 @@
 <h1 align="center">
-  Pecuniary
+  <p align="center">
+    <img src="diagrams/icon.png" height="24" width="24" alt="icon">
+    Pecuniary
+  </p>
 </h1>
 
+<p align="center">
+  <a href="diagrams">Diagrams</a> |
+  <a href="#">Changelog</a> |
+  <a href="#">Roadmap</a>
+</p>
+
 <h3 align="center">
-  Event-sourced and CQRS web application
+  Built with event sourcing and CQRS
 </h3>
 
 <p align="center">
-  A serverless event-driven microservices web application built with <a href="https://github.com/aws/aws-amplify">aws-amplify</a> and <a href="https://github.com/cypress-io/cypress">cypress</a>
+  An event-driven serverless microservices application built with <a href="https://github.com/aws/aws-amplify">aws-amplify</a> and <a href="https://nodejs.org">Node.js</a>
 </p>
 
 <p align="center">
@@ -24,6 +33,9 @@
 </p>
 
 ## Architecture
+
+- `pecuniary-seed` populates the EventStore with default lookup values on each backend build through Amplify Console
+- `pecuniary-eventBus` publishes Events to SNS topics. Subscribers to each SNS topic process the Event into the ReadStore
 
 ![Top Level](diagrams/toplevel.jpg)
 
@@ -47,6 +59,20 @@ $ npm start
 
 ```
 http://localhost:3000/
+```
+
+## Environment Setup
+
+1. Initialize AWS Amplify
+
+```bash
+$ amplify init
+```
+
+2. Deploy to AWS Account
+
+```
+amplify push
 ```
 
 ## License
