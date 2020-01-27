@@ -58,7 +58,30 @@
               ]
             }
           ]
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": ["", [{ "Ref": "AWS::Region" }, "-", "account-topic"]]
+            }
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Fn::Join": ["", [{ "Ref": "AWS::Region" }, "-", "pecuniary"]]
+            }
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [{ "Ref": "AWS::Region" }, "-", { "Ref": "env" }]
+              ]
+            }
+          }
+        ]
       }
     },
     "AccountUpdatedEventTopic": {
@@ -99,7 +122,30 @@
               ]
             }
           ]
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": ["", [{ "Ref": "AWS::Region" }, "-", "account-topic"]]
+            }
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Fn::Join": ["", [{ "Ref": "AWS::Region" }, "-", "pecuniary"]]
+            }
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [{ "Ref": "AWS::Region" }, "-", { "Ref": "env" }]
+              ]
+            }
+          }
+        ]
       }
     },
     "AccountDeletedEventTopic": {
@@ -140,7 +186,30 @@
               ]
             }
           ]
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": ["", [{ "Ref": "AWS::Region" }, "-", "account-topic"]]
+            }
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Fn::Join": ["", [{ "Ref": "AWS::Region" }, "-", "pecuniary"]]
+            }
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [{ "Ref": "AWS::Region" }, "-", { "Ref": "env" }]
+              ]
+            }
+          }
+        ]
       }
     },
     "TransactionCreatedEventTopic": {
@@ -181,7 +250,33 @@
               ]
             }
           ]
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [{ "Ref": "AWS::Region" }, "-", "transaction-topic"]
+              ]
+            }
+          },
+          {
+            "Key": "Application",
+            "Value": {
+              "Fn::Join": ["", [{ "Ref": "AWS::Region" }, "-", "pecuniary"]]
+            }
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [{ "Ref": "AWS::Region" }, "-", { "Ref": "env" }]
+              ]
+            }
+          }
+        ]
       }
     }
   },
