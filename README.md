@@ -7,8 +7,8 @@
 
 <p align="center">
   <a href="diagrams">Diagrams</a> |
-  <a href="#">Changelog</a> |
-  <a href="#">Roadmap</a>
+  <a href="#getting-started">Getting Started</a> |
+  <a href="#environment-setup">Development</a>
 </p>
 
 <h3 align="center">
