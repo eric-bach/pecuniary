@@ -4,9 +4,6 @@
   "Parameters": {
     "env": {
       "Type": "String"
-    },
-    "bucketName": {
-      "Type": "String"
     }
   },
   "Conditions": {

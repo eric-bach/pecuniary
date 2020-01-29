@@ -89,7 +89,56 @@
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
 					"S3Key": "amplify-builds/accountCreatedEvent-444c6c72757a46354730-build.zip"
-				}
+				},
+				"Tags": [
+					{
+						"Key": "Name",
+						"Value": {
+							"Fn::Join": [
+								"",
+								[
+									{
+										"Ref": "AWS::Region"
+									},
+									"-",
+									"function-account"
+								]
+							]
+						}
+					},
+					{
+						"Key": "Application",
+						"Value": {
+							"Fn::Join": [
+								"",
+								[
+									{
+										"Ref": "AWS::Region"
+									},
+									"-",
+									"pecuniary"
+								]
+							]
+						}
+					},
+					{
+						"Key": "Environment",
+						"Value": {
+							"Fn::Join": [
+								"",
+								[
+									{
+										"Ref": "AWS::Region"
+									},
+									"-",
+									{
+										"Ref": "env"
+									}
+								]
+							]
+						}
+					}
+				]
 			}
 		},
 		"LambdaExecutionRole": {
@@ -131,7 +180,56 @@
 							]
 						}
 					]
-				}
+				},
+				"Tags": [
+					{
+						"Key": "Name",
+						"Value": {
+							"Fn::Join": [
+								"",
+								[
+									{
+										"Ref": "AWS::Region"
+									},
+									"-",
+									"role-function"
+								]
+							]
+						}
+					},
+					{
+						"Key": "Application",
+						"Value": {
+							"Fn::Join": [
+								"",
+								[
+									{
+										"Ref": "AWS::Region"
+									},
+									"-",
+									"pecuniary"
+								]
+							]
+						}
+					},
+					{
+						"Key": "Environment",
+						"Value": {
+							"Fn::Join": [
+								"",
+								[
+									{
+										"Ref": "AWS::Region"
+									},
+									"-",
+									{
+										"Ref": "env"
+									}
+								]
+							]
+						}
+					}
+				]
 			}
 		},
 		"LambdaSubscription": {

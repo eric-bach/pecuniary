@@ -1,5 +1,3 @@
-#scalar AWSDateTime
-
 # Event Store
 type Event @model {
   id: ID!
