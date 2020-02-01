@@ -37,7 +37,7 @@
 - `pecuniary-seed` populates the EventStore with default lookup values on each backend build through Amplify Console
 - `pecuniary-eventBus` publishes Events to SNS topics. Subscribers to each SNS topic process the Event into the ReadStore
 
-![Top Level](diagrams/toplevel.jpg)
+![Top Level](diagrams/toplevel.png)
 
 ## Getting Started
 
