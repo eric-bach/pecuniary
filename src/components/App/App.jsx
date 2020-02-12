@@ -5,23 +5,25 @@ import { withAuthenticator } from "aws-amplify-react";
 
 import NavBar from "../Nav/NavBar";
 import Home from "../Home/Home";
-import Accounts from "../Accounts/AccountsList";
+import AccountList from "../Account/AccountList";
 
-function App() {
-  return (
-    <>
-      <NavBar />
-      <Container className='main'>
-        <Route exact path='/home' component={Home} />
-        <Route exact path='/accounts' component={Accounts} />
-        {/* <Route
+class App extends React.Component {
+  render() {
+    return (
+      <>
+        <NavBar />
+        <Container className='main'>
+          <Route exact path='/home' component={Home} />
+          <Route exact path='/accounts' component={AccountList} />
+          {/* <Route
                 exact
                 path='/transactions/new'
                 component={TransactionAdd}
               /> */}
-      </Container>
-    </>
-  );
+        </Container>
+      </>
+    );
+  }
 }
 
 export default withAuthenticator(App, { includeGreetings: false });
