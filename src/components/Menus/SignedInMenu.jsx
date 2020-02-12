@@ -1,10 +1,11 @@
 import React from "react";
 import { Menu, Image, Dropdown } from "semantic-ui-react";
+import faker from "faker";
 
 const SignedInMenu = ({ signOut, username }) => {
   return (
     <Menu.Item position='right'>
-      <Image avatar spaced='right' src='/assets/user.png' />
+      <Image avatar spaced='right' src={faker.image.avatar()} />
       <Dropdown pointing='top left' text={username}>
         <Dropdown.Menu>
           <Dropdown.Item text='Create Event' icon='plus' />
