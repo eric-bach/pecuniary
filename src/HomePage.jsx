@@ -21,7 +21,7 @@ const HomePage = ({ history }) => {
           />
           Pecuniary
         </Header>
-        <Button onClick={() => history.push("/accounts")} size='huge' inverted>
+        <Button onClick={() => history.push("/home")} size='huge' inverted>
           Get started
           <Icon name='right arrow' inverted />
         </Button>
