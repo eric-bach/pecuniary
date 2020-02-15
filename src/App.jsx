@@ -2,7 +2,7 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import HomePage from "./HomePage";
-import ProtectedApp from "./components/App/App";
+import ProtectedApp from "./app/layout/App";
 
 class App extends React.Component {
   render() {
