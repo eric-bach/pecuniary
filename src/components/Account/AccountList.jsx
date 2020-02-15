@@ -12,8 +12,6 @@ class AccountList extends Component {
   };
 
   componentDidMount = async () => {
-    console.log(this.state.userId);
-
     this.setState({ isLoading: !this.state.isLoading });
 
     await Auth.currentUserInfo().then(user => {

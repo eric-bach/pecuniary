@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink, Link, withRouter } from "react-router-dom";
 import { Container, Menu } from "semantic-ui-react";
 import { Auth } from "aws-amplify";
 
@@ -34,7 +34,7 @@ class NavBar extends Component {
       <>
         <Menu inverted fixed='top'>
           <Container>
-            <Menu.Item as={NavLink} exact to='/home' header>
+            <Menu.Item as={Link} to='/home' header>
               <img src='/favicon-32x32.png' alt='logo' />
               Pecuniary
             </Menu.Item>

@@ -11,7 +11,6 @@ import "./index.css";
 Amplify.configure(aws_exports);
 
 const store = configureStore();
-console.log("Store: ", store.get); //TEMP
 
 ReactDOM.render(
   <Provider store={store}>
