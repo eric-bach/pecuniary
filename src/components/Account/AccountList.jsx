@@ -7,9 +7,10 @@ import "./AccountList.css";
 
 class AccountList extends Component {
   componentDidMount = async () => {
-    console.log("AccountList");
     this.props.fetchAccounts();
   };
+
+  handleDisplayAccount = account => {};
 
   render() {
     const { loading, accounts } = this.props;
@@ -39,7 +40,6 @@ class AccountList extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     loading: state.async.loading,
     accounts: state.accounts.accounts

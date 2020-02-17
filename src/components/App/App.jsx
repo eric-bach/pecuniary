@@ -8,10 +8,6 @@ import Home from "../Home/Home";
 import AccountList from "../Account/AccountList";
 
 class App extends React.Component {
-  componentDidMount() {
-    console.log("App");
-  }
-
   render() {
     return (
       <>

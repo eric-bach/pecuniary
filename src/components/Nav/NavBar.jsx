@@ -9,8 +9,6 @@ import { signIn, signOut } from "../../domain/auth/actions";
 
 class NavBar extends Component {
   componentDidMount = () => {
-    console.log("NavBar");
-
     this.handleSignIn();
   };
 
