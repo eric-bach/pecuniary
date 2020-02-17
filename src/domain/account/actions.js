@@ -1,4 +1,5 @@
 import { API, graphqlOperation, Auth } from "aws-amplify";
+import { createEvent } from "../../graphql/mutations";
 import { listAccountReadModels } from "../../graphql/queries.js";
 import { FETCH_ACCOUNTS, UPDATE_ACCOUNT } from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
@@ -31,9 +32,33 @@ export const fetchAccounts = userId => async dispatch => {
   dispatch(asyncActionFinish());
 };
 
-export const updateAccount = account => {
-  return {
+export const updateAccount = account => async dispatch => {
+  dispatch(asyncActionStart());
+
+  var userId;
+  await Auth.currentUserInfo().then(user => {
+    userId = user.attributes.sub;
+  });
+
+  const input = {
+    aggregateId: account.aggregateId,
+    name: "AccountUpdatedEvent",
+    version: account.version + 1,
+    data: JSON.stringify({
+      id: account.id,
+      name: account.name,
+      description: account.description,
+      accountAccountTypeId: account.accountTypeId
+    }),
+    userId: userId,
+    timestamp: new Date().toISOString()
+  };
+  await API.graphql(graphqlOperation(createEvent, { input }));
+
+  dispatch({
     type: UPDATE_ACCOUNT,
     payload: account
-  };
+  });
+
+  dispatch(asyncActionFinish());
 };
