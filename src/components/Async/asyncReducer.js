@@ -1,5 +1,5 @@
 import { ASYNC_ACTION_START, ASYNC_ACTION_FINISH, ASYNC_ACTION_ERROR } from "./asyncConstants";
-import { createReducer } from "../../app/common/util/reducerUtils";
+import { createReducer } from "../../common/reducerUtils";
 
 const initialState = {
   loading: false,

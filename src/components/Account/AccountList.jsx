@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import LoadingComponent from "../../app/layout/LoadingComponent";
+import LoadingComponent from "../App/LoadingComponent";
 import AccountSummary from "./AccountSummary";
 import { fetchAccounts } from "./accountActions";
 import "./AccountList.css";

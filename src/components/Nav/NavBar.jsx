@@ -3,8 +3,8 @@ import { NavLink, Link, withRouter } from "react-router-dom";
 import { Container, Menu } from "semantic-ui-react";
 import { Auth } from "aws-amplify";
 
-import SignedInMenu from "../Menus/SignedInMenu";
-import SignedOutMenu from "../Menus/SignedOutMenu";
+import SignedInMenu from "./Menus/SignedInMenu";
+import SignedOutMenu from "./Menus/SignedOutMenu";
 
 class NavBar extends Component {
   state = { userName: "", authenticated: false };

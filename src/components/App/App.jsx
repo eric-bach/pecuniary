@@ -3,9 +3,9 @@ import { Route } from "react-router-dom";
 import { Container } from "semantic-ui-react";
 import { withAuthenticator } from "aws-amplify-react";
 
-import NavBar from "../../components/Nav/NavBar";
-import Home from "../../components/Home/Home";
-import AccountList from "../../components/Account/AccountList";
+import NavBar from "../Nav/NavBar";
+import Home from "../Home/Home";
+import AccountList from "../Account/AccountList";
 
 class App extends React.Component {
   componentDidMount() {
