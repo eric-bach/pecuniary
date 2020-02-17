@@ -18,7 +18,7 @@ class App extends React.Component {
           <Container className='main'>
             <Route exact path='/home' component={Home} />
             <Route exact path='/accounts' component={AccountList} />
-            <Route path='/accounts/:id' component={AccountDetail} />
+            <Route path={["/createAccount", "/accounts/:id"]} component={AccountDetail} />
           </Container>
         </ScrollToTop>
       </>

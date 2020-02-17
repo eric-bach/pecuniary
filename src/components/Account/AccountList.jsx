@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { Grid } from "semantic-ui-react";
+import { Grid, Button } from "semantic-ui-react";
 
 import Loading from "../App/Loading";
 import AccountSummary from "./AccountSummary";
@@ -26,6 +27,7 @@ class AccountList extends Component {
         </Grid.Column>
         <Grid.Column width={6}>
           <h2>Summary</h2>
+          <Button as={Link} to='/createAccount' floated='right' positive inverted content='Create Account' />
         </Grid.Column>
       </Grid>
     );
