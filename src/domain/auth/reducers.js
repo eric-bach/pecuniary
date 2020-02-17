@@ -1,7 +1,10 @@
 import { SIGN_IN, SIGN_OUT } from "./constants";
 import { createReducer } from "../../common/reducerUtils";
 
-const initialState = {};
+const INITIAL_STATE = {
+  user: null,
+  authenticated: false
+};
 
 const signIn = (state, payload) => {
   return {
@@ -19,7 +22,7 @@ const signOut = state => {
   };
 };
 
-export default createReducer(initialState, {
+export default createReducer(INITIAL_STATE, {
   [SIGN_IN]: signIn,
   [SIGN_OUT]: signOut
 });

@@ -1,14 +1,14 @@
 import { FETCH_ACCOUNTS } from "./constants";
+import { createReducer } from "../../common/reducerUtils";
 
 const INITIAL_STATE = {
   accounts: []
 };
 
-export default (state = INITIAL_STATE, action) => {
-  switch (action.type) {
-    case FETCH_ACCOUNTS:
-      return { ...state, accounts: action.payload };
-    default:
-      return state;
-  }
+const fetchAccounts = (state, payload) => {
+  return { ...state, accounts: payload };
 };
+
+export default createReducer(INITIAL_STATE, {
+  [FETCH_ACCOUNTS]: fetchAccounts
+});

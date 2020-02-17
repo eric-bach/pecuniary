@@ -10,7 +10,6 @@ export const fetchAccounts = userId => async dispatch => {
     userId = user.attributes.sub;
   });
 
-  let accounts;
   await API.graphql(
     graphqlOperation(listAccountReadModels, {
       limit: 50,
@@ -21,12 +20,12 @@ export const fetchAccounts = userId => async dispatch => {
       }
     })
   ).then(result => {
-    accounts = result.data.listAccountReadModels.items.sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1));
-  });
+    const accounts = result.data.listAccountReadModels.items.sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1));
 
-  dispatch({
-    type: FETCH_ACCOUNTS,
-    payload: accounts
+    dispatch({
+      type: FETCH_ACCOUNTS,
+      payload: accounts
+    });
   });
 
   dispatch(asyncActionFinish());
