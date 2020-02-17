@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Segment, Item } from "semantic-ui-react";
+import { Link } from "react-router-dom";
+import { Segment, Item, Button } from "semantic-ui-react";
 
 class AccountSummary extends Component {
   render() {
@@ -19,7 +20,12 @@ class AccountSummary extends Component {
                 <Item.Header>
                   <div>{account.name}</div>
                 </Item.Header>
-                <Item.Description>{account.description}</Item.Description>
+                <Item.Meta>{account.accountType.name} account</Item.Meta>
+                <Item.Description>
+                  {account.description}
+                  <Button as='a' color='red' floated='right' content='Delete' />
+                  <Button as={Link} to={`/accounts/${account.id}`} color='teal' floated='right' content='Edit' />
+                </Item.Description>
               </Item.Content>
             </Item>
           </Item.Group>

@@ -6,6 +6,7 @@ import { withAuthenticator } from "aws-amplify-react";
 import NavBar from "../Nav/NavBar";
 import Home from "../Home/Home";
 import AccountList from "../Account/AccountList";
+import AccountDetail from "../Account/AccountDetail";
 
 class App extends React.Component {
   render() {
@@ -15,11 +16,7 @@ class App extends React.Component {
         <Container className='main'>
           <Route exact path='/home' component={Home} />
           <Route exact path='/accounts' component={AccountList} />
-          {/* <Route
-                exact
-                path='/transactions/new'
-                component={TransactionAdd}
-              /> */}
+          <Route path='/accounts/:id' component={AccountDetail} />
         </Container>
       </>
     );
