@@ -1,16 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Grid } from "semantic-ui-react";
+
 import Loading from "../App/Loading";
 import AccountSummary from "./AccountSummary";
 import { fetchAccounts } from "../../domain/account/actions";
-import "./AccountList.css";
 
 class AccountList extends Component {
   componentDidMount = async () => {
     this.props.fetchAccounts();
   };
-
-  handleDisplayAccount = account => {};
 
   render() {
     const { loading, accounts } = this.props;
@@ -18,23 +17,17 @@ class AccountList extends Component {
     if (loading) return <Loading />;
 
     return (
-      <>
-        <div>Accounts</div>
-        <div className='ui divided selection list'>
+      <Grid>
+        <Grid.Column width={10}>
+          <h2>Accounts</h2>
           {accounts.map(account => {
-            return (
-              <div
-                className='item'
-                key={account.aggregateId}
-                data-test='account-label'
-                onClick={() => this.handleDisplayAccount(account)}
-              >
-                <AccountSummary account={account} />
-              </div>
-            );
+            return <AccountSummary key={account.aggregateId} account={account} data-test='account-label' />;
           })}
-        </div>
-      </>
+        </Grid.Column>
+        <Grid.Column width={6}>
+          <h2>Summary</h2>
+        </Grid.Column>
+      </Grid>
     );
   }
 }
