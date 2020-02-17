@@ -10,7 +10,6 @@ const fetchAccounts = (state, payload) => {
 };
 
 const createAccount = (state, payload) => {
-  console.log(payload);
   return { accounts: [payload] };
 };
 

@@ -20,7 +20,7 @@ const accountTypes = [
   { key: "2", text: "RRSP", value: "2" }
 ];
 
-class AccountDetail extends Component {
+class AccountForm extends Component {
   onFormSubmit = values => {
     if (this.props.initialValues.id) {
       this.props.updateAccount(values);
@@ -94,4 +94,4 @@ const actions = {
   updateAccount
 };
 
-export default connect(mapStateToProps, actions)(reduxForm({ form: "accountForm", validate })(AccountDetail));
+export default connect(mapStateToProps, actions)(reduxForm({ form: "accountForm", validate })(AccountForm));
