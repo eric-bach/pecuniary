@@ -40,6 +40,7 @@ export const updateAccount = account => async dispatch => {
     userId = user.attributes.sub;
   });
 
+  console.log(account);
   const input = {
     aggregateId: account.aggregateId,
     name: "AccountUpdatedEvent",
@@ -48,7 +49,7 @@ export const updateAccount = account => async dispatch => {
       id: account.id,
       name: account.name,
       description: account.description,
-      accountAccountTypeId: account.accountTypeId
+      accountAccountTypeId: account.accountType.id
     }),
     userId: userId,
     timestamp: new Date().toISOString()
