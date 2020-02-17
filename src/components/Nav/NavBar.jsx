@@ -10,12 +10,16 @@ class NavBar extends Component {
   state = { userName: "", authenticated: false };
 
   componentDidMount = async () => {
+    console.log("NavBar");
+
     await Auth.currentUserInfo().then(user => {
       this.setState({
         userName: user.username,
         authenticated: true
       });
     });
+
+    console.log("Done Navbar");
   };
 
   handleSignIn = () => {};
@@ -40,10 +44,7 @@ class NavBar extends Component {
             </Menu.Item>
             <Menu.Item as={NavLink} to='/accounts' name='Accounts' />
             {this.state.authenticated ? (
-              <SignedInMenu
-                username={this.state.userName}
-                signOut={this.handleSignOut}
-              />
+              <SignedInMenu signOut={this.handleSignOut} username={this.state.userName} />
             ) : (
               <SignedOutMenu signIn={this.handleSignIn} />
             )}

@@ -1,72 +1,49 @@
 import React, { Component } from "react";
-import { Auth, API, graphqlOperation } from "aws-amplify";
-import { listAccountReadModels } from "../../graphql/queries.js";
+import { connect } from "react-redux";
+import LoadingComponent from "../../app/layout/LoadingComponent";
 import AccountSummary from "./AccountSummary";
+import { fetchAccounts } from "./accountActions";
 import "./AccountList.css";
 
 class AccountList extends Component {
-  state = {
-    userId: this.props.userId,
-    accounts: [], // list of accounts owned by the userId,
-    isLoading: false
-  };
-
   componentDidMount = async () => {
-    this.setState({ isLoading: !this.state.isLoading });
-
-    await Auth.currentUserInfo().then(user => {
-      this.setState({ userId: user.attributes.sub });
-    });
-
-    // TODO Write a new query to get list of accounts by user id instead of filtering after
-    await API.graphql(
-      graphqlOperation(listAccountReadModels, {
-        limit: 50,
-        filter: {
-          userId: {
-            eq: this.state.userId
-          }
-        }
-      })
-    ).then(result =>
-      this.setState({
-        accounts: result.data.listAccountReadModels.items.sort((a, b) =>
-          a.createdDate < b.createdDate ? 1 : -1
-        )
-      })
-    );
-
-    this.setState({ isLoading: !this.state.isLoading });
-  };
-
-  handleDisplayAccount = account => {
-    this.props.onDisplayAccount(account);
+    console.log("AccountList");
+    this.props.fetchAccounts();
   };
 
   render() {
+    const { loading, accounts } = this.props;
+
+    if (loading) return <LoadingComponent />;
+
     return (
       <>
-        {this.state.isLoading ? (
-          <div className='ui active centered inline loader'></div>
-        ) : (
-          <div className='ui divided selection list'>
-            {this.state.accounts.map(account => {
-              return (
-                <div
-                  className='item'
-                  key={account.aggregateId}
-                  data-test='account-label'
-                  onClick={() => this.handleDisplayAccount(account)}
-                >
-                  <AccountSummary account={account} />
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <div>Accounts</div>
+        <div className='ui divided selection list'>
+          {accounts.map(account => {
+            return (
+              <div
+                className='item'
+                key={account.aggregateId}
+                data-test='account-label'
+                onClick={() => this.handleDisplayAccount(account)}
+              >
+                <AccountSummary account={account} />
+              </div>
+            );
+          })}
+        </div>
       </>
     );
   }
 }
 
-export default AccountList;
+const mapStateToProps = state => {
+  console.log(state);
+  return {
+    loading: state.async.loading,
+    accounts: state.accounts.accounts
+  };
+};
+
+export default connect(mapStateToProps, { fetchAccounts })(AccountList);
