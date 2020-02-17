@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import LoadingComponent from "../App/LoadingComponent";
+import Loading from "../App/Loading";
 import AccountSummary from "./AccountSummary";
 import { fetchAccounts } from "../../domain/account/actions";
 import "./AccountList.css";
@@ -14,7 +14,7 @@ class AccountList extends Component {
   render() {
     const { loading, accounts } = this.props;
 
-    if (loading) return <LoadingComponent />;
+    if (loading) return <Loading />;
 
     return (
       <>
