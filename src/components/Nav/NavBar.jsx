@@ -1,39 +1,32 @@
 import React, { Component } from "react";
 import { NavLink, Link, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 import { Container, Menu } from "semantic-ui-react";
-import { Auth } from "aws-amplify";
 
 import SignedInMenu from "./Menus/SignedInMenu";
 import SignedOutMenu from "./Menus/SignedOutMenu";
+import { signIn, signOut } from "../Auth/authActions";
 
 class NavBar extends Component {
-  state = { userName: "", authenticated: false };
-
-  componentDidMount = async () => {
+  componentDidMount = () => {
     console.log("NavBar");
 
-    await Auth.currentUserInfo().then(user => {
-      this.setState({
-        userName: user.username,
-        authenticated: true
-      });
-    });
-
-    console.log("Done Navbar");
+    this.handleSignIn();
   };
 
-  handleSignIn = () => {};
+  handleSignIn = () => {
+    this.props.signIn();
+  };
 
   handleSignOut = () => {
-    Auth.signOut()
-      .then(data => console.log(data))
-      .catch(err => console.log(err));
+    this.props.signOut();
 
-    this.setState({ authenticated: false });
     this.props.history.push("/");
   };
 
   render() {
+    const { userName, authenticated } = this.props;
+
     return (
       <>
         <Menu inverted fixed='top'>
@@ -43,8 +36,8 @@ class NavBar extends Component {
               Pecuniary
             </Menu.Item>
             <Menu.Item as={NavLink} to='/accounts' name='Accounts' />
-            {this.state.authenticated ? (
-              <SignedInMenu signOut={this.handleSignOut} username={this.state.userName} />
+            {authenticated ? (
+              <SignedInMenu signOut={this.handleSignOut} username={userName} />
             ) : (
               <SignedOutMenu signIn={this.handleSignIn} />
             )}
@@ -62,4 +55,16 @@ class NavBar extends Component {
   }
 }
 
-export default withRouter(NavBar);
+const mapStateToProps = state => {
+  return {
+    userName: state.auth.user ? state.auth.user.username : null,
+    authenticated: state.auth.authenticated
+  };
+};
+
+const actions = {
+  signIn,
+  signOut
+};
+
+export default connect(mapStateToProps, actions)(withRouter(NavBar));
