@@ -1,1 +1,2 @@
 export const FETCH_ACCOUNTS = "FETCH_ACCOUNTS";
+export const UPDATE_ACCOUNT = "UPDATE_ACCOUNT";

@@ -4,6 +4,7 @@ import { reduxForm, Field } from "redux-form";
 import { Grid, Segment, Header, Form, Button } from "semantic-ui-react";
 import { combineValidators, isRequired } from "revalidate";
 
+import { updateAccount } from "../../domain/account/actions";
 import TextInput from "../../common/Form/TextInput";
 import SelectInput from "../../common/Form/SelectInput";
 
@@ -21,7 +22,12 @@ const accountTypes = [
 
 class AccountDetail extends Component {
   onFormSubmit = values => {
-    console.log("Submit Clicked");
+    if (this.props.initialValues.id) {
+      this.props.updateAccount(values);
+      this.props.history.push("/accounts");
+    } else {
+      console.log("TODO: Create new Account");
+    }
   };
 
   render() {
@@ -67,6 +73,7 @@ const mapStateToProps = (state, ownProps) => {
 
   let account = {};
 
+  console.log(state.accounts);
   if (accountId && state.accounts.accounts.length > 0) {
     account = state.accounts.accounts.filter(account => account.id === accountId)[0];
   }
@@ -76,4 +83,8 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default connect(mapStateToProps)(reduxForm({ form: "accountForm", validate })(AccountDetail));
+const actions = {
+  updateAccount
+};
+
+export default connect(mapStateToProps, actions)(reduxForm({ form: "accountForm", validate })(AccountDetail));

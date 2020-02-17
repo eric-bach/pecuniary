@@ -1,6 +1,6 @@
 import { API, graphqlOperation, Auth } from "aws-amplify";
 import { listAccountReadModels } from "../../graphql/queries.js";
-import { FETCH_ACCOUNTS } from "./constants";
+import { FETCH_ACCOUNTS, UPDATE_ACCOUNT } from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
 
 export const fetchAccounts = userId => async dispatch => {
@@ -29,4 +29,11 @@ export const fetchAccounts = userId => async dispatch => {
   });
 
   dispatch(asyncActionFinish());
+};
+
+export const updateAccount = account => {
+  return {
+    type: UPDATE_ACCOUNT,
+    payload: account
+  };
 };
