@@ -1,4 +1,4 @@
-import { SIGN_IN, SIGN_OUT } from "./authConstants";
+import { SIGN_IN, SIGN_OUT } from "./constants";
 import { createReducer } from "../../common/reducerUtils";
 
 const initialState = {};

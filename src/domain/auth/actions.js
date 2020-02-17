@@ -1,6 +1,6 @@
 import { Auth } from "aws-amplify";
-import { SIGN_IN, SIGN_OUT } from "./authConstants";
-import { asyncActionStart, asyncActionFinish } from "../Async/asyncActions.js";
+import { SIGN_IN, SIGN_OUT } from "./constants";
+import { asyncActionStart, asyncActionFinish } from "../async/actions";
 
 export const signIn = () => async dispatch => {
   dispatch(asyncActionStart());

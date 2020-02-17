@@ -1,7 +1,7 @@
 import { API, graphqlOperation, Auth } from "aws-amplify";
 import { listAccountReadModels } from "../../graphql/queries.js";
-import { FETCH_ACCOUNTS } from "./accountTypes";
-import { asyncActionStart, asyncActionFinish } from "../Async/asyncActions.js";
+import { FETCH_ACCOUNTS } from "./constants";
+import { asyncActionStart, asyncActionFinish } from "../async/actions";
 
 export const fetchAccounts = userId => async dispatch => {
   dispatch(asyncActionStart());

@@ -1,4 +1,4 @@
-import { ASYNC_ACTION_START, ASYNC_ACTION_FINISH, ASYNC_ACTION_ERROR } from "./asyncConstants";
+import { ASYNC_ACTION_START, ASYNC_ACTION_FINISH, ASYNC_ACTION_ERROR } from "./constants";
 import { createReducer } from "../../common/reducerUtils";
 
 const initialState = {

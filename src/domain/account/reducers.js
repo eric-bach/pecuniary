@@ -1,4 +1,4 @@
-import { FETCH_ACCOUNTS } from "./accountTypes";
+import { FETCH_ACCOUNTS } from "./constants";
 
 const INITIAL_STATE = {
   accounts: []

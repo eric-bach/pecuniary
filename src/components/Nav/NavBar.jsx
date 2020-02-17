@@ -5,7 +5,7 @@ import { Container, Menu } from "semantic-ui-react";
 
 import SignedInMenu from "./Menus/SignedInMenu";
 import SignedOutMenu from "./Menus/SignedOutMenu";
-import { signIn, signOut } from "../Auth/authActions";
+import { signIn, signOut } from "../../domain/auth/actions";
 
 class NavBar extends Component {
   componentDidMount = () => {
