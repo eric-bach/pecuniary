@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 import { Container } from "semantic-ui-react";
 import { withAuthenticator } from "aws-amplify-react";
 
+import ScrollToTop from "../../common/ScrollToTop";
 import NavBar from "../Nav/NavBar";
 import Home from "../Home/Home";
 import AccountList from "../Account/AccountList";
@@ -12,12 +13,14 @@ class App extends React.Component {
   render() {
     return (
       <>
-        <NavBar />
-        <Container className='main'>
-          <Route exact path='/home' component={Home} />
-          <Route exact path='/accounts' component={AccountList} />
-          <Route path='/accounts/:id' component={AccountDetail} />
-        </Container>
+        <ScrollToTop>
+          <NavBar />
+          <Container className='main'>
+            <Route exact path='/home' component={Home} />
+            <Route exact path='/accounts' component={AccountList} />
+            <Route path='/accounts/:id' component={AccountDetail} />
+          </Container>
+        </ScrollToTop>
       </>
     );
   }

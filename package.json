@@ -16,7 +16,9 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.0",
     "redux": "^4.0.5",
+    "redux-form": "^8.3.0",
     "redux-thunk": "^2.3.0",
+    "revalidate": "^1.2.0",
     "semantic-ui-react": "^0.88.2",
     "uuid": "^3.4.0"
   },
