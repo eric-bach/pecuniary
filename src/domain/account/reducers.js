@@ -1,12 +1,17 @@
-import { FETCH_ACCOUNTS, UPDATE_ACCOUNT, CREATE_ACCOUNT } from "./constants";
+import { FETCH_ACCOUNTS, UPDATE_ACCOUNT, CREATE_ACCOUNT, FETCH_ACCOUNT_TYPES } from "./constants";
 import { createReducer } from "../../common/reducerUtils";
 
 const INITIAL_STATE = {
-  accounts: []
+  accounts: [],
+  accountTypes: []
 };
 
 const fetchAccounts = (state, payload) => {
   return { ...state, accounts: payload };
+};
+
+const fetchAccountTypes = (state, payload) => {
+  return { ...state, accountTypes: payload };
 };
 
 const createAccount = (state, payload) => {
@@ -19,6 +24,7 @@ const updateAccount = (state, payload) => {
 
 export default createReducer(INITIAL_STATE, {
   [FETCH_ACCOUNTS]: fetchAccounts,
+  [FETCH_ACCOUNT_TYPES]: fetchAccountTypes,
   [CREATE_ACCOUNT]: createAccount,
   [UPDATE_ACCOUNT]: updateAccount
 });

@@ -4,7 +4,7 @@ import { reduxForm, Field } from "redux-form";
 import { Grid, Segment, Header, Form, Button } from "semantic-ui-react";
 import { combineValidators, isRequired } from "revalidate";
 
-import { createAccount, updateAccount } from "../../domain/account/actions";
+import { createAccount, updateAccount, fetchAccountTypes } from "../../domain/account/actions";
 import TextInput from "../../common/Form/TextInput";
 import SelectInput from "../../common/Form/SelectInput";
 
@@ -14,13 +14,11 @@ const validate = combineValidators({
   description: isRequired({ message: "The account description is required" })
 });
 
-// TODO Get this from DynamoDB
-const accountTypes = [
-  { key: "1", text: "TFSA", value: "1" },
-  { key: "2", text: "RRSP", value: "2" }
-];
-
 class AccountForm extends Component {
+  componentDidMount() {
+    this.props.fetchAccountTypes();
+  }
+
   onFormSubmit = values => {
     if (this.props.initialValues.id) {
       this.props.updateAccount(values);
@@ -38,7 +36,13 @@ class AccountForm extends Component {
   };
 
   render() {
-    const { history } = this.props;
+    const { history, accountTypes } = this.props;
+
+    let accountTypeItems = accountTypes.map(accountType => ({
+      key: accountType.id,
+      text: accountType.name,
+      value: accountType.id
+    }));
 
     return (
       <Grid>
@@ -51,7 +55,7 @@ class AccountForm extends Component {
                 name='accountType.id'
                 type='text'
                 component={SelectInput}
-                options={accountTypes}
+                options={accountTypeItems}
                 placeholder='What account type is this'
               ></Field>
               <Field
@@ -85,13 +89,15 @@ const mapStateToProps = (state, ownProps) => {
   }
 
   return {
-    initialValues: account
+    selectedAccount: account,
+    accountTypes: state.accounts.accountTypes
   };
 };
 
 const actions = {
   createAccount,
-  updateAccount
+  updateAccount,
+  fetchAccountTypes
 };
 
 export default connect(mapStateToProps, actions)(reduxForm({ form: "accountForm", validate })(AccountForm));

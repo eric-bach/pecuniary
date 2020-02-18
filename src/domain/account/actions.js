@@ -1,7 +1,7 @@
 import { API, graphqlOperation, Auth } from "aws-amplify";
 import { createEvent } from "../../graphql/mutations";
-import { listAccountReadModels } from "../../graphql/queries.js";
-import { FETCH_ACCOUNTS, CREATE_ACCOUNT, UPDATE_ACCOUNT } from "./constants";
+import { listAccountReadModels, listAccountTypes } from "../../graphql/queries.js";
+import { FETCH_ACCOUNTS, CREATE_ACCOUNT, UPDATE_ACCOUNT, FETCH_ACCOUNT_TYPES } from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
 
 export const fetchAccounts = userId => async dispatch => {
@@ -27,6 +27,18 @@ export const fetchAccounts = userId => async dispatch => {
       type: FETCH_ACCOUNTS,
       payload: accounts
     });
+  });
+
+  dispatch(asyncActionFinish());
+};
+
+export const fetchAccountTypes = () => async dispatch => {
+  dispatch(asyncActionStart());
+
+  await API.graphql(graphqlOperation(listAccountTypes)).then(result => {
+    const accountTypes = result.data.listAccountTypes.items;
+
+    dispatch({ type: FETCH_ACCOUNT_TYPES, payload: accountTypes });
   });
 
   dispatch(asyncActionFinish());
