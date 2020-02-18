@@ -112,8 +112,6 @@ export const updateAccount = account => async dispatch => {
 };
 
 export const deleteAccount = account => async dispatch => {
-  dispatch(asyncActionStart());
-
   var userId;
   await Auth.currentUserInfo().then(user => {
     userId = user.attributes.sub;
@@ -141,6 +139,4 @@ export const deleteAccount = account => async dispatch => {
       account
     }
   });
-
-  dispatch(asyncActionFinish());
 };
