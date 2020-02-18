@@ -5,11 +5,15 @@ import { Grid, Button } from "semantic-ui-react";
 
 import Loading from "../App/Loading";
 import AccountSummary from "./AccountSummary";
-import { fetchAccounts } from "../../domain/account/actions";
+import { fetchAccounts, deleteAccount } from "../../domain/account/actions";
 
 class AccountList extends Component {
   componentDidMount = async () => {
     this.props.fetchAccounts();
+  };
+
+  handleDeleteAccount = account => {
+    this.props.deleteAccount(account);
   };
 
   render() {
@@ -22,7 +26,14 @@ class AccountList extends Component {
         <Grid.Column width={10}>
           <h2>Accounts</h2>
           {accounts.map(account => {
-            return <AccountSummary key={account.aggregateId} account={account} data-test='account-label' />;
+            return (
+              <AccountSummary
+                key={account.aggregateId}
+                account={account}
+                deleteAccount={this.handleDeleteAccount}
+                data-test='account-label'
+              />
+            );
           })}
         </Grid.Column>
         <Grid.Column width={6}>
@@ -41,4 +52,9 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, { fetchAccounts })(AccountList);
+const actions = {
+  fetchAccounts,
+  deleteAccount
+};
+
+export default connect(mapStateToProps, actions)(AccountList);

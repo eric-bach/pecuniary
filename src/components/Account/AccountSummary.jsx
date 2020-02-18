@@ -4,7 +4,7 @@ import { Segment, Item, Button } from "semantic-ui-react";
 
 class AccountSummary extends Component {
   render() {
-    const { account } = this.props;
+    const { account, deleteAccount } = this.props;
 
     return (
       <Segment.Group>
@@ -23,7 +23,7 @@ class AccountSummary extends Component {
                 <Item.Meta>{account.accountType.name} account</Item.Meta>
                 <Item.Description>
                   {account.description}
-                  <Button as='a' color='red' floated='right' content='Delete' />
+                  <Button as='a' color='red' floated='right' onClick={() => deleteAccount(account)} content='Delete' />
                   <Button as={Link} to={`/accounts/${account.id}`} color='teal' floated='right' content='Edit' />
                 </Item.Description>
               </Item.Content>

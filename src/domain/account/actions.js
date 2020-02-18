@@ -1,7 +1,7 @@
 import { API, graphqlOperation, Auth } from "aws-amplify";
 import { createEvent } from "../../graphql/mutations";
 import { listAccountReadModels, listAccountTypes } from "../../graphql/queries.js";
-import { FETCH_ACCOUNTS, CREATE_ACCOUNT, UPDATE_ACCOUNT, FETCH_ACCOUNT_TYPES } from "./constants";
+import { FETCH_ACCOUNTS, CREATE_ACCOUNT, UPDATE_ACCOUNT, FETCH_ACCOUNT_TYPES, DELETE_ACCOUNT } from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
 
 export const fetchAccounts = userId => async dispatch => {
@@ -101,6 +101,40 @@ export const updateAccount = account => async dispatch => {
   dispatch({
     type: UPDATE_ACCOUNT,
     payload: account
+  });
+
+  dispatch(asyncActionFinish());
+};
+
+export const deleteAccount = account => async dispatch => {
+  dispatch(asyncActionStart());
+
+  var userId;
+  await Auth.currentUserInfo().then(user => {
+    userId = user.attributes.sub;
+  });
+
+  const input = {
+    id: account.id,
+    aggregateId: account.aggregateId,
+    name: "AccountDeletedEvent",
+    version: account.version + 1,
+    data: JSON.stringify({
+      id: account.id,
+      name: account.name,
+      description: account.description,
+      accountAccountTypeId: account.accountType.id
+    }),
+    userId: userId,
+    timestamp: new Date().toISOString()
+  };
+  await API.graphql(graphqlOperation(createEvent, { input }));
+
+  dispatch({
+    type: DELETE_ACCOUNT,
+    payload: {
+      account
+    }
   });
 
   dispatch(asyncActionFinish());
