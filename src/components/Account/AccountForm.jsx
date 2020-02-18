@@ -47,6 +47,7 @@ class AccountForm extends Component {
     return (
       <Grid>
         <Grid.Column width={10}>
+          <h2>Account</h2>
           <Segment>
             <Header sub color='teal' content='Account Details' />
             <Form onSubmit={this.props.handleSubmit(this.onFormSubmit)} autoComplete='off'>
@@ -89,7 +90,7 @@ const mapStateToProps = (state, ownProps) => {
   }
 
   return {
-    selectedAccount: account,
+    initialValues: account,
     accountTypes: state.accounts.accountTypes
   };
 };

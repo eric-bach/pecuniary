@@ -24,7 +24,11 @@ class AccountList extends Component {
     return (
       <Grid>
         <Grid.Column width={10}>
-          <h2>Accounts</h2>
+          <h2>
+            Accounts
+            <Button as={Link} to='/createAccount' floated='right' positive content='Create Account' />
+          </h2>
+
           {accounts.map(account => {
             return (
               <AccountSummary
@@ -38,7 +42,6 @@ class AccountList extends Component {
         </Grid.Column>
         <Grid.Column width={6}>
           <h2>Summary</h2>
-          <Button as={Link} to='/createAccount' floated='right' positive inverted content='Create Account' />
         </Grid.Column>
       </Grid>
     );
