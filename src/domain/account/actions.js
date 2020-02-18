@@ -3,31 +3,34 @@ import { createEvent } from "../../graphql/mutations";
 import { listAccountReadModels, listAccountTypes } from "../../graphql/queries.js";
 import { FETCH_ACCOUNTS, CREATE_ACCOUNT, UPDATE_ACCOUNT, FETCH_ACCOUNT_TYPES, DELETE_ACCOUNT } from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
+import { setIntervalAsync } from "../../common/apiUtils";
 
 export const fetchAccounts = userId => async dispatch => {
   dispatch(asyncActionStart());
 
-  await Auth.currentUserInfo().then(user => {
-    userId = user.attributes.sub;
-  });
-
-  await API.graphql(
-    graphqlOperation(listAccountReadModels, {
-      limit: 50,
-      filter: {
-        userId: {
-          eq: userId
-        }
-      }
-    })
-  ).then(result => {
-    const accounts = result.data.listAccountReadModels.items.sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1));
-
-    dispatch({
-      type: FETCH_ACCOUNTS,
-      payload: accounts
+  setIntervalAsync(async () => {
+    await Auth.currentUserInfo().then(user => {
+      userId = user.attributes.sub;
     });
-  });
+
+    await API.graphql(
+      graphqlOperation(listAccountReadModels, {
+        limit: 50,
+        filter: {
+          userId: {
+            eq: userId
+          }
+        }
+      })
+    ).then(result => {
+      const accounts = result.data.listAccountReadModels.items.sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1));
+
+      dispatch({
+        type: FETCH_ACCOUNTS,
+        payload: accounts
+      });
+    });
+  }, 2000);
 
   dispatch(asyncActionFinish());
 };
@@ -35,11 +38,13 @@ export const fetchAccounts = userId => async dispatch => {
 export const fetchAccountTypes = () => async dispatch => {
   dispatch(asyncActionStart());
 
-  await API.graphql(graphqlOperation(listAccountTypes)).then(result => {
-    const accountTypes = result.data.listAccountTypes.items;
+  setIntervalAsync(async () => {
+    await API.graphql(graphqlOperation(listAccountTypes)).then(result => {
+      const accountTypes = result.data.listAccountTypes.items;
 
-    dispatch({ type: FETCH_ACCOUNT_TYPES, payload: accountTypes });
-  });
+      dispatch({ type: FETCH_ACCOUNT_TYPES, payload: accountTypes });
+    });
+  }, 2000);
 
   dispatch(asyncActionFinish());
 };
