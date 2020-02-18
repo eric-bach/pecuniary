@@ -25,7 +25,7 @@ class AccountList extends Component {
       <Grid>
         <Grid.Column width={10}>
           <h2>
-            Accounts
+            Accounts ({accounts.length})
             <Button as={Link} to='/createAccount' floated='right' positive content='Create Account' />
           </h2>
 
