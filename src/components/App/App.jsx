@@ -8,6 +8,8 @@ import NavBar from "../Nav/NavBar";
 import Home from "../Home/Home";
 import AccountList from "../Account/AccountList";
 import AccountForm from "../Account/AccountForm";
+import AccountDetail from "../Account/AccountDetail";
+import TransactionForm from "../Transaction/TransactionForm";
 
 class App extends React.Component {
   render() {
@@ -18,7 +20,9 @@ class App extends React.Component {
           <Container className='main'>
             <Route exact path='/home' component={Home} />
             <Route exact path='/accounts' component={AccountList} />
-            <Route path={["/createAccount", "/accounts/:id"]} component={AccountForm} />
+            <Route path='/accounts/view/:id' component={AccountDetail} />
+            <Route path={["/accounts/new", "/accounts/edit/:id"]} component={AccountForm} />
+            <Route path='/transactions/new' component={TransactionForm} />
           </Container>
         </ScrollToTop>
       </>
