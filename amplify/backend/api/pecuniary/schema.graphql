@@ -51,6 +51,7 @@ type AccountReadModel @model {
   transactions: [TransactionReadModel] @connection(name: "Transactions")
 }
 
+# Transaction
 type TransactionReadModel @model {
   id: ID!
   aggregateId: ID!

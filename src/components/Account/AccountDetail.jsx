@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "semantic-ui-react";
 import AccountSummary from "./AccountSummary";
+import TransactionList from "../Transaction/TransactionList";
 
 class AccountDetail extends Component {
   render() {
     const account = this.props.location.state.account;
-
     return (
       <>
         <h2>Account</h2>
@@ -22,6 +22,7 @@ class AccountDetail extends Component {
           positive
           content='Add Transaction'
         />
+        <TransactionList transactions={account.transactions} />
       </>
     );
   }

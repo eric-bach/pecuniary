@@ -45,7 +45,7 @@ export const fetchAccountTypes = () => async dispatch => {
 
       dispatch({ type: FETCH_ACCOUNT_TYPES, payload: accountTypes });
     });
-  }, 2000);
+  }, 10000);
 
   dispatch(asyncActionFinish());
 };

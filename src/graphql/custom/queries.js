@@ -23,6 +23,10 @@ export const listAccountReadModels = `query ListAccountReadModels(
           items {
             id
             aggregateId
+            transactionType {
+              id
+              name
+            }
             userId
             transactionDate
             shares
