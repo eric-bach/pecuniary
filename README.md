@@ -39,6 +39,31 @@
 
 ![Top Level](diagrams/toplevel.png)
 
+## Technology
+
+### Backend
+
+- AWS Amplify
+- AWS Cognito User Pools/Identity Pools
+- AWS AppSync GraphQL
+- AWS DynamoDB (EventStore)
+- DynamoDB Streams
+- AWS Simple Notification Service
+- AWS DynamoDB (ReadStore)
+- AWS Lambda
+
+### Frontend
+
+- AWS Amplify
+- React.js
+- React Router
+- Redux
+- Redux Thunk
+- Redux Form
+- Revalidate
+- Semantic UI React
+- Cypress
+
 ## Getting Started
 
 1. Clone project and install dependencies

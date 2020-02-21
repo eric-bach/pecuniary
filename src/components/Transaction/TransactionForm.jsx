@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { reduxForm, Field } from "redux-form";
 import { Grid, Segment, Header, Form, Button } from "semantic-ui-react";
-import { combineValidators, isRequired } from "revalidate";
+import { combineValidators, isRequired, isNumeric, isAlphaNumeric, composeValidators } from "revalidate";
 
 import { fetchTransactionTypes, createTransaction } from "../../domain/transaction/actions";
 import TextInput from "../../common/Form/TextInput";
@@ -13,10 +13,22 @@ import AccountSummary from "../Account/AccountSummary";
 const validate = combineValidators({
   "transactionType.id": isRequired({ message: "The transaction type is required" }),
   date: isRequired({ message: "Please select the transaction date" }),
-  symbol: isRequired({ message: "The security symbol is required" }),
-  shares: isRequired({ message: "The number of shares is required" }),
-  price: isRequired({ message: "The price per share is required" }),
-  commission: isRequired({ message: "The commission amount is required" })
+  symbol: composeValidators(
+    isRequired({ message: "The security symbol is required" }),
+    isAlphaNumeric({ message: "The symbol is invalid" })
+  )(),
+  shares: composeValidators(
+    isRequired({ message: "The number of shares is required" }),
+    isNumeric({ message: "The number of shares is invalid" })
+  )(),
+  price: composeValidators(
+    isRequired({ message: "The price per share is required" }),
+    isNumeric({ message: "The price per shares is invalid" })
+  )(),
+  commission: composeValidators(
+    isRequired({ message: "The commission amount is required" }),
+    isNumeric({ message: "The commission amount is invalid" })
+  )()
 });
 
 class TransactionForm extends Component {
