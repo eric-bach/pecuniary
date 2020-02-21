@@ -40,7 +40,7 @@ async function seed(query, operationName) {
     signer.addAuthorization(AWS.config.credentials, AWS.util.date.getDate());
   }
 
-  const data = await new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     const httpRequest = https.request({ ...req, host: endpoint }, result => {
       result.on("data", data => {
         resolve(JSON.parse(data.toString()));

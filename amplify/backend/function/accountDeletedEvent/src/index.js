@@ -11,15 +11,15 @@ exports.handler = async event => {
 
   console.log("Message received from SNS:", message);
 
-  var event = JSON.parse(message).message;
+  var msg = JSON.parse(message).message;
 
-  console.log("Saving event to read store:", event);
+  console.log("Saving event to read store:", msg);
 
   // 1. Get all transactions matching UserId
   let transactionsQuery = `query listTransactionReadModels {
         listTransactionReadModels(filter: {
           userId:{
-            eq:"${event.userId}"
+            eq:"${msg.userId}"
           }
         }) {
           items {
@@ -31,16 +31,11 @@ exports.handler = async event => {
         }
       }`;
   console.debug("Get transactions: %j", transactionsQuery);
-  var transactions = await graphqlOperation(
-    transactionsQuery,
-    "listTransactionReadModels"
-  );
+  var transactions = await graphqlOperation(transactionsQuery, "listTransactionReadModels");
   console.debug("Get transactions result: %j", transactions);
 
   // 2. Delete each transaction matching Account Id
-  var trans = transactions.data.listTransactionReadModels.items.filter(
-    e => e.account.id == event.data.id
-  );
+  var trans = transactions.data.listTransactionReadModels.items.filter(e => e.account.id === msg.data.id);
   trans.forEach(async t => {
     console.log(t.id);
 
@@ -53,17 +48,14 @@ exports.handler = async event => {
             }
           }`;
     console.debug("Delete transaction: %j", deleteTransQuery);
-    var deleteTransResult = await graphqlOperation(
-      deleteTransQuery,
-      "deleteTransactionReadModel"
-    );
+    var deleteTransResult = await graphqlOperation(deleteTransQuery, "deleteTransactionReadModel");
     console.debug("Delete transaction result: %j", deleteTransResult);
   });
 
   // 3. Delete Account
   let query = `mutation deleteAccountReadModel {
           deleteAccountReadModel(input: {
-            id: "${event.data.id}"
+            id: "${msg.data.id}"
           })
           {
             id
@@ -71,7 +63,7 @@ exports.handler = async event => {
         }`;
 
   console.debug("Mutation/Query: %j", query);
-  result = await graphqlOperation(query, "deleteAccountReadModel");
+  var result = await graphqlOperation(query, "deleteAccountReadModel");
   console.debug("Delete account result: %j", result);
 };
 

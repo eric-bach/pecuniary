@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 describe("Transactions:", function() {
   const symbol = new Date().getTime() + Math.trunc(365 * Math.random());
 

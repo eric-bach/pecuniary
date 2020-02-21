@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -78,10 +80,7 @@ Cypress.Commands.add("createTransaction", symbol => {
   cy.get('[data-test="transaction-type-selector"]')
     .select("Buy")
     .should("have.value", "Buy");
-  cy.get('[data-test="transaction-date-input"]').should(
-    "have.value",
-    Cypress.moment().format("YYYY-MM-DD")
-  );
+  cy.get('[data-test="transaction-date-input"]').should("have.value", Cypress.moment().format("YYYY-MM-DD"));
 
   cy.get('[data-test="symbol-input"]').type(symbol);
   cy.get('[data-test="shares-input"]')

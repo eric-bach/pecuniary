@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 describe("Accounts:", function() {
   beforeEach(function() {
     cy.login();

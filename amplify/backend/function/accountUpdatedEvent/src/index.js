@@ -11,19 +11,19 @@ exports.handler = async event => {
 
   console.log("Message received from SNS:", message);
 
-  var event = JSON.parse(message).message;
+  var msg = JSON.parse(message).message;
 
-  console.log("Saving event to read store:", event);
+  console.log("Saving event to read store:", msg);
 
   let mutation = `mutation updateAccountReadModel {
            updateAccountReadModel(input: {
-             id: "${event.data.id}"
-             aggregateId: "${event.aggregateId}"
-             version: ${event.version}
-             userId: "${event.userId}"
-             name: "${event.data.name}"
-             description: "${event.data.description}"
-             accountReadModelAccountTypeId: ${event.data.accountAccountTypeId}
+             id: "${msg.data.id}"
+             aggregateId: "${msg.aggregateId}"
+             version: ${msg.version}
+             userId: "${msg.userId}"
+             name: "${msg.data.name}"
+             description: "${msg.data.description}"
+             accountReadModelAccountTypeId: ${msg.data.accountAccountTypeId}
            })
            {
              aggregateId
