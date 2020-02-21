@@ -9,6 +9,7 @@ class AccountDetail extends Component {
 
     return (
       <>
+        <h2>Account</h2>
         <AccountSummary key={account.aggregateId} account={account} displayButtons={false} data-test='account-label' />
         <Button
           as={Link}

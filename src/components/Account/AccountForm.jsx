@@ -10,7 +10,7 @@ import SelectInput from "../../common/Form/SelectInput";
 
 const validate = combineValidators({
   name: isRequired({ message: "The account name is required" }),
-  type: isRequired({ message: "Please select an account type" }),
+  "accountType.id": isRequired({ message: "Please select an account type" }),
   description: isRequired({ message: "The account description is required" })
 });
 

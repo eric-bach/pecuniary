@@ -1,6 +1,7 @@
 import { API, graphqlOperation, Auth } from "aws-amplify";
 import { createEvent } from "../../graphql/mutations";
-import { listAccountReadModels, listAccountTypes } from "../../graphql/queries.js";
+import { listAccountReadModels } from "../../graphql/custom/queries.js";
+import { listAccountTypes } from "../../graphql/queries.js";
 import { FETCH_ACCOUNTS, CREATE_ACCOUNT, UPDATE_ACCOUNT, FETCH_ACCOUNT_TYPES, DELETE_ACCOUNT } from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
 import { setIntervalAsync } from "../../common/apiUtils";
