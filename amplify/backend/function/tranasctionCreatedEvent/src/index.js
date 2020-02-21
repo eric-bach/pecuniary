@@ -11,23 +11,23 @@ exports.handler = async event => {
 
   console.log("Message received from SNS:", message);
 
-  var event = JSON.parse(message).message;
+  var msg = JSON.parse(message).message;
 
-  console.log("Saving event to read store:", event);
+  console.log("Saving event to read store:", msg);
 
   let query = `mutation createTransactionReadModel {
         createTransactionReadModel(input: {
-          aggregateId: "${event.aggregateId}"
-          version: ${event.version}
-          userId: "${event.userId}"
-          transactionDate: "${event.data.transactionDate}"
-          symbol: "${event.data.symbol}"
-          shares: ${event.data.shares}
-          price: ${event.data.price}
-          commission: ${event.data.commission}
-          transactionReadModelAccountId: "${event.data.transactionReadModelAccountId}"
-          transactionReadModelTransactionTypeId: ${event.data.transactionReadModelTransactionTypeId}
-          createdDate: "${event.data.createdDate}"
+          aggregateId: "${msg.aggregateId}"
+          version: ${msg.version}
+          userId: "${msg.userId}"
+          transactionDate: "${msg.data.transactionDate}"
+          symbol: "${msg.data.symbol}"
+          shares: ${msg.data.shares}
+          price: ${msg.data.price}
+          commission: ${msg.data.commission}
+          transactionReadModelAccountId: "${msg.data.transactionReadModelAccountId}"
+          transactionReadModelTransactionTypeId: ${msg.data.transactionReadModelTransactionTypeId}
+          createdDate: "${msg.data.createdDate}"
         })
         {
           aggregateId
@@ -35,7 +35,7 @@ exports.handler = async event => {
       }`;
 
   console.debug("Mutation/Query: %j", query);
-  result = await graphqlOperation(query, "createTransactionReadModel");
+  var result = await graphqlOperation(query, "createTransactionReadModel");
 
   console.log("Result: %j", result);
   console.log(`Successfully processed ${event.Records.length} records.`);

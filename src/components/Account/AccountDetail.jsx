@@ -19,6 +19,7 @@ class AccountDetail extends Component {
               account: account
             }
           }}
+          floated='right'
           positive
           content='Add Transaction'
         />
