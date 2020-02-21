@@ -55,6 +55,8 @@
 ### Frontend
 
 - AWS Amplify
+- AWS CloudFront
+- AWS Route 53
 - React.js
 - React Router
 - Redux
