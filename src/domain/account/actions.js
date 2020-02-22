@@ -9,29 +9,27 @@ import { setIntervalAsync } from "../../common/apiUtils";
 export const fetchAccounts = userId => async dispatch => {
   dispatch(asyncActionStart());
 
-  setIntervalAsync(async () => {
-    await Auth.currentUserInfo().then(user => {
-      userId = user.attributes.sub;
-    });
+  await Auth.currentUserInfo().then(user => {
+    userId = user.attributes.sub;
+  });
 
-    await API.graphql(
-      graphqlOperation(listAccountReadModels, {
-        limit: 50,
-        filter: {
-          userId: {
-            eq: userId
-          }
+  await API.graphql(
+    graphqlOperation(listAccountReadModels, {
+      limit: 50,
+      filter: {
+        userId: {
+          eq: userId
         }
-      })
-    ).then(result => {
-      const accounts = result.data.listAccountReadModels.items.sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1));
+      }
+    })
+  ).then(result => {
+    const accounts = result.data.listAccountReadModels.items.sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1));
 
-      dispatch({
-        type: FETCH_ACCOUNTS,
-        payload: accounts
-      });
+    dispatch({
+      type: FETCH_ACCOUNTS,
+      payload: accounts
     });
-  }, 2000);
+  });
 
   dispatch(asyncActionFinish());
 };
@@ -45,7 +43,7 @@ export const fetchAccountTypes = () => async dispatch => {
 
       dispatch({ type: FETCH_ACCOUNT_TYPES, payload: accountTypes });
     });
-  }, 10000);
+  }, 500);
 
   dispatch(asyncActionFinish());
 };
