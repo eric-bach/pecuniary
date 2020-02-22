@@ -4,7 +4,6 @@ import { listAccountReadModels } from "../../graphql/custom/queries.js";
 import { listAccountTypes } from "../../graphql/queries.js";
 import { FETCH_ACCOUNTS, CREATE_ACCOUNT, UPDATE_ACCOUNT, FETCH_ACCOUNT_TYPES, DELETE_ACCOUNT } from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
-import { setIntervalAsync } from "../../common/apiUtils";
 
 export const fetchAccounts = userId => async dispatch => {
   dispatch(asyncActionStart());
@@ -31,21 +30,17 @@ export const fetchAccounts = userId => async dispatch => {
     });
   });
 
+  dispatch(fetchAccountTypes());
+
   dispatch(asyncActionFinish());
 };
 
 export const fetchAccountTypes = () => async dispatch => {
-  dispatch(asyncActionStart());
+  await API.graphql(graphqlOperation(listAccountTypes)).then(result => {
+    const accountTypes = result.data.listAccountTypes.items;
 
-  setIntervalAsync(async () => {
-    await API.graphql(graphqlOperation(listAccountTypes)).then(result => {
-      const accountTypes = result.data.listAccountTypes.items;
-
-      dispatch({ type: FETCH_ACCOUNT_TYPES, payload: accountTypes });
-    });
-  }, 500);
-
-  dispatch(asyncActionFinish());
+    dispatch({ type: FETCH_ACCOUNT_TYPES, payload: accountTypes });
+  });
 };
 
 export const createAccount = account => async dispatch => {

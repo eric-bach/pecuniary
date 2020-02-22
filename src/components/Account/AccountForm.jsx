@@ -4,7 +4,7 @@ import { reduxForm, Field } from "redux-form";
 import { Grid, Segment, Header, Form, Button } from "semantic-ui-react";
 import { combineValidators, isRequired } from "revalidate";
 
-import { createAccount, updateAccount, fetchAccountTypes } from "../../domain/account/actions";
+import { createAccount, updateAccount } from "../../domain/account/actions";
 import TextInput from "../../common/Form/TextInput";
 import SelectInput from "../../common/Form/SelectInput";
 
@@ -15,10 +15,6 @@ const validate = combineValidators({
 });
 
 class AccountForm extends Component {
-  componentDidMount() {
-    this.props.fetchAccountTypes();
-  }
-
   onFormSubmit = values => {
     if (this.props.initialValues.id) {
       this.props.updateAccount(values);
@@ -97,8 +93,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const actions = {
   createAccount,
-  updateAccount,
-  fetchAccountTypes
+  updateAccount
 };
 
 export default connect(mapStateToProps, actions)(reduxForm({ form: "accountForm", validate })(AccountForm));
