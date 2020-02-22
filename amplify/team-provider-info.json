@@ -27,23 +27,27 @@
     },
     "prod": {
         "awscloudformation": {
-            "AuthRoleName": "amplify-pecuniary-prod-222441-authRole",
-            "UnauthRoleArn": "arn:aws:iam::830221499166:role/amplify-pecuniary-prod-222441-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::830221499166:role/amplify-pecuniary-prod-222441-authRole",
+            "AuthRoleName": "amplify-pecuniary-prod-141540-authRole",
+            "UnauthRoleArn": "arn:aws:iam::830221499166:role/amplify-pecuniary-prod-141540-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::830221499166:role/amplify-pecuniary-prod-141540-authRole",
             "Region": "us-west-2",
-            "DeploymentBucketName": "amplify-pecuniary-prod-222441-deployment",
-            "UnauthRoleName": "amplify-pecuniary-prod-222441-unauthRole",
-            "StackName": "amplify-pecuniary-prod-222441",
-            "StackId": "arn:aws:cloudformation:us-west-2:830221499166:stack/amplify-pecuniary-prod-222441/008b8240-3a7c-11ea-8654-02f6ffa9fe66",
-            "AmplifyAppId": "d1ocg6ot2vmq90"
+            "DeploymentBucketName": "amplify-pecuniary-prod-141540-deployment",
+            "UnauthRoleName": "amplify-pecuniary-prod-141540-unauthRole",
+            "StackName": "amplify-pecuniary-prod-141540",
+            "StackId": "arn:aws:cloudformation:us-west-2:830221499166:stack/amplify-pecuniary-prod-141540/7b93d210-55b8-11ea-bdc0-02c46d078154",
+            "AmplifyAppId": "d27varpc9im8o1"
         },
         "categories": {
             "auth": {
                 "cognito": {}
             },
             "function": {
-                "pecuniarySeed": {},
-                "pecuniaryEvents": {},
+                "seed": {},
+                "eventBus": {},
+                "accountCreatedEvent": {},
+                "accountUpdatedEvent": {},
+                "accountDeletedEvent": {},
+                "tranasctionCreatedEvent": {},
                 "pecuniary": {}
             }
         }
