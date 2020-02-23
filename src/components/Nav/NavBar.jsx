@@ -29,10 +29,11 @@ class NavBar extends Component {
       <>
         <Menu inverted fixed='top'>
           <Container>
-            <Menu.Item as={Link} to='/home' header>
+            <Menu.Item as={Link} to='/' header>
               <img src='/favicon-32x32.png' alt='logo' />
               Pecuniary
             </Menu.Item>
+            <Menu.Item as={NavLink} to='/home' name='Home' />
             <Menu.Item as={NavLink} to='/accounts' name='Accounts' />
             {authenticated ? (
               <SignedInMenu signOut={this.handleSignOut} username={userName} />
