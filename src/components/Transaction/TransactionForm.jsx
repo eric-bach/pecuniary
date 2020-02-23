@@ -13,10 +13,7 @@ import AccountSummary from "../Account/AccountSummary";
 const validate = combineValidators({
   "transactionType.id": isRequired({ message: "The transaction type is required" }),
   date: isRequired({ message: "Please select the transaction date" }),
-  symbol: composeValidators(
-    isRequired({ message: "The security symbol is required" }),
-    isAlphaNumeric({ message: "The symbol is invalid" })
-  )(),
+  symbol: composeValidators(isRequired({ message: "The security symbol is required" }))(),
   shares: composeValidators(
     isRequired({ message: "The number of shares is required" }),
     isNumeric({ message: "The number of shares is invalid" })
