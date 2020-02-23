@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { reduxForm, Field } from "redux-form";
 import { Grid, Segment, Header, Form, Button } from "semantic-ui-react";
-import { combineValidators, isRequired, isNumeric, isAlphaNumeric, composeValidators } from "revalidate";
+import { combineValidators, composeValidators, isRequired, matchesPattern } from "revalidate";
 
 import { fetchTransactionTypes, createTransaction } from "../../domain/transaction/actions";
 import TextInput from "../../common/Form/TextInput";
@@ -13,18 +13,21 @@ import AccountSummary from "../Account/AccountSummary";
 const validate = combineValidators({
   "transactionType.id": isRequired({ message: "The transaction type is required" }),
   date: isRequired({ message: "Please select the transaction date" }),
-  symbol: composeValidators(isRequired({ message: "The security symbol is required" }))(),
+  symbol: composeValidators(
+    isRequired({ message: "The security symbol is required" }),
+    matchesPattern(/^[a-zA-Z]+\.[a-zA-Z]+$|^[a-zA-Z]+$/)({ message: "The security symbol is invalid" })
+  )(),
   shares: composeValidators(
-    isRequired({ message: "The number of shares is required" })
-    // isNumeric({ message: "The number of shares is invalid" })
+    isRequired({ message: "The number of shares is required" }),
+    matchesPattern(/^(\d{1,3}(\\,\d{3})*|(\d+))(\.\d+)?$/)({ message: "The price per shares is invalid" })
   )(),
   price: composeValidators(
-    isRequired({ message: "The price per share is required" })
-    // isNumeric({ message: "The price per shares is invalid" })
+    isRequired({ message: "The price per share is required" }),
+    matchesPattern(/^(\d{1,3}(\\,\d{3})*|(\d+))(\.\d{0,2})?$/)({ message: "The price per shares is invalid" })
   )(),
   commission: composeValidators(
-    isRequired({ message: "The commission amount is required" })
-    // isNumeric({ message: "The commission amount is invalid" })
+    isRequired({ message: "The commission amount is required" }),
+    matchesPattern(/^(\d{1,3}(\\,\d{3})*|(\d+))(\.\d{0,2})?$/)({ message: "The commission amount is invalid" })
   )()
 });
 
@@ -34,9 +37,6 @@ class TransactionForm extends Component {
   }
 
   onFormSubmit = values => {
-    // console.log("Create Transaction: ", values);
-    // console.log("Account: ", this.props.location.state.account);
-
     if (this.props.initialValues.id) {
       //this.props.updateAccount(values);
     } else {
