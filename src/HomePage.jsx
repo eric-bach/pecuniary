@@ -28,26 +28,26 @@ const HomePage = ({ history }) => {
           <nav className='main-menu'>
             <ul className='menu-list'>
               <li>
-                <a href=''>Solution</a>
+                <a href='#description'>Description</a>
               </li>
               <li>
-                <a href=''>Features</a>
+                <a href='#features'>Features</a>
               </li>
               <li>
-                <a href=''>News</a>
+                <a href='#getting-started'>Getting Started</a>
               </li>
               <li>
-                <a href=''>About</a>
+                <a href='#about'>About</a>
               </li>
               <li>
-                <a href=''>Contact</a>
+                <a href='#contact'>Contact</a>
               </li>
             </ul>
           </nav>
         </div>
       </header>
 
-      <section className='hero-section'>
+      <div className='hero-section'>
         <div className='container'>
           <div className='row'>
             <div className='col-md-6 hero-text'>
@@ -67,10 +67,10 @@ const HomePage = ({ history }) => {
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       <section className='about-section spad'>
-        <div className='container'>
+        <div id='dessription' className='container'>
           <div className='row'>
             <div className='col-lg-6 offset-lg-6 about-text'>
               <h2>What is Pecuniary?</h2>
@@ -90,7 +90,7 @@ const HomePage = ({ history }) => {
       </section>
 
       <section className='features-section spad gradient-bg'>
-        <div className='container text-white'>
+        <div id='features' className='container text-white'>
           <div className='section-title text-center'>
             <h2>Our Features</h2>
             <p>Pecuniary is the simplest way to manage your money at very low cost.</p>
@@ -103,9 +103,6 @@ const HomePage = ({ history }) => {
                 <p>
                   Built on the latest technology stack. You can be assured you will always receive the latest updates.
                 </p>
-                <a href='' className='readmore'>
-                  Read more
-                </a>
               </div>
             </div>
             <div className='col-md-6 col-lg-4 feature'>
@@ -116,9 +113,6 @@ const HomePage = ({ history }) => {
                   Your security and trust are important to us. We're committed to protecting your account with the
                   highest security standards.
                 </p>
-                <a href='' className='readmore'>
-                  Read more
-                </a>
               </div>
             </div>
             <div className='col-md-6 col-lg-4 feature'>
@@ -126,9 +120,6 @@ const HomePage = ({ history }) => {
               <div className='feature-content'>
                 <h4>Account</h4>
                 <p>It's quick an easy to setup a new account with Pecuniary and have it manage your investments.</p>
-                <a href='' className='readmore'>
-                  Read more
-                </a>
               </div>
             </div>
             <div className='col-md-6 col-lg-4 feature'>
@@ -136,9 +127,6 @@ const HomePage = ({ history }) => {
               <div className='feature-content'>
                 <h4>Expert Support</h4>
                 <p>We have friendly and knowledgeable people to help you with any questions you may have.</p>
-                <a href='' className='readmore'>
-                  Read more
-                </a>
               </div>
             </div>
             <div className='col-md-6 col-lg-4 feature'>
@@ -146,9 +134,6 @@ const HomePage = ({ history }) => {
               <div className='feature-content'>
                 <h4>Grow your money</h4>
                 <p>Get started, whether you're investing, doing taxes, or anything in between.</p>
-                <a href='' className='readmore'>
-                  Read more
-                </a>
               </div>
             </div>
             <div className='col-md-6 col-lg-4 feature'>
@@ -159,9 +144,6 @@ const HomePage = ({ history }) => {
                   Pecuniary is more than a tech platform. It provides you with detailed analytics of your portolio
                   performance.
                 </p>
-                <a href='' className='readmore'>
-                  Read more
-                </a>
               </div>
             </div>
           </div>
@@ -169,7 +151,7 @@ const HomePage = ({ history }) => {
       </section>
 
       <section className='process-section spad'>
-        <div className='container'>
+        <div id='getting-started' className='container'>
           <div className='section-title text-center'>
             <h2>Get Started With Pecuniary</h2>
             <p>
@@ -209,7 +191,7 @@ const HomePage = ({ history }) => {
       </section>
 
       <section className='fact-section gradient-bg'>
-        <div className='container'>
+        <div id='about' className='container'>
           <div className='row'>
             <div className='col-sm-6 col-md-6 col-lg-3'>
               <div className='fact'>
@@ -252,7 +234,7 @@ const HomePage = ({ history }) => {
       </section>
 
       <footer className='footer-section'>
-        <div className='container'>
+        <div id='contact' className='container'>
           <div className='row spad'>
             <div className='col-md-6 col-lg-3 footer-widget'>
               <img src='img/logo.png' className='mb-4' alt='' />
@@ -262,29 +244,26 @@ const HomePage = ({ history }) => {
               <span>
                 Copyright &copy;
                 {new Date().getFullYear()} Eric Bach | All rights reserved | This template is made with{" "}
-                <i className='fa fa-heart-o' aria-hidden='true' /> by{" "}
-                <a href='https://colorlib.com' target='_blank'>
-                  Colorlib
-                </a>
+                <i className='fa fa-heart-o' aria-hidden='true' /> by <a href='https://colorlib.com'>Colorlib</a>
               </span>
             </div>
             <div className='col-md-6 col-lg-2 offset-lg-1 footer-widget'>
               <h5 className='widget-title'>Resources</h5>
               <ul>
                 <li>
-                  <a href='#'>Site Link 1</a>
+                  <p>Site Link 1</p>
                 </li>
                 <li>
-                  <a href='#'>Site Link 2</a>
+                  <p>Site Link 2</p>
                 </li>
                 <li>
-                  <a href='#'>Site Link 3</a>
+                  <p>Site Link 3</p>
                 </li>
                 <li>
-                  <a href='#'>Site Link 4</a>
+                  <p>Site Link 4</p>
                 </li>
                 <li>
-                  <a href='#'>Site Link 5</a>
+                  <p>Site Link 5</p>
                 </li>
               </ul>
             </div>
@@ -292,65 +271,34 @@ const HomePage = ({ history }) => {
               <h5 className='widget-title'>Quick Links</h5>
               <ul>
                 <li>
-                  <a href='#'>Site Link 6</a>
+                  <p>Site Link 6</p>
                 </li>
                 <li>
-                  <a href='#'>Site Link 7</a>
+                  <p>Site Link 7</p>
                 </li>
                 <li>
-                  <a href='#'>Site Link 8</a>
+                  <p>Site Link 8</p>
                 </li>
                 <li>
-                  <a href='#'>Site Link 9</a>
+                  <p>Site Link 9</p>
                 </li>
                 <li>
-                  <a href='#'>Site Link 10</a>
+                  <p>Site Link 10</p>
                 </li>
               </ul>
             </div>
             <div className='col-md-6 col-lg-3 footer-widget pl-lg-5 pl-3'>
               <h5 className='widget-title'>Follow Us</h5>
               <div className='social'>
-                <a href='https://www.github.com/eri-bach/pecuniary' className='facebook'>
+                <a href='https://www.ericbach.dev' className='instagram'>
+                  <i className='fa fa-user'></i>
+                </a>
+                <a href='https://www.github.com/eric-bach/pecuniary' className='facebook'>
                   <i className='fa fa-github'></i>
                 </a>
                 <a href='https://www.linkedin/com/ebach' className='twitter'>
                   <i className='fa fa-linkedin'></i>
                 </a>
-                <a href='' className='instagram'>
-                  <i className='fa fa-instagram'></i>
-                </a>
-                <a href='' className='twitter'>
-                  <i className='fa fa-twitter'></i>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className='footer-bottom'>
-            <div className='row'>
-              {/* <div className='col-lg-4 store-links text-center text-lg-left pb-3 pb-lg-0'>
-                <a href=''>
-                  <img src='img/appstore.png' alt='' className='mr-2' />
-                </a>
-                <a href=''>
-                  <img src='img/playstore.png' alt='' />
-                </a>
-              </div> */}
-              <div className='col-lg-8 text-center text-lg-right'>
-                <ul className='footer-nav'>
-                  <li>
-                    <a href=''>Terms of Use</a>
-                  </li>
-                  <li>
-                    <a href=''>Privacy Policy </a>
-                  </li>
-                  <li>
-                    <a href=''>support@pecuniary.ca</a>
-                  </li>
-                  <li>
-                    <a href=''>(123) 456-7890</a>
-                  </li>
-                </ul>
               </div>
             </div>
           </div>
