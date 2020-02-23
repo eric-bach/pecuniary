@@ -11,7 +11,7 @@ const DateInput = ({ input, width, placeholder, meta: { touched, error }, dataTe
         dateFormat='yyyy-MM-dd'
         placeholderText={placeholder}
         // TODO Default to today's date
-        selected={input.value ? new Date(input.value) : new Date()}
+        selected={input.value ? new Date(input.value) : null}
         data-test={dataTest}
         onChange={input.onChange}
         onBlur={input.onBlur}

@@ -91,7 +91,6 @@ class TransactionForm extends Component {
                     placeholder='Transaction date'
                     dataTest='transaction-date'
                   ></Field>
-
                   <Field
                     name='symbol'
                     type='text'
@@ -143,16 +142,18 @@ class TransactionForm extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const accountId = ownProps.match.params.id;
+  const transactionId = ownProps.match.params.id;
+  let transaction = {};
 
-  let account = {};
-
-  if (accountId && state.accounts.accounts.length > 0) {
-    account = state.accounts.accounts.filter(account => account.id === accountId)[0];
+  if (transactionId && state.transaction.transactions.length > 0) {
+    transaction = state.transaction.transactions(t => t.id === transactionId)[0];
+  } else {
+    // Default new transaction to today's date
+    transaction = { date: new Date() };
   }
 
   return {
-    initialValues: account,
+    initialValues: transaction,
     transactionTypes: state.transaction.transactionTypes
   };
 };

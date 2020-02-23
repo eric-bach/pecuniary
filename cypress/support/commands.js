@@ -67,6 +67,8 @@ Cypress.Commands.add("deleteAccount", () => {
   cy.visit("/accounts");
   cy.url().should("include", "/accounts");
 
+  cy.delay(500);
+
   // Delete first Account
   cy.get('[data-test="delete-account-button"]')
     .first()
@@ -80,7 +82,7 @@ Cypress.Commands.add("createTransaction", symbol => {
     .first()
     .click();
 
-  //cy.get('[data-test="transaction-date-input"]').should("have.value", Cypress.moment().format("YYYY-MM-DD"));
+  // cy.get('[data-test="transaction-date-input"]').should("have.value", Cypress.moment().format("YYYY-MM-DD"));
 
   cy.get('[data-test="symbol-input"]').type("BMO");
   cy.get('[data-test="shares-input"]')

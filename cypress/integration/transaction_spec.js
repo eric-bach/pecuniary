@@ -40,5 +40,15 @@ describe("Transactions:", function() {
   it("Add Transaction", function() {
     // Act - Create Transaction
     cy.createTransaction();
+
+    cy.visit("/accounts");
+    cy.url().should("include", "/accounts");
+
+    cy.delay(500);
+
+    // Delete first Account
+    cy.get('[data-test="delete-account-button"]')
+      .first()
+      .click();
   });
 });
