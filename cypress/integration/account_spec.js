@@ -10,93 +10,82 @@ describe("Accounts:", function() {
 
   it("Cancel Creating Account", function() {
     // Arrange - create Account
-    cy.contains("button", "Account").should("be.visible");
-    cy.get('[data-test="add-account-button"]').click();
-    cy.contains("button", "Create").should("be.visible");
+    cy.contains("a", "Create Account").should("be.visible");
+    cy.get('[data-test="create-account-button"]').click();
+    cy.contains("button", "Submit").should("be.visible");
     cy.contains("button", "Cancel").should("be.visible");
 
     // Act - cancel creating Account
-    cy.get('[data-test="cancel-create-account-button"]').click();
+    cy.get('[data-test="cancel-submit-account-button"]').click();
 
     // Assert
     cy.url().should("include", "/accounts");
-    cy.contains("button", "Account").should("be.visible");
+    cy.contains("a", "Create Account").should("be.visible");
   });
 
   it("Create Account", function() {
     // Act - Create Account
     cy.createAccount();
 
-    // // Temp - delay due to eventual consistency
-    // cy.delay(400);
-
-    // // Assert - List Account
-    // cy.contains("div", "My Account");
-    // cy.contains("div", "My Account Description");
+    // Assert - List Account
+    cy.contains("div", "My Account");
+    cy.contains("div", "My Account Description");
   });
 
   it("View Account", function() {
-    // Temp - delay due to eventual consistency
-    cy.delay(200);
-
     // Act - Display Account
-    cy.get('[data-test="account-label"]')
+    cy.get('[data-test="view-account-button"]')
       .first()
       .click();
+    cy.url().should("include", "/accounts/view");
 
     // Assert - Display Account
     cy.contains("div", "My Account");
     cy.contains("div", "My Account Description");
-    cy.contains("button", "Edit");
-    cy.contains("button", "Transaction");
+    cy.contains("a", "Add Transaction");
   });
 
   it("Cancel Edit Account", function() {
     // Act - Cancel Edit Account
-    cy.get('[data-test="account-label"]')
+    cy.get('[data-test="edit-account-button"]')
       .first()
       .click();
-    cy.get('[data-test="edit-account-button"]').click();
-    cy.get('[data-test="cancel-edit-account-button"]').click();
+    cy.url().should("include", "/accounts/edit");
+    cy.get('[data-test="cancel-submit-account-button"]').click();
 
     // Assert
     cy.url().should("include", "/accounts");
-    cy.contains("button", "Account").should("be.visible");
+    cy.contains("a", "Create Account").should("be.visible");
   });
 
   it("Edit Account", function() {
     // Act - Edit Account
-    cy.get('[data-test="account-label"]')
+    cy.get('[data-test="edit-account-button"]')
       .first()
       .click();
-    cy.get('[data-test="edit-account-button"]').click();
+    cy.url().should("include", "/accounts/edit");
+
     cy.get('[data-test="account-name-input"]')
       .clear()
       .type("Edited Account")
       .should("have.value", "Edited Account");
-    cy.get('[data-test="edit-account-button"]').click();
+    cy.get('[data-test="submit-account-button"]').click();
 
-    // Temp - delay due to eventual consistency
-    //cy.delay(400);
+    cy.delay(300);
 
     // Assert
-    //cy.contains("div", "Edited Account");
+    cy.url().should("include", "/accounts");
+    cy.contains("div", "Edited Account");
   });
 
   it("Delete Account", function() {
     // Act - Edit Account
-    cy.get('[data-test="account-label"]')
+    cy.get('[data-test="delete-account-button"]')
       .first()
       .click();
-    cy.get('[data-test="edit-account-button"]').click();
-    cy.get('[data-test="account-name-input"]')
-      .clear()
-      .type("Edited Account")
-      .should("have.value", "Edited Account");
-    cy.get('[data-test="delete-account-button"]').click();
 
     // Assert
     cy.url().should("include", "/accounts");
-    cy.contains("button", "Account").should("be.visible");
+    cy.contains("a", "Create Account").should("be.visible");
   });
 });

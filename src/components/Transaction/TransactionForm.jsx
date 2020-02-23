@@ -15,16 +15,16 @@ const validate = combineValidators({
   date: isRequired({ message: "Please select the transaction date" }),
   symbol: composeValidators(isRequired({ message: "The security symbol is required" }))(),
   shares: composeValidators(
-    isRequired({ message: "The number of shares is required" }),
-    isNumeric({ message: "The number of shares is invalid" })
+    isRequired({ message: "The number of shares is required" })
+    // isNumeric({ message: "The number of shares is invalid" })
   )(),
   price: composeValidators(
-    isRequired({ message: "The price per share is required" }),
-    isNumeric({ message: "The price per shares is invalid" })
+    isRequired({ message: "The price per share is required" })
+    // isNumeric({ message: "The price per shares is invalid" })
   )(),
   commission: composeValidators(
-    isRequired({ message: "The commission amount is required" }),
-    isNumeric({ message: "The commission amount is invalid" })
+    isRequired({ message: "The commission amount is required" })
+    // isNumeric({ message: "The commission amount is invalid" })
   )()
 });
 
@@ -82,19 +82,45 @@ class TransactionForm extends Component {
                     component={SelectInput}
                     options={transactionTypeItems}
                     placeholder='What transaction type is this'
+                    dataTest='transaction-type-selector'
                   ></Field>
                   <Field
                     name='date'
                     dateFormat='yyyy-LL-dd'
                     component={DateInput}
                     placeholder='Transaction date'
+                    dataTest='transaction-date'
                   ></Field>
 
-                  <Field name='symbol' type='text' component={TextInput} placeholder='Security symbol' />
-                  <Field name='shares' type='text' component={TextInput} placeholder='Number of shares' />
-                  <Field name='price' type='text' component={TextInput} placeholder='Price per share' />
-                  <Field name='commission' type='text' component={TextInput} placeholder='Commission of trade' />
-                  <Button positive type='submit'>
+                  <Field
+                    name='symbol'
+                    type='text'
+                    component={TextInput}
+                    placeholder='Security symbol'
+                    dataTest='symbol-input'
+                  />
+                  <Field
+                    name='shares'
+                    type='text'
+                    component={TextInput}
+                    placeholder='Number of shares'
+                    dataTest='shares-input'
+                  />
+                  <Field
+                    name='price'
+                    type='text'
+                    component={TextInput}
+                    placeholder='Price per share'
+                    dataTest='price-input'
+                  />
+                  <Field
+                    name='commission'
+                    type='text'
+                    component={TextInput}
+                    placeholder='Commission of trade'
+                    dataTest='commission-input'
+                  />
+                  <Button positive type='submit' data-test='submit-transaction-button'>
                     Submit
                   </Button>
                   <Button
@@ -102,6 +128,7 @@ class TransactionForm extends Component {
                     onClick={() => history.push("/accounts")}
                     // TODO push to account view
                     //onClick={() => history.push(`/accounts/view/${account.id}`, { state: account })}
+                    data-test='cancel-submit-transaction-button'
                   >
                     Cancel
                   </Button>

@@ -22,6 +22,7 @@ class AccountDetail extends Component {
           floated='right'
           positive
           content='Add Transaction'
+          data-test='add-transaction-button'
         />
         <TransactionList transactions={account.transactions} />
       </>

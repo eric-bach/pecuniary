@@ -47,25 +47,33 @@ class AccountForm extends Component {
           <Segment>
             <Header sub color='teal' content='Account Details' />
             <Form onSubmit={this.props.handleSubmit(this.onFormSubmit)} autoComplete='off'>
-              <Field name='name' type='text' component={TextInput} placeholder='Give your account a name'></Field>
+              <Field
+                name='name'
+                type='text'
+                component={TextInput}
+                placeholder='Give your account a name'
+                dataTest='account-name-input'
+              ></Field>
               <Field
                 name='accountType.id'
                 type='text'
                 component={SelectInput}
                 options={accountTypeItems}
                 placeholder='What account type is this'
+                dataTest='account-type-selector'
               ></Field>
               <Field
                 name='description'
                 type='text'
                 component={TextInput}
                 placeholder='Give your account a description'
+                dataTest='account-description-input'
               ></Field>
 
-              <Button positive type='submit'>
+              <Button positive type='submit' data-test='submit-account-button'>
                 Submit
               </Button>
-              <Button type='button' onClick={() => history.push("/accounts")}>
+              <Button type='button' onClick={() => history.push("/accounts")} data-test='cancel-submit-account-button'>
                 Cancel
               </Button>
             </Form>

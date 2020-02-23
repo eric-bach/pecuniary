@@ -56,7 +56,14 @@ class AccountList extends Component {
         <Grid.Column width={10}>
           <h2>
             Accounts ({accounts.length})
-            <Button as={Link} to='/accounts/new' floated='right' positive content='Create Account' />
+            <Button
+              as={Link}
+              to='/accounts/new'
+              floated='right'
+              positive
+              content='Create Account'
+              data-test='create-account-button'
+            />
           </h2>
 
           {accounts.map(account => {
@@ -66,7 +73,6 @@ class AccountList extends Component {
                 account={account}
                 deleteAccount={this.handleDeleteAccount}
                 displayButtons={true}
-                data-test='account-label'
               />
             );
           })}

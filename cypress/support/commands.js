@@ -26,13 +26,13 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 Cypress.Commands.add("login", user => {
-  cy.visit("/");
+  cy.visit("/home");
   cy.get(selectors.usernameInput).type(Cypress.env("username"));
   cy.get(selectors.signInPasswordInput).type(Cypress.env("password")); // This is read from the CYPRESS_password environment variableb on the host
   cy.get(selectors.signInSignInButton)
     .contains("Sign In")
     .click();
-  cy.get(selectors.signOutButton).contains("Logout");
+  cy.get(selectors.signOutButton).contains("Sign Out");
 });
 
 Cypress.Commands.add("createAccount", account => {
@@ -41,13 +41,12 @@ Cypress.Commands.add("createAccount", account => {
 
   const name = "My Account";
   const description = "My Account Description";
-  const tfsa = "TFSA";
-  const rrsp = "RRSP";
 
   // Create a new Account
-  cy.contains("button", "Account").should("be.visible");
-  cy.get(selectors.addAccountButton).click();
-  cy.contains("button", "Create").should("be.visible");
+  cy.contains("a", "Create Account").should("be.visible");
+  cy.get(selectors.createAccountButton).click();
+  cy.url().should("include", "/accounts/new");
+  cy.contains("button", "Submit").should("be.visible");
   cy.contains("button", "Cancel").should("be.visible");
   cy.get(selectors.accountNameInput)
     .type(name)
@@ -55,13 +54,13 @@ Cypress.Commands.add("createAccount", account => {
   cy.get(selectors.accountDescriptionInput)
     .type(description)
     .should("have.value", description);
-  cy.get(selectors.accountTypeSelector)
-    .select(tfsa)
-    .should("have.value", tfsa);
-  cy.get(selectors.accountTypeSelector)
-    .select(rrsp)
-    .should("have.value", rrsp);
-  cy.get(selectors.createAccountButton).click();
+  cy.get(selectors.accountTypeSelector).click();
+  // Click first drop down value
+  cy.get(".text")
+    .first()
+    .click();
+
+  cy.get(selectors.submitAccountButton).click();
 });
 
 Cypress.Commands.add("deleteAccount", () => {
@@ -69,20 +68,21 @@ Cypress.Commands.add("deleteAccount", () => {
   cy.url().should("include", "/accounts");
 
   // Delete first Account
-  cy.get('[data-test="account-label"]')
+  cy.get('[data-test="delete-account-button"]')
     .first()
     .click();
-  cy.get('[data-test="edit-account-button"]').click();
-  cy.get('[data-test="delete-account-button"]').click();
 });
 
 Cypress.Commands.add("createTransaction", symbol => {
-  cy.get('[data-test="transaction-type-selector"]')
-    .select("Buy")
-    .should("have.value", "Buy");
-  cy.get('[data-test="transaction-date-input"]').should("have.value", Cypress.moment().format("YYYY-MM-DD"));
+  cy.get(selectors.transactionTypeSelector).click();
+  // Click first drop down value
+  cy.get(".text")
+    .first()
+    .click();
 
-  cy.get('[data-test="symbol-input"]').type(symbol);
+  //cy.get('[data-test="transaction-date-input"]').should("have.value", Cypress.moment().format("YYYY-MM-DD"));
+
+  cy.get('[data-test="symbol-input"]').type("BMO");
   cy.get('[data-test="shares-input"]')
     .type("1000")
     .should("have.value", "1000");
@@ -92,14 +92,11 @@ Cypress.Commands.add("createTransaction", symbol => {
   cy.get('[data-test="commission-input"]')
     .type("9.95")
     .should("have.value", "9.95");
-
-  cy.get('[data-test="create-transaction-button"]').click();
+  cy.get('[data-test="submit-transaction-button"]').click();
 });
 
 Cypress.Commands.add("delay", time => {
-  cy.visit("/");
   cy.wait(time);
-  cy.visit("/accounts");
 });
 
 export const selectors = {
@@ -108,9 +105,10 @@ export const selectors = {
   signInPasswordInput: '[data-test="sign-in-password-input"]',
   signInSignInButton: '[data-test="sign-in-sign-in-button"]',
   signOutButton: '[data-test="sign-out-button"]',
-  addAccountButton: '[data-test="add-account-button"]',
+  createAccountButton: '[data-test="create-account-button"]',
+  submitAccountButton: '[data-test="submit-account-button"]',
   accountNameInput: '[data-test="account-name-input"]',
   accountDescriptionInput: '[data-test="account-description-input"]',
   accountTypeSelector: '[data-test="account-type-selector"]',
-  createAccountButton: '[data-test="create-account-button"]'
+  transactionTypeSelector: '[data-test="transaction-type-selector"]'
 };

@@ -12,7 +12,7 @@ const SignedInMenu = ({ signOut, username, avatar }) => {
           <Dropdown.Item text='My Network' icon='users' />
           <Dropdown.Item text='My Profile' icon='user' />
           <Dropdown.Item text='Settings' icon='settings' />
-          <Dropdown.Item onClick={signOut} text='Sign Out' icon='power' />
+          <Dropdown.Item onClick={signOut} text='Sign Out' icon='power' data-test='sign-out-button' />
         </Dropdown.Menu>
       </Dropdown>
     </Menu.Item>

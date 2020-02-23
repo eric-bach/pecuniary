@@ -30,10 +30,18 @@ class AccountSummary extends Component {
                       floated='right'
                       onClick={() => deleteAccount(account)}
                       content='Delete'
+                      data-test='delete-account-button'
                     />
                   )}
                   {displayButtons && (
-                    <Button as={Link} to={`/accounts/edit/${account.id}`} color='blue' floated='right' content='Edit' />
+                    <Button
+                      as={Link}
+                      to={`/accounts/edit/${account.id}`}
+                      color='blue'
+                      floated='right'
+                      content='Edit'
+                      data-test='edit-account-button'
+                    />
                   )}
                   {displayButtons && (
                     <Button
@@ -47,6 +55,7 @@ class AccountSummary extends Component {
                       color='teal'
                       floated='right'
                       content='View'
+                      data-test='view-account-button'
                     />
                   )}
                 </Item.Description>
