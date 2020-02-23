@@ -296,7 +296,7 @@ const HomePage = ({ history }) => {
                 <a href='https://www.github.com/eric-bach/pecuniary' className='facebook'>
                   <i className='fa fa-github'></i>
                 </a>
-                <a href='https://www.linkedin/com/ebach' className='twitter'>
+                <a href='https://www.linkedin.com/ebach' className='twitter'>
                   <i className='fa fa-linkedin'></i>
                 </a>
               </div>
