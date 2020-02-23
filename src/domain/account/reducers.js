@@ -3,11 +3,13 @@ import { createReducer } from "../../common/reducerUtils";
 
 const INITIAL_STATE = {
   accounts: [],
+  prevToken: null,
+  nextToken: null,
   accountTypes: []
 };
 
 const fetchAccounts = (state, payload) => {
-  return { ...state, accounts: payload };
+  return { ...state, accounts: payload.accounts, prevToken: payload.prevToken, nextToken: payload.nextToken };
 };
 
 const fetchAccountTypes = (state, payload) => {

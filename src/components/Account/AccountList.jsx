@@ -15,7 +15,15 @@ import { fetchAccounts, deleteAccount } from "../../domain/account/actions";
 
 class AccountList extends Component {
   componentDidMount = async () => {
-    this.props.fetchAccounts();
+    this.props.fetchAccounts(null);
+  };
+
+  handlePrevPageClick = () => {
+    this.props.fetchAccounts(this.props.prevToken, this.props.prevToken);
+  };
+
+  handleNextPageClick = () => {
+    this.props.fetchAccounts(this.props.prevToken, this.props.nextToken);
   };
 
   handleDeleteAccount = account => {
@@ -66,6 +74,11 @@ class AccountList extends Component {
             />
           </h2>
 
+          <Button.Group>
+            <Button labelPosition='left' icon='left chevron' content='Previous' onClick={this.handlePrevPageClick} />
+            <Button labelPosition='right' icon='right chevron' content='Next' onClick={this.handleNextPageClick} />
+          </Button.Group>
+
           {accounts.map(account => {
             return (
               <AccountSummary
@@ -88,7 +101,9 @@ class AccountList extends Component {
 const mapStateToProps = state => {
   return {
     loading: state.async.loading,
-    accounts: state.accounts.accounts
+    accounts: state.accounts.accounts,
+    prevToken: state.accounts.prevToken,
+    nextToken: state.accounts.nextToken
   };
 };
 

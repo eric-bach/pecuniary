@@ -5,28 +5,44 @@ import { listAccountTypes } from "../../graphql/queries.js";
 import { FETCH_ACCOUNTS, CREATE_ACCOUNT, UPDATE_ACCOUNT, FETCH_ACCOUNT_TYPES, DELETE_ACCOUNT } from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
 
-export const fetchAccounts = userId => async dispatch => {
+export const fetchAccounts = (currentToken, nextToken) => async dispatch => {
   dispatch(asyncActionStart());
 
+  var userId;
   await Auth.currentUserInfo().then(user => {
     userId = user.attributes.sub;
   });
 
-  await API.graphql(
-    graphqlOperation(listAccountReadModels, {
-      limit: 50,
+  var query;
+  if (nextToken) {
+    query = {
+      filter: {
+        userId: {
+          eq: userId
+        }
+      },
+      nextToken: nextToken
+    };
+  } else {
+    query = {
       filter: {
         userId: {
           eq: userId
         }
       }
-    })
-  ).then(result => {
+    };
+  }
+
+  // Set prevToken to current Token
+  currentToken = nextToken;
+
+  await API.graphql(graphqlOperation(listAccountReadModels, query)).then(result => {
     const accounts = result.data.listAccountReadModels.items.sort((a, b) => (a.createdDate < b.createdDate ? 1 : -1));
+    const nextToken = result.data.listAccountReadModels.nextToken;
 
     dispatch({
       type: FETCH_ACCOUNTS,
-      payload: accounts
+      payload: { accounts: accounts, prevToken: currentToken, nextToken: nextToken }
     });
   });
 
