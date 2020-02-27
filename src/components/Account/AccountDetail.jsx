@@ -24,7 +24,7 @@ class AccountDetail extends Component {
           content='Add Transaction'
           data-test='add-transaction-button'
         />
-        <TransactionList transactions={account.transactions} />
+        <TransactionList accountId={account.id} />
       </>
     );
   }

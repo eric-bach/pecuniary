@@ -1,8 +1,27 @@
 import React, { Component } from "react";
-import { Table } from "semantic-ui-react";
+import { connect } from "react-redux";
+import { Table, Button } from "semantic-ui-react";
+
+import { fetchTransactions } from "../../domain/transaction/actions";
 
 class TransactionList extends Component {
+  handlePrevPageClick = () => {
+    console.log(this.props.prevToken, this.props.prevToken);
+    this.props.fetchTransactions(this.props.prevToken, this.props.prevToken);
+  };
+
+  handleNextPageClick = () => {
+    console.log(this.props.prevToken, this.props.nextToken);
+    this.props.fetchTransactions(this.props.prevToken, this.props.nextToken);
+  };
+
+  componentDidMount() {
+    this.props.fetchTransactions(this.props.accountId, null);
+  }
+
   render() {
+    const { transactions } = this.props;
+
     return (
       <div>
         <h2>Transaction List</h2>
@@ -19,7 +38,7 @@ class TransactionList extends Component {
           </Table.Header>
 
           <Table.Body>
-            {this.props.transactions.items.map(t => {
+            {transactions.map(t => {
               let color = t.transactionType.name === "Buy" ? "blue" : "red";
               return (
                 <Table.Row key={t.id}>
@@ -36,9 +55,27 @@ class TransactionList extends Component {
             })}
           </Table.Body>
         </Table>
+
+        <Button.Group>
+          <Button labelPosition='left' icon='left chevron' content='Previous' onClick={this.handlePrevPageClick} />
+          <Button labelPosition='right' icon='right chevron' content='Next' onClick={this.handleNextPageClick} />
+        </Button.Group>
       </div>
     );
   }
 }
 
-export default TransactionList;
+const mapStateToProps = state => {
+  return {
+    loading: state.async.loading,
+    transactions: state.transaction.transactions,
+    prevToken: state.transaction.prevToken,
+    nextToken: state.transaction.nextToken
+  };
+};
+
+const actions = {
+  fetchTransactions
+};
+
+export default connect(mapStateToProps, actions)(TransactionList);

@@ -1,7 +1,7 @@
 import { API, graphqlOperation, Auth } from "aws-amplify";
-import { listTransactionTypes } from "../../graphql/queries.js";
+import { listTransactionTypes, listTransactionReadModels } from "../../graphql/queries.js";
 import { createEvent } from "../../graphql/mutations";
-import { FETCH_TRANSACTION_TYPES, CREATE_TRANSACTION } from "./constants";
+import { FETCH_TRANSACTION_TYPES, FETCH_TRANSACTIONS, CREATE_TRANSACTION } from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
 import { setIntervalAsync } from "../../common/apiUtils";
 
@@ -19,6 +19,47 @@ export const fetchTransactionTypes = () => async dispatch => {
   dispatch(asyncActionFinish());
 };
 
+export const fetchTransactions = (aggregateId, currentToken, nextToken) => async dispatch => {
+  dispatch(asyncActionStart());
+
+  var query;
+  if (nextToken) {
+    query = {
+      filter: {
+        aggrgateId: {
+          eq: aggregateId
+        }
+      },
+      nextToken: nextToken
+    };
+  } else {
+    query = {
+      filter: {
+        aggregateId: {
+          eq: aggregateId
+        }
+      }
+    };
+  }
+
+  // Set prevToken to current Token
+  currentToken = nextToken ? nextToken : null;
+
+  await API.graphql(graphqlOperation(listTransactionReadModels, query)).then(result => {
+    const transactions = result.data.listTransactionReadModels.items.sort((a, b) =>
+      a.createdDate < b.createdDate ? 1 : -1
+    );
+    const nextToken = result.data.listTransactionReadModels.nextToken;
+
+    dispatch({
+      type: FETCH_TRANSACTIONS,
+      payload: { transactions: transactions, prevToken: currentToken, nextToken: nextToken }
+    });
+  });
+
+  dispatch(asyncActionFinish());
+};
+
 export const createTransaction = transaction => async dispatch => {
   dispatch(asyncActionStart());
 
@@ -28,7 +69,7 @@ export const createTransaction = transaction => async dispatch => {
   });
 
   const input = {
-    aggregateId: transaction.aggregateId,
+    aggregateId: transaction.account.id,
     name: "TransactionCreatedEvent",
     version: 1,
     data: JSON.stringify({

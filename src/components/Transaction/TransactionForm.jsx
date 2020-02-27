@@ -40,10 +40,8 @@ class TransactionForm extends Component {
     if (this.props.initialValues.id) {
       //this.props.updateAccount(values);
     } else {
-      const uuidv4 = require("uuid/v4");
       const newTransaction = {
         ...values,
-        aggregateId: uuidv4(),
         account: {
           id: this.props.location.state.account.id
         }
