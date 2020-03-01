@@ -73,6 +73,8 @@ export const createAccount = account => async dispatch => {
     data: JSON.stringify({
       name: account.name,
       description: account.description,
+      bookValue: 0,
+      marketValue: 0,
       accountAccountTypeId: account.accountType.id,
       createdDate: new Date().toISOString()
     }),
@@ -105,6 +107,8 @@ export const updateAccount = account => async dispatch => {
       id: account.id,
       name: account.name,
       description: account.description,
+      bookValue: account.bookValue,
+      marketValue: account.marketValue,
       accountAccountTypeId: account.accountType.id
     }),
     userId: userId,

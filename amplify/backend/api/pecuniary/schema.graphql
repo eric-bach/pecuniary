@@ -46,6 +46,8 @@ type AccountReadModel @model {
   userId: ID!
   name: String!
   description: String
+  bookValue: Float!
+  marketValue: Float!
   createdDate: AWSDateTime!
   accountType: AccountType! @connection(name: "AccountType")
   transactions: [TransactionReadModel] @connection(name: "Transactions")

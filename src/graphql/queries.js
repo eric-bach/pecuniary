@@ -45,6 +45,8 @@ export const getAccountType = `query GetAccountType($id: ID!) {
         userId
         name
         description
+        bookValue
+        marketValue
         createdDate
       }
       nextToken
@@ -189,6 +191,8 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
     userId
     name
     description
+    bookValue
+    marketValue
     createdDate
     accountType {
       id
@@ -242,6 +246,8 @@ export const listAccountReadModels = `query ListAccountReadModels(
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -278,6 +284,8 @@ export const getTransactionReadModel = `query GetTransactionReadModel($id: ID!) 
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -330,6 +338,8 @@ export const listTransactionReadModels = `query ListTransactionReadModels(
         userId
         name
         description
+        bookValue
+        marketValue
         createdDate
       }
       transactionType {
@@ -359,6 +369,8 @@ export const getPositionReadModel = `query GetPositionReadModel($id: ID!) {
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -401,6 +413,8 @@ export const listPositionReadModels = `query ListPositionReadModels(
         userId
         name
         description
+        bookValue
+        marketValue
         createdDate
       }
     }

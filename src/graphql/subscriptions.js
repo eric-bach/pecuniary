@@ -50,6 +50,8 @@ export const onCreateAccountType = `subscription OnCreateAccountType {
         userId
         name
         description
+        bookValue
+        marketValue
         createdDate
       }
       nextToken
@@ -70,6 +72,8 @@ export const onUpdateAccountType = `subscription OnUpdateAccountType {
         userId
         name
         description
+        bookValue
+        marketValue
         createdDate
       }
       nextToken
@@ -90,6 +94,8 @@ export const onDeleteAccountType = `subscription OnDeleteAccountType {
         userId
         name
         description
+        bookValue
+        marketValue
         createdDate
       }
       nextToken
@@ -270,6 +276,8 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
     userId
     name
     description
+    bookValue
+    marketValue
     createdDate
     accountType {
       id
@@ -318,6 +326,8 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
     userId
     name
     description
+    bookValue
+    marketValue
     createdDate
     accountType {
       id
@@ -366,6 +376,8 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
     userId
     name
     description
+    bookValue
+    marketValue
     createdDate
     accountType {
       id
@@ -425,6 +437,8 @@ export const onCreateTransactionReadModel = `subscription OnCreateTransactionRea
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -468,6 +482,8 @@ export const onUpdateTransactionReadModel = `subscription OnUpdateTransactionRea
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -511,6 +527,8 @@ export const onDeleteTransactionReadModel = `subscription OnDeleteTransactionRea
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -552,6 +570,8 @@ export const onCreatePositionReadModel = `subscription OnCreatePositionReadModel
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -585,6 +605,8 @@ export const onUpdatePositionReadModel = `subscription OnUpdatePositionReadModel
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -618,6 +640,8 @@ export const onDeletePositionReadModel = `subscription OnDeletePositionReadModel
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id

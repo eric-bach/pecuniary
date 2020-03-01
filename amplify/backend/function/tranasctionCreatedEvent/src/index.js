@@ -113,6 +113,11 @@ exports.handler = async event => {
   }
   //
 
+  //
+  // Update Account
+
+  //
+
   console.log("Result: %j", result);
   console.log(`Successfully processed ${event.Records.length} records.`);
 };

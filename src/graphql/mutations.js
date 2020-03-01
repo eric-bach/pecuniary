@@ -62,6 +62,8 @@ export const createAccountType = `mutation CreateAccountType(
         userId
         name
         description
+        bookValue
+        marketValue
         createdDate
       }
       nextToken
@@ -85,6 +87,8 @@ export const updateAccountType = `mutation UpdateAccountType(
         userId
         name
         description
+        bookValue
+        marketValue
         createdDate
       }
       nextToken
@@ -108,6 +112,8 @@ export const deleteAccountType = `mutation DeleteAccountType(
         userId
         name
         description
+        bookValue
+        marketValue
         createdDate
       }
       nextToken
@@ -318,6 +324,8 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
     userId
     name
     description
+    bookValue
+    marketValue
     createdDate
     accountType {
       id
@@ -369,6 +377,8 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
     userId
     name
     description
+    bookValue
+    marketValue
     createdDate
     accountType {
       id
@@ -420,6 +430,8 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
     userId
     name
     description
+    bookValue
+    marketValue
     createdDate
     accountType {
       id
@@ -482,6 +494,8 @@ export const createTransactionReadModel = `mutation CreateTransactionReadModel(
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -528,6 +542,8 @@ export const updateTransactionReadModel = `mutation UpdateTransactionReadModel(
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -574,6 +590,8 @@ export const deleteTransactionReadModel = `mutation DeleteTransactionReadModel(
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -618,6 +636,8 @@ export const createPositionReadModel = `mutation CreatePositionReadModel(
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -654,6 +674,8 @@ export const updatePositionReadModel = `mutation UpdatePositionReadModel(
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
@@ -690,6 +712,8 @@ export const deletePositionReadModel = `mutation DeletePositionReadModel(
       userId
       name
       description
+      bookValue
+      marketValue
       createdDate
       accountType {
         id
