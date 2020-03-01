@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { reduxForm, Field } from "redux-form";
-import { Grid, Segment, Header, Form, Button } from "semantic-ui-react";
+import { Grid, Segment, Header, Form, Button, Message } from "semantic-ui-react";
 import { combineValidators, composeValidators, isRequired, matchesPattern } from "revalidate";
 
 import { fetchTransactionTypes, createTransaction } from "../../domain/transaction/actions";
@@ -32,14 +32,33 @@ const validate = combineValidators({
 });
 
 class TransactionForm extends Component {
+  state = {
+    sellError: false
+  };
+
   componentDidMount() {
     this.props.fetchTransactionTypes();
   }
 
   onFormSubmit = values => {
     if (this.props.initialValues.id) {
+      // TODO Update transaction
       //this.props.updateAccount(values);
     } else {
+      var position = this.props.positions.filter(p => p.symbol === values.symbol);
+
+      // Selling shares that are not owned
+      if (+values.transactionType.id === 2 && position.length <= 0) {
+        this.setState({ sellError: true });
+        return;
+      }
+      // Selling more shares than owned
+      if (+values.transactionType.id === 2 && +values.shares > +position[0].shares) {
+        this.setState({ sellError: true });
+        return;
+      }
+
+      // Create Transaction
       const newTransaction = {
         ...values,
         account: this.props.location.state.account
@@ -70,6 +89,16 @@ class TransactionForm extends Component {
           <Grid>
             <Grid.Column width={10}>
               <Segment>
+                {this.state.sellError && (
+                  <Message
+                    error
+                    header='There was some errors with your transaction'
+                    list={[
+                      "You are trying to sell more shares than owned under this account",
+                      "You are trying to sell a security that does not exist under this account"
+                    ]}
+                  />
+                )}
                 <Header sub color='teal' content='Transaction Details' />
                 <Form onSubmit={this.props.handleSubmit(this.onFormSubmit)} autoComplete='off'>
                   <Field
@@ -150,7 +179,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     initialValues: transaction,
-    transactionTypes: state.transaction.transactionTypes
+    transactionTypes: state.transaction.transactionTypes,
+    positions: state.positions.positions
   };
 };
 
