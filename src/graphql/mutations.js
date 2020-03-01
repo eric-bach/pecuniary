@@ -342,6 +342,19 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
       }
       nextToken
     }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -377,6 +390,19 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
         commission
         symbol
         createdDate
+      }
+      nextToken
+    }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
       }
       nextToken
     }
@@ -418,6 +444,19 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
       }
       nextToken
     }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -450,6 +489,9 @@ export const createTransactionReadModel = `mutation CreateTransactionReadModel(
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -495,6 +537,9 @@ export const updateTransactionReadModel = `mutation UpdateTransactionReadModel(
       transactions {
         nextToken
       }
+      positions {
+        nextToken
+      }
     }
     transactionType {
       id
@@ -538,12 +583,123 @@ export const deleteTransactionReadModel = `mutation DeleteTransactionReadModel(
       transactions {
         nextToken
       }
+      positions {
+        nextToken
+      }
     }
     transactionType {
       id
       name
       description
       transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const createPositionReadModel = `mutation CreatePositionReadModel(
+  $input: CreatePositionReadModelInput!
+  $condition: ModelPositionReadModelConditionInput
+) {
+  createPositionReadModel(input: $input, condition: $condition) {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      createdDate
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const updatePositionReadModel = `mutation UpdatePositionReadModel(
+  $input: UpdatePositionReadModelInput!
+  $condition: ModelPositionReadModelConditionInput
+) {
+  updatePositionReadModel(input: $input, condition: $condition) {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      createdDate
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const deletePositionReadModel = `mutation DeletePositionReadModel(
+  $input: DeletePositionReadModelInput!
+  $condition: ModelPositionReadModelConditionInput
+) {
+  deletePositionReadModel(input: $input, condition: $condition) {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      createdDate
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }

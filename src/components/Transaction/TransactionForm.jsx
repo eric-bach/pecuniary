@@ -42,9 +42,7 @@ class TransactionForm extends Component {
     } else {
       const newTransaction = {
         ...values,
-        account: {
-          id: this.props.location.state.account.id
-        }
+        account: this.props.location.state.account
       };
 
       this.props.createTransaction(newTransaction);

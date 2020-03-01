@@ -69,7 +69,7 @@ export const createTransaction = transaction => async dispatch => {
   });
 
   const input = {
-    aggregateId: transaction.account.id,
+    aggregateId: transaction.account.aggregateId,
     name: "TransactionCreatedEvent",
     version: 1,
     data: JSON.stringify({

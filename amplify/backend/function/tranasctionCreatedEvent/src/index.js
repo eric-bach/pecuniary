@@ -33,9 +33,85 @@ exports.handler = async event => {
           aggregateId
         }
       }`;
-
   console.debug("Mutation/Query: %j", query);
   var result = await graphqlOperation(query, "createTransactionReadModel");
+
+  //
+  // Update PositionsReadModel with the transaction (maybe this can be another subscriber of the topic)
+  // 1. Find if a position exists
+  let positionQuery = `query listPositionReadModels {
+    listPositionReadModels(filter: {
+      aggregateId: {
+        eq: "${msg.aggregateId}"
+      }
+      symbol: {
+        eq: "${msg.data.symbol}"
+      }
+    })
+    {
+      items{
+        id
+        shares
+        bookValue
+      }
+    }
+  }`;
+  var positions = await graphqlOperation(positionQuery, "listPositionReadModels");
+  // 2. Check if position exists
+  if (positions.data.listPositionReadModels.items.length <= 0) {
+    console.log("Position doesn't exist...creating...");
+
+    var bookValue = msg.data.shares * msg.data.price - msg.data.commission;
+    var acb = bookValue / msg.data.shares;
+
+    var positionMutation = `mutation createPosition {
+      createPositionReadModel(input: {
+        aggregateId: "${msg.aggregateId}"
+        version: 1 
+        userId: "${msg.userId}"
+        symbol: "${msg.data.symbol}"
+        shares: ${msg.data.shares}
+        acb: ${acb}
+        bookValue: ${bookValue.toFixed(2)}
+        positionReadModelAccountId: "${msg.data.transactionReadModelAccountId}"
+      })
+      {
+        id
+      }
+    }`;
+    console.log(positionMutation);
+    await graphqlOperation(positionMutation, "createPosition");
+  } else {
+    console.log("Position exists...updating...");
+
+    let shares;
+    console.log(msg.data.transactionReadModelTransactionTypeId);
+    if (+msg.data.transactionReadModelTransactionTypeId === 2) {
+      shares = +positions.data.listPositionReadModels.items[0].shares - +msg.data.shares;
+    } else {
+      shares = +positions.data.listPositionReadModels.items[0].shares + +msg.data.shares;
+    }
+
+    let bookValue =
+      +positions.data.listPositionReadModels.items[0].bookValue +
+      (+msg.data.shares * +msg.data.price - +msg.data.commission);
+    let acb = bookValue / shares;
+
+    var positionUpdateMutation = `mutation updatePosition {
+      updatePositionReadModel(input: {
+        id: "${positions.data.listPositionReadModels.items[0].id}"
+        aggregateId: "${msg.aggregateId}"
+        symbol: "${msg.data.symbol}"
+        shares: ${shares}
+        acb: ${acb.toFixed(2)}
+        bookValue: ${bookValue}
+      }) {
+        id
+      }
+    }`;
+    await graphqlOperation(positionUpdateMutation, "updatePosition");
+  }
+  //
 
   console.log("Result: %j", result);
   console.log(`Successfully processed ${event.Records.length} records.`);

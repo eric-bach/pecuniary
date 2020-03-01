@@ -6,17 +6,15 @@ import { fetchTransactions } from "../../domain/transaction/actions";
 
 class TransactionList extends Component {
   handlePrevPageClick = () => {
-    console.log(this.props.prevToken, this.props.prevToken);
     this.props.fetchTransactions(this.props.prevToken, this.props.prevToken);
   };
 
   handleNextPageClick = () => {
-    console.log(this.props.prevToken, this.props.nextToken);
     this.props.fetchTransactions(this.props.prevToken, this.props.nextToken);
   };
 
   componentDidMount() {
-    this.props.fetchTransactions(this.props.accountId, null);
+    this.props.fetchTransactions(this.props.aggregateId, null);
   }
 
   render() {

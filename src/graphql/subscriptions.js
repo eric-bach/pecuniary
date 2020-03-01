@@ -294,6 +294,19 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
       }
       nextToken
     }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -326,6 +339,19 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
         commission
         symbol
         createdDate
+      }
+      nextToken
+    }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
       }
       nextToken
     }
@@ -364,6 +390,19 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
       }
       nextToken
     }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -393,6 +432,9 @@ export const onCreateTransactionReadModel = `subscription OnCreateTransactionRea
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -435,6 +477,9 @@ export const onUpdateTransactionReadModel = `subscription OnUpdateTransactionRea
       transactions {
         nextToken
       }
+      positions {
+        nextToken
+      }
     }
     transactionType {
       id
@@ -475,12 +520,114 @@ export const onDeleteTransactionReadModel = `subscription OnDeleteTransactionRea
       transactions {
         nextToken
       }
+      positions {
+        nextToken
+      }
     }
     transactionType {
       id
       name
       description
       transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onCreatePositionReadModel = `subscription OnCreatePositionReadModel {
+  onCreatePositionReadModel {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      createdDate
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onUpdatePositionReadModel = `subscription OnUpdatePositionReadModel {
+  onUpdatePositionReadModel {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      createdDate
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onDeletePositionReadModel = `subscription OnDeletePositionReadModel {
+  onDeletePositionReadModel {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      createdDate
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }

@@ -213,6 +213,19 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
       }
       nextToken
     }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+      }
+      nextToken
+    }
   }
 }
 `;
@@ -236,6 +249,9 @@ export const listAccountReadModels = `query ListAccountReadModels(
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -269,6 +285,9 @@ export const getTransactionReadModel = `query GetTransactionReadModel($id: ID!) 
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -317,6 +336,72 @@ export const listTransactionReadModels = `query ListTransactionReadModels(
         id
         name
         description
+      }
+    }
+    nextToken
+  }
+}
+`;
+export const getPositionReadModel = `query GetPositionReadModel($id: ID!) {
+  getPositionReadModel(id: $id) {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      createdDate
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const listPositionReadModels = `query ListPositionReadModels(
+  $filter: ModelPositionReadModelFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listPositionReadModels(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      aggregateId
+      version
+      userId
+      symbol
+      shares
+      acb
+      bookValue
+      account {
+        id
+        aggregateId
+        version
+        userId
+        name
+        description
+        createdDate
       }
     }
     nextToken
