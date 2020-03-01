@@ -81,12 +81,7 @@ class AccountList extends Component {
 
           {accounts.map(account => {
             return (
-              <AccountSummary
-                key={account.aggregateId}
-                account={account}
-                deleteAccount={this.handleDeleteAccount}
-                displayButtons={true}
-              />
+              <AccountSummary key={account.aggregateId} account={account} deleteAccount={this.handleDeleteAccount} />
             );
           })}
         </Grid.Column>

@@ -4,7 +4,7 @@ import { Segment, Item, Button } from "semantic-ui-react";
 
 class AccountSummary extends Component {
   render() {
-    const { account, deleteAccount, displayButtons } = this.props;
+    const { account, deleteAccount } = this.props;
 
     return (
       <Segment.Group>
@@ -23,41 +23,35 @@ class AccountSummary extends Component {
                 <Item.Meta>Book Value: ${account.bookValue}</Item.Meta>
                 <Item.Description>
                   {account.description}
-                  {displayButtons && (
-                    <Button
-                      as='a'
-                      color='red'
-                      floated='right'
-                      onClick={() => deleteAccount(account)}
-                      content='Delete'
-                      data-test='delete-account-button'
-                    />
-                  )}
-                  {displayButtons && (
-                    <Button
-                      as={Link}
-                      to={`/accounts/edit/${account.id}`}
-                      color='blue'
-                      floated='right'
-                      content='Edit'
-                      data-test='edit-account-button'
-                    />
-                  )}
-                  {displayButtons && (
-                    <Button
-                      as={Link}
-                      to={{
-                        pathname: `/accounts/view/${account.id}`,
-                        state: {
-                          account: account
-                        }
-                      }}
-                      color='teal'
-                      floated='right'
-                      content='View'
-                      data-test='view-account-button'
-                    />
-                  )}
+                  <Button
+                    as='a'
+                    color='red'
+                    floated='right'
+                    onClick={() => deleteAccount(account)}
+                    content='Delete'
+                    data-test='delete-account-button'
+                  />
+                  <Button
+                    as={Link}
+                    to={`/accounts/edit/${account.id}`}
+                    color='blue'
+                    floated='right'
+                    content='Edit'
+                    data-test='edit-account-button'
+                  />
+                  <Button
+                    as={Link}
+                    to={{
+                      pathname: `/accounts/view/${account.aggregateId}`,
+                      state: {
+                        account: account
+                      }
+                    }}
+                    color='teal'
+                    floated='right'
+                    content='View'
+                    data-test='view-account-button'
+                  />
                 </Item.Description>
               </Item.Content>
             </Item>
