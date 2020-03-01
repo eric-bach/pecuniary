@@ -80,7 +80,8 @@ export const createTransaction = transaction => async dispatch => {
       shares: transaction.shares,
       price: transaction.price,
       commission: transaction.commission,
-      createdDate: new Date().toISOString()
+      createdDate: new Date().toISOString(),
+      updatedDate: new Date().toISOString()
     }),
     userId: userId,
     timestamp: new Date().toISOString()

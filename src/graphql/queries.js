@@ -47,7 +47,8 @@ export const getAccountType = `query GetAccountType($id: ID!) {
         description
         bookValue
         marketValue
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -88,7 +89,8 @@ export const getTransactionType = `query GetTransactionType($id: ID!) {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -193,7 +195,8 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
     description
     bookValue
     marketValue
-    createdDate
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -213,7 +216,8 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -227,6 +231,8 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
         shares
         acb
         bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -248,7 +254,8 @@ export const listAccountReadModels = `query ListAccountReadModels(
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -276,7 +283,8 @@ export const getTransactionReadModel = `query GetTransactionReadModel($id: ID!) 
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -286,7 +294,8 @@ export const getTransactionReadModel = `query GetTransactionReadModel($id: ID!) 
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -330,7 +339,8 @@ export const listTransactionReadModels = `query ListTransactionReadModels(
       price
       commission
       symbol
-      createdDate
+      createdAt
+      updatedAt
       account {
         id
         aggregateId
@@ -340,7 +350,8 @@ export const listTransactionReadModels = `query ListTransactionReadModels(
         description
         bookValue
         marketValue
-        createdDate
+        createdAt
+        updatedAt
       }
       transactionType {
         id
@@ -362,6 +373,8 @@ export const getPositionReadModel = `query GetPositionReadModel($id: ID!) {
     shares
     acb
     bookValue
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -371,7 +384,8 @@ export const getPositionReadModel = `query GetPositionReadModel($id: ID!) {
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -406,6 +420,8 @@ export const listPositionReadModels = `query ListPositionReadModels(
       shares
       acb
       bookValue
+      createdAt
+      updatedAt
       account {
         id
         aggregateId
@@ -415,7 +431,8 @@ export const listPositionReadModels = `query ListPositionReadModels(
         description
         bookValue
         marketValue
-        createdDate
+        createdAt
+        updatedAt
       }
     }
     nextToken

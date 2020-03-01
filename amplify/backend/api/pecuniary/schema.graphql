@@ -48,7 +48,8 @@ type AccountReadModel @model {
   description: String
   bookValue: Float!
   marketValue: Float!
-  createdDate: AWSDateTime!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
   accountType: AccountType! @connection(name: "AccountType")
   transactions: [TransactionReadModel] @connection(name: "Transactions")
   positions: [PositionReadModel] @connection(name: "Positions")
@@ -65,7 +66,8 @@ type TransactionReadModel @model {
   price: Float!
   commission: Float!
   symbol: String!
-  createdDate: AWSDateTime!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
   account: AccountReadModel! @connection(name: "Transactions")
   transactionType: TransactionType! @connection(name: "TransactionTypes")
 }
@@ -79,6 +81,8 @@ type PositionReadModel @model {
   shares: Int!
   acb: Float!
   bookValue: Float!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
   account: AccountReadModel! @connection(name: "Positions")
 }
 

@@ -52,7 +52,8 @@ export const onCreateAccountType = `subscription OnCreateAccountType {
         description
         bookValue
         marketValue
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -74,7 +75,8 @@ export const onUpdateAccountType = `subscription OnUpdateAccountType {
         description
         bookValue
         marketValue
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -96,7 +98,8 @@ export const onDeleteAccountType = `subscription OnDeleteAccountType {
         description
         bookValue
         marketValue
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -119,7 +122,8 @@ export const onCreateTransactionType = `subscription OnCreateTransactionType {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -142,7 +146,8 @@ export const onUpdateTransactionType = `subscription OnUpdateTransactionType {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -165,7 +170,8 @@ export const onDeleteTransactionType = `subscription OnDeleteTransactionType {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -278,7 +284,8 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
     description
     bookValue
     marketValue
-    createdDate
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -298,7 +305,8 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -312,6 +320,8 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
         shares
         acb
         bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -328,7 +338,8 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
     description
     bookValue
     marketValue
-    createdDate
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -348,7 +359,8 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -362,6 +374,8 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
         shares
         acb
         bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -378,7 +392,8 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
     description
     bookValue
     marketValue
-    createdDate
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -398,7 +413,8 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -412,6 +428,8 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
         shares
         acb
         bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -429,7 +447,8 @@ export const onCreateTransactionReadModel = `subscription OnCreateTransactionRea
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -439,7 +458,8 @@ export const onCreateTransactionReadModel = `subscription OnCreateTransactionRea
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -474,7 +494,8 @@ export const onUpdateTransactionReadModel = `subscription OnUpdateTransactionRea
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -484,7 +505,8 @@ export const onUpdateTransactionReadModel = `subscription OnUpdateTransactionRea
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -519,7 +541,8 @@ export const onDeleteTransactionReadModel = `subscription OnDeleteTransactionRea
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -529,7 +552,8 @@ export const onDeleteTransactionReadModel = `subscription OnDeleteTransactionRea
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -563,6 +587,8 @@ export const onCreatePositionReadModel = `subscription OnCreatePositionReadModel
     shares
     acb
     bookValue
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -572,7 +598,8 @@ export const onCreatePositionReadModel = `subscription OnCreatePositionReadModel
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -598,6 +625,8 @@ export const onUpdatePositionReadModel = `subscription OnUpdatePositionReadModel
     shares
     acb
     bookValue
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -607,7 +636,8 @@ export const onUpdatePositionReadModel = `subscription OnUpdatePositionReadModel
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -633,6 +663,8 @@ export const onDeletePositionReadModel = `subscription OnDeletePositionReadModel
     shares
     acb
     bookValue
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -642,7 +674,8 @@ export const onDeletePositionReadModel = `subscription OnDeletePositionReadModel
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name

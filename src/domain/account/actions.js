@@ -76,7 +76,8 @@ export const createAccount = account => async dispatch => {
       bookValue: 0,
       marketValue: 0,
       accountAccountTypeId: account.accountType.id,
-      createdDate: new Date().toISOString()
+      createdDate: new Date().toISOString(),
+      updatedDate: new Date().toISOString()
     }),
     userId: userId,
     timestamp: new Date().toISOString()
@@ -109,7 +110,8 @@ export const updateAccount = account => async dispatch => {
       description: account.description,
       bookValue: account.bookValue,
       marketValue: account.marketValue,
-      accountAccountTypeId: account.accountType.id
+      accountAccountTypeId: account.accountType.id,
+      updatedDate: new Date().toISOString()
     }),
     userId: userId,
     timestamp: new Date().toISOString()

@@ -64,7 +64,8 @@ export const createAccountType = `mutation CreateAccountType(
         description
         bookValue
         marketValue
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -89,7 +90,8 @@ export const updateAccountType = `mutation UpdateAccountType(
         description
         bookValue
         marketValue
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -114,7 +116,8 @@ export const deleteAccountType = `mutation DeleteAccountType(
         description
         bookValue
         marketValue
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -140,7 +143,8 @@ export const createTransactionType = `mutation CreateTransactionType(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -166,7 +170,8 @@ export const updateTransactionType = `mutation UpdateTransactionType(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -192,7 +197,8 @@ export const deleteTransactionType = `mutation DeleteTransactionType(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -326,7 +332,8 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
     description
     bookValue
     marketValue
-    createdDate
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -346,7 +353,8 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -360,6 +368,8 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
         shares
         acb
         bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -379,7 +389,8 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
     description
     bookValue
     marketValue
-    createdDate
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -399,7 +410,8 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -413,6 +425,8 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
         shares
         acb
         bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -432,7 +446,8 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
     description
     bookValue
     marketValue
-    createdDate
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -452,7 +467,8 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -466,6 +482,8 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
         shares
         acb
         bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -486,7 +504,8 @@ export const createTransactionReadModel = `mutation CreateTransactionReadModel(
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -496,7 +515,8 @@ export const createTransactionReadModel = `mutation CreateTransactionReadModel(
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -534,7 +554,8 @@ export const updateTransactionReadModel = `mutation UpdateTransactionReadModel(
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -544,7 +565,8 @@ export const updateTransactionReadModel = `mutation UpdateTransactionReadModel(
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -582,7 +604,8 @@ export const deleteTransactionReadModel = `mutation DeleteTransactionReadModel(
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -592,7 +615,8 @@ export const deleteTransactionReadModel = `mutation DeleteTransactionReadModel(
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -629,6 +653,8 @@ export const createPositionReadModel = `mutation CreatePositionReadModel(
     shares
     acb
     bookValue
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -638,7 +664,8 @@ export const createPositionReadModel = `mutation CreatePositionReadModel(
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -667,6 +694,8 @@ export const updatePositionReadModel = `mutation UpdatePositionReadModel(
     shares
     acb
     bookValue
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -676,7 +705,8 @@ export const updatePositionReadModel = `mutation UpdatePositionReadModel(
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -705,6 +735,8 @@ export const deletePositionReadModel = `mutation DeletePositionReadModel(
     shares
     acb
     bookValue
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -714,7 +746,8 @@ export const deletePositionReadModel = `mutation DeletePositionReadModel(
       description
       bookValue
       marketValue
-      createdDate
+      createdAt
+      updatedAt
       accountType {
         id
         name
