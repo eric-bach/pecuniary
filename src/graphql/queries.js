@@ -9,7 +9,7 @@ export const getEvent = `query GetEvent($id: ID!) {
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -26,7 +26,7 @@ export const listEvents = `query ListEvents(
       version
       data
       userId
-      timestamp
+      createdAt
     }
     nextToken
   }
@@ -45,7 +45,10 @@ export const getAccountType = `query GetAccountType($id: ID!) {
         userId
         name
         description
-        createdDate
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -86,7 +89,8 @@ export const getTransactionType = `query GetTransactionType($id: ID!) {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -189,7 +193,10 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
     userId
     name
     description
-    createdDate
+    bookValue
+    marketValue
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -209,7 +216,23 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -229,13 +252,19 @@ export const listAccountReadModels = `query ListAccountReadModels(
       userId
       name
       description
-      createdDate
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
       accountType {
         id
         name
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -254,7 +283,8 @@ export const getTransactionReadModel = `query GetTransactionReadModel($id: ID!) 
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -262,13 +292,19 @@ export const getTransactionReadModel = `query GetTransactionReadModel($id: ID!) 
       userId
       name
       description
-      createdDate
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
       accountType {
         id
         name
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -303,7 +339,8 @@ export const listTransactionReadModels = `query ListTransactionReadModels(
       price
       commission
       symbol
-      createdDate
+      createdAt
+      updatedAt
       account {
         id
         aggregateId
@@ -311,12 +348,91 @@ export const listTransactionReadModels = `query ListTransactionReadModels(
         userId
         name
         description
-        createdDate
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
       }
       transactionType {
         id
         name
         description
+      }
+    }
+    nextToken
+  }
+}
+`;
+export const getPositionReadModel = `query GetPositionReadModel($id: ID!) {
+  getPositionReadModel(id: $id) {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    createdAt
+    updatedAt
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const listPositionReadModels = `query ListPositionReadModels(
+  $filter: ModelPositionReadModelFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listPositionReadModels(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      aggregateId
+      version
+      userId
+      symbol
+      shares
+      acb
+      bookValue
+      createdAt
+      updatedAt
+      account {
+        id
+        aggregateId
+        version
+        userId
+        name
+        description
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
       }
     }
     nextToken

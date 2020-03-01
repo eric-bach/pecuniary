@@ -6,7 +6,7 @@ type Event @model {
   version: Int!
   data: String!
   userId: ID!
-  timestamp: AWSDateTime!
+  createdAt: AWSDateTime!
 }
 
 # Lookup Types
@@ -46,9 +46,13 @@ type AccountReadModel @model {
   userId: ID!
   name: String!
   description: String
-  createdDate: AWSDateTime!
+  bookValue: Float!
+  marketValue: Float!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
   accountType: AccountType! @connection(name: "AccountType")
   transactions: [TransactionReadModel] @connection(name: "Transactions")
+  positions: [PositionReadModel] @connection(name: "Positions")
 }
 
 # Transaction
@@ -62,9 +66,24 @@ type TransactionReadModel @model {
   price: Float!
   commission: Float!
   symbol: String!
-  createdDate: AWSDateTime!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
   account: AccountReadModel! @connection(name: "Transactions")
   transactionType: TransactionType! @connection(name: "TransactionTypes")
+}
+
+type PositionReadModel @model {
+  id: ID!
+  aggregateId: ID!
+  version: Int!
+  userId: ID!
+  symbol: String!
+  shares: Int!
+  acb: Float!
+  bookValue: Float!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  account: AccountReadModel! @connection(name: "Positions")
 }
 
 # type SecurityReadModel @model {

@@ -1,16 +1,21 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "semantic-ui-react";
-import AccountSummary from "./AccountSummary";
+import AccountHeader from "../Account/AccountHeader";
 import TransactionList from "../Transaction/TransactionList";
+import Positions from "../Positions/Positions";
 
 class AccountDetail extends Component {
   render() {
-    const account = this.props.location.state.account;
+    const aggregateId = this.props.match.params.id;
+    const { account } = this.props.location.state;
+
     return (
       <>
         <h2>Account</h2>
-        <AccountSummary key={account.aggregateId} account={account} displayButtons={false} data-test='account-label' />
+        <AccountHeader aggregateId={aggregateId} />
+        <Positions aggregateId={aggregateId} />
+        <br />
         <Button
           as={Link}
           to={{
@@ -24,7 +29,7 @@ class AccountDetail extends Component {
           content='Add Transaction'
           data-test='add-transaction-button'
         />
-        <TransactionList accountId={account.id} />
+        <TransactionList aggregateId={aggregateId} />
       </>
     );
   }

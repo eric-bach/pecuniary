@@ -9,7 +9,7 @@ export const onCreateEvent = `subscription OnCreateEvent {
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -21,7 +21,7 @@ export const onUpdateEvent = `subscription OnUpdateEvent {
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -33,7 +33,7 @@ export const onDeleteEvent = `subscription OnDeleteEvent {
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -50,7 +50,10 @@ export const onCreateAccountType = `subscription OnCreateAccountType {
         userId
         name
         description
-        createdDate
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -70,7 +73,10 @@ export const onUpdateAccountType = `subscription OnUpdateAccountType {
         userId
         name
         description
-        createdDate
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -90,7 +96,10 @@ export const onDeleteAccountType = `subscription OnDeleteAccountType {
         userId
         name
         description
-        createdDate
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -113,7 +122,8 @@ export const onCreateTransactionType = `subscription OnCreateTransactionType {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -136,7 +146,8 @@ export const onUpdateTransactionType = `subscription OnUpdateTransactionType {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -159,7 +170,8 @@ export const onDeleteTransactionType = `subscription OnDeleteTransactionType {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -270,7 +282,10 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
     userId
     name
     description
-    createdDate
+    bookValue
+    marketValue
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -290,7 +305,23 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -305,7 +336,10 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
     userId
     name
     description
-    createdDate
+    bookValue
+    marketValue
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -325,7 +359,23 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -340,7 +390,10 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
     userId
     name
     description
-    createdDate
+    bookValue
+    marketValue
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -360,7 +413,23 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -378,7 +447,8 @@ export const onCreateTransactionReadModel = `subscription OnCreateTransactionRea
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -386,13 +456,19 @@ export const onCreateTransactionReadModel = `subscription OnCreateTransactionRea
       userId
       name
       description
-      createdDate
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
       accountType {
         id
         name
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -418,7 +494,8 @@ export const onUpdateTransactionReadModel = `subscription OnUpdateTransactionRea
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -426,13 +503,19 @@ export const onUpdateTransactionReadModel = `subscription OnUpdateTransactionRea
       userId
       name
       description
-      createdDate
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
       accountType {
         id
         name
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -458,7 +541,8 @@ export const onDeleteTransactionReadModel = `subscription OnDeleteTransactionRea
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -466,7 +550,10 @@ export const onDeleteTransactionReadModel = `subscription OnDeleteTransactionRea
       userId
       name
       description
-      createdDate
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -475,12 +562,129 @@ export const onDeleteTransactionReadModel = `subscription OnDeleteTransactionRea
       transactions {
         nextToken
       }
+      positions {
+        nextToken
+      }
     }
     transactionType {
       id
       name
       description
       transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onCreatePositionReadModel = `subscription OnCreatePositionReadModel {
+  onCreatePositionReadModel {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    createdAt
+    updatedAt
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onUpdatePositionReadModel = `subscription OnUpdatePositionReadModel {
+  onUpdatePositionReadModel {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    createdAt
+    updatedAt
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const onDeletePositionReadModel = `subscription OnDeletePositionReadModel {
+  onDeletePositionReadModel {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    createdAt
+    updatedAt
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }

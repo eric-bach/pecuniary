@@ -12,7 +12,7 @@ export const createEvent = `mutation CreateEvent(
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -27,7 +27,7 @@ export const updateEvent = `mutation UpdateEvent(
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -42,7 +42,7 @@ export const deleteEvent = `mutation DeleteEvent(
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -62,7 +62,10 @@ export const createAccountType = `mutation CreateAccountType(
         userId
         name
         description
-        createdDate
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -85,7 +88,10 @@ export const updateAccountType = `mutation UpdateAccountType(
         userId
         name
         description
-        createdDate
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -108,7 +114,10 @@ export const deleteAccountType = `mutation DeleteAccountType(
         userId
         name
         description
-        createdDate
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -134,7 +143,8 @@ export const createTransactionType = `mutation CreateTransactionType(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -160,7 +170,8 @@ export const updateTransactionType = `mutation UpdateTransactionType(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -186,7 +197,8 @@ export const deleteTransactionType = `mutation DeleteTransactionType(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -318,7 +330,10 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
     userId
     name
     description
-    createdDate
+    bookValue
+    marketValue
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -338,7 +353,23 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -356,7 +387,10 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
     userId
     name
     description
-    createdDate
+    bookValue
+    marketValue
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -376,7 +410,23 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -394,7 +444,10 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
     userId
     name
     description
-    createdDate
+    bookValue
+    marketValue
+    createdAt
+    updatedAt
     accountType {
       id
       name
@@ -414,7 +467,23 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
         price
         commission
         symbol
-        createdDate
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+    positions {
+      items {
+        id
+        aggregateId
+        version
+        userId
+        symbol
+        shares
+        acb
+        bookValue
+        createdAt
+        updatedAt
       }
       nextToken
     }
@@ -435,7 +504,8 @@ export const createTransactionReadModel = `mutation CreateTransactionReadModel(
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -443,13 +513,19 @@ export const createTransactionReadModel = `mutation CreateTransactionReadModel(
       userId
       name
       description
-      createdDate
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
       accountType {
         id
         name
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -478,7 +554,8 @@ export const updateTransactionReadModel = `mutation UpdateTransactionReadModel(
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -486,13 +563,19 @@ export const updateTransactionReadModel = `mutation UpdateTransactionReadModel(
       userId
       name
       description
-      createdDate
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
       accountType {
         id
         name
         description
       }
       transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }
@@ -521,7 +604,8 @@ export const deleteTransactionReadModel = `mutation DeleteTransactionReadModel(
     price
     commission
     symbol
-    createdDate
+    createdAt
+    updatedAt
     account {
       id
       aggregateId
@@ -529,7 +613,10 @@ export const deleteTransactionReadModel = `mutation DeleteTransactionReadModel(
       userId
       name
       description
-      createdDate
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
       accountType {
         id
         name
@@ -538,12 +625,138 @@ export const deleteTransactionReadModel = `mutation DeleteTransactionReadModel(
       transactions {
         nextToken
       }
+      positions {
+        nextToken
+      }
     }
     transactionType {
       id
       name
       description
       transactions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const createPositionReadModel = `mutation CreatePositionReadModel(
+  $input: CreatePositionReadModelInput!
+  $condition: ModelPositionReadModelConditionInput
+) {
+  createPositionReadModel(input: $input, condition: $condition) {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    createdAt
+    updatedAt
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const updatePositionReadModel = `mutation UpdatePositionReadModel(
+  $input: UpdatePositionReadModelInput!
+  $condition: ModelPositionReadModelConditionInput
+) {
+  updatePositionReadModel(input: $input, condition: $condition) {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    createdAt
+    updatedAt
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
+        nextToken
+      }
+    }
+  }
+}
+`;
+export const deletePositionReadModel = `mutation DeletePositionReadModel(
+  $input: DeletePositionReadModelInput!
+  $condition: ModelPositionReadModelConditionInput
+) {
+  deletePositionReadModel(input: $input, condition: $condition) {
+    id
+    aggregateId
+    version
+    userId
+    symbol
+    shares
+    acb
+    bookValue
+    createdAt
+    updatedAt
+    account {
+      id
+      aggregateId
+      version
+      userId
+      name
+      description
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
+      accountType {
+        id
+        name
+        description
+      }
+      transactions {
+        nextToken
+      }
+      positions {
         nextToken
       }
     }

@@ -22,8 +22,11 @@ exports.handler = async event => {
              userId: "${msg.userId}"
              name: "${msg.data.name}"
              description: "${msg.data.description}"
+             bookValue: ${msg.data.bookValue}
+             marketValue: ${msg.data.marketValue}
              accountReadModelAccountTypeId: ${msg.data.accountAccountTypeId}
-             createdDate: "${msg.data.createdDate}"
+             createdAt: "${msg.createdAt}"
+             updatedAt: "${msg.createdAt}"
            })
            {
              aggregateId

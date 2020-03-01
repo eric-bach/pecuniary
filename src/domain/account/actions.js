@@ -1,8 +1,46 @@
 import { API, graphqlOperation, Auth } from "aws-amplify";
 import { createEvent } from "../../graphql/mutations";
-import { listAccountTypes, listAccountReadModels } from "../../graphql/queries.js";
-import { FETCH_ACCOUNTS, CREATE_ACCOUNT, UPDATE_ACCOUNT, FETCH_ACCOUNT_TYPES, DELETE_ACCOUNT } from "./constants";
+import { listAccountTypes, listAccountReadModels, getAccountReadModel } from "../../graphql/queries.js";
+import {
+  GET_ACCOUNT,
+  FETCH_ACCOUNTS,
+  CREATE_ACCOUNT,
+  UPDATE_ACCOUNT,
+  FETCH_ACCOUNT_TYPES,
+  DELETE_ACCOUNT
+} from "./constants";
 import { asyncActionStart, asyncActionFinish } from "../async/actions";
+
+export const getAccount = aggregateId => async dispatch => {
+  dispatch(asyncActionStart());
+
+  var userId;
+  await Auth.currentUserInfo().then(user => {
+    userId = user.attributes.sub;
+  });
+
+  var query = {
+    filter: {
+      userId: {
+        eq: userId
+      },
+      aggregateId: {
+        eq: aggregateId
+      }
+    }
+  };
+
+  await API.graphql(graphqlOperation(listAccountReadModels, query)).then(result => {
+    const account = result.data.listAccountReadModels.items[0];
+
+    dispatch({
+      type: GET_ACCOUNT,
+      payload: { account: account }
+    });
+  });
+
+  dispatch(asyncActionFinish());
+};
 
 export const fetchAccounts = (currentToken, nextToken) => async dispatch => {
   dispatch(asyncActionStart());
@@ -73,11 +111,12 @@ export const createAccount = account => async dispatch => {
     data: JSON.stringify({
       name: account.name,
       description: account.description,
-      accountAccountTypeId: account.accountType.id,
-      createdDate: new Date().toISOString()
+      bookValue: 0,
+      marketValue: 0,
+      accountAccountTypeId: account.accountType.id
     }),
     userId: userId,
-    timestamp: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
   await API.graphql(graphqlOperation(createEvent, { input }));
 
@@ -105,10 +144,12 @@ export const updateAccount = account => async dispatch => {
       id: account.id,
       name: account.name,
       description: account.description,
+      bookValue: account.bookValue,
+      marketValue: account.marketValue,
       accountAccountTypeId: account.accountType.id
     }),
     userId: userId,
-    timestamp: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
   await API.graphql(graphqlOperation(createEvent, { input }));
 
@@ -138,7 +179,7 @@ export const deleteAccount = account => async dispatch => {
       accountAccountTypeId: account.accountType.id
     }),
     userId: userId,
-    timestamp: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
   await API.graphql(graphqlOperation(createEvent, { input }));
 

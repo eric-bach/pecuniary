@@ -69,7 +69,7 @@ export const createTransaction = transaction => async dispatch => {
   });
 
   const input = {
-    aggregateId: transaction.account.id,
+    aggregateId: transaction.account.aggregateId,
     name: "TransactionCreatedEvent",
     version: 1,
     data: JSON.stringify({
@@ -79,11 +79,10 @@ export const createTransaction = transaction => async dispatch => {
       transactionDate: new Date(transaction.date).toISOString(),
       shares: transaction.shares,
       price: transaction.price,
-      commission: transaction.commission,
-      createdDate: new Date().toISOString()
+      commission: transaction.commission
     }),
     userId: userId,
-    timestamp: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
   await API.graphql(graphqlOperation(createEvent, { input }));
 

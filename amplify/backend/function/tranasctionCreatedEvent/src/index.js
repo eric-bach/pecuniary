@@ -6,39 +6,185 @@ const region = process.env.REGION;
 const endpoint = new urlParse(appsyncUrl).hostname.toString();
 const apiKey = process.env.API_PECUNIARY_GRAPHQLAPIKEYOUTPUT;
 
-exports.handler = async event => {
-  var message = event.Records[0].Sns.Message;
+exports.handler = async e => {
+  var message = e.Records[0].Sns.Message;
+  console.log("Message received:", message);
 
-  console.log("Message received from SNS:", message);
+  var event = JSON.parse(message).message;
+  console.log("Parsed event:", event);
 
-  var msg = JSON.parse(message).message;
-
-  console.log("Saving event to read store:", msg);
-
-  let query = `mutation createTransactionReadModel {
+  /******************
+  // Create Transaction
+   ******************/
+  let createTransactionMutation = `mutation createTransaction {
         createTransactionReadModel(input: {
-          aggregateId: "${msg.aggregateId}"
-          version: ${msg.version}
-          userId: "${msg.userId}"
-          transactionDate: "${msg.data.transactionDate}"
-          symbol: "${msg.data.symbol}"
-          shares: ${msg.data.shares}
-          price: ${msg.data.price}
-          commission: ${msg.data.commission}
-          transactionReadModelAccountId: "${msg.data.transactionReadModelAccountId}"
-          transactionReadModelTransactionTypeId: ${msg.data.transactionReadModelTransactionTypeId}
-          createdDate: "${msg.data.createdDate}"
+          aggregateId: "${event.aggregateId}"
+          version: ${event.version}
+          userId: "${event.userId}"
+          transactionDate: "${event.data.transactionDate}"
+          symbol: "${event.data.symbol}"
+          shares: ${event.data.shares}
+          price: ${event.data.price}
+          commission: ${event.data.commission}
+          transactionReadModelAccountId: "${event.data.transactionReadModelAccountId}"
+          transactionReadModelTransactionTypeId: ${event.data.transactionReadModelTransactionTypeId}
+          createdAt: "${event.createdAt}"
+          updatedAt: "${event.createdAt}"
         })
         {
+          id
           aggregateId
         }
       }`;
+  console.debug("createTransaction: %j", createTransactionMutation);
+  var createTransactionResult = await graphqlOperation(createTransactionMutation, "createTransaction");
+  console.log("Created Transaction: %j", createTransactionResult);
 
-  console.debug("Mutation/Query: %j", query);
-  var result = await graphqlOperation(query, "createTransactionReadModel");
+  /******************
+  // Update Positions
+   ******************/
+  // 1. Check if a position exists
+  let getPositionQuery = `query getPosition {
+    listPositionReadModels(filter: {
+      aggregateId: {
+        eq: "${event.aggregateId}"
+      }
+      symbol: {
+        eq: "${event.data.symbol}"
+      }
+    })
+    {
+      items{
+        id
+        shares
+        bookValue
+      }
+    }
+  }`;
+  console.debug("getPosition: %j", getPositionQuery);
+  var positions = await graphqlOperation(getPositionQuery, "getPosition");
+  console.log("Found Position: %j", positions);
 
-  console.log("Result: %j", result);
-  console.log(`Successfully processed ${event.Records.length} records.`);
+  // 2. Check if position exists
+  var bookValue;
+  if (positions.data.listPositionReadModels.items.length <= 0) {
+    console.log("Position doesn't exist...creating...");
+
+    bookValue = event.data.shares * event.data.price - event.data.commission;
+    var acb = bookValue / event.data.shares;
+
+    var createPositionMutation = `mutation createPosition {
+      createPositionReadModel(input: {
+        aggregateId: "${event.aggregateId}"
+        version: 1 
+        userId: "${event.userId}"
+        symbol: "${event.data.symbol}"
+        shares: ${event.data.shares}
+        acb: ${acb}
+        bookValue: ${bookValue.toFixed(2)}
+        createdAt: "${event.createdAt}"
+        updatedAt: "${event.createdAt}"
+        positionReadModelAccountId: "${event.data.transactionReadModelAccountId}"
+      })
+      {
+        id
+      }
+    }`;
+    console.debug("createPosition: %j", createPositionMutation);
+    var createPositionResult = await graphqlOperation(createPositionMutation, "createPosition");
+    console.log("Created Position: %j", createPositionResult);
+  } else {
+    console.log("Position exists...updating...");
+
+    let shares;
+    if (+event.data.transactionReadModelTransactionTypeId === 2) {
+      // Sell
+      shares = +positions.data.listPositionReadModels.items[0].shares - +event.data.shares;
+      bookValue =
+        (+positions.data.listPositionReadModels.items[0].bookValue /
+          +positions.data.listPositionReadModels.items[0].shares) *
+        (+positions.data.listPositionReadModels.items[0].shares - +event.data.shares);
+    } else {
+      // Buy
+      shares = +positions.data.listPositionReadModels.items[0].shares + +event.data.shares;
+      bookValue =
+        +positions.data.listPositionReadModels.items[0].bookValue +
+        (+event.data.shares * +event.data.price - +event.data.commission);
+    }
+
+    let acb = bookValue / shares;
+
+    var updatePositionMutation = `mutation updatePosition {
+      updatePositionReadModel(input: {
+        id: "${positions.data.listPositionReadModels.items[0].id}"
+        aggregateId: "${event.aggregateId}"
+        symbol: "${event.data.symbol}"
+        shares: ${shares}
+        acb: ${acb.toFixed(2)}
+        bookValue: ${bookValue}
+        updatedAt: "${event.createdAt}"
+      }) {
+        id
+        aggregateId
+        symbol
+        shares
+        acb
+        bookValue
+        updatedAt
+      }
+    }`;
+    console.debug("updatePosition: %j", updatePositionMutation);
+    var updatePositionResult = await graphqlOperation(updatePositionMutation, "updatePosition");
+    console.log("Updated Position: %j", updatePositionResult);
+  }
+  //
+
+  /******************
+  // Update Account book value
+   ******************/
+  // 1. Get Account
+  var accountQuery = `query getAccount {
+    getAccountReadModel(id: "${event.data.transactionReadModelAccountId}") 
+    {
+      id
+      bookValue
+    }
+  }`;
+  console.debug("getAccount: %j", accountQuery);
+  var account = await graphqlOperation(accountQuery, "getAccount");
+  console.log("Found Account: %j", account);
+
+  // 2. Calculate new Account book value
+  var newBookValue;
+  if (+event.data.transactionReadModelTransactionTypeId === 2) {
+    // Sell
+    newBookValue =
+      +account.data.getAccountReadModel.bookValue -
+      +positions.data.listPositionReadModels.items[0].bookValue +
+      (+positions.data.listPositionReadModels.items[0].bookValue /
+        +positions.data.listPositionReadModels.items[0].shares) *
+        (+positions.data.listPositionReadModels.items[0].shares - +event.data.shares);
+  } else {
+    // Buy
+    newBookValue =
+      +account.data.getAccountReadModel.bookValue + +(+event.data.shares * +event.data.price - +event.data.commission);
+  }
+
+  // 3. Update Account book value
+  var updateAccountMutation = `mutation updateAccount {
+    updateAccountReadModel(input: {
+      id: "${event.data.transactionReadModelAccountId}"
+      bookValue: ${newBookValue}
+    })
+    {
+      id
+    }
+  }`;
+  console.debug("updateAccount: %j", updateAccountMutation);
+  var updatedAccountResult = await graphqlOperation(updateAccountMutation, "updateAccount");
+  console.log("Updated Account: %j", updatedAccountResult);
+
+  console.log(`Successfully processed ${e.Records.length} records.`);
 };
 
 async function graphqlOperation(query, operationName) {
