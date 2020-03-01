@@ -1,7 +1,7 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import { Container } from "semantic-ui-react";
-import { withAuthenticator } from "aws-amplify-react";
+import { withAuthenticator, AmplifyTheme } from "aws-amplify-react";
 
 import ScrollToTop from "../../common/ScrollToTop";
 import NavBar from "../Nav/NavBar";
@@ -30,4 +30,17 @@ class App extends React.Component {
   }
 }
 
-export default withAuthenticator(App, { includeGreetings: false });
+const theme = {
+  ...AmplifyTheme,
+  button: {
+    ...AmplifyTheme.button,
+    color: "fff",
+    backgroundColor: "#2185d0"
+  },
+  sectionHeader: {
+    ...AmplifyTheme.sectionHeader,
+    backgroundImage: "linear-gradient(135deg, rgb(24, 42, 115) 0%, rgb(33, 138, 174) 69%, rgb(32, 167, 172) 89%)"
+  }
+};
+
+export default withAuthenticator(App, false, [], null, theme);
