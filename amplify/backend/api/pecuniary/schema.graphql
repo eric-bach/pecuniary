@@ -6,7 +6,7 @@ type Event @model {
   version: Int!
   data: String!
   userId: ID!
-  timestamp: AWSDateTime!
+  createdAt: AWSDateTime!
 }
 
 # Lookup Types

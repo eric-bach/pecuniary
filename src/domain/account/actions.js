@@ -75,12 +75,10 @@ export const createAccount = account => async dispatch => {
       description: account.description,
       bookValue: 0,
       marketValue: 0,
-      accountAccountTypeId: account.accountType.id,
-      createdDate: new Date().toISOString(),
-      updatedDate: new Date().toISOString()
+      accountAccountTypeId: account.accountType.id
     }),
     userId: userId,
-    timestamp: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
   await API.graphql(graphqlOperation(createEvent, { input }));
 
@@ -110,11 +108,10 @@ export const updateAccount = account => async dispatch => {
       description: account.description,
       bookValue: account.bookValue,
       marketValue: account.marketValue,
-      accountAccountTypeId: account.accountType.id,
-      updatedDate: new Date().toISOString()
+      accountAccountTypeId: account.accountType.id
     }),
     userId: userId,
-    timestamp: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
   await API.graphql(graphqlOperation(createEvent, { input }));
 
@@ -144,7 +141,7 @@ export const deleteAccount = account => async dispatch => {
       accountAccountTypeId: account.accountType.id
     }),
     userId: userId,
-    timestamp: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
   await API.graphql(graphqlOperation(createEvent, { input }));
 

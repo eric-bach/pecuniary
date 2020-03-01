@@ -27,8 +27,8 @@ exports.handler = async event => {
           commission: ${msg.data.commission}
           transactionReadModelAccountId: "${msg.data.transactionReadModelAccountId}"
           transactionReadModelTransactionTypeId: ${msg.data.transactionReadModelTransactionTypeId}
-          createdAt: "${msg.data.createdDate}"
-          updatedAt: "${msg.data.updatedDate}"
+          createdAt: "${msg.createdAt}"
+          updatedAt: "${msg.createdAt}"
         })
         {
           aggregateId
@@ -74,8 +74,8 @@ exports.handler = async event => {
         shares: ${msg.data.shares}
         acb: ${acb}
         bookValue: ${bookValue.toFixed(2)}
-        createdAt: "${msg.data.createdDate}"
-        updatedAt: "${msg.data.updatedDate}"
+        createdAt: "${msg.createdAt}"
+        updatedAt: "${msg.createdAt}"
         positionReadModelAccountId: "${msg.data.transactionReadModelAccountId}"
       })
       {
@@ -108,7 +108,7 @@ exports.handler = async event => {
         shares: ${shares}
         acb: ${acb.toFixed(2)}
         bookValue: ${bookValue}
-        updatedAt: "${msg.data.updatedAt}"
+        updatedAt: "${msg.createdAt}"
       }) {
         id
       }

@@ -12,7 +12,7 @@ export const createEvent = `mutation CreateEvent(
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -27,7 +27,7 @@ export const updateEvent = `mutation UpdateEvent(
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -42,7 +42,7 @@ export const deleteEvent = `mutation DeleteEvent(
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;

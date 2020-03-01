@@ -9,7 +9,7 @@ export const getEvent = `query GetEvent($id: ID!) {
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -26,7 +26,7 @@ export const listEvents = `query ListEvents(
       version
       data
       userId
-      timestamp
+      createdAt
     }
     nextToken
   }

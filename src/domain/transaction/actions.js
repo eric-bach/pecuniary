@@ -79,12 +79,10 @@ export const createTransaction = transaction => async dispatch => {
       transactionDate: new Date(transaction.date).toISOString(),
       shares: transaction.shares,
       price: transaction.price,
-      commission: transaction.commission,
-      createdDate: new Date().toISOString(),
-      updatedDate: new Date().toISOString()
+      commission: transaction.commission
     }),
     userId: userId,
-    timestamp: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
   await API.graphql(graphqlOperation(createEvent, { input }));
 

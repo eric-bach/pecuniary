@@ -9,7 +9,7 @@ export const onCreateEvent = `subscription OnCreateEvent {
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -21,7 +21,7 @@ export const onUpdateEvent = `subscription OnUpdateEvent {
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;
@@ -33,7 +33,7 @@ export const onDeleteEvent = `subscription OnDeleteEvent {
     version
     data
     userId
-    timestamp
+    createdAt
   }
 }
 `;

@@ -1,12 +1,8 @@
 const AWS = require("aws-sdk");
-const accountCreatedEventTopic =
-  process.env.SNS_EVENTBUS_ACCOUNTCREATEDEVENTTOPICARN;
-const accountUpdatedEventTopic =
-  process.env.SNS_EVENTBUS_ACCOUNTUPDATEDEVENTTOPICARN;
-const accountDeletedEventTopic =
-  process.env.SNS_EVENTBUS_ACCOUNTDELETEDEVENTTOPICARN;
-const transactionCreatedEventTopic =
-  process.env.SNS_EVENTBUS_TRANSACTIONCREATEDEVENTTOPICARN;
+const accountCreatedEventTopic = process.env.SNS_EVENTBUS_ACCOUNTCREATEDEVENTTOPICARN;
+const accountUpdatedEventTopic = process.env.SNS_EVENTBUS_ACCOUNTUPDATEDEVENTTOPICARN;
+const accountDeletedEventTopic = process.env.SNS_EVENTBUS_ACCOUNTDELETEDEVENTTOPICARN;
+const transactionCreatedEventTopic = process.env.SNS_EVENTBUS_TRANSACTIONCREATEDEVENTTOPICARN;
 
 exports.handler = async (event, context) => {
   var sns = new AWS.SNS({ apiVersion: "2010-03-31", region: "us-west-2" });
@@ -24,12 +20,13 @@ exports.handler = async (event, context) => {
     var userId = record.dynamodb.OldImage
       ? trim(record.dynamodb.OldImage.userId.S)
       : trim(record.dynamodb.NewImage.userId.S);
-    var version = record.dynamodb.OldImage
-      ? record.dynamodb.OldImage.version.N
-      : record.dynamodb.NewImage.version.N;
+    var version = record.dynamodb.OldImage ? record.dynamodb.OldImage.version.N : record.dynamodb.NewImage.version.N;
     var eventName = record.dynamodb.OldImage
       ? trim(record.dynamodb.OldImage.name.S)
       : trim(record.dynamodb.NewImage.name.S);
+    var createdAt = record.dynamodb.OldImage
+      ? trim(record.dynamodb.OldImage.createdAt.S)
+      : trim(record.dynamodb.NewImage.createdAt.S);
     var data = record.dynamodb.OldImage
       ? JSON.parse(trim(record.dynamodb.OldImage.data.S))
       : JSON.parse(trim(record.dynamodb.NewImage.data.S));
@@ -39,13 +36,15 @@ exports.handler = async (event, context) => {
     console.log("Version: %j", version);
     console.log("Data: %j", data);
     console.log("User Id: %j", userId);
+    console.log("Created At: %j", createdAt);
 
     const type = "json";
     var message = {
       aggregateId: aggregateId,
       version: version,
       userId: userId,
-      data: data
+      data: data,
+      createdAt: createdAt
     };
 
     var topic;
