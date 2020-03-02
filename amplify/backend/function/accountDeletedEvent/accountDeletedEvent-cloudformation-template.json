@@ -88,7 +88,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/accountDeletedEvent-3532434e62644f417a36-build.zip"
+					"S3Key": "amplify-builds/accountDeletedEvent-7a4d48644759414e7570-build.zip"
 				},
 				"Tags": [
 					{

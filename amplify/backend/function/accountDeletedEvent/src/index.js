@@ -16,6 +16,41 @@ exports.handler = async event => {
   console.log("Saving event to read store:", msg);
 
   // 1. Get all transactions matching UserId
+  let positionsQuery = `query listPositions {
+    listPositionReadModels(filter: {
+      userId:{
+        eq:"${msg.userId}"
+      }
+    }) {
+      items {
+        id
+        account {
+          id
+        }
+      }
+    }
+  }`;
+  console.debug("Get positions: %j", positionsQuery);
+  var positions = await graphqlOperation(positionsQuery, "listPositions");
+  console.debug("Get positions result: %j", positions);
+
+  // 2. Delete each position matching Account Id
+  var pos = positions.data.listPositionReadModels.items.filter(e => e.account.id === msg.data.id);
+  pos.forEach(async p => {
+    let deletePositionsQuery = `mutation deletePosition {
+          deletePositionReadModel(input: {
+              id: "${p.id}"
+            })
+            {
+              id
+            }
+          }`;
+    console.debug("Delete position: %j", deletePositionsQuery);
+    var deletePositionResult = await graphqlOperation(deletePositionsQuery, "deletePosition");
+    console.debug("Delete position result: %j", deletePositionResult);
+  });
+
+  // 3. Get all transactions matching UserId
   let transactionsQuery = `query listTransactionReadModels {
         listTransactionReadModels(filter: {
           userId:{
@@ -34,11 +69,9 @@ exports.handler = async event => {
   var transactions = await graphqlOperation(transactionsQuery, "listTransactionReadModels");
   console.debug("Get transactions result: %j", transactions);
 
-  // 2. Delete each transaction matching Account Id
+  // 4. Delete each transaction matching Account Id
   var trans = transactions.data.listTransactionReadModels.items.filter(e => e.account.id === msg.data.id);
   trans.forEach(async t => {
-    console.log(t.id);
-
     let deleteTransQuery = `mutation deleteTransactionReadModel {
           deleteTransactionReadModel(input: {
               id: "${t.id}"
@@ -52,7 +85,7 @@ exports.handler = async event => {
     console.debug("Delete transaction result: %j", deleteTransResult);
   });
 
-  // 3. Delete Account
+  // 5. Delete Account
   let query = `mutation deleteAccountReadModel {
           deleteAccountReadModel(input: {
             id: "${msg.data.id}"
