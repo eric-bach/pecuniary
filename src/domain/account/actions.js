@@ -1,6 +1,6 @@
 import { API, graphqlOperation, Auth } from "aws-amplify";
 import { createEvent } from "../../graphql/mutations";
-import { listAccountTypes, listAccountReadModels, getAccountReadModel } from "../../graphql/queries.js";
+import { listAccountTypes, listAccountReadModels } from "../../graphql/queries.js";
 import {
   GET_ACCOUNT,
   FETCH_ACCOUNTS,

@@ -33,7 +33,7 @@ class AccountSummary extends Component {
                   />
                   <Button
                     as={Link}
-                    to={`/accounts/edit/${account.id}`}
+                    to={`/accounts/edit/${account.aggregateId}`}
                     color='blue'
                     floated='right'
                     content='Edit'

@@ -85,12 +85,12 @@ class AccountForm extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const accountId = ownProps.match.params.id;
+  const aggregateId = ownProps.match.params.id;
 
   let account = {};
 
-  if (accountId && state.accounts.accounts.length > 0) {
-    account = state.accounts.accounts.filter(account => account.id === accountId)[0];
+  if (aggregateId && state.accounts.accounts.length > 0) {
+    account = state.accounts.accounts.filter(account => account.aggregateId === aggregateId)[0];
   }
 
   return {
