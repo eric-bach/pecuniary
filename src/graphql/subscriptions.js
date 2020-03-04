@@ -691,3 +691,42 @@ export const onDeletePositionReadModel = `subscription OnDeletePositionReadModel
   }
 }
 `;
+export const onCreateTimeSeries = `subscription OnCreateTimeSeries {
+  onCreateTimeSeries {
+    id
+    symbol
+    date
+    open
+    high
+    low
+    close
+    volume
+  }
+}
+`;
+export const onUpdateTimeSeries = `subscription OnUpdateTimeSeries {
+  onUpdateTimeSeries {
+    id
+    symbol
+    date
+    open
+    high
+    low
+    close
+    volume
+  }
+}
+`;
+export const onDeleteTimeSeries = `subscription OnDeleteTimeSeries {
+  onDeleteTimeSeries {
+    id
+    symbol
+    date
+    open
+    high
+    low
+    close
+    volume
+  }
+}
+`;

@@ -93,6 +93,30 @@ exports.handler = async e => {
     console.debug("createPosition: %j", createPositionMutation);
     var createPositionResult = await graphqlOperation(createPositionMutation, "createPosition");
     console.log("Created Position: %j", createPositionResult);
+
+    // Call AlphaVantage to get quote
+    var timeSeries = await getTimeSeries(event.data.symbol, new Date(event.createdAt).toISOString().substring(0, 10));
+    console.log(`TimeSeries for ${event.data.symbol}: `, timeSeries);
+    // TODO Handle error
+
+    // Create TimeSeries
+    var createTimeSeriesMutation = `mutation createTimeSeries {
+      createTimeSeries(input: {
+        symbol: "${event.data.symbol}"
+        date: "${timeSeries.date}"
+        open: ${timeSeries["1. open"]}
+        high: ${timeSeries["2. high"]}
+        low: ${timeSeries["3. low"]}
+        close: ${timeSeries["4. close"]}
+        volume: ${timeSeries["5. volume"]}
+      })
+      {
+        id
+      }
+    }`;
+    console.debug("createTimeSeries: %j", createTimeSeriesMutation);
+    var createTimeSeriesResult = await graphqlOperation(createTimeSeriesMutation, "createTimeSeries");
+    console.log("Created TimeSeries: %j", createTimeSeriesResult);
   } else {
     console.log("Position exists...updating...");
 
@@ -186,6 +210,55 @@ exports.handler = async e => {
 
   console.log(`Successfully processed ${e.Records.length} records.`);
 };
+
+async function getTimeSeries(symbol, date) {
+  var result = await get(
+    `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=SPRODHAE4BSL2OLB`
+  );
+
+  if (result["Error Message"]) {
+    console.error("Error: ", result["Error Message"]);
+
+    // Default to $0 for quotes not found
+    return {
+      "1. open": "0",
+      "2. high": "0",
+      "3. low": "0",
+      "4. close": "0",
+      "5. volume": "0"
+    };
+  } else if (!result["Time Series (Daily)"][`${date}`]) {
+    var d = new Date(date);
+    d.setDate(d.getDate() - 1);
+
+    date = d.toISOString().substring(0, 10);
+  }
+
+  return { ...result["Time Series (Daily)"][`${date}`], date: date };
+}
+
+function get(url) {
+  return new Promise((resolve, reject) => {
+    const req = https.get(url, res => {
+      res.setEncoding("utf8");
+      let body = "";
+
+      res.on("data", chunk => {
+        body += chunk;
+      });
+
+      res.on("end", () => {
+        resolve(JSON.parse(body));
+      });
+    });
+
+    req.on("error", err => {
+      reject(err);
+    });
+
+    req.end();
+  });
+}
 
 async function graphqlOperation(query, operationName) {
   const req = new AWS.HttpRequest(appsyncUrl, region);

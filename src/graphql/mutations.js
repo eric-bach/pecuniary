@@ -763,3 +763,51 @@ export const deletePositionReadModel = `mutation DeletePositionReadModel(
   }
 }
 `;
+export const createTimeSeries = `mutation CreateTimeSeries(
+  $input: CreateTimeSeriesInput!
+  $condition: ModelTimeSeriesConditionInput
+) {
+  createTimeSeries(input: $input, condition: $condition) {
+    id
+    symbol
+    date
+    open
+    high
+    low
+    close
+    volume
+  }
+}
+`;
+export const updateTimeSeries = `mutation UpdateTimeSeries(
+  $input: UpdateTimeSeriesInput!
+  $condition: ModelTimeSeriesConditionInput
+) {
+  updateTimeSeries(input: $input, condition: $condition) {
+    id
+    symbol
+    date
+    open
+    high
+    low
+    close
+    volume
+  }
+}
+`;
+export const deleteTimeSeries = `mutation DeleteTimeSeries(
+  $input: DeleteTimeSeriesInput!
+  $condition: ModelTimeSeriesConditionInput
+) {
+  deleteTimeSeries(input: $input, condition: $condition) {
+    id
+    symbol
+    date
+    open
+    high
+    low
+    close
+    volume
+  }
+}
+`;

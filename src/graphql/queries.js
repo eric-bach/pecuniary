@@ -439,3 +439,36 @@ export const listPositionReadModels = `query ListPositionReadModels(
   }
 }
 `;
+export const getTimeSeries = `query GetTimeSeries($id: ID!) {
+  getTimeSeries(id: $id) {
+    id
+    symbol
+    date
+    open
+    high
+    low
+    close
+    volume
+  }
+}
+`;
+export const listTimeSeriess = `query ListTimeSeriess(
+  $filter: ModelTimeSeriesFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listTimeSeriess(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      symbol
+      date
+      open
+      high
+      low
+      close
+      volume
+    }
+    nextToken
+  }
+}
+`;

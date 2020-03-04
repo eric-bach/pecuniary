@@ -86,6 +86,17 @@ type PositionReadModel @model {
   account: AccountReadModel! @connection(name: "Positions")
 }
 
+type TimeSeries @model {
+  id: ID!
+  symbol: String!
+  date: AWSDate!
+  open: Float!
+  high: Float!
+  low: Float!
+  close: Float!
+  volume: Int!
+}
+
 # type SecurityReadModel @model {
 #   id: ID!
 #   name: String!
