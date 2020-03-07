@@ -320,6 +320,7 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
         shares
         acb
         bookValue
+        marketValue
         createdAt
         updatedAt
       }
@@ -374,6 +375,7 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
         shares
         acb
         bookValue
+        marketValue
         createdAt
         updatedAt
       }
@@ -428,6 +430,7 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
         shares
         acb
         bookValue
+        marketValue
         createdAt
         updatedAt
       }
@@ -587,6 +590,7 @@ export const onCreatePositionReadModel = `subscription OnCreatePositionReadModel
     shares
     acb
     bookValue
+    marketValue
     createdAt
     updatedAt
     account {
@@ -625,6 +629,7 @@ export const onUpdatePositionReadModel = `subscription OnUpdatePositionReadModel
     shares
     acb
     bookValue
+    marketValue
     createdAt
     updatedAt
     account {
@@ -663,6 +668,7 @@ export const onDeletePositionReadModel = `subscription OnDeletePositionReadModel
     shares
     acb
     bookValue
+    marketValue
     createdAt
     updatedAt
     account {

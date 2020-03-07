@@ -81,6 +81,7 @@ type PositionReadModel @model {
   shares: Int!
   acb: Float!
   bookValue: Float!
+  marketValue: Float!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   account: AccountReadModel! @connection(name: "Positions")

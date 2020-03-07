@@ -231,6 +231,7 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
         shares
         acb
         bookValue
+        marketValue
         createdAt
         updatedAt
       }
@@ -373,6 +374,7 @@ export const getPositionReadModel = `query GetPositionReadModel($id: ID!) {
     shares
     acb
     bookValue
+    marketValue
     createdAt
     updatedAt
     account {
@@ -420,6 +422,7 @@ export const listPositionReadModels = `query ListPositionReadModels(
       shares
       acb
       bookValue
+      marketValue
       createdAt
       updatedAt
       account {

@@ -37,9 +37,9 @@ class Positions extends Component {
                   <Table.Cell>{p.shares}</Table.Cell>
                   <Table.Cell>${p.acb.toFixed(2)}</Table.Cell>
                   <Table.Cell>${p.bookValue.toFixed(2)}</Table.Cell>
-                  <Table.Cell>$0.00</Table.Cell>
-                  <Table.Cell>${pl}</Table.Cell>
-                  <Table.Cell>{plPer}%</Table.Cell>
+                  <Table.Cell>${p.marketValue.toFixed(2)}</Table.Cell>
+                  <Table.Cell>${(p.marketValue - p.bookValue).toFixed(2)}</Table.Cell>
+                  <Table.Cell>${((p.marketValue - p.bookValue) / p.bookValue).toFixed(2)}%</Table.Cell>
                 </Table.Row>
               );
             })}

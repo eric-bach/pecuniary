@@ -368,6 +368,7 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
         shares
         acb
         bookValue
+        marketValue
         createdAt
         updatedAt
       }
@@ -425,6 +426,7 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
         shares
         acb
         bookValue
+        marketValue
         createdAt
         updatedAt
       }
@@ -482,6 +484,7 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
         shares
         acb
         bookValue
+        marketValue
         createdAt
         updatedAt
       }
@@ -653,6 +656,7 @@ export const createPositionReadModel = `mutation CreatePositionReadModel(
     shares
     acb
     bookValue
+    marketValue
     createdAt
     updatedAt
     account {
@@ -694,6 +698,7 @@ export const updatePositionReadModel = `mutation UpdatePositionReadModel(
     shares
     acb
     bookValue
+    marketValue
     createdAt
     updatedAt
     account {
@@ -735,6 +740,7 @@ export const deletePositionReadModel = `mutation DeletePositionReadModel(
     shares
     acb
     bookValue
+    marketValue
     createdAt
     updatedAt
     account {

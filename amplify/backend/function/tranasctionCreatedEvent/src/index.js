@@ -61,16 +61,15 @@ exports.handler = async e => {
   console.log("Found TimeSeries: %j", timeSeriesResult);
 
   // 2. Check if time series exists
+  var timeSeries = await getQuote(event.data.symbol);
+  console.log(`TimeSeries for ${event.data.symbol}: `, timeSeries);
+  // TODO Handle error
   if (
     !timeSeriesResult.data.listTImeSeriess ||
     !timeSeriesResult.data.listTImeSeriess.items ||
     timeSeriesResult.data.listTImeSeriess.items.length <= 0
   ) {
     console.log("TimeSeries doesn't exist...creating...");
-
-    var timeSeries = await getQuote(event.data.symbol);
-    console.log(`TimeSeries for ${event.data.symbol}: `, timeSeries);
-    // TODO Handle error
 
     // Create TimeSeries
     var createTimeSeriesMutation = `mutation createTimeSeries {
@@ -114,9 +113,10 @@ exports.handler = async e => {
   var positions = await graphqlOperation(getPositionQuery, "getPosition");
   console.log("Found Position: %j", positions);
 
-  // TODO UPDATE MARKET VALUE
   // 2. Check if position exists
   var bookValue;
+  let marketValue = event.data.shares * timeSeries["05. price"];
+
   if (positions.data.listPositionReadModels.items.length <= 0) {
     console.log("Position doesn't exist...creating...");
 
@@ -132,6 +132,7 @@ exports.handler = async e => {
         shares: ${event.data.shares}
         acb: ${acb}
         bookValue: ${bookValue.toFixed(2)}
+        marketValue: ${marketValue.toFixed(2)}
         createdAt: "${event.createdAt}"
         updatedAt: "${event.createdAt}"
         positionReadModelAccountId: "${event.data.transactionReadModelAccountId}"
@@ -172,6 +173,7 @@ exports.handler = async e => {
         shares: ${shares}
         acb: ${acb.toFixed(2)}
         bookValue: ${bookValue}
+        marketValue: ${marketValue.toFixed(2)}
         updatedAt: "${event.createdAt}"
       }) {
         id
@@ -192,13 +194,13 @@ exports.handler = async e => {
   /******************
   // Update Account book/market value
    ******************/
-  // TODO UPDATE MARKET VALUE
   // 1. Get Account
   var accountQuery = `query getAccount {
     getAccountReadModel(id: "${event.data.transactionReadModelAccountId}") 
     {
       id
       bookValue
+      marketValue
     }
   }`;
   console.debug("getAccount: %j", accountQuery);
@@ -207,6 +209,11 @@ exports.handler = async e => {
 
   // 2. Calculate new Account book value
   var newBookValue;
+  var newMarketValue;
+  console.log(+account.data.getAccountReadModel.marketValue);
+  console.log(+event.data.shares);
+  console.log(+timeSeries["05. price"]);
+  console.log(+event.data.shares * +timeSeries["05. price"]);
   if (+event.data.transactionReadModelTransactionTypeId === 2) {
     // Sell
     newBookValue =
@@ -215,10 +222,12 @@ exports.handler = async e => {
       (+positions.data.listPositionReadModels.items[0].bookValue /
         +positions.data.listPositionReadModels.items[0].shares) *
         (+positions.data.listPositionReadModels.items[0].shares - +event.data.shares);
+    newMarketValue = +account.data.getAccountReadModel.marketValue + +event.data.shares * +timeSeries["05. price"];
   } else {
     // Buy
     newBookValue =
       +account.data.getAccountReadModel.bookValue + +(+event.data.shares * +event.data.price - +event.data.commission);
+    newMarketValue = +account.data.getAccountReadModel.marketValue + +event.data.shares * +timeSeries["05. price"];
   }
 
   // 3. Update Account book value
@@ -226,6 +235,7 @@ exports.handler = async e => {
     updateAccountReadModel(input: {
       id: "${event.data.transactionReadModelAccountId}"
       bookValue: ${newBookValue}
+      marketValue: ${newMarketValue}
     })
     {
       id
