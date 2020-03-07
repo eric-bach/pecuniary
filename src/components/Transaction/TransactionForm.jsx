@@ -68,6 +68,10 @@ class TransactionForm extends Component {
     }
 
     this.props.history.push("/accounts");
+    // this.props.history.push({
+    //   pathname: `/accounts/view/${this.props.location.state.account.aggregateId}`,
+    //   state: { account: this.props.location.state.account }
+    // });
   };
 
   render() {

@@ -20,7 +20,8 @@ class AccountSummary extends Component {
                 <Item.Header>
                   <div>{account.name}</div>
                 </Item.Header>
-                <Item.Meta>Book Value: ${account.bookValue}</Item.Meta>
+                <Item.Meta>Book Value: ${account.bookValue.toFixed(2)}</Item.Meta>
+                <Item.Meta>Market Value: ${account.marketValue.toFixed(2)}</Item.Meta>
                 <Item.Description>
                   {account.description}
                   <Button

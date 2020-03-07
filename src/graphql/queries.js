@@ -231,6 +231,7 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
         shares
         acb
         bookValue
+        marketValue
         createdAt
         updatedAt
       }
@@ -373,6 +374,7 @@ export const getPositionReadModel = `query GetPositionReadModel($id: ID!) {
     shares
     acb
     bookValue
+    marketValue
     createdAt
     updatedAt
     account {
@@ -420,6 +422,7 @@ export const listPositionReadModels = `query ListPositionReadModels(
       shares
       acb
       bookValue
+      marketValue
       createdAt
       updatedAt
       account {
@@ -434,6 +437,39 @@ export const listPositionReadModels = `query ListPositionReadModels(
         createdAt
         updatedAt
       }
+    }
+    nextToken
+  }
+}
+`;
+export const getTimeSeries = `query GetTimeSeries($id: ID!) {
+  getTimeSeries(id: $id) {
+    id
+    symbol
+    date
+    open
+    high
+    low
+    close
+    volume
+  }
+}
+`;
+export const listTimeSeriess = `query ListTimeSeriess(
+  $filter: ModelTimeSeriesFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listTimeSeriess(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      symbol
+      date
+      open
+      high
+      low
+      close
+      volume
     }
     nextToken
   }
