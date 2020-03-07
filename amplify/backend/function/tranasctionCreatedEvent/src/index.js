@@ -41,6 +41,58 @@ exports.handler = async e => {
   console.log("Created Transaction: %j", createTransactionResult);
 
   /******************
+   * Update TimeSeries
+   ******************/
+  // 1. Check if a time series exists
+  let getTimeSeriesQuery = `query getTimeSeries {
+    listTimeSeriess(filter: {
+      symbol: {
+        eq: "${event.data.symbol}"
+      }
+    })
+    {
+      items{
+        id
+      }
+    }
+  }`;
+  console.debug("getTimeSeries: %j", getTimeSeriesQuery);
+  var timeSeriesResult = await graphqlOperation(getTimeSeriesQuery, "getTimeSeries");
+  console.log("Found TimeSeries: %j", timeSeriesResult);
+
+  // 2. Check if time series exists
+  if (
+    !timeSeriesResult.data.listTImeSeriess ||
+    !timeSeriesResult.data.listTImeSeriess.items ||
+    timeSeriesResult.data.listTImeSeriess.items.length <= 0
+  ) {
+    console.log("TimeSeries doesn't exist...creating...");
+
+    var timeSeries = await getQuote(event.data.symbol);
+    console.log(`TimeSeries for ${event.data.symbol}: `, timeSeries);
+    // TODO Handle error
+
+    // Create TimeSeries
+    var createTimeSeriesMutation = `mutation createTimeSeries {
+      createTimeSeries(input: {
+        symbol: "${event.data.symbol}"
+        date: "${timeSeries["07. latest trading day"]}"
+        open: ${timeSeries["02. open"]}
+        high: ${timeSeries["03. high"]}
+        low: ${timeSeries["04. low"]}
+        close: ${timeSeries["05. price"]}
+        volume: ${timeSeries["06. volume"]}
+      })
+      {
+        id
+      }
+    }`;
+    console.debug("createTimeSeries: %j", createTimeSeriesMutation);
+    var createTimeSeriesResult = await graphqlOperation(createTimeSeriesMutation, "createTimeSeries");
+    console.log("Created TimeSeries: %j", createTimeSeriesResult);
+  }
+
+  /******************
   // Update Positions
    ******************/
   // 1. Check if a position exists
@@ -48,9 +100,6 @@ exports.handler = async e => {
     listPositionReadModels(filter: {
       aggregateId: {
         eq: "${event.aggregateId}"
-      }
-      symbol: {
-        eq: "${event.data.symbol}"
       }
     })
     {
@@ -65,6 +114,7 @@ exports.handler = async e => {
   var positions = await graphqlOperation(getPositionQuery, "getPosition");
   console.log("Found Position: %j", positions);
 
+  // TODO UPDATE MARKET VALUE
   // 2. Check if position exists
   var bookValue;
   if (positions.data.listPositionReadModels.items.length <= 0) {
@@ -93,30 +143,6 @@ exports.handler = async e => {
     console.debug("createPosition: %j", createPositionMutation);
     var createPositionResult = await graphqlOperation(createPositionMutation, "createPosition");
     console.log("Created Position: %j", createPositionResult);
-
-    // Call AlphaVantage to get quote
-    var timeSeries = await getTimeSeries(event.data.symbol, new Date(event.createdAt).toISOString().substring(0, 10));
-    console.log(`TimeSeries for ${event.data.symbol}: `, timeSeries);
-    // TODO Handle error
-
-    // Create TimeSeries
-    var createTimeSeriesMutation = `mutation createTimeSeries {
-      createTimeSeries(input: {
-        symbol: "${event.data.symbol}"
-        date: "${timeSeries.date}"
-        open: ${timeSeries["1. open"]}
-        high: ${timeSeries["2. high"]}
-        low: ${timeSeries["3. low"]}
-        close: ${timeSeries["4. close"]}
-        volume: ${timeSeries["5. volume"]}
-      })
-      {
-        id
-      }
-    }`;
-    console.debug("createTimeSeries: %j", createTimeSeriesMutation);
-    var createTimeSeriesResult = await graphqlOperation(createTimeSeriesMutation, "createTimeSeries");
-    console.log("Created TimeSeries: %j", createTimeSeriesResult);
   } else {
     console.log("Position exists...updating...");
 
@@ -164,8 +190,9 @@ exports.handler = async e => {
   //
 
   /******************
-  // Update Account book value
+  // Update Account book/market value
    ******************/
+  // TODO UPDATE MARKET VALUE
   // 1. Get Account
   var accountQuery = `query getAccount {
     getAccountReadModel(id: "${event.data.transactionReadModelAccountId}") 
@@ -210,6 +237,32 @@ exports.handler = async e => {
 
   console.log(`Successfully processed ${e.Records.length} records.`);
 };
+
+async function getQuote(symbol) {
+  var result = await get(
+    `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=SPRODHAE4BSL2OLB`
+  );
+
+  if (result["Error Message"]) {
+    console.error("Error: ", result["Error Message"]);
+
+    // Default to $0 for quotes not found
+    return {
+      "01. symbol": `${symbol}`,
+      "02. open": "0",
+      "03. high": "0",
+      "04. low": "0",
+      "05. price": "0",
+      "06. volume": "0",
+      "07. latest trading day": `${new Date().toISOString.substring(0, 10)}`,
+      "08. previous close": "0",
+      "09. change": "0",
+      "10. change percent": "0%"
+    };
+  }
+
+  return result["Global Quote"];
+}
 
 async function getTimeSeries(symbol, date) {
   var result = await get(
@@ -258,6 +311,12 @@ function get(url) {
 
     req.end();
   });
+}
+
+function addDays(date, days) {
+  var result = new Date(date);
+  result.setDate(date.getDate() + days);
+  return result;
 }
 
 async function graphqlOperation(query, operationName) {

@@ -21,6 +21,7 @@ class AccountSummary extends Component {
                   <div>{account.name}</div>
                 </Item.Header>
                 <Item.Meta>Book Value: ${account.bookValue}</Item.Meta>
+                <Item.Meta>Market Value: ${account.marketValue}</Item.Meta>
                 <Item.Description>
                   {account.description}
                   <Button
