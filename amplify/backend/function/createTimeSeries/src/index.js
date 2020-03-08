@@ -5,6 +5,7 @@ const appsyncUrl = process.env.API_PECUNIARY_GRAPHQLAPIENDPOINTOUTPUT;
 const region = process.env.REGION;
 const endpoint = new urlParse(appsyncUrl).hostname.toString();
 const apiKey = process.env.API_PECUNIARY_GRAPHQLAPIKEYOUTPUT;
+const parameterStore = new AWS.SSM();
 
 exports.handler = async e => {
   var event = JSON.parse(e.Records[0].Sns.Message).message;
@@ -24,6 +25,22 @@ exports.handler = async e => {
   }
 
   console.log(`Successfully processed ${e.Records.length} record(s)`);
+};
+
+const getParam = param => {
+  return new Promise((res, rej) => {
+    parameterStore.getParameter(
+      {
+        Name: param
+      },
+      (err, data) => {
+        if (err) {
+          return rej(err);
+        }
+        return res(data);
+      }
+    );
+  });
 };
 
 async function createTimeSeries(timeSeriesQuote, symbol) {
@@ -86,8 +103,10 @@ async function timeSeriesExistsForSymbol(symbol) {
 
 // Call AlphaVantage to get a GLOBAL_QUOTE
 async function getQuote(symbol) {
+  const param = await getParam("AlphaVantageApiKey");
+
   var result = await get(
-    `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=SPRODHAE4BSL2OLB`
+    `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${param.Parameter.Value}`
   );
 
   if (result["Error Message"]) {

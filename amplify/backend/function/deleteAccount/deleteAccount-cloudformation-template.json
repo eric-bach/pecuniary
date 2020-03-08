@@ -137,7 +137,7 @@
 				],
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/deleteAccount-41454e7763626a355341-build.zip"
+					"S3Key": "amplify-builds/deleteAccount-6c6732383842746e5356-build.zip"
 				}
 			}
 		},
