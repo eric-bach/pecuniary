@@ -46,11 +46,13 @@
             "function": {
                 "seed": {},
                 "eventBus": {},
-                "accountCreatedEvent": {},
-                "accountUpdatedEvent": {},
-                "accountDeletedEvent": {},
-                "tranasctionCreatedEvent": {},
-                "pecuniary": {}
+                "pecuniary": {},
+                "createTransaction": {},
+                "createTimeSeries": {},
+                "createUpdatePosition": {},
+                "createAccount": {},
+                "updateAccount": {},
+                "deleteAccount": {}
             }
         }
     }
