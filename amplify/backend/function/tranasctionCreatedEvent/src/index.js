@@ -16,6 +16,7 @@ exports.handler = async e => {
   /******************
   // Create Transaction
    ******************/
+  /*
   let createTransactionMutation = `mutation createTransaction {
         createTransactionReadModel(input: {
           aggregateId: "${event.aggregateId}"
@@ -39,6 +40,7 @@ exports.handler = async e => {
   console.debug("createTransaction: %j", createTransactionMutation);
   var createTransactionResult = await graphqlOperation(createTransactionMutation, "createTransaction");
   console.log("Created Transaction: %j", createTransactionResult);
+  */
 
   /******************
    * Update TimeSeries

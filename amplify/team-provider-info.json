@@ -21,7 +21,8 @@
                 "eventBus": {},
                 "accountUpdatedEvent": {},
                 "accountDeletedEvent": {},
-                "tranasctionCreatedEvent": {}
+                "tranasctionCreatedEvent": {},
+                "createTransaction": {}
             }
         }
     },

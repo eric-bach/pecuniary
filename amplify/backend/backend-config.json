@@ -40,11 +40,7 @@
         {
           "category": "api",
           "resourceName": "pecuniary",
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ]
+          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput", "GraphQLAPIKeyOutput"]
         }
       ]
     },
@@ -56,11 +52,7 @@
         {
           "category": "api",
           "resourceName": "pecuniary",
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ]
+          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput", "GraphQLAPIKeyOutput"]
         },
         {
           "category": "sns",
@@ -82,11 +74,7 @@
         {
           "category": "api",
           "resourceName": "pecuniary",
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ]
+          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput", "GraphQLAPIKeyOutput"]
         },
         {
           "category": "sns",
@@ -103,11 +91,7 @@
         {
           "category": "api",
           "resourceName": "pecuniary",
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ]
+          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput", "GraphQLAPIKeyOutput"]
         },
         {
           "category": "sns",
@@ -124,11 +108,7 @@
         {
           "category": "api",
           "resourceName": "pecuniary",
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ]
+          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput", "GraphQLAPIKeyOutput"]
         },
         {
           "category": "sns",
@@ -145,11 +125,24 @@
         {
           "category": "api",
           "resourceName": "pecuniary",
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput",
-            "GraphQLAPIKeyOutput"
-          ]
+          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput", "GraphQLAPIKeyOutput"]
+        },
+        {
+          "category": "sns",
+          "resourceName": "eventBus",
+          "attributes": ["TransactionCreatedEventTopicArn"]
+        }
+      ]
+    },
+    "createTransaction": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation",
+      "build": true,
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "pecuniary",
+          "attributes": ["GraphQLAPIIdOutput", "GraphQLAPIEndpointOutput", "GraphQLAPIKeyOutput"]
         },
         {
           "category": "sns",
