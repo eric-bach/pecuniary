@@ -29,8 +29,6 @@ class Positions extends Component {
 
           <Table.Body>
             {positions.map(p => {
-              var pl = p.bookValue.toFixed(2) - 0;
-              var plPer = (pl / p.bookValue.toFixed(2)) * 100;
               return (
                 <Table.Row key={p.id}>
                   <Table.Cell>{p.symbol}</Table.Cell>

@@ -7,11 +7,8 @@ const endpoint = new urlParse(appsyncUrl).hostname.toString();
 const apiKey = process.env.API_PECUNIARY_GRAPHQLAPIKEYOUTPUT;
 
 exports.handler = async e => {
-  var message = e.Records[0].Sns.Message;
-  console.log("Message received:", message);
-
-  var event = JSON.parse(message).message;
-  console.log("Parsed event:", event);
+  var event = JSON.parse(e.Records[0].Sns.Message).message;
+  console.log("Event received:\n", event);
 
   let createTransactionMutation = `mutation createTransaction {
           createTransactionReadModel(input: {
@@ -34,11 +31,12 @@ exports.handler = async e => {
           }
         }`;
 
-  console.debug("createTransaction: %j", createTransactionMutation);
-  var createTransactionResult = await graphqlOperation(createTransactionMutation, "createTransaction");
-  console.log("Created Transaction: %j", createTransactionResult);
+  console.debug(`createTransaction:\n${createTransactionMutation}`);
 
-  console.log(`Successfully processed ${e.Records.length} records.`);
+  var result = await graphqlOperation(createTransactionMutation, "createTransaction");
+  console.log("Created Transaction:\n", result);
+
+  console.log(`Successfully processed ${e.Records.length} record(s)`);
 };
 
 async function graphqlOperation(query, operationName) {

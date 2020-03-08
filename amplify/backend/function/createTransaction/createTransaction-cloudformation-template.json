@@ -88,7 +88,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/createTransaction-6c704b3867715367792f-build.zip"
+					"S3Key": "amplify-builds/createTransaction-4f4a386e38434e355863-build.zip"
 				}
 			}
 		},

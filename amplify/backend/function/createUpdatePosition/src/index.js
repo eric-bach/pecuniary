@@ -5,7 +5,7 @@ var region = process.env.REGION
 var apiPecuniaryGraphQLAPIIdOutput = process.env.API_PECUNIARY_GRAPHQLAPIIDOUTPUT
 var apiPecuniaryGraphQLAPIEndpointOutput = process.env.API_PECUNIARY_GRAPHQLAPIENDPOINTOUTPUT
 
-Amplify Params - DO NOT EDIT */const https = require("https");
+Amplify Params - DO NOT EDIT */ const https = require("https");
 const AWS = require("aws-sdk");
 const urlParse = require("url").URL;
 const appsyncUrl = process.env.API_PECUNIARY_GRAPHQLAPIENDPOINTOUTPUT;
@@ -25,6 +25,9 @@ exports.handler = async e => {
       listPositionReadModels(filter: {
         aggregateId: {
           eq: "${event.aggregateId}"
+        }
+        symbol: {
+          eq: "${event.data.symbol}"
         }
       })
       {
