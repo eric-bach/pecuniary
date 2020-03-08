@@ -39,7 +39,7 @@ class Positions extends Component {
                   <Table.Cell>${p.bookValue.toFixed(2)}</Table.Cell>
                   <Table.Cell>${p.marketValue.toFixed(2)}</Table.Cell>
                   <Table.Cell>${(p.marketValue - p.bookValue).toFixed(2)}</Table.Cell>
-                  <Table.Cell>${((p.marketValue - p.bookValue) / p.bookValue).toFixed(2)}%</Table.Cell>
+                  <Table.Cell>${(((p.marketValue - p.bookValue) * 100) / p.bookValue).toFixed(2)}%</Table.Cell>
                 </Table.Row>
               );
             })}

@@ -22,7 +22,8 @@
                 "accountUpdatedEvent": {},
                 "accountDeletedEvent": {},
                 "tranasctionCreatedEvent": {},
-                "createTransaction": {}
+                "createTransaction": {},
+                "createTimeSeries": {}
             }
         }
     },

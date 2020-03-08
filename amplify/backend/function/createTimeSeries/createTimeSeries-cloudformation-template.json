@@ -44,12 +44,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-transaction-created",
+						"pecuniary-create-time-series",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-transaction-created",
+									"pecuniary-create-time-series",
 									"-",
 									{
 										"Ref": "env"
@@ -78,10 +78,6 @@
 						}
 					}
 				},
-				"Code": {
-					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/tranasctionCreatedEvent-525a726c69696a63524f-build.zip"
-				},
 				"Role": {
 					"Fn::GetAtt": [
 						"LambdaExecutionRole",
@@ -89,7 +85,11 @@
 					]
 				},
 				"Runtime": "nodejs10.x",
-				"Timeout": "25"
+				"Timeout": "25",
+				"Code": {
+					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
+					"S3Key": "amplify-builds/createTimeSeries-35696153307247703174-build.zip"
+				}
 			}
 		},
 		"LambdaExecutionRole": {
@@ -98,12 +98,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRole2721c4b6",
+						"pecuniaryLambdaRolea47e276e",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRole2721c4b6",
+									"pecuniaryLambdaRolea47e276e",
 									"-",
 									{
 										"Ref": "env"
@@ -131,56 +131,7 @@
 							]
 						}
 					]
-				},
-				"Tags": [
-					{
-						"Key": "Name",
-						"Value": {
-							"Fn::Join": [
-								"",
-								[
-									{
-										"Ref": "AWS::Region"
-									},
-									"-",
-									"function-role"
-								]
-							]
-						}
-					},
-					{
-						"Key": "Application",
-						"Value": {
-							"Fn::Join": [
-								"",
-								[
-									{
-										"Ref": "AWS::Region"
-									},
-									"-",
-									"pecuniary"
-								]
-							]
-						}
-					},
-					{
-						"Key": "Environment",
-						"Value": {
-							"Fn::Join": [
-								"",
-								[
-									{
-										"Ref": "AWS::Region"
-									},
-									"-",
-									{
-										"Ref": "env"
-									}
-								]
-							]
-						}
-					}
-				]
+				}
 			}
 		},
 		"LambdaSubscription": {
@@ -302,7 +253,9 @@
 							"Action": [
 								"appsync:Create*",
 								"appsync:StartSchemaCreation",
-								"appsync:GraphQL"
+								"appsync:GraphQL",
+								"appsync:Get*",
+								"appsync:List*"
 							],
 							"Resource": [
 								{

@@ -45,6 +45,7 @@ exports.handler = async e => {
   /******************
    * Update TimeSeries
    ******************/
+  /*
   // 1. Check if a time series exists
   let getTimeSeriesQuery = `query getTimeSeries {
     listTimeSeriess(filter: {
@@ -92,6 +93,7 @@ exports.handler = async e => {
     var createTimeSeriesResult = await graphqlOperation(createTimeSeriesMutation, "createTimeSeries");
     console.log("Created TimeSeries: %j", createTimeSeriesResult);
   }
+  */
 
   /******************
   // Update Positions
@@ -116,6 +118,7 @@ exports.handler = async e => {
   console.log("Found Position: %j", positions);
 
   // 2. Check if position exists
+  var timeSeries = await getQuote(event.data.symbol);
   var bookValue;
   let marketValue = event.data.shares * timeSeries["05. price"];
 
@@ -323,12 +326,6 @@ function get(url) {
 
     req.end();
   });
-}
-
-function addDays(date, days) {
-  var result = new Date(date);
-  result.setDate(date.getDate() + days);
-  return result;
 }
 
 async function graphqlOperation(query, operationName) {
