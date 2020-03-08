@@ -60,6 +60,8 @@ exports.handler = async e => {
     var createTimeSeriesResult = await graphqlOperation(createTimeSeriesMutation, "createTimeSeries");
     console.log("Created TimeSeries: %j", createTimeSeriesResult);
   }
+
+  console.log(`Successfully processed ${e.Records.length} records.`);
 };
 
 async function getQuote(symbol) {

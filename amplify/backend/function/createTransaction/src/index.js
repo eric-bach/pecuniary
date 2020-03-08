@@ -37,6 +37,8 @@ exports.handler = async e => {
   console.debug("createTransaction: %j", createTransactionMutation);
   var createTransactionResult = await graphqlOperation(createTransactionMutation, "createTransaction");
   console.log("Created Transaction: %j", createTransactionResult);
+
+  console.log(`Successfully processed ${e.Records.length} records.`);
 };
 
 async function graphqlOperation(query, operationName) {

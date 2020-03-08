@@ -2,7 +2,9 @@
     "permissions": {
         "api": {
             "pecuniary": [
-                "create"
+                "create",
+                "read",
+                "update"
             ]
         }
     }
