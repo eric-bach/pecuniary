@@ -10,11 +10,7 @@ exports.handler = async e => {
   var event = JSON.parse(e.Records[0].Sns.Message).message;
   console.log("Event received:\n", event);
 
-  // Get any existing TimeSeries for symbol
-  // TODO Add condition to match the current transaction date
-  let timeSeries = await getTimeSeries(event.data.symbol);
-
-  if (timeSeriesExists(timeSeries)) {
+  if (await timeSeriesExistsForSymbol(event.data.symbol)) {
     // TOOD Update TimeSeries
   } else {
     console.log("TimeSeries doesn't exist. Creating...");
@@ -52,6 +48,7 @@ async function createTimeSeries(timeSeriesQuote, symbol) {
 }
 
 async function getTimeSeries(symbol) {
+  // TODO Add condition to match the current transaction date
   let getTimeSeriesQuery = `query getTimeSeries {
     listTimeSeriess(filter: {
       symbol: {
@@ -72,7 +69,10 @@ async function getTimeSeries(symbol) {
   return timeSeries;
 }
 
-function timeSeriesExists(timeSeries) {
+async function timeSeriesExistsForSymbol(symbol) {
+  // Get any existing TimeSeries for symbol
+  let timeSeries = await getTimeSeries(symbol);
+
   try {
     if (timeSeries.data.listTimeSeriess.items.length > 0) {
       return true;
@@ -80,6 +80,8 @@ function timeSeriesExists(timeSeries) {
   } catch (error) {
     return false;
   }
+
+  return false;
 }
 
 // Call AlphaVantage to get a GLOBAL_QUOTE
