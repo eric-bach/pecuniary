@@ -44,12 +44,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-account-created",
+						"pecuniary-account-created-2",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-account-created",
+									"pecuniary-account-created-2",
 									"-",
 									{
 										"Ref": "env"
@@ -86,10 +86,6 @@
 				},
 				"Runtime": "nodejs10.x",
 				"Timeout": "25",
-				"Code": {
-					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/accountCreatedEvent-66795773534544746431-build.zip"
-				},
 				"Tags": [
 					{
 						"Key": "Name",
@@ -138,7 +134,11 @@
 							]
 						}
 					}
-				]
+				],
+				"Code": {
+					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
+					"S3Key": "amplify-builds/createAccount-66795773534544746431-build.zip"
+				}
 			}
 		},
 		"LambdaExecutionRole": {
@@ -147,12 +147,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRole977006a2",
+						"pecuniaryLambdaRole2f484b23",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRole977006a2",
+									"pecuniaryLambdaRole2f484b23",
 									"-",
 									{
 										"Ref": "env"

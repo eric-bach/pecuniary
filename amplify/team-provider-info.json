@@ -16,14 +16,14 @@
                 "cognito": {}
             },
             "function": {
-                "accountCreatedEvent": {},
                 "seed": {},
                 "eventBus": {},
                 "accountUpdatedEvent": {},
                 "accountDeletedEvent": {},
                 "createTransaction": {},
                 "createTimeSeries": {},
-                "createUpdatePosition": {}
+                "createUpdatePosition": {},
+                "createAccount": {}
             }
         }
     },
