@@ -17,9 +17,9 @@
 			"Type": "String",
 			"Default": "apipecuniaryGraphQLAPIKeyOutput"
 		},
-		"snseventBusTransactionCreatedEventTopicArn": {
+		"snseventBusAccountDeletedEventTopicArn": {
 			"Type": "String",
-			"Default": "snseventBusTransactionCreatedEventTopicArn"
+			"Default": "snseventBusAccountDeletedEventTopicArn"
 		}
 	},
 	"Conditions": {
@@ -44,12 +44,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-transaction-created",
+						"pecuniary-delete-account",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-transaction-created",
+									"pecuniary-delete-account",
 									"-",
 									{
 										"Ref": "env"
@@ -86,10 +86,6 @@
 				},
 				"Runtime": "nodejs10.x",
 				"Timeout": "25",
-				"Code": {
-					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/tranasctionCreatedEvent-5a773947326e6c4f4353-build.zip"
-				},
 				"Tags": [
 					{
 						"Key": "Name",
@@ -101,7 +97,7 @@
 										"Ref": "AWS::Region"
 									},
 									"-",
-									"function-transaction"
+									"function-account"
 								]
 							]
 						}
@@ -138,7 +134,11 @@
 							]
 						}
 					}
-				]
+				],
+				"Code": {
+					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
+					"S3Key": "amplify-builds/deleteAccount-41454e7763626a355341-build.zip"
+				}
 			}
 		},
 		"LambdaExecutionRole": {
@@ -147,12 +147,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRole2721c4b6",
+						"pecuniaryLambdaRoled0167978",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRole2721c4b6",
+									"pecuniaryLambdaRoled0167978",
 									"-",
 									{
 										"Ref": "env"
@@ -192,7 +192,7 @@
 										"Ref": "AWS::Region"
 									},
 									"-",
-									"function-role"
+									"role-function"
 								]
 							]
 						}
@@ -243,7 +243,7 @@
 				},
 				"Protocol": "lambda",
 				"TopicArn": {
-					"Ref": "snseventBusTransactionCreatedEventTopicArn"
+					"Ref": "snseventBusAccountDeletedEventTopicArn"
 				}
 			}
 		},
@@ -259,7 +259,7 @@
 				"Principal": "sns.amazonaws.com",
 				"Action": "lambda:InvokeFunction",
 				"SourceArn": {
-					"Ref": "snseventBusTransactionCreatedEventTopicArn"
+					"Ref": "snseventBusAccountDeletedEventTopicArn"
 				}
 			}
 		},
@@ -268,7 +268,7 @@
 			"Properties": {
 				"Topics": [
 					{
-						"Ref": "snseventBusTransactionCreatedEventTopicArn"
+						"Ref": "snseventBusAccountDeletedEventTopicArn"
 					}
 				],
 				"PolicyDocument": {
@@ -278,7 +278,7 @@
 							"Effect": "Allow",
 							"Action": "sns:Publish",
 							"Resource": {
-								"Ref": "snseventBusTransactionCreatedEventTopicArn"
+								"Ref": "snseventBusAccountDeletedEventTopicArn"
 							},
 							"Principal": {
 								"AWS": "*"
@@ -349,9 +349,9 @@
 						{
 							"Effect": "Allow",
 							"Action": [
-								"appsync:Create*",
-								"appsync:StartSchemaCreation",
-								"appsync:GraphQL"
+								"appsync:Delete*",
+								"appsync:Get",
+								"appsync:List"
 							],
 							"Resource": [
 								{

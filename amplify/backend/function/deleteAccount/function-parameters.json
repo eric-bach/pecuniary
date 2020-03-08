@@ -2,6 +2,7 @@
     "permissions": {
         "api": {
             "pecuniary": [
+                "read",
                 "delete"
             ]
         }

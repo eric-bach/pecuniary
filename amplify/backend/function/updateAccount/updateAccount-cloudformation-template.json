@@ -44,12 +44,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-account-updated",
+						"pecuniary-update-account",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-account-updated",
+									"pecuniary-update-account",
 									"-",
 									{
 										"Ref": "env"
@@ -86,10 +86,6 @@
 				},
 				"Runtime": "nodejs10.x",
 				"Timeout": "25",
-				"Code": {
-					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/accountUpdatedEvent-57386277715236493450-build.zip"
-				},
 				"Tags": [
 					{
 						"Key": "Name",
@@ -138,7 +134,11 @@
 							]
 						}
 					}
-				]
+				],
+				"Code": {
+					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
+					"S3Key": "amplify-builds/updateAccount-4e384a57575858337570-build.zip"
+				}
 			}
 		},
 		"LambdaExecutionRole": {
@@ -147,12 +147,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRole1abf43c3",
+						"pecuniaryLambdaRoleba8d035f",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRole1abf43c3",
+									"pecuniaryLambdaRoleba8d035f",
 									"-",
 									{
 										"Ref": "env"

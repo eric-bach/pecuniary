@@ -17,9 +17,9 @@
 			"Type": "String",
 			"Default": "apipecuniaryGraphQLAPIKeyOutput"
 		},
-		"snseventBusAccountCreatedEventTopicArn": {
+		"snseventBusTransactionCreatedEventTopicArn": {
 			"Type": "String",
-			"Default": "snseventBusAccountCreatedEventTopicArn"
+			"Default": "snseventBusTransactionCreatedEventTopicArn"
 		}
 	},
 	"Conditions": {
@@ -44,12 +44,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-account-created",
+						"pecuniary-create-update-position",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-account-created",
+									"pecuniary-create-update-position",
 									"-",
 									{
 										"Ref": "env"
@@ -88,57 +88,8 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/accountCreatedEvent-66795773534544746431-build.zip"
-				},
-				"Tags": [
-					{
-						"Key": "Name",
-						"Value": {
-							"Fn::Join": [
-								"",
-								[
-									{
-										"Ref": "AWS::Region"
-									},
-									"-",
-									"function-account"
-								]
-							]
-						}
-					},
-					{
-						"Key": "Application",
-						"Value": {
-							"Fn::Join": [
-								"",
-								[
-									{
-										"Ref": "AWS::Region"
-									},
-									"-",
-									"pecuniary"
-								]
-							]
-						}
-					},
-					{
-						"Key": "Environment",
-						"Value": {
-							"Fn::Join": [
-								"",
-								[
-									{
-										"Ref": "AWS::Region"
-									},
-									"-",
-									{
-										"Ref": "env"
-									}
-								]
-							]
-						}
-					}
-				]
+					"S3Key": "amplify-builds/createUpdatePosition-6f325045325276793271-build.zip"
+				}
 			}
 		},
 		"LambdaExecutionRole": {
@@ -147,12 +98,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRole977006a2",
+						"pecuniaryLambdaRole89b38292",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRole977006a2",
+									"pecuniaryLambdaRole89b38292",
 									"-",
 									{
 										"Ref": "env"
@@ -180,56 +131,7 @@
 							]
 						}
 					]
-				},
-				"Tags": [
-					{
-						"Key": "Name",
-						"Value": {
-							"Fn::Join": [
-								"",
-								[
-									{
-										"Ref": "AWS::Region"
-									},
-									"-",
-									"role-function"
-								]
-							]
-						}
-					},
-					{
-						"Key": "Application",
-						"Value": {
-							"Fn::Join": [
-								"",
-								[
-									{
-										"Ref": "AWS::Region"
-									},
-									"-",
-									"pecuniary"
-								]
-							]
-						}
-					},
-					{
-						"Key": "Environment",
-						"Value": {
-							"Fn::Join": [
-								"",
-								[
-									{
-										"Ref": "AWS::Region"
-									},
-									"-",
-									{
-										"Ref": "env"
-									}
-								]
-							]
-						}
-					}
-				]
+				}
 			}
 		},
 		"LambdaSubscription": {
@@ -243,7 +145,7 @@
 				},
 				"Protocol": "lambda",
 				"TopicArn": {
-					"Ref": "snseventBusAccountCreatedEventTopicArn"
+					"Ref": "snseventBusTransactionCreatedEventTopicArn"
 				}
 			}
 		},
@@ -259,7 +161,7 @@
 				"Principal": "sns.amazonaws.com",
 				"Action": "lambda:InvokeFunction",
 				"SourceArn": {
-					"Ref": "snseventBusAccountCreatedEventTopicArn"
+					"Ref": "snseventBusTransactionCreatedEventTopicArn"
 				}
 			}
 		},
@@ -268,7 +170,7 @@
 			"Properties": {
 				"Topics": [
 					{
-						"Ref": "snseventBusAccountCreatedEventTopicArn"
+						"Ref": "snseventBusTransactionCreatedEventTopicArn"
 					}
 				],
 				"PolicyDocument": {
@@ -278,7 +180,7 @@
 							"Effect": "Allow",
 							"Action": "sns:Publish",
 							"Resource": {
-								"Ref": "snseventBusAccountCreatedEventTopicArn"
+								"Ref": "snseventBusTransactionCreatedEventTopicArn"
 							},
 							"Principal": {
 								"AWS": "*"
@@ -351,7 +253,10 @@
 							"Action": [
 								"appsync:Create*",
 								"appsync:StartSchemaCreation",
-								"appsync:GraphQL"
+								"appsync:GraphQL",
+								"appsync:Get*",
+								"appsync:List*",
+								"appsync:Update*"
 							],
 							"Resource": [
 								{

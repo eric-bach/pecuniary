@@ -29,8 +29,6 @@ class Positions extends Component {
 
           <Table.Body>
             {positions.map(p => {
-              var pl = p.bookValue.toFixed(2) - 0;
-              var plPer = (pl / p.bookValue.toFixed(2)) * 100;
               return (
                 <Table.Row key={p.id}>
                   <Table.Cell>{p.symbol}</Table.Cell>
@@ -39,7 +37,7 @@ class Positions extends Component {
                   <Table.Cell>${p.bookValue.toFixed(2)}</Table.Cell>
                   <Table.Cell>${p.marketValue.toFixed(2)}</Table.Cell>
                   <Table.Cell>${(p.marketValue - p.bookValue).toFixed(2)}</Table.Cell>
-                  <Table.Cell>${((p.marketValue - p.bookValue) / p.bookValue).toFixed(2)}%</Table.Cell>
+                  <Table.Cell>${(((p.marketValue - p.bookValue) * 100) / p.bookValue).toFixed(2)}%</Table.Cell>
                 </Table.Row>
               );
             })}
