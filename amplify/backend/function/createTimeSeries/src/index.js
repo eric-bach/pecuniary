@@ -7,17 +7,55 @@ const endpoint = new urlParse(appsyncUrl).hostname.toString();
 const apiKey = process.env.API_PECUNIARY_GRAPHQLAPIKEYOUTPUT;
 
 exports.handler = async e => {
-  var message = e.Records[0].Sns.Message;
-  console.log("Message received:", message);
+  var event = JSON.parse(e.Records[0].Sns.Message).message;
+  console.log("Event received:\n", event);
 
-  var event = JSON.parse(message).message;
-  console.log("Parsed event:", event);
+  // Get any existing TimeSeries for symbol
+  // TODO Add condition to match the current transaction date
+  let timeSeries = await getTimeSeries(event.data.symbol);
 
-  // 1. Check if a time series exists
+  if (timeSeriesExists(timeSeries)) {
+    // TOOD Update TimeSeries
+  } else {
+    console.log("TimeSeries doesn't exist. Creating...");
+
+    // Get the TimeSeries quote
+    var timeSeriesQuote = await getQuote(event.data.symbol);
+    console.log(`TimeSeriesQuote for ${event.data.symbol}:\n`, timeSeriesQuote);
+
+    // Create TimeSeries
+    await createTimeSeries(timeSeriesQuote, event.data.symbol);
+  }
+
+  console.log(`Successfully processed ${e.Records.length} record(s)`);
+};
+
+async function createTimeSeries(timeSeriesQuote, symbol) {
+  var createTimeSeriesMutation = `mutation createTimeSeries {
+    createTimeSeries(input: {
+      symbol: "${symbol}"
+      date: "${timeSeriesQuote["07. latest trading day"]}"
+      open: ${timeSeriesQuote["02. open"]}
+      high: ${timeSeriesQuote["03. high"]}
+      low: ${timeSeriesQuote["04. low"]}
+      close: ${timeSeriesQuote["05. price"]}
+      volume: ${timeSeriesQuote["06. volume"]}
+    })
+    {
+      id
+    }
+  }`;
+  console.debug("createTimeSeries:\n", createTimeSeriesMutation);
+
+  var result = await graphqlOperation(createTimeSeriesMutation, "createTimeSeries");
+  console.log("Created TimeSeries:\n", result);
+}
+
+async function getTimeSeries(symbol) {
   let getTimeSeriesQuery = `query getTimeSeries {
     listTimeSeriess(filter: {
       symbol: {
-        eq: "${event.data.symbol}"
+        eq: "${symbol}"
       }
     })
     {
@@ -26,44 +64,25 @@ exports.handler = async e => {
       }
     }
   }`;
-  console.debug("getTimeSeries: %j", getTimeSeriesQuery);
-  var timeSeriesResult = await graphqlOperation(getTimeSeriesQuery, "getTimeSeries");
-  console.log("Found TimeSeries: %j", timeSeriesResult);
+  console.debug("getTimeSeries:\n", getTimeSeriesQuery);
 
-  // 2. Check if time series exists
-  var timeSeries = await getQuote(event.data.symbol);
-  console.log(`TimeSeries for ${event.data.symbol}: `, timeSeries);
-  // TODO Handle error
-  if (
-    !timeSeriesResult.data.listTImeSeriess ||
-    !timeSeriesResult.data.listTImeSeriess.items ||
-    timeSeriesResult.data.listTImeSeriess.items.length <= 0
-  ) {
-    console.log("TimeSeries doesn't exist...creating...");
+  var timeSeries = await graphqlOperation(getTimeSeriesQuery, "getTimeSeries");
+  console.log("TimeSeries: %j", timeSeries);
 
-    // Create TimeSeries
-    var createTimeSeriesMutation = `mutation createTimeSeries {
-      createTimeSeries(input: {
-        symbol: "${event.data.symbol}"
-        date: "${timeSeries["07. latest trading day"]}"
-        open: ${timeSeries["02. open"]}
-        high: ${timeSeries["03. high"]}
-        low: ${timeSeries["04. low"]}
-        close: ${timeSeries["05. price"]}
-        volume: ${timeSeries["06. volume"]}
-      })
-      {
-        id
-      }
-    }`;
-    console.debug("createTimeSeries: %j", createTimeSeriesMutation);
-    var createTimeSeriesResult = await graphqlOperation(createTimeSeriesMutation, "createTimeSeries");
-    console.log("Created TimeSeries: %j", createTimeSeriesResult);
+  return timeSeries;
+}
+
+function timeSeriesExists(timeSeries) {
+  try {
+    if (timeSeries.data.listTimeSeriess.items.length > 0) {
+      return true;
+    }
+  } catch (error) {
+    return false;
   }
+}
 
-  console.log(`Successfully processed ${e.Records.length} records.`);
-};
-
+// Call AlphaVantage to get a GLOBAL_QUOTE
 async function getQuote(symbol) {
   var result = await get(
     `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=SPRODHAE4BSL2OLB`
