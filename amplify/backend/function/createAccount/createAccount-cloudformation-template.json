@@ -44,12 +44,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-account-created-2",
+						"pecuniary-account-created",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-account-created-2",
+									"pecuniary-account-created",
 									"-",
 									{
 										"Ref": "env"

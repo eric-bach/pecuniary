@@ -44,12 +44,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniary-account-deleted",
+						"pecuniary-delete-account",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniary-account-deleted",
+									"pecuniary-delete-account",
 									"-",
 									{
 										"Ref": "env"
@@ -86,10 +86,6 @@
 				},
 				"Runtime": "nodejs10.x",
 				"Timeout": "25",
-				"Code": {
-					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/accountDeletedEvent-7a61596b6c50794f7856-build.zip"
-				},
 				"Tags": [
 					{
 						"Key": "Name",
@@ -138,7 +134,11 @@
 							]
 						}
 					}
-				]
+				],
+				"Code": {
+					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
+					"S3Key": "amplify-builds/deleteAccount-41454e7763626a355341-build.zip"
+				}
 			}
 		},
 		"LambdaExecutionRole": {
@@ -147,12 +147,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"pecuniaryLambdaRole638713c8",
+						"pecuniaryLambdaRoled0167978",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"pecuniaryLambdaRole638713c8",
+									"pecuniaryLambdaRoled0167978",
 									"-",
 									{
 										"Ref": "env"

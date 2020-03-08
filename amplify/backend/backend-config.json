@@ -74,29 +74,6 @@
 				}
 			]
 		},
-		"accountDeletedEvent": {
-			"service": "Lambda",
-			"providerPlugin": "awscloudformation",
-			"build": true,
-			"dependsOn": [
-				{
-					"category": "api",
-					"resourceName": "pecuniary",
-					"attributes": [
-						"GraphQLAPIIdOutput",
-						"GraphQLAPIEndpointOutput",
-						"GraphQLAPIKeyOutput"
-					]
-				},
-				{
-					"category": "sns",
-					"resourceName": "eventBus",
-					"attributes": [
-						"AccountDeletedEventTopicArn"
-					]
-				}
-			]
-		},
 		"createTransaction": {
 			"service": "Lambda",
 			"providerPlugin": "awscloudformation",
@@ -208,6 +185,29 @@
 					"resourceName": "eventBus",
 					"attributes": [
 						"AccountUpdatedEventTopicArn"
+					]
+				}
+			]
+		},
+		"deleteAccount": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"dependsOn": [
+				{
+					"category": "api",
+					"resourceName": "pecuniary",
+					"attributes": [
+						"GraphQLAPIIdOutput",
+						"GraphQLAPIEndpointOutput",
+						"GraphQLAPIKeyOutput"
+					]
+				},
+				{
+					"category": "sns",
+					"resourceName": "eventBus",
+					"attributes": [
+						"AccountDeletedEventTopicArn"
 					]
 				}
 			]
