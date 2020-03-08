@@ -18,12 +18,12 @@
             "function": {
                 "seed": {},
                 "eventBus": {},
-                "accountUpdatedEvent": {},
                 "accountDeletedEvent": {},
                 "createTransaction": {},
                 "createTimeSeries": {},
                 "createUpdatePosition": {},
-                "createAccount": {}
+                "createAccount": {},
+                "updateAccount": {}
             }
         }
     },
