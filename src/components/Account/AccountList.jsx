@@ -2,12 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { Grid, Button } from "semantic-ui-react";
-import { API, graphqlOperation } from "aws-amplify";
-import {
-  onCreateAccountReadModel,
-  onUpdateAccountReadModel,
-  onDeleteAccountReadModel
-} from "../../graphql/subscriptions";
 
 import Loading from "../App/Loading";
 import AccountSummary from "./AccountSummary";
@@ -28,31 +22,9 @@ class AccountList extends Component {
 
   handleDeleteAccount = account => {
     this.props.deleteAccount(account);
+
+    this.props.history.push({ pathname: "/processing", state: { message: "Deleting account...", path: "/accounts" } });
   };
-
-  createAccountListener = API.graphql(graphqlOperation(onCreateAccountReadModel)).subscribe({
-    next: () => {
-      this.props.fetchAccounts();
-    }
-  });
-
-  updateAccountListener = API.graphql(graphqlOperation(onUpdateAccountReadModel)).subscribe({
-    next: () => {
-      this.props.fetchAccounts();
-    }
-  });
-
-  deleteAccountListener = API.graphql(graphqlOperation(onDeleteAccountReadModel)).subscribe({
-    next: () => {
-      this.props.fetchAccounts();
-    }
-  });
-
-  componentWillUnmount() {
-    this.createAccountListener.unsubscribe();
-    this.updateAccountListener.unsubscribe();
-    this.deleteAccountListener.unsubscribe();
-  }
 
   render() {
     const { loading, accounts } = this.props;

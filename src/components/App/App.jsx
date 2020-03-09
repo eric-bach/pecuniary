@@ -10,6 +10,7 @@ import AccountList from "../Account/AccountList";
 import AccountForm from "../Account/AccountForm";
 import AccountDetail from "../Account/AccountDetail";
 import TransactionForm from "../Transaction/TransactionForm";
+import Processing from "../Account/Processing";
 
 class App extends React.Component {
   render() {
@@ -23,6 +24,7 @@ class App extends React.Component {
             <Route path='/accounts/view/:id' component={AccountDetail} />
             <Route path={["/accounts/new", "/accounts/edit/:id"]} component={AccountForm} />
             <Route path='/transactions/new' component={TransactionForm} />
+            <Route path='/processing' component={Processing} />
           </Container>
         </ScrollToTop>
       </>
