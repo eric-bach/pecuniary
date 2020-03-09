@@ -4,7 +4,8 @@ import { API, graphqlOperation } from "aws-amplify";
 import {
   onCreateAccountReadModel,
   onUpdateAccountReadModel,
-  onDeleteAccountReadModel
+  onDeleteAccountReadModel,
+  onCreateTransactionReadModel
 } from "../../graphql/subscriptions";
 
 class Processing extends Component {
@@ -52,10 +53,25 @@ class Processing extends Component {
     }
   });
 
+  createTransactionListener = API.graphql(graphqlOperation(onCreateTransactionReadModel)).subscribe({
+    next: () => {
+      this.setState(prevState => ({
+        percent: prevState.percent === 0 ? 100 : 0
+      }));
+
+      if (this.state.percent === 100) {
+        setTimeout(() => {
+          this.props.history.push(this.props.location.state.path);
+        }, 500);
+      }
+    }
+  });
+
   componentWillUnmount() {
     this.createAccountListener.unsubscribe();
     this.updateAccountListener.unsubscribe();
     this.deleteAccountListener.unsubscribe();
+    this.createTransactionListener.unsubscribe();
   }
 
   render() {

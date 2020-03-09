@@ -39,6 +39,10 @@ class TransactionList extends Component {
           <Table.Body>
             {transactions.map(t => {
               let color = t.transactionType.name === "Buy" ? "blue" : "red";
+
+              const price = t.price; // ? t.price.toFixed(2) : 0;
+              const commission = t.commission; // ? t.commission.toFixed(2) : 0;
+
               return (
                 <Table.Row key={t.id}>
                   <Table.Cell className={`ui ${color} label`} style={{ margin: "8px" }}>
@@ -48,20 +52,10 @@ class TransactionList extends Component {
                   <Table.Cell>{t.symbol}</Table.Cell>
                   <Table.Cell>{t.shares}</Table.Cell>
                   <Table.Cell>
-                    <NumberFormat
-                      value={t.price.toFixed(2)}
-                      displayType={"text"}
-                      thousandSeparator={true}
-                      prefix={"$"}
-                    />
+                    <NumberFormat value={price} displayType={"text"} thousandSeparator={true} prefix={"$"} />
                   </Table.Cell>
                   <Table.Cell>
-                    <NumberFormat
-                      value={t.commission.toFixed(2)}
-                      displayType={"text"}
-                      thousandSeparator={true}
-                      prefix={"$"}
-                    />
+                    <NumberFormat value={commission} displayType={"text"} thousandSeparator={true} prefix={"$"} />
                   </Table.Cell>
                 </Table.Row>
               );
