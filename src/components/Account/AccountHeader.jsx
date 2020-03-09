@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Segment, Item } from "semantic-ui-react";
+import { Segment, Item, Label } from "semantic-ui-react";
+import NumberFormat from "react-number-format";
 import { getAccount } from "../../domain/account/actions";
 
 class AccountHeader extends Component {
@@ -15,22 +16,29 @@ class AccountHeader extends Component {
       return <div></div>;
     }
 
+    const bookValue = account.bookValue ? account.bookValue.toFixed(2) : 0;
+    const marketValue = account.marketValue ? account.marketValue.toFixed(2) : 0;
+
     return (
       <Segment.Group>
         <Segment>
+          <Label as='span' color={`${account.accountType.name === "RRSP" ? "red" : "blue"}`} ribbon>
+            {account.accountType.name}
+          </Label>
           <Item.Group>
             <Item>
-              <Item.Image size='tiny'>
-                <div className={`ui horizontal label ${account.accountType.name === "RRSP" ? "red" : "blue"}`}>
-                  {account.accountType.name}
-                </div>
-              </Item.Image>
               <Item.Content>
                 <Item.Header>
                   <div>{account.name}</div>
                 </Item.Header>
-                <Item.Meta>Book Value: ${account.bookValue.toFixed(2)}</Item.Meta>
-                <Item.Meta>Market Value: ${account.marketValue.toFixed(2)}</Item.Meta>
+                <Item.Meta>
+                  Book Value:{" "}
+                  <NumberFormat value={bookValue} displayType={"text"} thousandSeparator={true} prefix={"$"} />
+                </Item.Meta>
+                <Item.Meta>
+                  Market Value:{" "}
+                  <NumberFormat value={marketValue} displayType={"text"} thousandSeparator={true} prefix={"$"} />
+                </Item.Meta>
                 <Item.Description>{account.description}</Item.Description>
               </Item.Content>
             </Item>

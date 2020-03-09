@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Table } from "semantic-ui-react";
+import NumberFormat from "react-number-format";
 import { fetchPositions } from "../../domain/position/actions";
 
 class Positions extends Component {
@@ -14,7 +15,7 @@ class Positions extends Component {
     return (
       <div>
         <h2>Positions</h2>
-        <Table selectable>
+        <Table selectable color='teal' key='teal'>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Symbol</Table.HeaderCell>
@@ -29,15 +30,39 @@ class Positions extends Component {
 
           <Table.Body>
             {positions.map(p => {
+              const pl = p.marketValue - p.bookValue;
+              const plPer = ((p.marketValue - p.bookValue) * 100) / p.bookValue;
               return (
                 <Table.Row key={p.id}>
                   <Table.Cell>{p.symbol}</Table.Cell>
                   <Table.Cell>{p.shares}</Table.Cell>
-                  <Table.Cell>${p.acb.toFixed(2)}</Table.Cell>
-                  <Table.Cell>${p.bookValue.toFixed(2)}</Table.Cell>
-                  <Table.Cell>${p.marketValue.toFixed(2)}</Table.Cell>
-                  <Table.Cell>${(p.marketValue - p.bookValue).toFixed(2)}</Table.Cell>
-                  <Table.Cell>${(((p.marketValue - p.bookValue) * 100) / p.bookValue).toFixed(2)}%</Table.Cell>
+                  <Table.Cell>
+                    <NumberFormat value={p.acb.toFixed(2)} displayType={"text"} thousandSeparator={true} prefix={"$"} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <NumberFormat
+                      value={p.bookValue.toFixed(2)}
+                      displayType={"text"}
+                      thousandSeparator={true}
+                      prefix={"$"}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <NumberFormat
+                      value={p.marketValue.toFixed(2)}
+                      displayType={"text"}
+                      thousandSeparator={true}
+                      prefix={"$"}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>
+                    {" "}
+                    <NumberFormat value={pl.toFixed(2)} displayType={"text"} thousandSeparator={true} prefix={"$"} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    {" "}
+                    <NumberFormat value={plPer.toFixed(2)} displayType={"text"} thousandSeparator={true} suffix={"%"} />
+                  </Table.Cell>
                 </Table.Row>
               );
             })}
