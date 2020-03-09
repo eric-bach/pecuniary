@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Table, Button } from "semantic-ui-react";
+import NumberFormat from "react-number-format";
 
 import { fetchTransactions } from "../../domain/transaction/actions";
 
@@ -23,7 +24,7 @@ class TransactionList extends Component {
     return (
       <div>
         <h2>Transaction List</h2>
-        <Table selectable>
+        <Table selectable color='teal' key='teal'>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Type</Table.HeaderCell>
@@ -38,16 +39,24 @@ class TransactionList extends Component {
           <Table.Body>
             {transactions.map(t => {
               let color = t.transactionType.name === "Buy" ? "blue" : "red";
+
+              const price = t.price; // ? t.price.toFixed(2) : 0;
+              const commission = t.commission; // ? t.commission.toFixed(2) : 0;
+
               return (
                 <Table.Row key={t.id}>
                   <Table.Cell className={`ui ${color} label`} style={{ margin: "8px" }}>
                     {t.transactionType.name}
                   </Table.Cell>
-                  <Table.Cell>{t.transactionDate}</Table.Cell>
+                  <Table.Cell>{new Date(t.transactionDate).toLocaleDateString()}</Table.Cell>
                   <Table.Cell>{t.symbol}</Table.Cell>
                   <Table.Cell>{t.shares}</Table.Cell>
-                  <Table.Cell>${t.price}</Table.Cell>
-                  <Table.Cell>${t.commission}</Table.Cell>
+                  <Table.Cell>
+                    <NumberFormat value={price} displayType={"text"} thousandSeparator={true} prefix={"$"} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <NumberFormat value={commission} displayType={"text"} thousandSeparator={true} prefix={"$"} />
+                  </Table.Cell>
                 </Table.Row>
               );
             })}

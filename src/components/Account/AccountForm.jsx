@@ -18,6 +18,11 @@ class AccountForm extends Component {
   onFormSubmit = values => {
     if (this.props.initialValues.id) {
       this.props.updateAccount(values);
+
+      this.props.history.push({
+        pathname: "/processing",
+        state: { message: "Updating account...", path: "/accounts" }
+      });
     } else {
       const uuidv4 = require("uuid/v4");
       const newAccount = {
@@ -26,9 +31,12 @@ class AccountForm extends Component {
       };
 
       this.props.createAccount(newAccount);
-    }
 
-    this.props.history.push("/accounts");
+      this.props.history.push({
+        pathname: "/processing",
+        state: { message: "Creating account...", path: "/accounts" }
+      });
+    }
   };
 
   render() {

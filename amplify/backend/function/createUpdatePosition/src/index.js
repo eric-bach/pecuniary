@@ -19,7 +19,7 @@ exports.handler = async e => {
   var price = timeSeries["05. price"];
 
   // Create or Update the Position
-  if (positionExistsForSymbol(positions) === true) {
+  if (positions.data.listPositionReadModels.items.length > 0) {
     await updatePosition(event, price, positions);
   } else {
     await createPosition(event, price);
@@ -63,6 +63,7 @@ async function getPositions(aggregateId, symbol) {
         id
         shares
         bookValue
+        marketValue
       }
     }
   }`;
@@ -72,18 +73,6 @@ async function getPositions(aggregateId, symbol) {
   console.log("Found Positions:\n", positions);
 
   return positions;
-}
-
-async function positionExistsForSymbol(positions) {
-  try {
-    if (positions.data.listPositionReadModels.items.length > 0) {
-      return true;
-    }
-  } catch (error) {
-    return false;
-  }
-
-  return false;
 }
 
 async function createPosition(event, price) {
@@ -100,7 +89,7 @@ async function createPosition(event, price) {
       userId: "${event.userId}"
       symbol: "${event.data.symbol}"
       shares: ${event.data.shares}
-      acb: ${acb}
+      acb: ${acb.toFixed(2)}
       bookValue: ${bookValue.toFixed(2)}
       marketValue: ${marketValue.toFixed(2)}
       createdAt: "${event.createdAt}"
@@ -120,7 +109,10 @@ async function createPosition(event, price) {
 async function updatePosition(event, price, positions) {
   console.info("Position exists. Updating...");
 
-  let shares, bookValue;
+  let shares, bookValue, marketValue;
+
+  console.log(positions.data.listPositionReadModels.items[0].bookValue);
+  console.log(positions.data.listPositionReadModels.items[0].marketValue);
 
   if (+event.data.transactionReadModelTransactionTypeId === 1) {
     // Buy
@@ -128,6 +120,7 @@ async function updatePosition(event, price, positions) {
     bookValue =
       +positions.data.listPositionReadModels.items[0].bookValue +
       (+event.data.shares * +event.data.price - +event.data.commission);
+    marketValue = +positions.data.listPositionReadModels.items[0].marketValue + +event.data.shares * +price;
   } else {
     // Sell
     shares = +positions.data.listPositionReadModels.items[0].shares - +event.data.shares;
@@ -135,10 +128,10 @@ async function updatePosition(event, price, positions) {
       (+positions.data.listPositionReadModels.items[0].bookValue /
         +positions.data.listPositionReadModels.items[0].shares) *
       (+positions.data.listPositionReadModels.items[0].shares - +event.data.shares);
+    marketValue = +positions.data.listPositionReadModels.items[0].marketValue - +event.data.shares * +price;
   }
 
   let acb = bookValue / shares;
-  let marketValue = event.data.shares * price;
 
   var mutation = `mutation updatePosition {
         updatePositionReadModel(input: {
@@ -147,7 +140,7 @@ async function updatePosition(event, price, positions) {
           symbol: "${event.data.symbol}"
           shares: ${shares}
           acb: ${acb.toFixed(2)}
-          bookValue: ${bookValue}
+          bookValue: ${bookValue.toFixed(2)}
           marketValue: ${marketValue.toFixed(2)}
           updatedAt: "${event.createdAt}"
         }) {
@@ -157,6 +150,7 @@ async function updatePosition(event, price, positions) {
           shares
           acb
           bookValue
+          marketValue
           updatedAt
         }
       }`;
@@ -195,7 +189,7 @@ async function updateAccount(event, price, positions) {
       (+positions.data.listPositionReadModels.items[0].bookValue /
         +positions.data.listPositionReadModels.items[0].shares) *
         (+positions.data.listPositionReadModels.items[0].shares - +event.data.shares);
-    marketValue = +account.data.getAccountReadModel.marketValue + +event.data.shares * +price;
+    marketValue = +account.data.getAccountReadModel.marketValue - +event.data.shares * +price;
   }
 
   // Update the Account book and market values

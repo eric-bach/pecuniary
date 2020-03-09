@@ -28,6 +28,8 @@ class AccountList extends Component {
 
   handleDeleteAccount = account => {
     this.props.deleteAccount(account);
+
+    this.props.history.push({ pathname: "/processing", state: { message: "Deleting account...", path: "/accounts" } });
   };
 
   createAccountListener = API.graphql(graphqlOperation(onCreateAccountReadModel)).subscribe({
