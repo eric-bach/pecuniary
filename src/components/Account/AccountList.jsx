@@ -8,10 +8,12 @@ import {
   onUpdateAccountReadModel,
   onDeleteAccountReadModel
 } from "../../graphql/subscriptions";
+import { Doughnut } from "react-chartjs-2";
 
 import Loading from "../App/Loading";
 import AccountSummary from "./AccountSummary";
 import { fetchAccounts, deleteAccount } from "../../domain/account/actions";
+import LineGraph from "../../common/Chart/LineGraph";
 
 class AccountList extends Component {
   componentDidMount = async () => {
@@ -89,13 +91,32 @@ class AccountList extends Component {
         </Grid.Column>
         <Grid.Column width={6}>
           <h2>Summary</h2>
+          <Doughnut data={data} />
         </Grid.Column>
       </Grid>
     );
   }
 }
 
+var data = {};
+
 const mapStateToProps = state => {
+  const labels = [...new Set(state.accounts.accounts.map(a => a.accountType.name).map(label => label))];
+
+  data = {
+    labels: labels,
+    datasets: [
+      {
+        data: [
+          state.accounts.accounts.filter(a => a.accountType.name === labels[0]).length,
+          state.accounts.accounts.filter(a => a.accountType.name === labels[1]).length
+        ],
+        backgroundColor: ["#2185d0", "#db2828"],
+        hoverBackgroundColor: ["#2185d0", "#db2828"]
+      }
+    ]
+  };
+
   return {
     loading: state.async.loading,
     accounts: state.accounts.accounts,
