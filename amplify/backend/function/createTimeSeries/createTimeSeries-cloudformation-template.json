@@ -88,7 +88,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-pecuniary-dev-212013-deployment",
-					"S3Key": "amplify-builds/createTimeSeries-517a7764663733436939-build.zip"
+					"S3Key": "amplify-builds/createTimeSeries-316e4635594964504d4a-build.zip"
 				}
 			}
 		},

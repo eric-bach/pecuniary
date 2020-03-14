@@ -13,7 +13,6 @@ import { Doughnut } from "react-chartjs-2";
 import Loading from "../App/Loading";
 import AccountSummary from "./AccountSummary";
 import { fetchAccounts, deleteAccount } from "../../domain/account/actions";
-import LineGraph from "../../common/Chart/LineGraph";
 
 class AccountList extends Component {
   componentDidMount = async () => {
@@ -85,7 +84,12 @@ class AccountList extends Component {
 
           {accounts.map(account => {
             return (
-              <AccountSummary key={account.aggregateId} account={account} deleteAccount={this.handleDeleteAccount} />
+              <AccountSummary
+                key={account.aggregateId}
+                aggregateId={account.aggregateId}
+                account={account}
+                deleteAccount={this.handleDeleteAccount}
+              />
             );
           })}
         </Grid.Column>

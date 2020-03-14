@@ -321,6 +321,8 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -376,6 +378,8 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -431,6 +435,8 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -591,6 +597,8 @@ export const onCreatePositionReadModel = `subscription OnCreatePositionReadModel
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -630,6 +638,8 @@ export const onUpdatePositionReadModel = `subscription OnUpdatePositionReadModel
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -669,6 +679,8 @@ export const onDeletePositionReadModel = `subscription OnDeletePositionReadModel
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -701,6 +713,10 @@ export const onCreateTimeSeries = `subscription OnCreateTimeSeries {
   onCreateTimeSeries {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high
@@ -714,6 +730,10 @@ export const onUpdateTimeSeries = `subscription OnUpdateTimeSeries {
   onUpdateTimeSeries {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high
@@ -727,6 +747,10 @@ export const onDeleteTimeSeries = `subscription OnDeleteTimeSeries {
   onDeleteTimeSeries {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high

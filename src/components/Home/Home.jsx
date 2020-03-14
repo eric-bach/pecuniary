@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Message, Segment, Grid, Placeholder } from "semantic-ui-react";
-import LineGraph from "../../common/Chart/LineGraph";
 
 class Home extends Component {
   state = { visible: true };
@@ -71,7 +70,6 @@ class Home extends Component {
             </Placeholder.Paragraph>
           </Placeholder>
         </Segment>
-        <LineGraph />
       </>
     );
   };
