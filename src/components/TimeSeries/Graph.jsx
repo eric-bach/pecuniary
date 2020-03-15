@@ -10,42 +10,41 @@ class Graph extends Component {
   componentDidMount = async () => {
     // Fetch Positions
     await this.props.fetchPositions(this.props.aggregateId);
-    console.log("Positions: ", this.props.positions);
 
-    const types = [...new Set(this.props.positions.map(a => a.type).map(label => label))];
-    var values = [];
+    const typeLabels = [...new Set(this.props.positions.map(a => a.type).map(label => label))];
+    var typeValues = [];
     var i = 0;
-    types.map(t => {
-      values[i] = this.props.positions.filter(p => p.type === t).length;
+    typeLabels.forEach(t => {
+      typeValues[i] = this.props.positions.filter(p => p.type === t).length;
       i++;
     });
 
     typesData = {
-      labels: types,
+      labels: typeLabels,
       datasets: [
         {
           backgroundColor: ["#2185d0", "#db2828"],
           hoverBackgroundColor: ["#2185d0", "#db2828"],
-          data: values
+          data: typeValues
         }
       ]
     };
 
-    const regions = [...new Set(this.props.positions.map(a => a.region).map(label => label))];
-    var values2 = [];
+    const regionLabels = [...new Set(this.props.positions.map(a => a.region).map(label => label))];
+    var regionValues = [];
     var j = 0;
-    regions.map(r => {
-      values2[j] = this.props.positions.filter(p => p.region === r).length;
+    regionLabels.forEach(r => {
+      regionValues[j] = this.props.positions.filter(p => p.region === r).length;
       j++;
     });
 
     regionsData = {
-      labels: regions,
+      labels: regionLabels,
       datasets: [
         {
           backgroundColor: ["#2185d0", "#db2828"],
           hoverBackgroundColor: ["#2185d0", "#db2828"],
-          data: values2
+          data: regionValues
         }
       ]
     };
