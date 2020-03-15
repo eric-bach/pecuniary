@@ -365,6 +365,7 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
@@ -425,6 +426,7 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
@@ -485,6 +487,7 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
@@ -659,6 +662,7 @@ export const createPositionReadModel = `mutation CreatePositionReadModel(
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
@@ -703,6 +707,7 @@ export const updatePositionReadModel = `mutation UpdatePositionReadModel(
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
@@ -747,6 +752,7 @@ export const deletePositionReadModel = `mutation DeletePositionReadModel(
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue

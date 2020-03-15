@@ -92,6 +92,7 @@ async function createPosition(event, price, timeSeriesSymbol) {
       version: 1 
       userId: "${event.userId}"
       symbol: "${event.data.symbol}"
+      name: "${timeSeriesSymbol["2. name"]}"
       shares: ${event.data.shares}
       acb: ${acb.toFixed(2)}
       bookValue: ${bookValue.toFixed(2)}
@@ -144,6 +145,7 @@ async function updatePosition(event, price, positions, timeSeriesSymbol) {
           id: "${positions.data.listPositionReadModels.items[0].id}"
           aggregateId: "${event.aggregateId}"
           symbol: "${event.data.symbol}"
+          name: "${timeSeriesSymbol["2. name"]}"
           shares: ${shares}
           acb: ${acb.toFixed(2)}
           bookValue: ${bookValue.toFixed(2)}

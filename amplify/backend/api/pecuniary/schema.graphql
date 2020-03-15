@@ -78,6 +78,7 @@ type PositionReadModel @model {
   version: Int!
   userId: ID!
   symbol: String!
+  name: String!
   shares: Int!
   acb: Float!
   bookValue: Float!

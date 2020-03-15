@@ -228,6 +228,7 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
@@ -373,6 +374,7 @@ export const getPositionReadModel = `query GetPositionReadModel($id: ID!) {
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
@@ -423,6 +425,7 @@ export const listPositionReadModels = `query ListPositionReadModels(
       version
       userId
       symbol
+      name
       shares
       acb
       bookValue
