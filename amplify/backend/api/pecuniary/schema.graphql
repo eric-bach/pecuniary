@@ -61,7 +61,7 @@ type TransactionReadModel @model {
   aggregateId: ID!
   version: Int!
   userId: ID!
-  transactionDate: AWSDateTime!
+  transactionDate: AWSDate!
   shares: Int!
   price: Float!
   commission: Float!

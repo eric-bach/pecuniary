@@ -76,7 +76,7 @@ export const createTransaction = transaction => async dispatch => {
       symbol: transaction.symbol,
       transactionReadModelAccountId: transaction.account.id,
       transactionReadModelTransactionTypeId: transaction.transactionType.id,
-      transactionDate: new Date(transaction.date).toISOString(),
+      transactionDate: new Date(transaction.date).toISOString().substring(0, 10),
       shares: transaction.shares,
       price: transaction.price,
       commission: transaction.commission
