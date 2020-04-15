@@ -5,6 +5,7 @@ import authReducers from "../domain/auth/reducers";
 import asyncReducer from "../domain/async/reducers";
 import transactionReducers from "../domain/transaction/reducers";
 import positionReducers from "../domain/position/reducers";
+import timeSeriesReducers from "../domain/timeseries/reducers";
 
 const rootReducer = combineReducers({
   form: FormReducer,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
   auth: authReducers,
   accounts: accountReducers,
   transaction: transactionReducers,
-  positions: positionReducers
+  positions: positionReducers,
+  timeSeries: timeSeriesReducers
 });
 
 export default rootReducer;

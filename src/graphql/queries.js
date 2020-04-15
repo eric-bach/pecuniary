@@ -228,10 +228,13 @@ export const getAccountReadModel = `query GetAccountReadModel($id: ID!) {
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -371,10 +374,13 @@ export const getPositionReadModel = `query GetPositionReadModel($id: ID!) {
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -419,10 +425,13 @@ export const listPositionReadModels = `query ListPositionReadModels(
       version
       userId
       symbol
+      name
       shares
       acb
       bookValue
       marketValue
+      type
+      region
       createdAt
       updatedAt
       account {
@@ -446,6 +455,10 @@ export const getTimeSeries = `query GetTimeSeries($id: ID!) {
   getTimeSeries(id: $id) {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high
@@ -464,6 +477,10 @@ export const listTimeSeriess = `query ListTimeSeriess(
     items {
       id
       symbol
+      name
+      type
+      region
+      currency
       date
       open
       high

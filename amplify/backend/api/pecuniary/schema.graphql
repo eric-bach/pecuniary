@@ -61,7 +61,7 @@ type TransactionReadModel @model {
   aggregateId: ID!
   version: Int!
   userId: ID!
-  transactionDate: AWSDateTime!
+  transactionDate: AWSDate!
   shares: Int!
   price: Float!
   commission: Float!
@@ -78,10 +78,13 @@ type PositionReadModel @model {
   version: Int!
   userId: ID!
   symbol: String!
+  name: String!
   shares: Int!
   acb: Float!
   bookValue: Float!
   marketValue: Float!
+  type: String!
+  region: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   account: AccountReadModel! @connection(name: "Positions")
@@ -90,6 +93,10 @@ type PositionReadModel @model {
 type TimeSeries @model {
   id: ID!
   symbol: String!
+  name: String!
+  type: String!
+  region: String!
+  currency: String!
   date: AWSDate!
   open: Float!
   high: Float!
@@ -97,12 +104,3 @@ type TimeSeries @model {
   close: Float!
   volume: Int!
 }
-
-# type SecurityReadModel @model {
-#   id: ID!
-#   name: String!
-#   description: String!
-#   userId: ID!
-#   transactions: [Transaction] @connection(name: "TransactionSecurities")
-#   exchangeType: ExchangeType @connection(name: "SecurityExchangeTypes")
-# }

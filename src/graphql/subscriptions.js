@@ -317,10 +317,13 @@ export const onCreateAccountReadModel = `subscription OnCreateAccountReadModel {
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -372,10 +375,13 @@ export const onUpdateAccountReadModel = `subscription OnUpdateAccountReadModel {
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -427,10 +433,13 @@ export const onDeleteAccountReadModel = `subscription OnDeleteAccountReadModel {
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -587,10 +596,13 @@ export const onCreatePositionReadModel = `subscription OnCreatePositionReadModel
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -626,10 +638,13 @@ export const onUpdatePositionReadModel = `subscription OnUpdatePositionReadModel
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -665,10 +680,13 @@ export const onDeletePositionReadModel = `subscription OnDeletePositionReadModel
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -701,6 +719,10 @@ export const onCreateTimeSeries = `subscription OnCreateTimeSeries {
   onCreateTimeSeries {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high
@@ -714,6 +736,10 @@ export const onUpdateTimeSeries = `subscription OnUpdateTimeSeries {
   onUpdateTimeSeries {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high
@@ -727,6 +753,10 @@ export const onDeleteTimeSeries = `subscription OnDeleteTimeSeries {
   onDeleteTimeSeries {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high

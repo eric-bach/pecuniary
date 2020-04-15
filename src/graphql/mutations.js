@@ -365,10 +365,13 @@ export const createAccountReadModel = `mutation CreateAccountReadModel(
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -423,10 +426,13 @@ export const updateAccountReadModel = `mutation UpdateAccountReadModel(
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -481,10 +487,13 @@ export const deleteAccountReadModel = `mutation DeleteAccountReadModel(
         version
         userId
         symbol
+        name
         shares
         acb
         bookValue
         marketValue
+        type
+        region
         createdAt
         updatedAt
       }
@@ -653,10 +662,13 @@ export const createPositionReadModel = `mutation CreatePositionReadModel(
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -695,10 +707,13 @@ export const updatePositionReadModel = `mutation UpdatePositionReadModel(
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -737,10 +752,13 @@ export const deletePositionReadModel = `mutation DeletePositionReadModel(
     version
     userId
     symbol
+    name
     shares
     acb
     bookValue
     marketValue
+    type
+    region
     createdAt
     updatedAt
     account {
@@ -776,6 +794,10 @@ export const createTimeSeries = `mutation CreateTimeSeries(
   createTimeSeries(input: $input, condition: $condition) {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high
@@ -792,6 +814,10 @@ export const updateTimeSeries = `mutation UpdateTimeSeries(
   updateTimeSeries(input: $input, condition: $condition) {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high
@@ -808,6 +834,10 @@ export const deleteTimeSeries = `mutation DeleteTimeSeries(
   deleteTimeSeries(input: $input, condition: $condition) {
     id
     symbol
+    name
+    type
+    region
+    currency
     date
     open
     high

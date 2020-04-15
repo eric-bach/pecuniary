@@ -16,12 +16,16 @@ exports.handler = async e => {
   } else {
     console.log("TimeSeries doesn't exist. Creating...");
 
+    // Get the TimeSeries symbol
+    var timeSeriesSymbol = await getSymbol(event.data.symbol);
+    console.log(`TimeSeriesSymbol for ${event.data.symbol}:\n`, timeSeriesSymbol);
+
     // Get the TimeSeries quote
     var timeSeriesQuote = await getQuote(event.data.symbol);
     console.log(`TimeSeriesQuote for ${event.data.symbol}:\n`, timeSeriesQuote);
 
     // Create TimeSeries
-    await createTimeSeries(timeSeriesQuote, event.data.symbol);
+    await createTimeSeries(timeSeriesSymbol, timeSeriesQuote, event.data.symbol);
   }
 
   console.log(`Successfully processed ${e.Records.length} record(s)`);
@@ -43,10 +47,14 @@ const getParam = param => {
   });
 };
 
-async function createTimeSeries(timeSeriesQuote, symbol) {
+async function createTimeSeries(timeSeriesSymbol, timeSeriesQuote, symbol) {
   var createTimeSeriesMutation = `mutation createTimeSeries {
     createTimeSeries(input: {
       symbol: "${symbol}"
+      name: "${timeSeriesSymbol["2. name"]}"
+      type: "${timeSeriesSymbol["3. type"]}"
+      region: "${timeSeriesSymbol["4. region"]}"
+      currency: "${timeSeriesSymbol["8. currency"]}"
       date: "${timeSeriesQuote["07. latest trading day"]}"
       open: ${timeSeriesQuote["02. open"]}
       high: ${timeSeriesQuote["03. high"]}
@@ -99,6 +107,34 @@ async function timeSeriesExistsForSymbol(symbol) {
   }
 
   return false;
+}
+
+// Call AlphaVantage to get a SYMBOL_SEARCH
+async function getSymbol(symbol) {
+  const param = await getParam("AlphaVantageApiKey");
+
+  var result = await get(
+    `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${symbol}&apikey=${param.Parameter.Value}`
+  );
+
+  if (result["Error Message"]) {
+    console.error("Error: ", result["Error Message"]);
+
+    // Default to $0 for quotes not found
+    return {
+      "1. symbol": `${symbol}`,
+      "2. name": "",
+      "3. type": "",
+      "4. region": "",
+      "5. marketOpen": "",
+      "6. marketClose": "",
+      "7. timezone": "",
+      "8. currency": "0",
+      "9. matchScore": "0"
+    };
+  }
+
+  return result["bestMatches"][0];
 }
 
 // Call AlphaVantage to get a GLOBAL_QUOTE

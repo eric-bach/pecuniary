@@ -19,6 +19,7 @@ class Positions extends Component {
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Symbol</Table.HeaderCell>
+              <Table.HeaderCell>Name</Table.HeaderCell>
               <Table.HeaderCell>Shares</Table.HeaderCell>
               <Table.HeaderCell>ACB</Table.HeaderCell>
               <Table.HeaderCell>Book Value</Table.HeaderCell>
@@ -35,6 +36,7 @@ class Positions extends Component {
               return (
                 <Table.Row key={p.id}>
                   <Table.Cell>{p.symbol}</Table.Cell>
+                  <Table.Cell>{p.name}</Table.Cell>
                   <Table.Cell>{p.shares}</Table.Cell>
                   <Table.Cell>
                     <NumberFormat value={p.acb.toFixed(2)} displayType={"text"} thousandSeparator={true} prefix={"$"} />

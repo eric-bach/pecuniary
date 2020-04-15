@@ -4,6 +4,7 @@ import { Button } from "semantic-ui-react";
 import AccountHeader from "../Account/AccountHeader";
 import TransactionList from "../Transaction/TransactionList";
 import Positions from "../Positions/Positions";
+import Graph from "../TimeSeries/Graph";
 
 class AccountDetail extends Component {
   render() {
@@ -14,6 +15,7 @@ class AccountDetail extends Component {
       <>
         <h2>Account</h2>
         <AccountHeader aggregateId={aggregateId} />
+        <Graph aggregateId={aggregateId} />
         <Positions aggregateId={aggregateId} />
         <br />
         <Button

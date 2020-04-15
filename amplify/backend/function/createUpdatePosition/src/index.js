@@ -14,15 +14,19 @@ exports.handler = async e => {
   // Get Positions for aggregate and symbol
   let positions = await getPositions(event.aggregateId, event.data.symbol);
 
+  // Get the TimeSeries symbol
+  var timeSeriesSymbol = await getSymbol(event.data.symbol);
+  console.log(`TimeSeriesSymbol for ${event.data.symbol}:\n`, timeSeriesSymbol);
+
   // Get the price from the TimeSeries quote
   let timeSeries = await getQuote(event.data.symbol);
   var price = timeSeries["05. price"];
 
   // Create or Update the Position
   if (positions.data.listPositionReadModels.items.length > 0) {
-    await updatePosition(event, price, positions);
+    await updatePosition(event, price, positions, timeSeriesSymbol);
   } else {
-    await createPosition(event, price);
+    await createPosition(event, price, timeSeriesSymbol);
   }
 
   // Update the Account book and market values
@@ -75,7 +79,7 @@ async function getPositions(aggregateId, symbol) {
   return positions;
 }
 
-async function createPosition(event, price) {
+async function createPosition(event, price, timeSeriesSymbol) {
   console.info("Position doesn't exist. Creating...");
 
   let bookValue = event.data.shares * event.data.price - event.data.commission;
@@ -88,10 +92,13 @@ async function createPosition(event, price) {
       version: 1 
       userId: "${event.userId}"
       symbol: "${event.data.symbol}"
+      name: "${timeSeriesSymbol["2. name"]}"
       shares: ${event.data.shares}
       acb: ${acb.toFixed(2)}
       bookValue: ${bookValue.toFixed(2)}
       marketValue: ${marketValue.toFixed(2)}
+      type: "${timeSeriesSymbol["3. type"]}"
+      region: "${timeSeriesSymbol["4. region"]}"
       createdAt: "${event.createdAt}"
       updatedAt: "${event.createdAt}"
       positionReadModelAccountId: "${event.data.transactionReadModelAccountId}"
@@ -106,7 +113,7 @@ async function createPosition(event, price) {
   console.log("Created Position:\n", result);
 }
 
-async function updatePosition(event, price, positions) {
+async function updatePosition(event, price, positions, timeSeriesSymbol) {
   console.info("Position exists. Updating...");
 
   let shares, bookValue, marketValue;
@@ -138,10 +145,13 @@ async function updatePosition(event, price, positions) {
           id: "${positions.data.listPositionReadModels.items[0].id}"
           aggregateId: "${event.aggregateId}"
           symbol: "${event.data.symbol}"
+          name: "${timeSeriesSymbol["2. name"]}"
           shares: ${shares}
           acb: ${acb.toFixed(2)}
           bookValue: ${bookValue.toFixed(2)}
           marketValue: ${marketValue.toFixed(2)}
+          type: "${timeSeriesSymbol["3. type"]}"
+          region: "${timeSeriesSymbol["4. region"]}"   
           updatedAt: "${event.createdAt}"
         }) {
           id
@@ -206,6 +216,34 @@ async function updateAccount(event, price, positions) {
   console.debug("updateAccount:\n", updateAccountMutation);
   var updatedAccountResult = await graphqlOperation(updateAccountMutation, "updateAccount");
   console.log("Updated Account:\n", updatedAccountResult);
+}
+
+// Call AlphaVantage to get a SYMBOL_SEARCH
+async function getSymbol(symbol) {
+  const param = await getParam("AlphaVantageApiKey");
+
+  var result = await get(
+    `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${symbol}&apikey=${param.Parameter.Value}`
+  );
+
+  if (result["Error Message"]) {
+    console.error("Error: ", result["Error Message"]);
+
+    // Default to $0 for quotes not found
+    return {
+      "1. symbol": `${symbol}`,
+      "2. name": "",
+      "3. type": "",
+      "4. region": "",
+      "5. marketOpen": "",
+      "6. marketClose": "",
+      "7. timezone": "",
+      "8. currency": "0",
+      "9. matchScore": "0"
+    };
+  }
+
+  return result["bestMatches"][0];
 }
 
 // Call AlphaVantage to get a GLOBAL_QUOTE

@@ -13,7 +13,10 @@ export const listAccountReadModels = `query ListAccountReadModels(
         userId
         name
         description
-        createdDate
+        bookValue
+        marketValue
+        createdAt
+        updatedAt
         accountType {
           id
           name
@@ -23,17 +26,36 @@ export const listAccountReadModels = `query ListAccountReadModels(
           items {
             id
             aggregateId
-            transactionType {
-              id
-              name
-            }
+            version
             userId
             transactionDate
             shares
             price
             commission
             symbol
-            createdDate
+            createdAt
+            updatedAt
+            transactionType {
+              id
+              name
+            }
+          }
+        }
+        positions {
+          items {
+            id
+            aggregateId
+            version
+            userId
+            symbol
+            shares
+            acb
+            bookValue
+            marketValue
+            type
+            region
+            createdAt
+            updatedAt
           }
         }
       }
