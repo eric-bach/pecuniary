@@ -1,18 +1,18 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { Grid, Button } from "semantic-ui-react";
-import { API, graphqlOperation } from "aws-amplify";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Grid, Button } from 'semantic-ui-react';
+import { API, graphqlOperation } from 'aws-amplify';
 import {
   onCreateAccountReadModel,
   onUpdateAccountReadModel,
-  onDeleteAccountReadModel
-} from "../../graphql/subscriptions";
-import { Doughnut } from "react-chartjs-2";
+  onDeleteAccountReadModel,
+} from '../../graphql/subscriptions';
+import { Doughnut } from 'react-chartjs-2';
 
-import Loading from "../App/Loading";
-import AccountSummary from "./AccountSummary";
-import { fetchAccounts, deleteAccount } from "../../domain/account/actions";
+import Loading from '../App/Loading';
+import AccountSummary from './AccountSummary';
+import { fetchAccounts, deleteAccount } from '../../domain/account/actions';
 
 class AccountList extends Component {
   componentDidMount = async () => {
@@ -27,28 +27,31 @@ class AccountList extends Component {
     this.props.fetchAccounts(this.props.prevToken, this.props.nextToken);
   };
 
-  handleDeleteAccount = account => {
+  handleDeleteAccount = (account) => {
     this.props.deleteAccount(account);
 
-    this.props.history.push({ pathname: "/processing", state: { message: "Deleting account...", path: "/accounts" } });
+    this.props.history.push({
+      pathname: '/processing',
+      state: { message: 'Deleting account...', path: '/accounts' },
+    });
   };
 
   createAccountListener = API.graphql(graphqlOperation(onCreateAccountReadModel)).subscribe({
     next: () => {
       this.props.fetchAccounts();
-    }
+    },
   });
 
   updateAccountListener = API.graphql(graphqlOperation(onUpdateAccountReadModel)).subscribe({
     next: () => {
       this.props.fetchAccounts();
-    }
+    },
   });
 
   deleteAccountListener = API.graphql(graphqlOperation(onDeleteAccountReadModel)).subscribe({
     next: () => {
       this.props.fetchAccounts();
-    }
+    },
   });
 
   componentWillUnmount() {
@@ -82,7 +85,7 @@ class AccountList extends Component {
             <Button labelPosition='right' icon='right chevron' content='Next' onClick={this.handleNextPageClick} />
           </Button.Group>
 
-          {accounts.map(account => {
+          {accounts.map((account) => {
             return (
               <AccountSummary
                 key={account.aggregateId}
@@ -93,7 +96,7 @@ class AccountList extends Component {
             );
           })}
         </Grid.Column>
-        <Grid.Column width={6}>
+        <Grid.Column width={5}>
           <h2>Summary</h2>
           <Doughnut data={data} />
         </Grid.Column>
@@ -104,34 +107,34 @@ class AccountList extends Component {
 
 var data = {};
 
-const mapStateToProps = state => {
-  const labels = [...new Set(state.accounts.accounts.map(a => a.accountType.name).map(label => label))];
+const mapStateToProps = (state) => {
+  const labels = [...new Set(state.accounts.accounts.map((a) => a.accountType.name).map((label) => label))];
 
   data = {
     labels: labels,
     datasets: [
       {
         data: [
-          state.accounts.accounts.filter(a => a.accountType.name === labels[0]).length,
-          state.accounts.accounts.filter(a => a.accountType.name === labels[1]).length
+          state.accounts.accounts.filter((a) => a.accountType.name === labels[0]).length,
+          state.accounts.accounts.filter((a) => a.accountType.name === labels[1]).length,
         ],
-        backgroundColor: ["#2185d0", "#db2828"],
-        hoverBackgroundColor: ["#2185d0", "#db2828"]
-      }
-    ]
+        backgroundColor: ['#2185d0', '#db2828'],
+        hoverBackgroundColor: ['#2185d0', '#db2828'],
+      },
+    ],
   };
 
   return {
     loading: state.async.loading,
     accounts: state.accounts.accounts,
     prevToken: state.accounts.prevToken,
-    nextToken: state.accounts.nextToken
+    nextToken: state.accounts.nextToken,
   };
 };
 
 const actions = {
   fetchAccounts,
-  deleteAccount
+  deleteAccount,
 };
 
 export default connect(mapStateToProps, actions)(AccountList);
