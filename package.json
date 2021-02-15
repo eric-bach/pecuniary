@@ -9,7 +9,7 @@
     "@testing-library/user-event": "^7.1.2",
     "aws-amplify": "^3.0.7",
     "aws-amplify-react": "^3.1.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chart.js": "^2.9.3",
     "date-fns": "^2.9.0",
     "faker": "^4.1.0",
