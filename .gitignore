@@ -1,42 +1,12 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+*.js
+!jest.config.js
+*.d.ts
+node_modules
+package-lock.json
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# CDK asset staging directory
+.cdk.staging
+cdk.out
 
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-#amplify
-amplify/\#current-cloud-backend
-amplify/.config/local-*
-amplify/mock-data
-amplify/backend/amplify-meta.json
-amplify/backend/awscloudformation
-build/
-dist/
-node_modules/
-aws-exports.js
-awsconfiguration.json
-amplifyconfiguration.json
-amplify-gradle-config.json
-amplifyxc.config
-
-# cypress
-cypress/screenshots/
-cypress/videos/
+.env
+deploy-cdk.ps1

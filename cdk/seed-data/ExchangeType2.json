@@ -1,0 +1,5 @@
+{
+  "id": { "S": "2" },
+  "name": { "S": "NYSE" },
+  "description": { "S": "New York Stock Exchange" }
+}
