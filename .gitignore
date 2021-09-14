@@ -9,3 +9,4 @@ package-lock.json
 cdk.out
 
 .env
+deploy-cdk.ps1

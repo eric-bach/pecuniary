@@ -50,19 +50,26 @@ Please see the [Trello board](https://trello.com/b/7lA2gwTs/pecuniary)
    $ cd ../spa && npm install
    ```
 
-2. Copy the `cdk/.env.example` file to `cdk/.env` and fill in the parameter values:
+2. Copy the `cdk/deploy-cdk.ps1.example` file to `cdk/deploy-cdk.ps1` and replace `AWS_PROFILE` in the file with your AWS credentials profile name
+
+   ```
+   # Deploy CDK
+   cmd.exe /c cdk deploy --profile AWS_PROFILE pecuniary-dev
+   ```
+
+3. Copy the `cdk/.env.example` file to `cdk/.env` and fill in the parameter values:
 
    a. DLQ_NOTIFICATIONS - email address to send failed event message notifications to
 
    b. ALPHA_VANTAGE_API_KEY - AlphaVantage API key to lookup quotes
 
-3. Start the project
+4. Start the project
 
    ```bash
    $ npm start
    ```
 
-4. Run the app
+5. Run the app
 
    ```bash
    http://localhost:3000/
