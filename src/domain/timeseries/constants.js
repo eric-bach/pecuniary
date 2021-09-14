@@ -1,1 +1,0 @@
-export const FETCH_TIME_SERIES = "FETCH_TIME_SERIES";
