@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "api": {
-      "pecuniary": ["create"]
-    }
-  }
-}
