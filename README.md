@@ -7,16 +7,9 @@
 
 <p align="center">
   <a href="diagrams">Diagrams</a> |
+  <a href="ARCHITECTURE.md">Architecture</a> |
   <a href="#getting-started">Getting Started</a> |
   <a href="#environment-setup">Development</a>
-</p>
-
-<h3 align="center">
-  Built with event sourcing and CQRS
-</h3>
-
-<p align="center">
-  An event-driven serverless microservices application built with <a href="https://github.com/aws/aws-amplify">aws-amplify</a> and <a href="https://nodejs.org">Node.js</a>
 </p>
 
 <p align="center">
@@ -32,76 +25,116 @@
   </a>
 </p>
 
-## Architecture
+<h3 align="center">
+  Built with event sourcing and CQRS
+</h3>
 
-- `pecuniary-seed` populates the EventStore with default lookup values on each backend build through Amplify Console
-- `pecuniary-eventBus` publishes Events to SNS topics. Subscribers to each SNS topic process the Event into the ReadStore
+<p align="center">
+  An event-driven serverless microservices application built with <a href="https://nodejs.org">Node.js</a>
+</p>
 
-![Top Level](diagrams/toplevel.png)
+![Top Level](diagrams/toplevel.jpg)
 
-## Technology
+# Roadmap
 
-### Backend
+Please see the [Trello board](https://trello.com/b/7lA2gwTs/pecuniary)
 
-- AWS Amplify
-- AWS Cognito User Pools/Identity Pools
-- AWS AppSync GraphQL
-- AWS DynamoDB (EventStore)
-- DynamoDB Streams
-- AWS Simple Notification Service
-- AWS DynamoDB (ReadStore)
-- AWS Lambda
-
-### Frontend
-
-- AWS Amplify
-- AWS CloudFront
-- AWS Route 53
-- React.js
-- React Router
-- Redux
-- Redux Thunk
-- Redux Form
-- Revalidate
-- Semantic UI React
-- Cypress
-
-## Getting Started
+# Getting Started
 
 1. Clone project and install dependencies
 
-```bash
-$ git clone https://github.com/eric-bach/pecuniary.git
-$ cd pecuniary
-$ npm install
-```
+   ```bash
+   $ git clone https://github.com/eric-bach/pecuniary-v3.git
+   $ cd pecuniary-v3
+   $ cd cdk && npm install
+   $ cd ../spa && npm install
+   ```
 
-2. Start the project
+2. Copy the `cdk/.env.example` file to `cdk/.env` and fill in the parameter values:
 
-```bash
-$ npm start
-```
+   a. DLQ_NOTIFICATIONS - email address to send failed event message notifications to
 
-3. Run the app
+   b. ALPHA_VANTAGE_API_KEY - AlphaVantage API key to lookup quotes
 
-```
-http://localhost:3000/
-```
+3. Start the project
 
-## Environment Setup
+   ```bash
+   $ npm start
+   ```
 
-1. Initialize AWS Amplify
+4. Run the app
 
-```bash
-$ amplify init
-```
+   ```bash
+   http://localhost:3000/
+   ```
 
-2. Deploy to AWS Account
+# Deployment
 
-```
-amplify push
-```
+## Deployment with CDK CLI
 
-## License
+The Pecuniary application consists of the CDK backend and CDK frontend, each of which has an independent method of deploying.
+
+### Deploy backend via script
+
+1. Ensure AWS credentials are up to date. If using AWS SSO, generate new temporary credentials
+
+   ```
+   aws sso login
+   ```
+
+2. Navigate to `cdk` folder
+
+   ```
+   $ cd cdk
+   ```
+
+3. Deploy CDK stack
+   ```
+   $ ./deploy-cdk.ps1
+   ```
+
+### Deploy backend via CLI
+
+1. Bootstrap CDK (one-time)
+
+   ```
+   $ cdk bootstrap aws://ACCOUNT/us-east-1 --profile PROFILE_NAME
+   ```
+
+2. Navigate to `cdk` folder
+
+   ```
+   $ cd cdk
+   ```
+
+3. Deploy CDK stack
+   ```
+   $ cdk deploy --profile PROFILE_NAME pecuniary-dev
+   ```
+
+### Deploy frontend
+
+1. Navigate to `spa` folder
+
+   ```
+   $ cd spa
+   ```
+
+2. Deploy CDK stack
+   ```
+   TBA
+   ```
+
+## Deployment with CodePipeline (optional)
+
+See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/README.md)
+
+# Resources
+
+## GraphQL queries/mutations
+
+See [README.md](docs/GraphQL.md)
+
+# License
 
 This project is licensed under the terms of the [MIT license](/LICENSE).
