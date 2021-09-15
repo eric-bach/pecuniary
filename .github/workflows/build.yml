@@ -27,6 +27,6 @@ jobs:
           cd ../spa
       - name: Run CDK Unit Tests
         run: |
-          yarn build
+          npm build
           cd ../cdk
           npm run test
