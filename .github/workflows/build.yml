@@ -8,7 +8,7 @@ jobs:
       run:
         working-directory: ${{ github.workspace }}/spa
     env:
-      GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -19,12 +19,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - name: Install yarn
-        run: npm install -g yarn
-      - name: Generate .npmrc
-        run: echo "//npm.pkg.github.com/:_authToken=$GITHUB_TOKEN" >> ~/.npmrc
-      - name: Install SPA packages
-        run: yarn install --frozen-lockfile
+
       - name: Install CDK packages
         run: |
           cd ../cdk
