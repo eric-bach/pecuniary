@@ -1,7 +1,13 @@
 import { Stack, Construct, CfnOutput, Expiration, Duration, RemovalPolicy } from '@aws-cdk/core';
 import * as ssm from '@aws-cdk/aws-ssm';
 import { PolicyStatement, Effect } from '@aws-cdk/aws-iam';
-import { UserPool, UserPoolClient, AccountRecovery, VerificationEmailStyle } from '@aws-cdk/aws-cognito';
+import {
+  UserPool,
+  CfnUserPoolGroup,
+  UserPoolClient,
+  AccountRecovery,
+  VerificationEmailStyle,
+} from '@aws-cdk/aws-cognito';
 import { Topic } from '@aws-cdk/aws-sns';
 import { EmailSubscription } from '@aws-cdk/aws-sns-subscriptions';
 import { Queue } from '@aws-cdk/aws-sqs';
@@ -52,12 +58,23 @@ export class PecuniaryStack extends Stack {
       autoVerify: {
         email: true,
       },
+      signInAliases: {
+        username: false,
+        email: true,
+      },
       standardAttributes: {
         email: {
           required: true,
           mutable: true,
         },
       },
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    const usersGroup = new CfnUserPoolGroup(this, 'PecuniaryUserGroup', {
+      userPoolId: userPool.userPoolId,
+      groupName: 'Users',
+      description: 'Pecuniary Users',
     });
 
     // Cognito user client
@@ -218,6 +235,7 @@ export class PecuniaryStack extends Stack {
         name: 'id',
         type: AttributeType.STRING,
       },
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // DynamoDB table for CurrencyType
@@ -228,6 +246,7 @@ export class PecuniaryStack extends Stack {
         name: 'id',
         type: AttributeType.STRING,
       },
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // DynamoDB table for ExchangeType
@@ -238,6 +257,7 @@ export class PecuniaryStack extends Stack {
         name: 'id',
         type: AttributeType.STRING,
       },
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // DynamoDB table for TransactionType
@@ -248,6 +268,7 @@ export class PecuniaryStack extends Stack {
         name: 'id',
         type: AttributeType.STRING,
       },
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // DynamoDB table for AccountReadModel
@@ -258,6 +279,7 @@ export class PecuniaryStack extends Stack {
         name: 'id',
         type: AttributeType.STRING,
       },
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // DynamoDB table for PositionReadModel
@@ -268,6 +290,7 @@ export class PecuniaryStack extends Stack {
         name: 'id',
         type: AttributeType.STRING,
       },
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // DynamoDB table for TransactionReadModel
@@ -278,6 +301,7 @@ export class PecuniaryStack extends Stack {
         name: 'id',
         type: AttributeType.STRING,
       },
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // DynamoDB table for TimeSeries
@@ -288,6 +312,7 @@ export class PecuniaryStack extends Stack {
         name: 'id',
         type: AttributeType.STRING,
       },
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // Add a global secondary index to enable another data access pattern

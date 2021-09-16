@@ -145,5 +145,3 @@ See [README.md](docs/GraphQL.md)
 # License
 
 This project is licensed under the terms of the [MIT license](/LICENSE).
-
-Test
