@@ -2,8 +2,7 @@ import React from 'react';
 import { Button, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
-//const HomePage = ({ history }) => {
-const HomePage = () => {
+const Home = () => {
   return (
     <>
       <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' />
@@ -22,8 +21,7 @@ const HomePage = () => {
           <div className='responsive-bar'>
             <i className='fa fa-bars'></i>
           </div>
-          {/* <Button onClick={() => history.push('/home')} inverted className='site-btn'> */}
-          <Link to='/home'>
+          <Link to='/login'>
             <Button inverted className='site-btn'>
               Get started
               <Icon />
@@ -63,8 +61,8 @@ const HomePage = () => {
               <br />
               <h4>Modern financial tools to help you grow and manage your money</h4>
               <br />
-              {/* <button onClick={() => history.push('/home')} className='site-btn sb-gradients'> */}
-              <Link to='/home'>
+              {/* <button onClick={() => history.push('/login')} className='site-btn sb-gradients'> */}
+              <Link to='/login'>
                 <button className='site-btn sb-gradients'>Get Started</button>
               </Link>
             </div>
@@ -318,4 +316,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Home;

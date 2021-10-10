@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
+import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react';
 import UserPool from '../../UserPool';
 
 const Login = () => {
@@ -35,18 +36,42 @@ const Login = () => {
       },
     });
   };
-
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <label htmlFor='email'>Email</label>
-        <input value={email} onChange={(event) => setEmail(event.target.value)}></input>
-        <label htmlFor='password'>Password</label>
-        <input value={password} onChange={(event) => setPassword(event.target.value)}></input>
+    <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+      <Grid.Column style={{ maxWidth: 450 }}>
+        <Header as='h2' color='teal' textAlign='center'>
+          <Image src='/img/logo.png' /> Log-in to your account
+        </Header>
+        <Form size='large' onSubmit={onSubmit}>
+          <Segment stacked>
+            <Form.Input
+              fluid
+              icon='user'
+              iconPosition='left'
+              placeholder='E-mail address'
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            <Form.Input
+              fluid
+              icon='lock'
+              iconPosition='left'
+              placeholder='Password'
+              type='password'
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
 
-        <button type='submit'>Login</button>
-      </form>
-    </div>
+            <Button type='submit' color='teal' fluid size='large'>
+              Login
+            </Button>
+          </Segment>
+        </Form>
+        <Message>
+          New to us? <a href='/signup'>Sign Up</a>
+        </Message>
+      </Grid.Column>
+    </Grid>
   );
 };
 
