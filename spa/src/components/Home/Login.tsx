@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react';
 import UserPool from '../../UserPool';
+import { useHistory } from 'react-router-dom';
 
 const Login = () => {
+  const history = useHistory();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -22,17 +25,20 @@ const Login = () => {
 
     user.authenticateUser(authDetails, {
       onSuccess: (data) => {
-        console.log('onSuccess: ', data);
+        console.log('Authenticated: ', data);
 
         var accessToken = data.getAccessToken().getJwtToken();
 
-        console.log('accessToken: ', accessToken);
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('accessToken', accessToken);
+
+        history.push('/account');
       },
       onFailure: (err) => {
-        console.error('onFailure: ', err);
+        console.error('Authentication Failed: ', err);
       },
       newPasswordRequired: (data) => {
-        console.log('newPasswordRequired: ', data);
+        console.log('New Password Required: ', data);
       },
     });
   };

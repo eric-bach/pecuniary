@@ -1,15 +1,17 @@
 import React from 'react';
-import { BrowserRouter as Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import Home from './Home';
 import Signup from './components/Home/Signup';
 import Login from './components/Home/Login';
 import Verify from './components/Home/Verify';
+import Account from './components/Home/Account/Account';
+import PrivateRoute from './components/Home/PrivateRoute/PrivateRoute';
 
 import 'semantic-ui-css/semantic.min.css';
 
 function App() {
   return (
-    <Switch>
+    <BrowserRouter>
       <Route exact path='/'>
         <Home />
       </Route>
@@ -22,7 +24,8 @@ function App() {
       <Route exact path='/verify'>
         <Verify />
       </Route>
-    </Switch>
+      <PrivateRoute exact path='/account' component={Account} />
+    </BrowserRouter>
   );
 }
 
