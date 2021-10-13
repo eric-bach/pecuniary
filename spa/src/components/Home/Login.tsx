@@ -36,9 +36,13 @@ const Login = () => {
       },
       onFailure: (err) => {
         console.error('Authentication Failed: ', err);
+
+        // TODO Show authentication failed message
       },
       newPasswordRequired: (data) => {
         console.log('New Password Required: ', data);
+
+        // TODO Redirect to password change page
       },
     });
   };

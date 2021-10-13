@@ -4,8 +4,8 @@ import Home from './Home';
 import Signup from './components/Home/Signup';
 import Login from './components/Home/Login';
 import Verify from './components/Home/Verify';
-import Account from './components/Home/Account/Account';
-import PrivateRoute from './components/Home/PrivateRoute/PrivateRoute';
+import Account from './components/Account/Account';
+import PrivateRoute from './components/PrivateRoute';
 
 import 'semantic-ui-css/semantic.min.css';
 
