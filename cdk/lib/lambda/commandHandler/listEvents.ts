@@ -7,13 +7,14 @@ async function listEvents() {
   };
 
   try {
-    console.debug(`listEvents: ${params}`);
+    console.debug(`listEvents: ${JSON.stringify(params)}`);
 
     const data = await client.scan(params).promise();
 
-    console.log(`✅ listEvents found: ${data.Items}`);
+    console.log(`✅ listEvents found: ${JSON.stringify(data.Items)}`);
 
-    return data.Items;
+    // TODO Set nextToken value
+    return { items: data.Items, nextToken: null };
   } catch (err) {
     console.error('❌ listEvents error: ', err);
 

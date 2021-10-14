@@ -1,5 +1,6 @@
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.03.html#GettingStarted.NodeJs.03.02
 import createEvent from './createEvent';
+import listEvents from './listEvents';
 
 import AppSyncEvent from './types/AppSyncEvent';
 
@@ -8,6 +9,11 @@ exports.handler = async (event: AppSyncEvent) => {
   console.debug(`AppSync arguments: ${JSON.stringify(event.arguments)}`);
 
   switch (event.info.fieldName) {
+    // Queries
+    case 'listEvents':
+      console.debug(`🔔 ListEvents`);
+      return await listEvents();
+
     // Mutations
     case 'createEvent':
       console.debug(`🔔 ${event.info.fieldName} GraphQL data: ${JSON.stringify(event.arguments.event)}`);

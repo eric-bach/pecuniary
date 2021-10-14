@@ -12,7 +12,7 @@ async function updatePositionReadModel(position: Position) {
   }
 
   const params = {
-    TableName: process.env.POSITION_TABLE,
+    TableName: process.env.POSITION_TABLE_NAME,
     Key: {
       id: position.id,
     },

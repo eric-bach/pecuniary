@@ -352,6 +352,11 @@ export class PecuniaryStack extends Stack {
       fieldName: 'createEvent',
     });
 
+    lambdaDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'listEvents',
+    });
+
     /***
      *** AWS EventBridge - Event Bus
      ***/
