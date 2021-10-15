@@ -8,7 +8,7 @@ import UserPool from '../../UserPool';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  //const [authenticationDetails, setAuthenticationDetails] = useState({ authenticated: '', title: '', message: '' });
+  const [authenticationDetails, setAuthenticationDetails] = useState({ authenticated: '', title: '', message: '' });
 
   const history = useHistory();
 
@@ -41,20 +41,20 @@ const Login = () => {
         //history.push('/account');
       },
       onFailure: (err) => {
-        // setAuthenticationDetails({
-        //   authenticated: 'false',
-        //   title: 'Login Failed',
-        //   message: 'Incorrect username and/or password',
-        // });
-        //console.error('Authentication Failed: ', err.me);
+        setAuthenticationDetails({
+          authenticated: 'false',
+          title: 'Login Failed',
+          message: 'Incorrect username and/or password',
+        });
+        console.error('Authentication Failed: ', err.me);
       },
       newPasswordRequired: (data) => {
-        // setAuthenticationDetails({
-        //   authenticated: 'false',
-        //   title: 'Login Failed',
-        //   message: 'Password must be changed',
-        // });
-        //console.log('New Password Required: ', data);
+        setAuthenticationDetails({
+          authenticated: 'false',
+          title: 'Login Failed',
+          message: 'Password must be changed',
+        });
+        console.log('New Password Required: ', data);
         // TODO Redirect to password change page
       },
     });
@@ -90,12 +90,12 @@ const Login = () => {
             </Button>
           </Segment>
         </Form>
-        {/* {authenticationDetails.authenticated !== 'true' && authenticationDetails.authenticated && (
+        {authenticationDetails.authenticated !== 'true' && authenticationDetails.authenticated && (
           <Message negative>
             <Message.Header>Login Failed</Message.Header>
             <p>Incorrect username or password</p>
           </Message>
-        )} */}
+        )}
         <Message>
           New to us? <a href='/signup'>Sign Up</a>
         </Message>
