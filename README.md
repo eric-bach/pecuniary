@@ -142,6 +142,8 @@ See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/REA
 
 [GraphQL queries/mutations](docs/GraphQL.md)
 
+(AWS Cognito - React)[https://github.com/DevAscend/YT-AWS-Cognito-React-Tutorials]
+
 (Apollo Client Query example)[https://www.yannisspyrou.com/querying-app-sync-using-react-hooks]
 (Apollo Client Mutation example)[https://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/]
 

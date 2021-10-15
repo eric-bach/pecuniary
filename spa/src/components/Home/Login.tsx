@@ -60,11 +60,17 @@ const Login = () => {
   return (
     <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
       <Grid.Column style={{ maxWidth: 450 }}>
-        <Header as='h2' color='teal' textAlign='center'>
-          <Image src='/img/logo.png' /> Log-in to your account
+        <Header as='h1' color='teal' textAlign='center'>
+          <Image src='/img/logo.png' />
+          Pecuniary
         </Header>
         <Form size='large' onSubmit={onSubmit}>
-          <Segment stacked>
+          <Segment>
+            <Header as='h3' color='blue'>
+              Log into your account
+            </Header>
+            <div>Manage your account</div>
+            <br />
             <Form.Input
               fluid
               icon='user'
@@ -82,10 +88,20 @@ const Login = () => {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
             />
-
-            <Button type='submit' color='teal' fluid size='large'>
+            <Button type='submit' color='blue' fluid size='large'>
               Login
             </Button>
+            <br />
+            By continuing I agree to Pecuniary's <a href='#'>Terms of Service</a>.
+            <br />
+            <br />
+            <br />
+            <a href='/reset'>Forgot your password?</a>
+            <br />
+            <br />
+            <a href='/signup'>Create new account</a>
+            <br />
+            <br />
           </Segment>
         </Form>
         {authenticationDetails.authenticated !== 'true' && authenticationDetails.authenticated && (
@@ -94,9 +110,6 @@ const Login = () => {
             <p>Incorrect username or password</p>
           </Message>
         )}
-        <Message>
-          New to us? <a href='/signup'>Sign Up</a>
-        </Message>
       </Grid.Column>
     </Grid>
   );
