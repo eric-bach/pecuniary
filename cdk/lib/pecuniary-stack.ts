@@ -340,6 +340,7 @@ export class PecuniaryStack extends Stack {
       timeout: Duration.seconds(10),
       environment: {
         EVENT_TABLE_NAME: eventTable.tableName,
+        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
       },
       deadLetterQueue: commandHandlerQueue,
     });
@@ -350,6 +351,11 @@ export class PecuniaryStack extends Stack {
     lambdaDataSource.createResolver({
       typeName: 'Mutation',
       fieldName: 'createEvent',
+    });
+
+    lambdaDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getAccountsByUser',
     });
 
     lambdaDataSource.createResolver({

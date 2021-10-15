@@ -1,6 +1,7 @@
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.03.html#GettingStarted.NodeJs.03.02
 import createEvent from './createEvent';
 import listEvents from './listEvents';
+import getAccountsByUser from './getAccountsByUser';
 
 import AppSyncEvent from './types/AppSyncEvent';
 
@@ -13,6 +14,9 @@ exports.handler = async (event: AppSyncEvent) => {
     case 'listEvents':
       console.debug(`🔔 ListEvents`);
       return await listEvents();
+    case 'getAccountsByUser':
+      console.debug(`🔔 GetAccountsByUser: ${JSON.stringify(event.arguments.userId)}`);
+      return await getAccountsByUser(event.arguments.userId);
 
     // Mutations
     case 'createEvent':

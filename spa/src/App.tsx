@@ -12,18 +12,10 @@ import 'semantic-ui-css/semantic.min.css';
 function App() {
   return (
     <BrowserRouter>
-      <Route exact path='/'>
-        <Home />
-      </Route>
-      <Route exact path='/login'>
-        <Login />
-      </Route>
-      <Route exact path='/signup'>
-        <Signup />
-      </Route>
-      <Route exact path='/verify'>
-        <Verify />
-      </Route>
+      <Route exact path='/' component={Home} />
+      <Route exact path='/login' component={Login} />
+      <Route exact path='/signup' component={Signup} />
+      <Route exact path='/verify' component={Verify} />
       <PrivateRoute exact path='/account' component={Account} />
     </BrowserRouter>
   );

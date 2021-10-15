@@ -10,6 +10,7 @@ type AppSyncEvent = {
     event: Event;
     input: Position;
     filter: Filter;
+    userId: string;
   };
   identity: {
     username: string;

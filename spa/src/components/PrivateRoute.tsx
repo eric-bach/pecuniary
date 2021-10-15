@@ -2,8 +2,8 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
 function PrivateRoute({ component: Component, ...restOfProps }: any) {
-  const isAuthenticated = localStorage.getItem('isAuthenticated');
-  console.log('isAuthenticaed: ', isAuthenticated);
+  var isAuthenticated = localStorage.getItem('isAuthenticated');
+  console.log('isAuthenticated: ', isAuthenticated);
 
   return (
     <Route

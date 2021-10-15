@@ -138,9 +138,12 @@ See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/REA
 
 # Resources
 
-## GraphQL queries/mutations
+[How to add a new GraphQL API/Command Handler](docs/CommandHandler.md)
 
-See [README.md](docs/GraphQL.md)
+[GraphQL queries/mutations](docs/GraphQL.md)
+
+(Apollo Client Query example)[https://www.yannisspyrou.com/querying-app-sync-using-react-hooks]
+(Apollo Client Mutation example)[https://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/]
 
 # License
 

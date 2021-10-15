@@ -1,10 +1,9 @@
 //https://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/
-import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Button } from 'semantic-ui-react';
-import { useMutation, useQuery, gql } from '@apollo/client';
+import { useQuery, gql } from '@apollo/client';
 
-// TODO Figure out how to set Data as a JSON
+/*
 const createAccount = gql`
   mutation CreateAccount {
     createEvent(
@@ -27,30 +26,62 @@ const createAccount = gql`
     }
   }
 `;
-const listEvents = gql`
-  query ListEvents {
-    listEvents {
+*/
+const getAccountsByUser = gql`
+  query getAccountsByUser {
+    getAccountsByUser(userId: "eric") {
       id
+      aggregateId
+      name
+      description
+      bookValue
+      marketValue
+      createdAt
+      updatedAt
     }
   }
 `;
 
+interface AccountReadModel {
+  id: string;
+  aggregateId: string;
+  name: string;
+  description: string;
+  bookValue: number;
+  marketValue: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const Account = () => {
-  const [accounts, setAccounts] = useState([]);
-  const [accountsLoaded, setAccountsLoaded] = useState(false);
+  // const [accounts, setAccounts] = useState([]);
+  // const [accountsLoaded, setAccountsLoaded] = useState(false);
 
-  const [createAccountMutation] = useMutation(createAccount);
-  //const [queryEvents] = useQuery(listEvents);
+  //const [createAccountMutation] = useMutation(createAccount);
+  const { data, error, loading } = useQuery(getAccountsByUser);
 
+  if (error) return 'Error!'; // You probably want to do more here!
+  if (loading) return 'loading...'; // You can also show a spinner here.
+
+  /* 
+   * EXAMPLE: Calling GraphQL Mutation with hooks
   const handleCreateTodoClick = () => {
-    createAccountMutation()
-      .then((res: any) => console.log('Created Account successfully'))
-      .catch((err: any) => {
-        console.log('Error occurred');
-        console.log(err);
-      });
-  };
+        const todo = {
+          item: 'visit qualityology.com'
+        }
+        createTodoMutation({
+            variables: todo,
+        })
+            .then((res) => console.log('Todo created successfully'))
+            .catch((err) => {
+                console.log('Error occurred');
+                console.log(err);
+            });
+    };
+  */
 
+  /*
+   * EXAMPLE: Calling an API with hooks
   const fetchAccounts = async () => {
     try {
       let response = await fetch('https://randomuser.me/api');
@@ -68,20 +99,19 @@ const Account = () => {
     (async () => {
       setAccountsLoaded(false);
       let res = await fetchAccounts();
-      handleCreateTodoClick();
       if (res.success) {
         setAccounts(res.data.results[0]);
         setAccountsLoaded(true);
       }
     })();
   }, []);
+  */
 
   return (
     <Grid>
       <Grid.Column width={10}>
         <h2>
-          {/* Accounts ({accounts.length})         */}
-          Accounts 1
+          Accounts ({data.getAccountsByUser.length})
           <Button
             as={Link}
             to='/accounts/new'
@@ -91,6 +121,20 @@ const Account = () => {
             data-test='create-account-button'
           />
         </h2>
+
+        <Button.Group>
+          <Button labelPosition='left' icon='left chevron' content='Previous' />
+          <Button labelPosition='right' icon='right chevron' content='Next' />
+        </Button.Group>
+
+        {data &&
+          data.getAccountsByUser.map((d: AccountReadModel) => {
+            return (
+              <div>
+                {d.id} {d.name} {d.description} ${d.bookValue}
+              </div>
+            );
+          })}
       </Grid.Column>
     </Grid>
   );
