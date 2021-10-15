@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react';
-import UserPool from '../../UserPool';
 import { useHistory } from 'react-router-dom';
 
-const Login = () => {
-  const history = useHistory();
+import UserPool from '../../UserPool';
 
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   //const [authenticationDetails, setAuthenticationDetails] = useState({ authenticated: '', title: '', message: '' });
+
+  const history = useHistory();
+
+  console.log('auth', localStorage.getItem('isAuthenticated'));
 
   const onSubmit = (event: any) => {
     event.preventDefault();
@@ -34,7 +37,8 @@ const Login = () => {
 
         console.log('Authenticated: ', data);
 
-        history.push('/account');
+        window.location.pathname = '/account';
+        //history.push('/account');
       },
       onFailure: (err) => {
         // setAuthenticationDetails({

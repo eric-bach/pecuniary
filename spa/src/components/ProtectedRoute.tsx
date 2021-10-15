@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
-function PrivateRoute({ component: Component, ...restOfProps }: any) {
+function ProtectedRoute({ component: Component, ...restOfProps }: any) {
   var isAuthenticated = localStorage.getItem('isAuthenticated');
   console.log('isAuthenticated: ', isAuthenticated);
 
@@ -13,4 +13,4 @@ function PrivateRoute({ component: Component, ...restOfProps }: any) {
   );
 }
 
-export default PrivateRoute;
+export default ProtectedRoute;

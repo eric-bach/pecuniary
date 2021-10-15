@@ -5,7 +5,7 @@ import Signup from './components/Home/Signup';
 import Login from './components/Home/Login';
 import Verify from './components/Home/Verify';
 import Account from './components/Account/Account';
-import PrivateRoute from './components/PrivateRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 
 import 'semantic-ui-css/semantic.min.css';
 
@@ -16,7 +16,7 @@ function App() {
       <Route exact path='/login' component={Login} />
       <Route exact path='/signup' component={Signup} />
       <Route exact path='/verify' component={Verify} />
-      <PrivateRoute exact path='/account' component={Account} />
+      <ProtectedRoute exact path='/account' component={Account} />
     </BrowserRouter>
   );
 }
