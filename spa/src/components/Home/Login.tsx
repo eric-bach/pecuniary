@@ -31,14 +31,12 @@ const Login = () => {
       onSuccess: (data) => {
         var accessToken = data.getAccessToken().getJwtToken();
 
-        // setAuthenticationDetails({ authenticated: 'true', title: '', message: '' });
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('accessToken', accessToken);
 
-        console.log('Authenticated: ', data);
+        //console.log('Authenticated: ', data);
 
         window.location.pathname = '/account';
-        //history.push('/account');
       },
       onFailure: (err) => {
         setAuthenticationDetails({
