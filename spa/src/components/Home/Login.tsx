@@ -8,7 +8,11 @@ import UserPool from '../../UserPool';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [authenticationDetails, setAuthenticationDetails] = useState({ authenticated: '', title: '', message: '' });
+  const [authenticationDetails, setAuthenticationDetails] = useState({
+    authenticated: '',
+    title: '',
+    message: '',
+  });
 
   const history = useHistory();
 
@@ -59,7 +63,7 @@ const Login = () => {
   };
   return (
     <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
-      <Grid.Column style={{ maxWidth: 450 }}>
+      <Grid.Column style={{ maxWidth: 480 }}>
         <Header as='h1' color='teal' textAlign='center'>
           <Image src='/img/logo.png' />
           Pecuniary
@@ -106,8 +110,8 @@ const Login = () => {
         </Form>
         {authenticationDetails.authenticated !== 'true' && authenticationDetails.authenticated && (
           <Message negative>
-            <Message.Header>Login Failed</Message.Header>
-            <p>Incorrect username or password</p>
+            <Message.Header>{authenticationDetails.title}</Message.Header>
+            <p>{authenticationDetails.message}</p>
           </Message>
         )}
       </Grid.Column>
