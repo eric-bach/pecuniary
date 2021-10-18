@@ -17,8 +17,9 @@ async function getAccountsByUser(userId: string) {
 
   try {
     console.debug('Searching for Accounts');
-
     const client = new DynamoDBClient({});
+
+    // Get Accounts
     const result = await client.send(new ScanCommand(params));
     const accounts = result.Items?.map((Item) => unmarshall(Item));
 

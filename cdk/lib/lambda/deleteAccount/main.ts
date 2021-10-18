@@ -14,7 +14,6 @@ type Account = {
   description: string;
   bookValue: number;
   marketValue: number;
-  accountReadModelAccountTypeId: number;
 };
 
 exports.handler = async (event: EventBridgeEvent<string, Account>) => {

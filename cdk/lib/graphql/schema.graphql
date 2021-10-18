@@ -10,7 +10,7 @@ type Event @model @aws_api_key @aws_cognito_user_pools {
 }
 
 # Lookup Types
-type AccountType @model {
+type AccountType @model @aws_api_key @aws_cognito_user_pools {
   id: ID!
   name: String!
   description: String

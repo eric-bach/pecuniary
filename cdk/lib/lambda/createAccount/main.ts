@@ -9,13 +9,18 @@ type Detail = {
   version: number;
   userId: string;
 };
+type AccountType = {
+  id: string;
+  name: string;
+  description: string;
+};
 type Account = {
   id: string;
   name: string;
   description: string;
   bookValue: number;
   marketValue: number;
-  accountReadModelAccountTypeId: number;
+  accountType: AccountType;
 };
 
 exports.handler = async (event: EventBridgeEvent<string, Account>) => {
@@ -39,7 +44,11 @@ async function createAccountAsync(detail: Detail, data: Account) {
     description: data.description,
     bookValue: data.bookValue,
     marketValue: data.marketValue,
-    accountReadModelAccountTypeId: `${data.accountReadModelAccountTypeId}`,
+    accountType: {
+      id: data.accountType.id,
+      name: data.accountType.name,
+      description: data.accountType.description,
+    },
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

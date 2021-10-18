@@ -38,10 +38,20 @@ const getAccountsByUser = gql`
       marketValue
       createdAt
       updatedAt
+      accountType {
+        id
+        name
+        description
+      }
     }
   }
 `;
 
+interface AccountType {
+  id: string;
+  name: string;
+  description: string;
+}
 interface AccountReadModel {
   id: string;
   aggregateId: string;
@@ -49,6 +59,7 @@ interface AccountReadModel {
   description: string;
   bookValue: number;
   marketValue: number;
+  accountType: AccountType;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -129,12 +140,17 @@ const Accounts = () => {
 
         {data &&
           data.getAccountsByUser.map((d: AccountReadModel) => {
+            console.log(d);
             return (
-              <div>
-                {d.id} {d.name} {d.description} ${d.bookValue}
+              <div key={d.id}>
+                {d.id} {d.name} {d.description} ${d.bookValue} {d.accountType.name}
               </div>
             );
           })}
+      </Grid.Column>
+      <Grid.Column width={5}>
+        <h2>Summary</h2>
+        {/* <Doughnut data={data} /> */}
       </Grid.Column>
     </Grid>
   );

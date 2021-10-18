@@ -8,13 +8,18 @@ type Detail = {
   version: number;
   userId: string;
 };
+type AccountType = {
+  id: string;
+  name: string;
+  description: string;
+};
 type Account = {
   id: string;
   name: string;
   description: string;
   bookValue: number;
   marketValue: number;
-  accountReadModelAccountTypeId: number;
+  accountType: AccountType;
 };
 
 exports.handler = async (event: EventBridgeEvent<string, Account>) => {
@@ -35,14 +40,14 @@ async function updateAccountAsync(detail: Detail, data: Account) {
       id: data.id,
     }),
     UpdateExpression:
-      'SET version=:version, #name=:name, description=:description, bookValue=:bookValue, marketValue=:marketValue, accountReadModelAccountTypeId=:accountTypeId',
+      'SET version=:version, #name=:name, description=:description, bookValue=:bookValue, marketValue=:marketValue, accountType=:accountType',
     ExpressionAttributeValues: marshall({
       ':version': detail.version,
       ':name': data.name,
       ':description': data.description,
       ':bookValue': data.bookValue,
       ':marketValue': data.marketValue,
-      ':accountTypeId': `${data.accountReadModelAccountTypeId}`,
+      ':accountType': data.accountType,
     }),
     ExpressionAttributeNames: {
       '#name': 'name',

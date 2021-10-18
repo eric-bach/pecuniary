@@ -7,7 +7,6 @@ import Signup from './components/Auth/Signup';
 import Login from './components/Auth/Login';
 import Verify from './components/Auth/Verify';
 import Accounts from './components/Account/Accounts';
-import Status from './components/Auth/Status';
 import ProtectedRoute from './components/ProtectedRoute';
 import { User } from './components/Auth/User';
 import NavBar from './components/Nav/NavBar';
