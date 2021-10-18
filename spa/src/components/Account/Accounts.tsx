@@ -53,7 +53,7 @@ interface AccountReadModel {
   updatedAt: Date;
 }
 
-const Account = () => {
+const Accounts = () => {
   // const [accounts, setAccounts] = useState([]);
   // const [accountsLoaded, setAccountsLoaded] = useState(false);
 
@@ -140,4 +140,4 @@ const Account = () => {
   );
 };
 
-export default Account;
+export default Accounts;

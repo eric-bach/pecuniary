@@ -1,4 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
+
 import { UserContext } from './User';
 
 const Status = () => {
@@ -13,7 +14,7 @@ const Status = () => {
     });
   }, []);
 
-  return <div style={{ fontSize: '24px' }}>{status ? <button onClick={logout}>Logout</button> : 'Please login'}</div>;
+  return <></>;
 };
 
 export default Status;

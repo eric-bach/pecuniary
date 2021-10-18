@@ -22,7 +22,7 @@ const Login = () => {
         console.log('Authentication succeeded: ', data);
 
         // Re-direct to /account
-        window.location.pathname = '/account';
+        window.location.pathname = '/accounts';
       })
       .catch((err: any) => {
         console.error('Authentication failed: ', err);
