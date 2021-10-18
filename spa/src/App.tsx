@@ -1,4 +1,5 @@
 import { BrowserRouter, Route } from 'react-router-dom';
+import { Container } from 'semantic-ui-react';
 
 import Home from './Home';
 import HomePage from './components/Home/HomePage';
@@ -16,15 +17,17 @@ import 'semantic-ui-css/semantic.min.css';
 function App() {
   return (
     <BrowserRouter>
+      <Route exact path='/' component={Home} />
       <User>
-        <Route exact path='/' component={Home} />
         <NavBar />
         <Status />
-        <Route exact path='/home' component={HomePage} />
-        <Route exact path='/login' component={Login} />
-        <Route exact path='/signup' component={Signup} />
-        <Route exact path='/verify' component={Verify} />
-        <ProtectedRoute exact path='/accounts' component={Accounts} />
+        <Container className='main'>
+          <Route exact path='/login' component={Login} />
+          <Route exact path='/signup' component={Signup} />
+          <Route exact path='/verify' component={Verify} />
+          <ProtectedRoute exact path='/home' component={HomePage} />
+          <ProtectedRoute exact path='/accounts' component={Accounts} />
+        </Container>
       </User>
     </BrowserRouter>
   );

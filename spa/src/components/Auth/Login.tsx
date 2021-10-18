@@ -21,8 +21,8 @@ const Login = () => {
       .then((data: any) => {
         console.log('Authentication succeeded: ', data);
 
-        // Re-direct to /account
-        window.location.pathname = '/accounts';
+        // Re-direct to /home
+        window.location.pathname = '/home';
       })
       .catch((err: any) => {
         console.error('Authentication failed: ', err);
