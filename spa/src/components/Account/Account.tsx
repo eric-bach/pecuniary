@@ -107,11 +107,6 @@ const Account = () => {
   }, []);
   */
 
-  const handleLogout = () => {
-    localStorage.clear();
-    window.location.pathname = '/login';
-  };
-
   return (
     <Grid>
       <Grid.Column width={10}>
@@ -141,10 +136,6 @@ const Account = () => {
             );
           })}
       </Grid.Column>
-      <button className='btn btn-primary' onClick={handleLogout}>
-        Logout
-      </button>
-      );
     </Grid>
   );
 };

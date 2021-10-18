@@ -1,9 +1,7 @@
-import { useState } from 'react';
-import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
+import { useState, useContext } from 'react';
 import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react';
-import { useHistory } from 'react-router-dom';
 
-import UserPool from '../../UserPool';
+import { UserContext } from './User';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -14,53 +12,23 @@ const Login = () => {
     message: '',
   });
 
-  const history = useHistory();
-
-  console.log('auth', localStorage.getItem('isAuthenticated'));
+  const { authenticate }: any = useContext(UserContext);
 
   const onSubmit = (event: any) => {
     event.preventDefault();
 
-    const user = new CognitoUser({
-      Username: email,
-      Pool: UserPool,
-    });
+    authenticate(email, password)
+      .then((data: any) => {
+        console.log('Authentication succeeded: ', data);
 
-    const authDetails = new AuthenticationDetails({
-      Username: email,
-      Password: password,
-    });
-
-    user.authenticateUser(authDetails, {
-      onSuccess: (data) => {
-        var accessToken = data.getAccessToken().getJwtToken();
-
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('accessToken', accessToken);
-
-        //console.log('Authenticated: ', data);
-
+        // Re-direct to /account
         window.location.pathname = '/account';
-      },
-      onFailure: (err) => {
-        setAuthenticationDetails({
-          authenticated: 'false',
-          title: 'Login Failed',
-          message: 'Incorrect username and/or password',
-        });
-        console.error('Authentication Failed: ', err.me);
-      },
-      newPasswordRequired: (data) => {
-        setAuthenticationDetails({
-          authenticated: 'false',
-          title: 'Login Failed',
-          message: 'Password must be changed',
-        });
-        console.log('New Password Required: ', data);
-        // TODO Redirect to password change page
-      },
-    });
+      })
+      .catch((err: any) => {
+        console.error('Authentication failed: ', err);
+      });
   };
+
   return (
     <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
       <Grid.Column style={{ maxWidth: 480 }}>
