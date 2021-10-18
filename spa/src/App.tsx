@@ -20,11 +20,10 @@ function App() {
       <Route exact path='/' component={Home} />
       <User>
         <NavBar />
-        <Status />
-        <Container className='main'>
-          <Route exact path='/login' component={Login} />
-          <Route exact path='/signup' component={Signup} />
-          <Route exact path='/verify' component={Verify} />
+        <Route exact path='/login' component={Login} />
+        <Route exact path='/signup' component={Signup} />
+        <Route exact path='/verify' component={Verify} />
+        <Container className='main' style={{ paddingTop: '30px' }}>
           <ProtectedRoute exact path='/home' component={HomePage} />
           <ProtectedRoute exact path='/accounts' component={Accounts} />
         </Container>
