@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { Grid, Button } from 'semantic-ui-react';
 import { useQuery, gql } from '@apollo/client';
 
+import AccountReadModel from './types/Account';
+import AccountSummary from './AccountSummary';
+
 /*
 const createAccount = gql`
   mutation CreateAccount {
@@ -46,23 +49,6 @@ const getAccountsByUser = gql`
     }
   }
 `;
-
-interface AccountType {
-  id: string;
-  name: string;
-  description: string;
-}
-interface AccountReadModel {
-  id: string;
-  aggregateId: string;
-  name: string;
-  description: string;
-  bookValue: number;
-  marketValue: number;
-  accountType: AccountType;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 const Accounts = () => {
   // const [accounts, setAccounts] = useState([]);
@@ -141,11 +127,7 @@ const Accounts = () => {
         {data &&
           data.getAccountsByUser.map((d: AccountReadModel) => {
             console.log(d);
-            return (
-              <div key={d.id}>
-                {d.id} {d.name} {d.description} ${d.bookValue} {d.accountType.name}
-              </div>
-            );
+            return <AccountSummary {...d} />;
           })}
       </Grid.Column>
       <Grid.Column width={5}>
