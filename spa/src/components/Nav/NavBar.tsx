@@ -4,7 +4,7 @@ import { Container, Menu } from 'semantic-ui-react';
 
 import SignedInMenu from './SignedInMenu';
 import SignedOutMenu from './SignedOutMenu';
-import { UserContext } from '../Home/User';
+import { UserContext } from '../Auth/User';
 
 const NavBar = () => {
   const [status, setStatus] = useState(false);

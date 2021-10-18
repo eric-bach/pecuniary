@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
-import { UserContext } from './Home/User';
+import { UserContext } from './Auth/User';
 
 function ProtectedRoute({ component: Component, ...restOfProps }: any) {
   var isAuthenticated = localStorage.getItem('isAuthenticated');

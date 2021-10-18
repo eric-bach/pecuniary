@@ -21,7 +21,7 @@ const Home = () => {
           <div className='responsive-bar'>
             <i className='fa fa-bars'></i>
           </div>
-          <Link to='/login'>
+          <Link to='/home'>
             <Button inverted className='site-btn'>
               Get started
               <Icon />
@@ -61,8 +61,7 @@ const Home = () => {
               <br />
               <h4>Modern financial tools to help you grow and manage your money</h4>
               <br />
-              {/* <button onClick={() => history.push('/login')} className='site-btn sb-gradients'> */}
-              <Link to='/login'>
+              <Link to='/home'>
                 <button className='site-btn sb-gradients'>Get Started</button>
               </Link>
             </div>
