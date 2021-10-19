@@ -7,6 +7,7 @@ import Signup from './components/Auth/Signup';
 import Login from './components/Auth/Login';
 import Verify from './components/Auth/Verify';
 import Accounts from './components/Account/Accounts';
+import AccountForm from './components/Account/AccountForm';
 import ProtectedRoute from './components/ProtectedRoute';
 import { User } from './components/Auth/User';
 import NavBar from './components/Nav/NavBar';
@@ -25,6 +26,7 @@ function App() {
         <Container className='main' style={{ paddingTop: '30px' }}>
           <ProtectedRoute exact path='/home' component={HomePage} />
           <ProtectedRoute exact path='/accounts' component={Accounts} />
+          <ProtectedRoute path={['/accounts/new', '/accounts/edit/:id']} component={AccountForm} />
         </Container>
       </User>
     </BrowserRouter>
