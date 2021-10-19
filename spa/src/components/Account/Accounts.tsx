@@ -35,10 +35,12 @@ const getAccountsByUser = gql`
     getAccountsByUser(userId: "eric") {
       id
       aggregateId
+      version
       name
       description
       bookValue
       marketValue
+      userId
       createdAt
       updatedAt
       accountType {
