@@ -6,30 +6,6 @@ import { useQuery, gql } from '@apollo/client';
 import AccountReadModel from './types/Account';
 import AccountSummary from './AccountSummary';
 
-/*
-const createAccount = gql`
-  mutation CreateAccount {
-    createEvent(
-      event: {
-        aggregateId: "1"
-        name: "AccountCreatedEvent"
-        version: 1
-        data: "Test"
-        userId: "eric"
-        createdAt: "2020-02-18T00:00:00Z"
-      }
-    ) {
-      id
-      aggregateId
-      name
-      version
-      data
-      userId
-      createdAt
-    }
-  }
-`;
-*/
 const getAccountsByUser = gql`
   query getAccountsByUser {
     getAccountsByUser(userId: "eric") {

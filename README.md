@@ -145,8 +145,9 @@ See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/REA
 
 ## AppSync
 
-[How perform a GraphQL Query with Apollo using React hooks](https://www.yannisspyrou.com/querying-app-sync-using-react-hooks)
-[How perform a GraphQL Mutation with Apollo using React hooks](ttps://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/)
+[How to build an authenticated GraphQL AppSync API with CDK](https://github.com/dabit3/build-an-authenticated-api-with-cdk)
+[How to perform a GraphQL Query with Apollo using React hooks](https://www.yannisspyrou.com/querying-app-sync-using-react-hooks)
+[How to perform a GraphQL Mutation with Apollo using React hooks](ttps://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/)
 
 ## Cognito
 

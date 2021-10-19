@@ -1,6 +1,14 @@
 # Queries and Mutations
 
 ```
+query ListAccountTypes {
+  listAccountTypes {
+    id
+    name
+    description
+  }
+}
+
 query GetAccountsByUser {
   getAccountsByUser(userId: "eric") {
    	id
