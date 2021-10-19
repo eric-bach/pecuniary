@@ -136,16 +136,22 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
 
 See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/README.md)
 
-# Resources
+# Projects References
 
+[Saved GraphQL queries/mutations for GraphiQl](docs/GraphQL.md)
 [How to add a new GraphQL API/Command Handler](docs/CommandHandler.md)
 
-[GraphQL queries/mutations](docs/GraphQL.md)
+# Resources
 
-(AWS Cognito - React)[https://github.com/DevAscend/YT-AWS-Cognito-React-Tutorials]
+## AppSync
 
-(Apollo Client Query example)[https://www.yannisspyrou.com/querying-app-sync-using-react-hooks]
-(Apollo Client Mutation example)[https://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/]
+[How perform a GraphQL Query with Apollo using React hooks](https://www.yannisspyrou.com/querying-app-sync-using-react-hooks)
+[How perform a GraphQL Mutation with Apollo using React hooks](ttps://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/)
+
+## Cognito
+
+[How to add a protected route to React](https://dev.to/olumidesamuel_/implementing-protected-route-and-authentication-in-react-js-3cl4)
+[How to authenticate with Cognito using React hooks](https://github.com/DevAscend/YT-AWS-Cognito-React-Tutorials)
 
 # License
 

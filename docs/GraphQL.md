@@ -1,6 +1,19 @@
 # Queries and Mutations
 
 ```
+query GetAccountsByUser {
+  getAccountsByUser(userId: "eric") {
+   	id
+    name
+    description
+    bookValue
+    marketValue
+   	accountType {
+     	id
+      name
+   	}
+  }
+}
 
 mutation CreateAccount($createAccountInput: CreateEventInput!) {
 	createEvent(event: $createAccountInput) {
