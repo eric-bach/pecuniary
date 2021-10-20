@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Grid, Segment, Header, Form, Button, Select } from 'semantic-ui-react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import { v4 as uuidv4 } from 'uuid';
+
+import { UserContext } from '../Auth/User';
 
 const listAccountTypes = gql`
   query ListAccountTypes {
@@ -31,10 +33,18 @@ const AccountForm = () => {
   const [name, setName] = useState('');
   const [accountType, setAccountType] = useState('');
   const [description, setDescription] = useState('');
-
-  const [createAccountMutation] = useMutation(createAccount);
-
+  const [username, setUsername] = useState('');
   const { data, error, loading } = useQuery(listAccountTypes);
+  const [createAccountMutation] = useMutation(createAccount);
+  const { getSession } = useContext(UserContext);
+
+  // Get the logged in username
+  useEffect(() => {
+    getSession().then((session: any) => {
+      setUsername(session.idToken.payload.email);
+      console.log('Username: ', session.idToken.payload.email);
+    });
+  }, []);
 
   if (error) return 'Error!'; // You probably want to do more here!
   if (loading) return 'loading...'; // You can also show a spinner here.
@@ -42,12 +52,8 @@ const AccountForm = () => {
   const onSubmit = (event: any) => {
     event.preventDefault();
 
-    // TODO Call AppSync to create account
     console.log('CREATE ACCOUNT');
-    console.log(accountType);
-
     const selectedAccountType = accountTypes.find((a) => a.value === accountType);
-    console.log(selectedAccountType);
 
     const params = {
       createAccountInput: {
@@ -55,19 +61,19 @@ const AccountForm = () => {
         name: 'AccountCreatedEvent',
         data: `{"name":"${name}","description":"${description}","bookValue":0,"marketValue":0,"accountType":{"id":"${selectedAccountType.key}","name":"${selectedAccountType.text}","description":"${selectedAccountType.value}"}}`,
         version: 1,
-        userId: 'eric', // TODO Get user from session
+        userId: `${username}`,
         createdAt: new Date(),
       },
     };
 
-    console.log(params); // TODO Remove
     createAccountMutation({
       variables: params,
     })
-      .then(
-        (res) => console.log('Account created successfully')
-        // TODO On success re-direct to Account to refresh Account listings
-      )
+      .then((res) => {
+        console.log('Account created successfully');
+
+        window.location.pathname = '/accounts';
+      })
       .catch((err) => {
         console.error('Error occurred creating account');
         console.error(err);
