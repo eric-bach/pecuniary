@@ -9,6 +9,15 @@ query ListAccountTypes {
   }
 }
 
+query GetAccountByAggregateId {
+  getAccountByAggregateId(aggregateId: "d70f5eb9-ecc9-4a79-b145-4ac7d327e38e") {
+    id
+    name
+    description
+    userId
+  }
+}
+
 query GetAccountsByUser {
   getAccountsByUser(userId: "eric") {
    	id

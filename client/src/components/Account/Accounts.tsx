@@ -29,58 +29,10 @@ const getAccountsByUser = gql`
 `;
 
 const Accounts = () => {
-  // const [accounts, setAccounts] = useState([]);
-  // const [accountsLoaded, setAccountsLoaded] = useState(false);
-
-  //const [createAccountMutation] = useMutation(createAccount);
   const { data, error, loading } = useQuery(getAccountsByUser);
 
   if (error) return 'Error!'; // You probably want to do more here!
   if (loading) return 'loading...'; // You can also show a spinner here.
-
-  /* 
-   * EXAMPLE: Calling GraphQL Mutation with hooks
-  const handleCreateTodoClick = () => {
-        const todo = {
-          item: 'visit qualityology.com'
-        }
-        createTodoMutation({
-            variables: todo,
-        })
-            .then((res) => console.log('Todo created successfully'))
-            .catch((err) => {
-                console.log('Error occurred');
-                console.log(err);
-            });
-    };
-  */
-
-  /*
-   * EXAMPLE: Calling an API with hooks
-  const fetchAccounts = async () => {
-    try {
-      let response = await fetch('https://randomuser.me/api');
-      let json = await response.json();
-
-      return { success: true, data: json };
-    } catch (error) {
-      console.error(error);
-
-      return { success: false };
-    }
-  };
-
-  useEffect(() => {
-    (async () => {
-      setAccountsLoaded(false);
-      let res = await fetchAccounts();
-      if (res.success) {
-        setAccounts(res.data.results[0]);
-        setAccountsLoaded(true);
-      }
-    })();
-  }, []);
-  */
 
   return (
     <Grid>
@@ -105,7 +57,7 @@ const Accounts = () => {
         {data &&
           data.getAccountsByUser.map((d: AccountReadModel) => {
             console.log(d);
-            return <AccountSummary {...d} />;
+            return <AccountSummary key={d.aggregateId} {...d} />;
           })}
       </Grid.Column>
       <Grid.Column width={5}>

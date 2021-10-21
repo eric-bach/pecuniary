@@ -356,6 +356,11 @@ export class PecuniaryStack extends Stack {
 
     lambdaDataSource.createResolver({
       typeName: 'Query',
+      fieldName: 'getAccountByAggregateId',
+    });
+
+    lambdaDataSource.createResolver({
+      typeName: 'Query',
       fieldName: 'getAccountsByUser',
     });
 

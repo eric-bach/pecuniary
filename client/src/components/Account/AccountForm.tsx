@@ -5,6 +5,25 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserContext } from '../Auth/User';
 
+const getAccountByAggregateId = gql`
+  query GetAccountByAggregateId($aggregateId: ID!) {
+    getAccountByAggregateId(aggregateId: $aggregateId) {
+      id
+      aggregateId
+      name
+      description
+      version
+      bookValue
+      marketValue
+      accountType {
+        id
+        name
+        description
+      }
+    }
+  }
+`;
+
 const listAccountTypes = gql`
   query ListAccountTypes {
     listAccountTypes {
@@ -29,61 +48,128 @@ const createAccount = gql`
   }
 `;
 
-const AccountForm = () => {
+const updateAccount = gql`
+  mutation UpdateAccount($updateAccountInput: CreateEventInput!) {
+    createEvent(event: $updateAccountInput) {
+      aggregateId
+      name
+      version
+      data
+      userId
+      createdAt
+    }
+  }
+`;
+
+const AccountForm = (props: any) => {
+  const [aggregateId, setAggregateId] = useState(props.match.params.id);
   const [name, setName] = useState('');
   const [accountType, setAccountType] = useState('');
   const [description, setDescription] = useState('');
   const [username, setUsername] = useState('');
-  const { data, error, loading } = useQuery(listAccountTypes);
+
+  // Flag to indicate useEffect() has completed loading
+  const [loaded, setLoaded] = useState(false);
+
+  const { data: accountTypes, error: accountTypesError, loading: accountTypesLoading } = useQuery(listAccountTypes);
+  const {
+    data: account,
+    error: accountError,
+    loading: accountLoading,
+  } = useQuery(getAccountByAggregateId, { variables: { aggregateId: aggregateId } });
+
   const [createAccountMutation] = useMutation(createAccount);
+  const [updateAccountMutation] = useMutation(updateAccount);
+
   const { getSession } = useContext(UserContext);
 
-  // Get the logged in username
   useEffect(() => {
+    console.log('Aggregate ID: ', aggregateId);
+
+    // Get the logged in username
     getSession().then((session: any) => {
       setUsername(session.idToken.payload.email);
       console.log('Username: ', session.idToken.payload.email);
     });
   }, []);
 
-  if (error) return 'Error!'; // You probably want to do more here!
-  if (loading) return 'loading...'; // You can also show a spinner here.
+  if (accountTypesError || accountError) return 'Error!'; // You probably want to do more here!
+  if (accountTypesLoading || accountLoading) return 'loading...'; // You can also show a spinner here.
+
+  // Get the account after everything loads
+  if (!loaded && account && account.getAccountByAggregateId) {
+    setName(account.getAccountByAggregateId.name);
+    setAccountType(account.getAccountByAggregateId.accountType.description);
+    setDescription(account.getAccountByAggregateId.description);
+    setLoaded(true);
+  }
 
   const onSubmit = (event: any) => {
     event.preventDefault();
 
-    console.log('CREATE ACCOUNT');
-    const selectedAccountType = accountTypes.find((a) => a.value === accountType);
+    if (!props.match.params.id) {
+      console.log('CREATE ACCOUNT');
+      const selectedAccountType = accountTypesList.find((a) => a.value === accountType);
 
-    const params = {
-      createAccountInput: {
-        aggregateId: uuidv4(),
-        name: 'AccountCreatedEvent',
-        data: `{"name":"${name}","description":"${description}","bookValue":0,"marketValue":0,"accountType":{"id":"${selectedAccountType.key}","name":"${selectedAccountType.text}","description":"${selectedAccountType.value}"}}`,
-        version: 1,
-        userId: `${username}`,
-        createdAt: new Date(),
-      },
-    };
+      const params = {
+        createAccountInput: {
+          aggregateId: uuidv4(),
+          name: 'AccountCreatedEvent',
+          data: `{"name":"${name}","description":"${description}","bookValue":0,"marketValue":0,"accountType":{"id":"${selectedAccountType.key}","name":"${selectedAccountType.text}","description":"${selectedAccountType.value}"}}`,
+          version: 1,
+          userId: `${username}`,
+          createdAt: new Date(),
+        },
+      };
 
-    createAccountMutation({
-      variables: params,
-    })
-      .then((res) => {
-        console.log('Account created successfully');
-
-        window.location.pathname = '/accounts';
+      createAccountMutation({
+        variables: params,
       })
-      .catch((err) => {
-        console.error('Error occurred creating account');
-        console.error(err);
-      });
+        .then((res) => {
+          console.log('Account created successfully');
+
+          window.location.pathname = '/accounts';
+        })
+        .catch((err) => {
+          console.error('Error occurred creating account');
+          console.error(err);
+        });
+    } else {
+      console.log('UPDATE ACCOUNT');
+      const selectedAccountType = accountTypesList.find((a) => a.value === accountType);
+
+      const params = {
+        updateAccountInput: {
+          aggregateId: account.getAccountByAggregateId.aggregateId,
+          name: 'AccountUpdatedEvent',
+          data: `{"id":"${account.getAccountByAggregateId.id}","name":"${name}","description":"${description}","bookValue":${account.getAccountByAggregateId.bookValue},"marketValue":${account.getAccountByAggregateId.marketValue},"accountType":{"id":"${selectedAccountType.key}","name":"${selectedAccountType.text}","description":"${selectedAccountType.value}"}}`,
+          version: account.getAccountByAggregateId.version + 1,
+          userId: `${username}`,
+          createdAt: new Date(),
+        },
+      };
+
+      console.log('Updaing Account with values: ', params);
+
+      updateAccountMutation({
+        variables: params,
+      })
+        .then((res) => {
+          console.log('Account updated successfully');
+
+          window.location.pathname = '/accounts';
+        })
+        .catch((err) => {
+          console.error('Error occurred updating account');
+          console.error(err);
+        });
+    }
   };
 
   // TODO Set AccountTypes type from any
-  const accountTypes: any[] = [];
-  data.listAccountTypes.map((d: any) => {
-    accountTypes.push({ key: d.id, text: d.name, value: d.description });
+  const accountTypesList: any[] = [];
+  accountTypes.listAccountTypes.map((d: any) => {
+    accountTypesList.push({ key: d.id, text: d.name, value: d.description });
   });
 
   const onChange = (event: any, result: any) => {
@@ -113,7 +199,7 @@ const AccountForm = () => {
               label='Account Type'
               placeholder='Account Type'
               selection
-              options={accountTypes}
+              options={accountTypesList}
               value={accountType}
               onChange={onChange}
             />

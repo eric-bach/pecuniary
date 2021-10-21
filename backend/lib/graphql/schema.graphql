@@ -206,9 +206,9 @@ type Query {
     @aws_api_key
     @aws_cognito_user_pools(cognito_groups: ["Users"])
 
-  listAccountTypes: [AccountType] @aws_cognito_user_pools(cognito_groups: ["Users"])
-
+  getAccountByAggregateId(aggregateId: ID!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAccountsByUser(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  listAccountTypes: [AccountType] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 input CreateEventInput {

@@ -10,7 +10,9 @@ type AppSyncEvent = {
     event: Event;
     input: Position;
     filter: Filter;
-    userId: string;
+
+    userId: string; //getAccountsByUserId
+    aggregateId: string; //getAccountByAggregateId
   };
   identity: {
     username: string;
