@@ -34,6 +34,7 @@ const User = (props: any) => {
         onSuccess: (data) => {
           console.log('[USER] Authentication succeeded: ', data);
 
+          // TODO Find a way to prevent saving to localStorage
           // Save session to localStorage (change this later)
           localStorage.setItem('accessToken', data.getAccessToken().getJwtToken());
           localStorage.setItem('isAuthenticated', 'true');
