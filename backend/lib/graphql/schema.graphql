@@ -222,5 +222,5 @@ type Mutation {
 }
 
 type Subscription {
-  onCreateEvent: Event @aws_subscribe(mutations: ["createEvent"])
+  onCreateEvent: Event @aws_subscribe(mutations: ["createEvent"]) @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
