@@ -6,7 +6,7 @@ import UserPool from '../../UserPool';
 const Verify = () => {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
-  const [verifyDetails, setVerifyDetails] = useState({ state: '', title: '', message: '' });
+  const [verifyDetails] = useState({ state: '', title: '', message: '' });
 
   const onSubmit = (event: any) => {
     event.preventDefault();

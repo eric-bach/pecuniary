@@ -6,7 +6,7 @@ import { UserContext } from './User';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [authenticationDetails, setAuthenticationDetails] = useState({
+  const [authenticationDetails] = useState({
     authenticated: '',
     title: '',
     message: '',
@@ -64,7 +64,7 @@ const Login = () => {
               Login
             </Button>
             <br />
-            By continuing I agree to Pecuniary's <a href='#'>Terms of Service</a>.
+            By continuing I agree to Pecuniary's <a href='/service'>Terms of Service</a>.
             <br />
             <br />
             <br />

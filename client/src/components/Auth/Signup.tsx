@@ -89,7 +89,7 @@ const Signup = () => {
               Sign up
             </Button>
             <br />
-            By continuing I agree to Pecuniary's <a href='#'>Terms of Service</a>.
+            By continuing I agree to Pecuniary's <a href='/service'>Terms of Service</a>.
             <br />
             <br />
           </Segment>

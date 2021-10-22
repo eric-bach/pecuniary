@@ -9,13 +9,13 @@ import { UserContext } from '../Auth/User';
 const NavBar = () => {
   const [status, setStatus] = useState(false);
 
-  const { getSession, logout } = useContext(UserContext);
+  const { getSession } = useContext(UserContext);
 
   useEffect(() => {
     getSession().then((session: any) => {
       setStatus(true);
     });
-  }, []);
+  });
 
   return (
     <div>

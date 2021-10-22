@@ -11,7 +11,7 @@ const SignedInMenu = () => {
     getSession().then((session: any) => {
       setUsername(session.idToken.payload.email);
     });
-  }, []);
+  });
 
   return (
     <Menu.Item position='right'>

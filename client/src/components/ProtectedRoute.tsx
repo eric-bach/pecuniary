@@ -16,7 +16,7 @@ function ProtectedRoute({ component: Component, ...restOfProps }: any) {
       setStatus('true');
       console.log('Status: ', status);
     });
-  }, []);
+  });
 
   return (
     <Route

@@ -1,24 +1,16 @@
 //https://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Button } from 'semantic-ui-react';
 import { useQuery, gql } from '@apollo/client';
 
+import { UserContext } from '../Auth/User';
 import AccountReadModel from './types/Account';
 import AccountSummary from './AccountSummary';
 
-const accountSubscription = gql`
-  subscription onCreateEvent {
-    onCreateEvent {
-      id
-      name
-      data
-    }
-  }
-`;
-
 const getAccountsByUser = gql`
-  query getAccountsByUser {
-    getAccountsByUser(userId: "eric") {
+  query getAccountsByUser($userId: String!) {
+    getAccountsByUser(userId: $userId) {
       id
       aggregateId
       version
@@ -39,7 +31,16 @@ const getAccountsByUser = gql`
 `;
 
 const Accounts = () => {
-  const { data, error, loading } = useQuery(getAccountsByUser);
+  const [userId, setUserId] = useState('');
+  const { data, error, loading } = useQuery(getAccountsByUser, { variables: { userId: userId } });
+  const { getSession } = useContext(UserContext);
+
+  useEffect(() => {
+    // Get the logged in username
+    getSession().then((session: any) => {
+      setUserId(session.idToken.payload.email);
+    });
+  });
 
   if (error) return 'Error!'; // You probably want to do more here!
   if (loading) return 'loading...'; // You can also show a spinner here.
@@ -66,7 +67,6 @@ const Accounts = () => {
 
         {data &&
           data.getAccountsByUser.map((d: AccountReadModel) => {
-            console.log(d);
             return <AccountSummary key={d.aggregateId} {...d} />;
           })}
       </Grid.Column>
