@@ -9,4 +9,4 @@ node_modules
 cdk.out
 
 .env
-deploy-cdk.ps1
+cdk/deploy-cdk.ps1

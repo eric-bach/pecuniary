@@ -1,0 +1,57 @@
+const AWS = require('aws-sdk');
+const client = new AWS.DynamoDB.DocumentClient();
+const { v4: uuid } = require('uuid');
+
+import Position from '../types/Position';
+
+async function updatePositionReadModel(position: Position) {
+  if (!position.id) {
+    position.id = uuid();
+
+    console.log(`updatePositionReadModel: Creating new Id ${position.id}`);
+  }
+
+  const params = {
+    TableName: process.env.POSITION_TABLE_NAME,
+    Key: {
+      id: position.id,
+    },
+    UpdateExpression:
+      'set version = :v, userId = :u, symbol = :s, #n = :n, description = :d, exchange = :e, currency = :cur, country = :c, shares = :sh, acb = :a, bookValue = :b, marketValue = :m, lastTransactionDate = :ltd, positionReadModelAccountId = :p',
+    ExpressionAttributeNames: {
+      '#n': 'name',
+    },
+    ExpressionAttributeValues: {
+      ':v': position.version,
+      ':u': position.userId,
+      ':s': position.symbol,
+      ':n': position.name,
+      ':d': position.description,
+      ':e': position.exchange,
+      ':cur': position.currency,
+      ':c': position.country,
+      ':sh': position.shares,
+      ':a': position.acb,
+      ':b': position.bookValue,
+      ':m': position.marketValue,
+      ':ltd': position.lastTransactionDate,
+      ':p': position.positionReadModelAccountId,
+    },
+    ReturnValues: 'UPDATED_NEW',
+  };
+
+  try {
+    console.debug(`updatePositionReadModel: ${params}`);
+
+    await client.update(params).promise();
+
+    console.log(`✅ updatePositionReadModel succeeded`);
+
+    return position;
+  } catch (err) {
+    console.error('❌ createEvent error: ', err);
+    return null;
+  }
+}
+
+export default updatePositionReadModel;

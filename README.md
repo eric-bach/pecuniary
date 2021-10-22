@@ -46,18 +46,18 @@ Please see the [Trello board](https://trello.com/b/7lA2gwTs/pecuniary)
    ```bash
    $ git clone https://github.com/eric-bach/pecuniary-v3.git
    $ cd pecuniary-v3
-   $ cd cdk && npm install
-   $ cd ../spa && npm install
+   $ cd backend && npm install
+   $ cd ../client && npm install
    ```
 
-2. Copy the `cdk/deploy-cdk.ps1.example` file to `cdk/deploy-cdk.ps1` and replace `AWS_PROFILE` in the file with your AWS credentials profile name
+2. Copy the `./backend/deploy-cdk.ps1.example` file to `./backend/deploy-cdk.ps1` and replace `AWS_PROFILE` in the file with your AWS credentials profile name
 
    ```
    # Deploy CDK
    cmd.exe /c cdk deploy --profile AWS_PROFILE pecuniary-dev
    ```
 
-3. Copy the `cdk/.env.example` file to `cdk/.env` and fill in the parameter values:
+3. Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values:
 
    a. DLQ_NOTIFICATIONS - email address to send failed event message notifications to
 
@@ -89,10 +89,10 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
    aws sso login
    ```
 
-2. Navigate to `cdk` folder
+2. Navigate to `backend` folder
 
    ```
-   $ cd cdk
+   $ cd backend
    ```
 
 3. Deploy CDK stack
@@ -108,10 +108,10 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
    $ cdk bootstrap aws://ACCOUNT/us-east-1 --profile PROFILE_NAME
    ```
 
-2. Navigate to `cdk` folder
+2. Navigate to `backend` folder
 
    ```
-   $ cd cdk
+   $ cd backend
    ```
 
 3. Deploy CDK stack
@@ -121,10 +121,10 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
 
 ### Deploy frontend
 
-1. Navigate to `spa` folder
+1. Navigate to `client` folder
 
    ```
-   $ cd spa
+   $ cd client
    ```
 
 2. Deploy CDK stack
@@ -136,11 +136,23 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
 
 See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/README.md)
 
+# Projects References
+
+[Saved GraphQL queries/mutations for GraphiQl](docs/GraphQL.md)
+[How to add a new GraphQL API/Command Handler](docs/CommandHandler.md)
+
 # Resources
 
-## GraphQL queries/mutations
+## AppSync
 
-See [README.md](docs/GraphQL.md)
+[How to build an authenticated GraphQL AppSync API with CDK](https://github.com/dabit3/build-an-authenticated-api-with-cdk)
+[How to perform a GraphQL Query with Apollo using React hooks](https://www.yannisspyrou.com/querying-app-sync-using-react-hooks)
+[How to perform a GraphQL Mutation with Apollo using React hooks](ttps://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/)
+
+## Cognito
+
+[How to add a protected route to React](https://dev.to/olumidesamuel_/implementing-protected-route-and-authentication-in-react-js-3cl4)
+[How to authenticate with Cognito using React hooks](https://github.com/DevAscend/YT-AWS-Cognito-React-Tutorials)
 
 # License
 

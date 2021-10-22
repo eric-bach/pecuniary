@@ -1,6 +1,36 @@
 # Queries and Mutations
 
 ```
+query ListAccountTypes {
+  listAccountTypes {
+    id
+    name
+    description
+  }
+}
+
+query GetAccountByAggregateId {
+  getAccountByAggregateId(aggregateId: "d70f5eb9-ecc9-4a79-b145-4ac7d327e38e") {
+    id
+    name
+    description
+    userId
+  }
+}
+
+query GetAccountsByUser {
+  getAccountsByUser(userId: "eric") {
+   	id
+    name
+    description
+    bookValue
+    marketValue
+   	accountType {
+     	id
+      name
+   	}
+  }
+}
 
 mutation CreateAccount($createAccountInput: CreateEventInput!) {
 	createEvent(event: $createAccountInput) {
@@ -83,7 +113,7 @@ mutation DeleteTransaction($deleteTransactionInput: CreateEventInput!) {
         "aggregateId": "1",
         "name": "AccountCreatedEvent",
         "version": 1,
-        "data": "{\"name\":\"New Account\",\"description\":\"RRSP Account\",\"bookValue\":0,\"marketValue\":0,\"accountReadModelAccountTypeId\":1}",
+        "data": "{\"name\":\"New Account\",\"description\":\"RRSP Account\",\"bookValue\":0,\"marketValue\":0,\"accountType\":{\"id\":1,\"name\":\"TFSA\",\"description\":\"Tax Free Savings Account\"}}",
         "userId": "eric",
         "createdAt": "2020-02-18T00:00:00Z"
   },
@@ -91,7 +121,7 @@ mutation DeleteTransaction($deleteTransactionInput: CreateEventInput!) {
       "aggregateId": "1",
       "name": "AccountUpdatedEvent",
       "version": 2,
-      "data": "{\"id\":\"df169036-bcd4-4338-b909-92ab7f53f814\",\"name\":\"Eric Account\",\"description\":\"RRSP Account\",\"bookValue\":0,\"marketValue\":0,\"accountReadModelAccountTypeId\":1}",
+      "data": "{\"id\":\"df169036-bcd4-4338-b909-92ab7f53f814\",\"name\":\"Eric Account\",\"description\":\"RRSP Account\",\"bookValue\":0,\"marketValue\":0,\"accountType\":{\"id\":1,\"name\":\"TFSA\",\"description\":\"Tax Free Savings Account\"}}",
       "userId": "eric",
       "createdAt": "2020-02-22T00:00:00Z"
   },
@@ -99,7 +129,7 @@ mutation DeleteTransaction($deleteTransactionInput: CreateEventInput!) {
       "aggregateId": "1",
       "name": "AccountDeletedEvent",
       "version": 3,
-    	"data": "{\"id\":\"374c96f7-59a4-4b3e-8b5e-cf4283df8480\",\"name\":\"New Account\",\"description\":\"Updated RRSP Account\",\"accountReadModelAccountTypeId\":1}",
+    	"data": "{\"id\":\"374c96f7-59a4-4b3e-8b5e-cf4283df8480\",\"name\":\"New Account\",\"description\":\"Updated RRSP Account\",\"accountType\":{\"id\":1,\"name\":\"TFSA\",\"description\":\"Tax Free Savings Account\"}}",
       "userId": "eric",
       "createdAt": "2020-02-22T00:00:00Z"
   },
