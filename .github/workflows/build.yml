@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ github.workspace }}/spa
+        working-directory: ${{ github.workspace }}/client
     env:
       GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
     steps:
@@ -22,11 +22,11 @@ jobs:
 
       - name: Install CDK packages
         run: |
-          cd ../cdk
+          cd ../backend
           npm ci
-          cd ../spa
+          cd ../client
       - name: Run CDK Unit Tests
         run: |
           npm build
-          cd ../cdk
+          cd ../backend
           npm run test
