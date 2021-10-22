@@ -2,11 +2,11 @@
 !jest.config.js
 *.d.ts
 node_modules
-/spa/package-lock.json
+/client/package-lock.json
 
 # CDK asset staging directory
 .cdk.staging
 cdk.out
 
 .env
-cdk/deploy-cdk.ps1
+backend/deploy-cdk.ps1
