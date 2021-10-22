@@ -1,10 +1,13 @@
+// This component is a demo of a GraphQL subscription. Follow this video to setup another component to subscribe to this components mutation
+// - https://www.youtube.com/watch?v=Bf3k7zH0I6w
+
 import { gql, useMutation, useQuery, useSubscription } from '@apollo/client';
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import AccountReadModel from '../Account/types/Account';
-import SubscriptionsParent from './SubscriptionsParent';
 
+// TODO Set userId to currently logged in userId
 const GET_ACCOUNTS = gql`
   query getAccountsByUser {
     getAccountsByUser(userId: "eric") {
@@ -26,6 +29,7 @@ const GET_ACCOUNTS = gql`
     }
   }
 `;
+
 const CREATE_ACCOUNT = gql`
   mutation CreateAccount($createAccountInput: CreateEventInput!) {
     createEvent(event: $createAccountInput) {
@@ -39,16 +43,6 @@ const CREATE_ACCOUNT = gql`
     }
   }
 `;
-const createAccountInput = {
-  createAccountInput: {
-    aggregateId: uuidv4(),
-    name: 'AccountCreatedEvent',
-    data: `{"name":"test","description":"description","bookValue":15,"marketValue":0,"accountType":{"id":"1","name":"TFSA","description":"Tax Free Savings Account"}}`,
-    version: 1,
-    userId: 'eric',
-    createdAt: new Date(),
-  },
-};
 
 const ACCOUNT_SUBSCRIPTION = gql`
   subscription OnCreateEvent {
@@ -71,37 +65,49 @@ const Dummy = () => {
 
   useEffect(() => {
     if (listData && listData.getAccountsByUser && subData) {
-      console.log('A NEW ACCOUNT WAS ADDED');
-      console.log('Current: ', listData.getAccountsByUser);
-      console.log('New: ', subData);
-
-      // TODO Re-render list to include subData (new account)
+      console.log('[SUBSCRIPTIONS] New event created: ', subData);
     }
   }, [subData]);
 
-  if (listError) return <div>'Error!'</div>; // You probably want to do more here!
+  if (listError || createError || subError) {
+    console.error(listError);
+    console.error(createError);
+    console.error(subError);
+    return <div>'Error!'</div>; // You probably want to do more here!
+  }
   if (listLoading) return <div>'loading...'</div>; // You can also show a spinner here.
 
-  console.log('GET_ACCOUNTS: ', listData);
+  const createAccountInput = {
+    createAccountInput: {
+      aggregateId: uuidv4(),
+      name: 'AccountCreatedEvent',
+      data: `{"name":"test","description":"description","bookValue":15,"marketValue":0,"accountType":{"id":"1","name":"TFSA","description":"Tax Free Savings Account"}}`,
+      version: 1,
+      // TODO Set userId to currently logged in userId
+      userId: 'eric',
+      createdAt: new Date(),
+    },
+  };
 
   const handleClick = () => {
-    console.log('CREATING ACCOUNT');
+    console.log('[SUBSCRIPTIONS] Creating account');
 
     createAccountMutateFunction({
       variables: createAccountInput,
     })
       .then((res) => {
-        console.log('Account created successfully');
-        window.location.pathname = '/dummylist';
+        console.log('[SUBSCRIPTIONS] Account created successfully');
+        //window.location.pathname = '/accounts';
+        //window.location.pathname = '/parent';
       })
       .catch((err) => {
-        console.error('Error occurred creating account');
+        console.error('[SUBSCRIPTIONS] Error occurred creating account');
         console.error(err);
       });
   };
 
   const handleRefresh = () => {
-    console.log('REFRESH');
+    console.log('[SUBSCRIPTIONS] Refreshing Account list');
 
     refetch();
   };
@@ -120,9 +126,7 @@ const Dummy = () => {
 
           const newEvent = subscriptionData.data.onCreateEvent;
 
-          console.log('SUBSCRIPTION TRIGGERED');
-          console.log('newEvent: ', newEvent);
-          console.log('newEvent data: ', JSON.parse(newEvent.data));
+          console.log('[SUBSCRIPTIONS] Subscription triggered: ', newEvent);
 
           var data = JSON.parse(newEvent.data);
           return Object.assign({}, prev, {
@@ -143,39 +147,6 @@ const Dummy = () => {
           });
         },
       })}
-      {/* This is from the Apollo client documentation
-      <SubscriptionsParent
-        {...listData}
-        subscribeToNewAccounts={() =>
-          subscribeToMore({
-            document: ACCOUNT_SUBSCRIPTION,
-            updateQuery: (prev, { subscriptionData }) => {
-              if (!subscriptionData.data) return prev;
-              const newAccountItem = subscriptionData.data.onCreateEvent;
-              console.log('newAccountItem: ', newAccountItem);
-              console.log('newAccount data: ', JSON.parse(newAccountItem.data));
-              var data = JSON.parse(newAccountItem.data);
-
-              return Object.assign({}, prev, {
-                getAccountsByUser: {
-                  id: newAccountItem.id, // This should be the event id, not the account id
-                  aggregateId: newAccountItem.aggregateId,
-                  version: newAccountItem.version,
-                  userId: newAccountItem.userId,
-                  createdAt: newAccountItem.createdAt,
-                  updatedAt: newAccountItem.createdAt,
-                  name: data.name,
-                  description: data.description,
-                  bookValue: data.bookValue,
-                  marketValue: data.marketValue,
-                  accountType: data.accountType,
-                },
-                ...prev,
-              });
-            },
-          })
-        }
-      /> */}
       <button onClick={() => handleClick()}>Submit</button>
       <button onClick={() => handleRefresh()}>Refresh</button>
     </div>

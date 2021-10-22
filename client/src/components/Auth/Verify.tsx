@@ -22,7 +22,7 @@ const Verify = () => {
         return;
       }
 
-      console.log('call result: ' + result);
+      console.log('[VERIFY] call result: ' + result);
 
       window.location.pathname = '/account';
     });

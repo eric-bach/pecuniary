@@ -42,8 +42,9 @@ const Accounts = () => {
     });
   });
 
+  // TODO Improve these loading screens
   if (error) return 'Error!'; // You probably want to do more here!
-  if (loading) return 'loading...'; // You can also show a spinner here.
+  if (loading) return 'Loading...'; // You can also show a spinner here.
 
   return (
     <Grid>
@@ -67,7 +68,7 @@ const Accounts = () => {
 
         {data &&
           data.getAccountsByUser.map((d: AccountReadModel) => {
-            return <AccountSummary key={d.aggregateId} {...d} />;
+            return <AccountSummary key={d.id} {...d} />;
           })}
       </Grid.Column>
       <Grid.Column width={5}>

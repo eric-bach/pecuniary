@@ -19,13 +19,13 @@ const Login = () => {
 
     authenticate(email, password)
       .then((data: any) => {
-        console.log('Authentication succeeded: ', data);
+        console.log('[LOGIN] Authentication succeeded: ', data);
 
         // Re-direct to /home
         window.location.pathname = '/home';
       })
       .catch((err: any) => {
-        console.error('Authentication failed: ', err);
+        console.error('[LOGIN] Authentication failed: ', err);
       });
   };
 

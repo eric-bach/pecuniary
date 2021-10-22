@@ -32,7 +32,7 @@ const User = (props: any) => {
 
       user.authenticateUser(authDetails, {
         onSuccess: (data) => {
-          console.log('Authentication succeeded: ', data);
+          console.log('[USER] Authentication succeeded: ', data);
 
           // Save session to localStorage (change this later)
           localStorage.setItem('accessToken', data.getAccessToken().getJwtToken());
@@ -41,12 +41,12 @@ const User = (props: any) => {
           resolve(data);
         },
         onFailure: (err) => {
-          console.error('Authentication failed: ', err);
+          console.error('[USER] Authentication failed: ', err);
 
           reject(err);
         },
         newPasswordRequired: (data) => {
-          console.log('New Password Required: ', data);
+          console.log('[USER] New Password Required: ', data);
 
           resolve(data);
 
