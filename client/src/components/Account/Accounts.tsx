@@ -6,6 +6,16 @@ import { useQuery, gql } from '@apollo/client';
 import AccountReadModel from './types/Account';
 import AccountSummary from './AccountSummary';
 
+const accountSubscription = gql`
+  subscription onCreateEvent {
+    onCreateEvent {
+      id
+      name
+      data
+    }
+  }
+`;
+
 const getAccountsByUser = gql`
   query getAccountsByUser {
     getAccountsByUser(userId: "eric") {
