@@ -129,7 +129,9 @@ const AccountForm = (props: any) => {
         .then((res) => {
           console.log('[ACCOUNT FORM] Account created successfully');
 
-          window.location.pathname = '/accounts';
+          setTimeout(() => {
+            window.location.pathname = '/accounts';
+          }, 500);
         })
         .catch((err) => {
           console.error('[ACCOUNT FORM] Error occurred creating account');

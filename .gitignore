@@ -10,3 +10,4 @@ cdk.out
 
 .env
 backend/deploy-cdk.ps1
+aws-exports.js
