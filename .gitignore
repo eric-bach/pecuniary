@@ -8,6 +8,10 @@ node_modules
 .cdk.staging
 cdk.out
 
+# Include Apollo client
+!client.js
+
+# Exclude configuration files (provided with *.example files)
 .env
 backend/deploy-cdk.ps1
 aws-exports.js
