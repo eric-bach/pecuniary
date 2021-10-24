@@ -9,7 +9,7 @@ node_modules
 cdk.out
 
 # Include Apollo client
-!client.js
+!/client/src/client.js
 
 # Exclude configuration files (provided with *.example files)
 .env
