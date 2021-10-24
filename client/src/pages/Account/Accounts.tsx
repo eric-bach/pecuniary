@@ -66,7 +66,7 @@ const Accounts = () => {
       setTimeout(() => {
         refetch();
         console.log('[ACCOUNTS] Re-render components');
-      }, 2000);
+      }, 1000);
     }
   }, [subData, refetch]);
 

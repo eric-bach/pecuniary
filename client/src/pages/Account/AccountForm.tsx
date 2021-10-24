@@ -92,7 +92,7 @@ const AccountForm = (props: any) => {
     getSession().then((session: any) => {
       setUsername(session.idToken.payload.email);
     });
-  });
+  }, [aggregateId, getSession]);
 
   if (accountTypesError || accountError) return 'Error!'; // You probably want to do more here!
   if (accountTypesLoading || accountLoading) return 'loading...'; // You can also show a spinner here.
@@ -178,7 +178,6 @@ const AccountForm = (props: any) => {
 
   const onChange = (event: any, result: any) => {
     const { value } = result;
-    console.log('Selected value: ', value);
     setAccountType(value);
   };
 
