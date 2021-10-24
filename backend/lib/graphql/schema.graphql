@@ -121,6 +121,7 @@ enum ModelAttributeTypes {
   _null
 }
 
+# Filter Models
 input ModelIDInput {
   ne: ID
   eq: ID
@@ -136,6 +137,7 @@ input ModelIDInput {
   attributeType: ModelAttributeTypes
   size: ModelSizeInput
 }
+
 input ModelStringInput {
   ne: String
   eq: String
@@ -151,6 +153,7 @@ input ModelStringInput {
   attributeType: ModelAttributeTypes
   size: ModelSizeInput
 }
+
 input ModelIntInput {
   ne: Int
   eq: Int
@@ -162,17 +165,7 @@ input ModelIntInput {
   attributeExists: Boolean
   attributeType: ModelAttributeTypes
 }
-input ModelFloatInput {
-  ne: Float
-  eq: Float
-  le: Float
-  lt: Float
-  ge: Float
-  gt: Float
-  between: [Float]
-  attributeExists: Boolean
-  attributeType: ModelAttributeTypes
-}
+
 input ModelSizeInput {
   ne: Int
   eq: Int
@@ -183,12 +176,8 @@ input ModelSizeInput {
   between: [Int]
 }
 
-type ModelEventConnection @aws_api_key @aws_cognito_user_pools {
-  items: [Event]
-  nextToken: String
-}
-
-input ModelEventFilterInput {
+# Inputs
+input EventFilterInput {
   id: ModelIDInput
   aggregateId: ModelIDInput
   name: ModelStringInput
@@ -196,19 +185,9 @@ input ModelEventFilterInput {
   data: ModelStringInput
   userId: ModelIDInput
   createdAt: ModelStringInput
-  and: [ModelEventFilterInput]
-  or: [ModelEventFilterInput]
-  not: ModelEventFilterInput
-}
-
-type Query {
-  listEvents(filter: ModelEventFilterInput, limit: Int, nextToken: String): ModelEventConnection
-    @aws_api_key
-    @aws_cognito_user_pools(cognito_groups: ["Users"])
-
-  getAccountByAggregateId(aggregateId: ID!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
-  getAccountsByUser(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
-  listAccountTypes: [AccountType] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  and: [EventFilterInput]
+  or: [EventFilterInput]
+  not: EventFilterInput
 }
 
 input CreateEventInput {
@@ -221,10 +200,27 @@ input CreateEventInput {
   createdAt: AWSDateTime
 }
 
+# Return types
+type EventsModel @aws_api_key @aws_cognito_user_pools {
+  items: [Event]
+  nextToken: String
+}
+
+# GraphQL actions
+type Query {
+  listEvents(filter: EventFilterInput, limit: Int, nextToken: String): EventsModel
+    @aws_api_key
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
+
+  getAccountByAggregateId(aggregateId: ID!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccountsByUser(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  listAccountTypes: [AccountType] @aws_cognito_user_pools(cognito_groups: ["Users"])
+}
+
 type Mutation {
   createEvent(event: CreateEventInput!): Event @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Subscription {
-  onCreateEvent: Event @aws_subscribe(mutations: ["createEvent"])
+  onCreateEvent: Event @aws_subscribe(mutations: ["createEvent"]) @aws_cognito_user_pools(cognito_groups: ["Users"])
 }

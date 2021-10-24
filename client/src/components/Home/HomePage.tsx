@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { Message, Segment, Grid, Placeholder } from 'semantic-ui-react';
 
 const HomePage = () => {

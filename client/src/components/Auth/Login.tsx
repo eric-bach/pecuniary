@@ -6,7 +6,7 @@ import { UserContext } from './User';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [authenticationDetails, setAuthenticationDetails] = useState({
+  const [authenticationDetails] = useState({
     authenticated: '',
     title: '',
     message: '',
@@ -19,13 +19,13 @@ const Login = () => {
 
     authenticate(email, password)
       .then((data: any) => {
-        console.log('Authentication succeeded: ', data);
+        console.log('[LOGIN] Authentication succeeded: ', data);
 
         // Re-direct to /home
         window.location.pathname = '/home';
       })
       .catch((err: any) => {
-        console.error('Authentication failed: ', err);
+        console.error('[LOGIN] Authentication failed: ', err);
       });
   };
 
@@ -64,7 +64,7 @@ const Login = () => {
               Login
             </Button>
             <br />
-            By continuing I agree to Pecuniary's <a href='#'>Terms of Service</a>.
+            By continuing I agree to Pecuniary's <a href='/service'>Terms of Service</a>.
             <br />
             <br />
             <br />

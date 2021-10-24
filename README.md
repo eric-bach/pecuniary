@@ -140,6 +140,7 @@ See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/REA
 
 [Saved GraphQL queries/mutations for GraphiQl](docs/GraphQL.md)
 [How to add a new GraphQL API/Command Handler](docs/CommandHandler.md)
+[How to call an authenticated AppSync GraphQL API with Apollo Client](docs/ApolloClient.md)
 
 # Resources
 

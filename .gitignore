@@ -3,10 +3,16 @@
 *.d.ts
 node_modules
 /client/package-lock.json
+/client/build
 
 # CDK asset staging directory
 .cdk.staging
 cdk.out
 
+# Include Apollo client
+!/client/src/client.js
+
+# Exclude configuration files (provided with *.example files)
 .env
 backend/deploy-cdk.ps1
+aws-exports.js

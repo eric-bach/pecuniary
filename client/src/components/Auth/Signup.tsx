@@ -29,16 +29,16 @@ const Signup = () => {
     var attributeEmail = new CognitoUserAttribute(dataEmail);
     attributeList.push(attributeEmail);
 
-    console.log(JSON.stringify(attributeList));
+    console.log('[SIGNUP] Attribute list: ', JSON.stringify(attributeList));
 
     UserPool.signUp(email, password, attributeList, [], (err, data) => {
       if (err) {
-        console.error(`Error: ${JSON.stringify(err)}`);
+        console.error(`[SIGNUP] Error: ${JSON.stringify(err)}`);
       }
 
       setSignUpDetails({ state: 'signedUp', title: '', message: '' });
 
-      console.log(`Data: ${JSON.stringify(data)}`);
+      console.log(`[SIGNUP] Data: ${JSON.stringify(data)}`);
     });
 
     // TODO Add user to Users group
@@ -89,7 +89,7 @@ const Signup = () => {
               Sign up
             </Button>
             <br />
-            By continuing I agree to Pecuniary's <a href='#'>Terms of Service</a>.
+            By continuing I agree to Pecuniary's <a href='/service'>Terms of Service</a>.
             <br />
             <br />
           </Segment>

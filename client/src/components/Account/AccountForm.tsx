@@ -62,7 +62,7 @@ const updateAccount = gql`
 `;
 
 const AccountForm = (props: any) => {
-  const [aggregateId, setAggregateId] = useState(props.match.params.id);
+  const [aggregateId] = useState(props.match.params.id !== undefined ? props.match.params.id : '');
   const [name, setName] = useState('');
   const [accountType, setAccountType] = useState('');
   const [description, setDescription] = useState('');
@@ -84,14 +84,15 @@ const AccountForm = (props: any) => {
   const { getSession } = useContext(UserContext);
 
   useEffect(() => {
-    console.log('Aggregate ID: ', aggregateId);
+    aggregateId
+      ? console.log(`[ACCOUNT FORM] Aggregate Id ${aggregateId} exists. Edit Account mode enabled`)
+      : console.log('[ACCOUNT FORM] Aggregate Id does not exist.  Create Account mode enabled');
 
     // Get the logged in username
     getSession().then((session: any) => {
       setUsername(session.idToken.payload.email);
-      console.log('Username: ', session.idToken.payload.email);
     });
-  }, []);
+  });
 
   if (accountTypesError || accountError) return 'Error!'; // You probably want to do more here!
   if (accountTypesLoading || accountLoading) return 'loading...'; // You can also show a spinner here.
@@ -108,7 +109,7 @@ const AccountForm = (props: any) => {
     event.preventDefault();
 
     if (!props.match.params.id) {
-      console.log('CREATE ACCOUNT');
+      console.log('[ACCOUNT FORM] Creating Account...');
       const selectedAccountType = accountTypesList.find((a) => a.value === accountType);
 
       const params = {
@@ -126,16 +127,18 @@ const AccountForm = (props: any) => {
         variables: params,
       })
         .then((res) => {
-          console.log('Account created successfully');
+          console.log('[ACCOUNT FORM] Account created successfully');
 
-          window.location.pathname = '/accounts';
+          setTimeout(() => {
+            window.location.pathname = '/accounts';
+          }, 500);
         })
         .catch((err) => {
-          console.error('Error occurred creating account');
+          console.error('[ACCOUNT FORM] Error occurred creating account');
           console.error(err);
         });
     } else {
-      console.log('UPDATE ACCOUNT');
+      console.log('[ACCOUNT FORM] Updating Account...');
       const selectedAccountType = accountTypesList.find((a) => a.value === accountType);
 
       const params = {
@@ -149,18 +152,18 @@ const AccountForm = (props: any) => {
         },
       };
 
-      console.log('Updaing Account with values: ', params);
+      console.log('[ACCOUNT FORM] Updaing Account with values: ', params);
 
       updateAccountMutation({
         variables: params,
       })
         .then((res) => {
-          console.log('Account updated successfully');
+          console.log('[ACCOUNT FORM] Account updated successfully');
 
           window.location.pathname = '/accounts';
         })
         .catch((err) => {
-          console.error('Error occurred updating account');
+          console.error('[ACCOUNT FORM] Error occurred updating account');
           console.error(err);
         });
     }

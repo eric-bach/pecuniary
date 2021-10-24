@@ -11,6 +11,7 @@ import AccountForm from './components/Account/AccountForm';
 import ProtectedRoute from './components/ProtectedRoute';
 import { User } from './components/Auth/User';
 import NavBar from './components/Nav/NavBar';
+import Subscriptions from './components/TempSubscriptions/Subscriptions';
 
 import 'semantic-ui-css/semantic.min.css';
 
@@ -20,6 +21,8 @@ function App() {
       <Route exact path='/' component={Home} />
       <User>
         <NavBar />
+        <Route exact path='/subscriptions' component={Subscriptions} />
+
         <Route exact path='/login' component={Login} />
         <Route exact path='/signup' component={Signup} />
         <Route exact path='/verify' component={Verify} />

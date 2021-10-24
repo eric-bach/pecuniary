@@ -32,21 +32,20 @@ const User = (props: any) => {
 
       user.authenticateUser(authDetails, {
         onSuccess: (data) => {
-          console.log('Authentication succeeded: ', data);
+          console.log('[USER] Authentication succeeded: ', data);
 
-          // Save session to localStorage (change this later)
-          localStorage.setItem('accessToken', data.getAccessToken().getJwtToken());
+          // TODO Change to check if user is authenticated from session instead of localStorage
           localStorage.setItem('isAuthenticated', 'true');
 
           resolve(data);
         },
         onFailure: (err) => {
-          console.error('Authentication failed: ', err);
+          console.error('[USER] Authentication failed: ', err);
 
           reject(err);
         },
         newPasswordRequired: (data) => {
-          console.log('New Password Required: ', data);
+          console.log('[USER] New Password Required: ', data);
 
           resolve(data);
 
