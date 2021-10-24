@@ -1,19 +1,8 @@
-import { useContext, useEffect } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
-import { UserContext } from './Auth/User';
-
-function ProtectedRoute({ component: Component, ...restOfProps }: any) {
-  // TODO Get rid of localStorage implementation
+const ProtectedRoute = ({ component: Component, ...restOfProps }: any) => {
+  // TODO Change to check if user is authenticated from session instead of localStorage
   var isAuthenticated = localStorage.getItem('isAuthenticated');
-
-  const { getSession } = useContext(UserContext);
-
-  useEffect(() => {
-    getSession().then((session: any) => {
-      console.log('[PROTECTEDROUTE] Session: ', session);
-    });
-  });
 
   return (
     <Route
@@ -21,6 +10,6 @@ function ProtectedRoute({ component: Component, ...restOfProps }: any) {
       render={(props) => (isAuthenticated ? <Component {...props} /> : <Redirect to='/login' />)}
     />
   );
-}
+};
 
 export default ProtectedRoute;
