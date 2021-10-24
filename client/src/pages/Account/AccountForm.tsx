@@ -173,6 +173,7 @@ const AccountForm = (props: any) => {
   const accountTypesList: any[] = [];
   accountTypes.listAccountTypes.map((d: any) => {
     accountTypesList.push({ key: d.id, text: d.name, value: d.description });
+    return true;
   });
 
   const onChange = (event: any, result: any) => {

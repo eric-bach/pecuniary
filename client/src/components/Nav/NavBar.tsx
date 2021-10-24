@@ -4,7 +4,7 @@ import { Container, Menu } from 'semantic-ui-react';
 
 import SignedInMenu from './SignedInMenu';
 import SignedOutMenu from './SignedOutMenu';
-import { UserContext } from '../Auth/User';
+import { UserContext } from '../../pages/Auth/User';
 
 const NavBar = () => {
   const [status, setStatus] = useState(false);
@@ -12,9 +12,11 @@ const NavBar = () => {
   const { getSession } = useContext(UserContext);
 
   useEffect(() => {
-    getSession().then((session: any) => {
-      setStatus(true);
-    });
+    getSession()
+      .then((session: any) => {
+        setStatus(true);
+      })
+      .catch();
   });
 
   return (

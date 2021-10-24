@@ -2,16 +2,16 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
 
 import Home from './Home';
-import HomePage from './components/Home/HomePage';
-import Signup from './components/Auth/Signup';
-import Login from './components/Auth/Login';
-import Verify from './components/Auth/Verify';
-import Accounts from './components/Account/Accounts';
-import AccountForm from './components/Account/AccountForm';
+import HomePage from './pages/Home/HomePage';
+import Signup from './pages/Auth/Signup';
+import Login from './pages/Auth/Login';
+import Verify from './pages/Auth/Verify';
+import Accounts from './pages/Account/Accounts';
+import AccountForm from './pages/Account/AccountForm';
 import ProtectedRoute from './components/ProtectedRoute';
-import { User } from './components/Auth/User';
+import { User } from './pages/Auth/User';
 import NavBar from './components/Nav/NavBar';
-import Subscriptions from './components/TempSubscriptions/Subscriptions';
+import Subscriptions from './pages/TempSubscriptions/Subscriptions';
 
 import 'semantic-ui-css/semantic.min.css';
 

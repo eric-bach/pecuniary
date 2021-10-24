@@ -12,6 +12,15 @@ const User = (props: any) => {
 
       if (user) {
         user.getSession((err: any, session: any) => {
+          if (!err) {
+            resolve(session);
+          }
+        });
+      }
+
+      /*
+      if (user) {
+        user.getSession((err: any, session: any) => {
           if (err) {
             reject();
           } else {
@@ -21,6 +30,7 @@ const User = (props: any) => {
       } else {
         reject();
       }
+      */
     });
   };
 
