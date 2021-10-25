@@ -45,6 +45,7 @@ const getAccountsByUser = gql`
 `;
 
 const Accounts = () => {
+  const [isLoading, setLoading] = useState(true);
   const [userId, setUserId] = useState('');
   const { data, error, loading, refetch } = useQuery(getAccountsByUser, {
     variables: { userId: userId },
@@ -54,22 +55,27 @@ const Accounts = () => {
   const { getSession } = useContext(UserContext);
 
   useEffect(() => {
-    // Get the logged in username
-    getSession().then((session: any) => {
-      setUserId(session.idToken.payload.email);
-    });
+    // TEMP Force 1000ms delay in loading Account page to ensure backend updates
+    setTimeout(() => {
+      // Get the logged in username
+      getSession().then((session: any) => {
+        setUserId(session.idToken.payload.email);
+      });
 
-    console.log('[ACCOUNTS] Get username');
+      console.log('[ACCOUNTS] Get username');
+      setLoading(false);
+    }, 500);
   }, [getSession]);
 
   useEffect(() => {
     if (subData) {
       console.log('[ACCOUNTS] Event created: ', subData);
 
+      // TEMP Force 1000ms delay before re-loading Accounts to ensure backend updates
       setTimeout(() => {
         refetch();
         console.log('[ACCOUNTS] Re-render components');
-      }, 2000);
+      }, 1000);
     }
   }, [subData, refetch]);
 
@@ -77,6 +83,9 @@ const Accounts = () => {
   if (error) return 'Error!'; // You probably want to do more here!
   if (loading) return 'Loading...'; // You can also show a spinner here.
 
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
   return (
     <Grid>
       <Grid.Column width={10}>
