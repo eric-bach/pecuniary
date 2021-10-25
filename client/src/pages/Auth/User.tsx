@@ -50,9 +50,9 @@ const User = (props: any) => {
           resolve(data);
         },
         onFailure: (err) => {
-          console.error('[USER] Authentication failed: ', err);
+          console.error('[USER] Authentication failed');
 
-          reject(err);
+          reject('Incorrect username or password');
         },
         newPasswordRequired: (data) => {
           console.log('[USER] New Password Required: ', data);
