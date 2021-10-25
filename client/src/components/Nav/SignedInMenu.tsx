@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { Menu, Image, Dropdown } from 'semantic-ui-react';
 
-import { UserContext } from '../Auth/User';
+import { UserContext } from '../../pages/Auth/User';
 
 const SignedInMenu = () => {
   const [username, setUsername] = useState('');

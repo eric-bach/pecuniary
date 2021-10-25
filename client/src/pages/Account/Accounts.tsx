@@ -1,5 +1,5 @@
 //https://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/
-import { useState, useEffect, useContext, useReducer } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Button } from 'semantic-ui-react';
 import { useQuery, useSubscription, gql } from '@apollo/client';
@@ -47,32 +47,28 @@ const getAccountsByUser = gql`
 const Accounts = () => {
   const [userId, setUserId] = useState('');
   const { data, error, loading, refetch } = useQuery(getAccountsByUser, { variables: { userId: userId } });
-  const { data: subData, loading: subLoading, error: subError } = useSubscription(ACCOUNT_SUBSCRIPTION);
+  const { data: subData } = useSubscription(ACCOUNT_SUBSCRIPTION);
   const { getSession } = useContext(UserContext);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
-
   useEffect(() => {
-    setTimeout(() => {
-      // Get the logged in username
-      getSession().then((session: any) => {
-        setUserId(session.idToken.payload.email);
-      });
+    // Get the logged in username
+    getSession().then((session: any) => {
+      setUserId(session.idToken.payload.email);
+    });
 
-      console.log('[ACCOUNTS] hook rendered');
-    }, 1000);
-  }, []);
+    console.log('[ACCOUNTS] Get username');
+  }, [getSession]);
 
   useEffect(() => {
     if (subData) {
-      console.log('[ACCOUNTS] New event created: ', subData);
+      console.log('[ACCOUNTS] Event created: ', subData);
 
       setTimeout(() => {
         refetch();
-        console.log('Refresh');
-      }, 2000);
+        console.log('[ACCOUNTS] Re-render components');
+      }, 1000);
     }
-  }, [subData]);
+  }, [subData, refetch]);
 
   // TODO Improve these loading screens
   if (error) return 'Error!'; // You probably want to do more here!

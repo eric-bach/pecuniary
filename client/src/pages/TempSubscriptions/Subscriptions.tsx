@@ -61,13 +61,13 @@ const ACCOUNT_SUBSCRIPTION = gql`
 const Dummy = () => {
   const { subscribeToMore, loading: listLoading, data: listData, error: listError, refetch } = useQuery(GET_ACCOUNTS);
   const [createAccountMutateFunction, { error: createError }] = useMutation(CREATE_ACCOUNT);
-  const { data: subData, loading: subLoading, error: subError } = useSubscription(ACCOUNT_SUBSCRIPTION);
+  const { data: subData, error: subError } = useSubscription(ACCOUNT_SUBSCRIPTION);
 
   useEffect(() => {
     if (listData && listData.getAccountsByUser && subData) {
       console.log('[SUBSCRIPTIONS] New event created: ', subData);
     }
-  }, [subData]);
+  }, [subData, listData]);
 
   if (listError || createError || subError) {
     console.error(listError);

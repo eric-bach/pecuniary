@@ -92,7 +92,7 @@ const AccountForm = (props: any) => {
     getSession().then((session: any) => {
       setUsername(session.idToken.payload.email);
     });
-  });
+  }, [aggregateId, getSession]);
 
   if (accountTypesError || accountError) return 'Error!'; // You probably want to do more here!
   if (accountTypesLoading || accountLoading) return 'loading...'; // You can also show a spinner here.
@@ -173,11 +173,11 @@ const AccountForm = (props: any) => {
   const accountTypesList: any[] = [];
   accountTypes.listAccountTypes.map((d: any) => {
     accountTypesList.push({ key: d.id, text: d.name, value: d.description });
+    return true;
   });
 
   const onChange = (event: any, result: any) => {
     const { value } = result;
-    console.log('Selected value: ', value);
     setAccountType(value);
   };
 

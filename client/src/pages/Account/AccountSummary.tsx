@@ -23,7 +23,7 @@ const AccountSummary = (account: AccountReadModel) => {
   const [deleteAccountMutation] = useMutation(deleteAccount);
 
   const handleDeleteAccount = (account: AccountReadModel) => {
-    console.log('DELETING ACCOUNT');
+    console.log('[ACCOUNT SUMMARY] Deleting Account: ', account.aggregateId);
 
     const params = {
       deleteAccountInput: {
@@ -38,9 +38,9 @@ const AccountSummary = (account: AccountReadModel) => {
     deleteAccountMutation({
       variables: params,
     })
-      .then((res) => console.log('Account deleted successfully'))
+      .then((res) => console.log('[ACCOUNT SUMMARY] Account deleted successfully'))
       .catch((err) => {
-        console.error('Error occurred deleting account');
+        console.error('[ACCOUNT SUMMARY] Error occurred deleting account');
         console.error(err);
       });
   };
