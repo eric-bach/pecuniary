@@ -23,6 +23,6 @@ const link = ApolloLink.from([
 
 const client = new ApolloClient({ link, cache: new InMemoryCache() });
 
-console.log('[CLIENT] Apollo Client initialized: ', client); // TODO TEMP
+console.log('[CLIENT] Apollo Client initialized: ', client);
 
 export default client;
