@@ -46,7 +46,10 @@ const getAccountsByUser = gql`
 
 const Accounts = () => {
   const [userId, setUserId] = useState('');
-  const { data, error, loading, refetch } = useQuery(getAccountsByUser, { variables: { userId: userId } });
+  const { data, error, loading, refetch } = useQuery(getAccountsByUser, {
+    variables: { userId: userId },
+    fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
+  });
   const { data: subData } = useSubscription(ACCOUNT_SUBSCRIPTION);
   const { getSession } = useContext(UserContext);
 
