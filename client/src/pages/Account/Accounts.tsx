@@ -7,6 +7,7 @@ import { useQuery, useSubscription, gql } from '@apollo/client';
 import { UserContext } from '../Auth/User';
 import AccountReadModel from './types/Account';
 import AccountSummary from './AccountSummary';
+import Loading from '../../components/Loading';
 
 // TODO Update schema to include parameter to filter by name and userId
 const ACCOUNT_SUBSCRIPTION = gql`
@@ -81,11 +82,8 @@ const Accounts = () => {
 
   // TODO Improve these loading screens
   if (error) return 'Error!'; // You probably want to do more here!
-  if (loading) return 'Loading...'; // You can also show a spinner here.
+  if (loading || isLoading) return <Loading />;
 
-  if (isLoading) {
-    return <div>Loading</div>;
-  }
   return (
     <Grid>
       <Grid.Column width={10}>

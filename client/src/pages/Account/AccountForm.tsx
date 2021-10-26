@@ -4,6 +4,7 @@ import { useQuery, useMutation, gql } from '@apollo/client';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UserContext } from '../Auth/User';
+import Loading from '../../components/Loading';
 
 const getAccountByAggregateId = gql`
   query GetAccountByAggregateId($aggregateId: ID!) {
@@ -95,7 +96,7 @@ const AccountForm = (props: any) => {
   }, [aggregateId, getSession]);
 
   if (accountTypesError || accountError) return 'Error!'; // You probably want to do more here!
-  if (accountTypesLoading || accountLoading) return 'loading...'; // You can also show a spinner here.
+  if (accountTypesLoading || accountLoading) return <Loading />;
 
   // Get the account after everything loads
   if (!loaded && account && account.getAccountByAggregateId) {
