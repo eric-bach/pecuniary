@@ -1,16 +1,14 @@
 {
-  "name": "lammbda",
+  "name": "cognitoHandler",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.36.1",
-    "@aws-sdk/util-dynamodb": "^3.36.1",
-    "uuid": "^8.3.2"
+    "aws-sdk": "^2.1016.0"
   }
 }

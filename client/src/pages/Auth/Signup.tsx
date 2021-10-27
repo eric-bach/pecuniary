@@ -7,30 +7,21 @@ import * as Yup from 'yup';
 import UserPool from '../../UserPool';
 
 const Signup = () => {
-  const signUp = async (values: any) => {
+  const signUp = (values: any) => {
     var attributeList = [];
-    var dataEmail = {
+    var attributeEmail = new CognitoUserAttribute({
       Name: 'email',
       Value: values.email,
-    };
-    var attributeEmail = new CognitoUserAttribute(dataEmail);
-    attributeList.push(attributeEmail);
-
-    console.log('[SIGNUP] Attribute list: ', JSON.stringify(attributeList));
-
-    await UserPool.signUp(values.email, values.password, attributeList, [], (err, data) => {
-      if (err) {
-        console.error(`[SIGNUP] Error: ${JSON.stringify(err)}`);
-      }
-
-      console.log(`[SIGNUP] Data: ${JSON.stringify(data)}`);
     });
+    attributeList.push(attributeEmail);
+    console.log('[SIGNUP] Attributes: ', JSON.stringify(attributeList));
 
-    // TODO Add user to Users group - https://bobbyhadz.com/blog/aws-cognito-add-user-to-group
-    console.log('[SIGNUP] About to add user to group: ');
-    // TODO Call graphql mutation
-
-    window.location.pathname = '/verify';
+    UserPool.signUp(values.email, values.password, attributeList, [], (err, data) => {
+      if (err) {
+        console.error(`[SIGNUP] Error creating user: ${JSON.stringify(err)}`);
+      }
+      console.log(`[SIGNUP] Created user: ${JSON.stringify(data)}`);
+    });
   };
 
   return (
@@ -40,28 +31,29 @@ const Signup = () => {
           <Image src='/img/logo.png' />
           Pecuniary
         </Header>
-        <Formik
-          initialValues={{ email: '', password: '', passwordConfirm: '' }}
-          onSubmit={async (values) => {
-            await signUp(values);
-          }}
-          validationSchema={Yup.object().shape({
-            email: Yup.string().email().required('Please enter your Email'),
-            password: Yup.string()
-              .min(8, 'Password must be a minimum of 8 characters')
-              .matches(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/,
-                'Password must contain at least one uppercase, one lowercase, one number and one special character'
-              )
-              .required('Please enter your password'),
-            passwordConfirm: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
-          })}
-        >
-          <Form size='large'>
-            <Segment>
-              <Header as='h3' color='blue'>
-                Create new account
-              </Header>
+        <Segment>
+          <Header as='h3' color='blue'>
+            Create new account
+          </Header>
+          <Formik
+            initialValues={{ email: '', password: '', passwordConfirm: '' }}
+            onSubmit={(values, actions) => {
+              signUp(values);
+              actions.setSubmitting(false);
+            }}
+            validationSchema={Yup.object().shape({
+              email: Yup.string().email().required('Please enter your Email'),
+              password: Yup.string()
+                .min(8, 'Password must be a minimum of 8 characters')
+                .matches(
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,64})/,
+                  'Password must contain at least one uppercase, one lowercase, one number and one special character'
+                )
+                .required('Please enter your password'),
+              passwordConfirm: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match'),
+            })}
+          >
+            <Form size='large'>
               <Input
                 id='email'
                 name='email'
@@ -94,13 +86,13 @@ const Signup = () => {
               <SubmitButton fluid primary>
                 Sign up
               </SubmitButton>
-              <br />
-              By continuing I agree to Pecuniary's <a href='/service'>Terms of Service</a>.
-              <br />
-              <br />
-            </Segment>
-          </Form>
-        </Formik>
+            </Form>
+          </Formik>
+          <br />
+          By continuing I agree to Pecuniary's <a href='/service'>Terms of Service</a>.
+          <br />
+          <br />
+        </Segment>
       </Grid.Column>
     </Grid>
   );

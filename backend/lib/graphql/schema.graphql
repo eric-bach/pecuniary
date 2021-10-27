@@ -107,17 +107,6 @@ type TimeSeries @model @aws_api_key {
   split_coefficient: Float!
 }
 
-# Cognito
-input AddUserToCognitoGroupInput @aws_cognito_user_pools {
-  userPoolId: String!
-  username: String!
-  groupName: String!
-}
-
-type AddUserToCognitoGroupResult @aws_cognito_user_pools {
-  error: String
-}
-
 # Enums
 enum ModelAttributeTypes {
   binary
@@ -230,8 +219,6 @@ type Query {
 
 type Mutation {
   createEvent(event: CreateEventInput!): Event @aws_cognito_user_pools(cognito_groups: ["Users"])
-
-  addUserToCognitoGroup(cognito: AddUserToCognitoGroupInput!): AddUserToCognitoGroupResult @aws_cognito_user_pools
 }
 
 type Subscription {

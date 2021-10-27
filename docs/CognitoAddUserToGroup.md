@@ -6,46 +6,89 @@ For this, we will create an AppSync GraphQL API to call from our React client du
 
 Reference this documentation - https://bobbyhadz.com/blog/aws-cognito-add-user-to-group
 
-1.  Update the graphQL schema `./backend/lib/graphql/schema.graphql` to add a mutation to invoke the lambda function that will add the user to the Cognito User Group
-
-        ```
-        input AddUserToCognitoGroupInput @aws_cognito_user_pools {
-            userPoolId: String!
-            username: String!
-            groupName: String!
-        }
-
-        type AddUserToCognitoGroupResult @aws_cognito_user_pools {
-            error: String
-        }
-
-        addUserToCognitoGroup(cognito: AddUserToCognitoGroupInput!): AddUserToCognitoGroupResult  @aws_cognito_user_pools
-        ```
-
-2.  Create a new file in the commandHandler lambda (`./backend/lib/graphql/lambda/commandHandler/`) that will contain the AppSync resolver code to interact with DynamoDB.
+1.  Create a lambda function
 
     ```
-    import * as AWS from 'aws-sdk';
-    import Cognito from './types/Cognito';
+    import {Callback, Context, PostConfirmationTriggerEvent} from 'aws-lambda';
+    import AWS from 'aws-sdk';
 
-    async function addUserToCognitoGroup(cognito: Cognito): Promise<{$response: AWS.Response<Record<string, string>, AWS.AWSError>;}> {
-        console.log('Received Cognito event: ', cognito);
+    export async function main(
+    event: PostConfirmationTriggerEvent,
+    _context: Context,
+    callback: Callback,
+    ): Promise<void> {
+    const {userPoolId, userName} = event;
 
-        const params = {
-            GroupName: cognito.groupName,
-            UserPoolId: cognito.userPoolId,
-            Username: cognito.username,
-        };
+    try {
+        await adminAddUserToGroup({
+        userPoolId,
+        username: userName,
+        groupName: 'Users',
+        });
 
-        const cognitoIdp = new AWS.CognitoIdentityServiceProvider();
-        var result = cognitoIdp.adminAddUserToGroup(params).promise();
-
-        console.log(`✅ Successfully added user ${cognito.username} to cognito group ${cognito.groupName}`);
-
-        return result;
+        return callback(null, event);
+    } catch (error) {
+        return callback(error, event);
+    }
     }
 
-    export default addUserToCognitoGroup;
+    export function adminAddUserToGroup({
+    userPoolId,
+    username,
+    groupName,
+    }: {
+    userPoolId: string;
+    username: string;
+    groupName: string;
+    }): Promise<{
+    $response: AWS.Response<Record<string, string>, AWS.AWSError>;
+    }> {
+    const params = {
+        GroupName: groupName,
+        UserPoolId: userPoolId,
+        Username: username,
+    };
+
+    const cognitoIdp = new AWS.CognitoIdentityServiceProvider();
+    return cognitoIdp.adminAddUserToGroup(params).promise();
+    }
+    ```
+
+2.  Add permission in the CDK stack
+
+    ```
+    const cognitoHandlerFunction = new Function(this, 'CognitoHandler', {
+      runtime: Runtime.NODEJS_14_X,
+      functionName: `${props.appName}-cognitoHandler`,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoHandler')),
+      memorySize: 256,
+      timeout: Duration.seconds(10),
+      environment: {
+        REGION: REGION,
+      },
+    });
+
+    // Cognito user pool
+    const userPool = new UserPool(this, 'PecuniaryUserPool', {
+     ...
+      lambdaTriggers: {
+        postConfirmation: cognitoHandlerFunction,
+      },
+    });
+
+    // Add permissions to add user to Cognito User Pool
+    cognitoHandlerFunction.role!.attachInlinePolicy(
+      new Policy(this, 'userpool-policy', {
+        statements: [
+          new PolicyStatement({
+            actions: ['cognito-idp:AdminAddUserToGroup'],
+            resources: [userPool.userPoolArn],
+          }),
+        ],
+      })
+    );
+
     ```
 
 3.  Update the `AppSyncEvent` object as necessary for any additional properties that are required by the resolver. For example, adding `cognito` as an input for the `addUserToCognitoGroup` mutation.

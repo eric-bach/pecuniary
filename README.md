@@ -144,10 +144,6 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
 - [How to add a new GraphQL API/Command Handler](docs/CommandHandler.md)
 - [How to call an authenticated AppSync GraphQL API with Apollo Client](docs/ApolloClient.md)
 
-## Cognito
-
-- [How to add a user to a Cognito User Group](docs/CognitoAddUserToGroup)
-
 # Resources
 
 ## AppSync
@@ -160,6 +156,7 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
 
 - [How to add a protected route to React](https://dev.to/olumidesamuel_/implementing-protected-route-and-authentication-in-react-js-3cl4)
 - [How to authenticate with Cognito using React hooks](https://github.com/DevAscend/YT-AWS-Cognito-React-Tutorials)
+- [How to add a user to a Cognito User Group](https://bobbyhadz.com/blog/aws-cognito-add-user-to-group)
 
 # License
 

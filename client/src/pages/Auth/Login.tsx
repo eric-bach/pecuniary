@@ -23,7 +23,7 @@ const Login = () => {
               email: '',
               password: '',
             }}
-            onSubmit={(values) => {
+            onSubmit={(values, actions) => {
               authenticate(values.email, values.password)
                 .then((data: any) => {
                   console.log('[LOGIN] Authentication succeeded: ', data);
@@ -35,6 +35,8 @@ const Login = () => {
                   console.error('[LOGIN] Authentication failed');
                   setMessage({ visible: true, error: err });
                 });
+
+              actions.setSubmitting(false);
             }}
             validationSchema={Yup.object().shape({
               email: Yup.string().email().required('Please enter your Email'),

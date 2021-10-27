@@ -1,6 +1,6 @@
 import { Stack, Construct, CfnOutput, Expiration, Duration, RemovalPolicy } from '@aws-cdk/core';
 import * as ssm from '@aws-cdk/aws-ssm';
-import { PolicyStatement, Effect } from '@aws-cdk/aws-iam';
+import { PolicyStatement, Policy, Effect } from '@aws-cdk/aws-iam';
 import {
   UserPool,
   CfnUserPoolGroup,
@@ -47,6 +47,18 @@ export class PecuniaryStack extends Stack {
      *** AWS Cognito
      ***/
 
+    const cognitoHandlerFunction = new Function(this, 'CognitoHandler', {
+      runtime: Runtime.NODEJS_14_X,
+      functionName: `${props.appName}-cognitoHandler`,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoHandler')),
+      memorySize: 256,
+      timeout: Duration.seconds(10),
+      environment: {
+        REGION: REGION,
+      },
+    });
+
     // Cognito user pool
     const userPool = new UserPool(this, 'PecuniaryUserPool', {
       userPoolName: `${props.appName}_user_pool`,
@@ -68,8 +80,23 @@ export class PecuniaryStack extends Stack {
           mutable: true,
         },
       },
+      lambdaTriggers: {
+        postConfirmation: cognitoHandlerFunction,
+      },
       removalPolicy: RemovalPolicy.DESTROY,
     });
+
+    // Add permissions to add user to Cognito User Pool
+    cognitoHandlerFunction.role!.attachInlinePolicy(
+      new Policy(this, 'userpool-policy', {
+        statements: [
+          new PolicyStatement({
+            actions: ['cognito-idp:AdminAddUserToGroup'],
+            resources: [userPool.userPoolArn],
+          }),
+        ],
+      })
+    );
 
     const usersGroup = new CfnUserPoolGroup(this, 'PecuniaryUserGroup', {
       userPoolId: userPool.userPoolId,
@@ -345,14 +372,6 @@ export class PecuniaryStack extends Stack {
       },
       deadLetterQueue: commandHandlerQueue,
     });
-    // Add permissions to call Cognito
-    commandHandlerFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['cognito-idp:AdminAddUserToGroup'],
-        resources: [userPool.userPoolArn],
-      })
-    );
 
     // Set the new Lambda function as a data source for the AppSync API
     const lambdaDataSource = api.addLambdaDataSource('lambdaDataSource', commandHandlerFunction);
@@ -380,11 +399,6 @@ export class PecuniaryStack extends Stack {
     lambdaDataSource.createResolver({
       typeName: 'Query',
       fieldName: 'listEvents',
-    });
-
-    lambdaDataSource.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'addUserToCognitoGroup',
     });
 
     /***
