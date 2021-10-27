@@ -18,7 +18,7 @@ const Login = () => {
       password: Yup.string()
         .min(8, 'Password must be a minimum of 8 characters')
         .matches(
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
           'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
         )
         .required('Please enter your password'),

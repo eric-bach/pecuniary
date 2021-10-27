@@ -18,6 +18,7 @@
     "aws-appsync-subscription-link": "^3.0.9",
     "dotenv": "^10.0.0",
     "formik": "^2.2.9",
+    "formik-semantic-ui-react": "^2.0.0",
     "graphql": "^15.6.1",
     "graphql-tag": "^2.12.5",
     "react": "^17.0.2",
