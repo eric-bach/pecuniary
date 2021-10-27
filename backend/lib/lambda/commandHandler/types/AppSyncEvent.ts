@@ -1,4 +1,5 @@
 import Event from './Event';
+import Cognito from './Cognito';
 import Filter from './Filter';
 import Position from './Position';
 
@@ -7,10 +8,11 @@ type AppSyncEvent = {
     fieldName: string;
   };
   arguments: {
-    event: Event;
     input: Position;
     filter: Filter;
 
+    event: Event;
+    cognito: Cognito; //addUserToCognitoGroup
     userId: string; //getAccountsByUserId
     aggregateId: string; //getAccountByAggregateId
   };

@@ -138,9 +138,15 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
 
 # Projects References
 
+## AppSync
+
 - [Saved GraphQL queries/mutations for GraphiQl](docs/GraphQL.md)
 - [How to add a new GraphQL API/Command Handler](docs/CommandHandler.md)
 - [How to call an authenticated AppSync GraphQL API with Apollo Client](docs/ApolloClient.md)
+
+## Cognito
+
+- [How to add a user to a Cognito User Group](docs/CognitoAddUserToGroup)
 
 # Resources
 

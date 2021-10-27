@@ -1,5 +1,6 @@
 // https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.03.html#GettingStarted.NodeJs.03.02
 import createEvent from './createEvent';
+import addUserToCognitoGroup from './addUserToCognitoGroup';
 import listEvents from './listEvents';
 import getAccountByAggregateId from './getAccountByAggregateId';
 import getAccountsByUser from './getAccountsByUser';
@@ -28,6 +29,9 @@ exports.handler = async (event: AppSyncEvent) => {
       return await listAccountTypes();
 
     // Mutations
+    case 'addUserToCognitoGroup':
+      console.debug(`🔔 Adding user to Cognito group`);
+      return await addUserToCognitoGroup(event.arguments.cognito);
     case 'createEvent':
       console.debug(`🔔 ${event.info.fieldName} GraphQL data: ${JSON.stringify(event.arguments.event)}`);
       return await createEvent(event.arguments.event);

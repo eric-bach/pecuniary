@@ -345,6 +345,14 @@ export class PecuniaryStack extends Stack {
       },
       deadLetterQueue: commandHandlerQueue,
     });
+    // Add permissions to call Cognito
+    commandHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['cognito-idp:AdminAddUserToGroup'],
+        resources: [userPool.userPoolArn],
+      })
+    );
 
     // Set the new Lambda function as a data source for the AppSync API
     const lambdaDataSource = api.addLambdaDataSource('lambdaDataSource', commandHandlerFunction);
@@ -372,6 +380,11 @@ export class PecuniaryStack extends Stack {
     lambdaDataSource.createResolver({
       typeName: 'Query',
       fieldName: 'listEvents',
+    });
+
+    lambdaDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'addUserToCognitoGroup',
     });
 
     /***
