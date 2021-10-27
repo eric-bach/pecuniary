@@ -7,6 +7,7 @@ import {
   UserPoolClient,
   AccountRecovery,
   VerificationEmailStyle,
+  UserPoolDomain,
 } from '@aws-cdk/aws-cognito';
 import { Topic } from '@aws-cdk/aws-sns';
 import { EmailSubscription } from '@aws-cdk/aws-sns-subscriptions';
@@ -44,9 +45,10 @@ export class PecuniaryStack extends Stack {
     });
 
     /***
-     *** AWS Cognito
+     *** AWS Lambda
      ***/
 
+    // AWS Cognito post-confirmation lambda function
     const cognitoHandlerFunction = new Function(this, 'CognitoHandler', {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-cognitoHandler`,
@@ -59,13 +61,17 @@ export class PecuniaryStack extends Stack {
       },
     });
 
+    /***
+     *** AWS Cognito
+     ***/
+
     // Cognito user pool
     const userPool = new UserPool(this, 'PecuniaryUserPool', {
       userPoolName: `${props.appName}_user_pool`,
       selfSignUpEnabled: true,
       accountRecovery: AccountRecovery.EMAIL_ONLY,
       userVerification: {
-        emailStyle: VerificationEmailStyle.CODE,
+        emailStyle: VerificationEmailStyle.LINK,
       },
       autoVerify: {
         email: true,
@@ -86,6 +92,27 @@ export class PecuniaryStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
+    // Cognito user pool group
+    const usersGroup = new CfnUserPoolGroup(this, 'PecuniaryUserGroup', {
+      userPoolId: userPool.userPoolId,
+      groupName: 'Users',
+      description: 'Pecuniary Users',
+    });
+
+    // Cognito user pool domain
+    const userPoolDomain = new UserPoolDomain(this, 'PecuniaryUserPoolDomain', {
+      userPool: userPool,
+      cognitoDomain: {
+        domainPrefix: props.appName,
+      },
+    });
+
+    // Cognito user client
+    const userPoolClient = new UserPoolClient(this, 'PecuniaryUserClient', {
+      userPoolClientName: `${props.appName}_user_client`,
+      userPool,
+    });
+
     // Add permissions to add user to Cognito User Pool
     cognitoHandlerFunction.role!.attachInlinePolicy(
       new Policy(this, 'userpool-policy', {
@@ -97,18 +124,6 @@ export class PecuniaryStack extends Stack {
         ],
       })
     );
-
-    const usersGroup = new CfnUserPoolGroup(this, 'PecuniaryUserGroup', {
-      userPoolId: userPool.userPoolId,
-      groupName: 'Users',
-      description: 'Pecuniary Users',
-    });
-
-    // Cognito user client
-    const userPoolClient = new UserPoolClient(this, 'PecuniaryUserClient', {
-      userPoolClientName: `${props.appName}_user_client`,
-      userPool,
-    });
 
     /***
      *** AWS SQS - Dead letter Queues
@@ -852,6 +867,7 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
 
     // Lambda functions
+    new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoHandlerFunction.functionArn });
     new CfnOutput(this, 'CommandHandlerFunctionArn', { value: commandHandlerFunction.functionArn });
     new CfnOutput(this, 'EventBusFunctionArn', { value: eventBusFunction.functionArn });
     new CfnOutput(this, 'AccountCreatedEventFunctionArn', { value: createAccountFunction.functionArn });

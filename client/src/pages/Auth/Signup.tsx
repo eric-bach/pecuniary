@@ -21,6 +21,8 @@ const Signup = () => {
         console.error(`[SIGNUP] Error creating user: ${JSON.stringify(err)}`);
       }
       console.log(`[SIGNUP] Created user: ${JSON.stringify(data)}`);
+
+      window.location.pathname = '/verify';
     });
   };
 
