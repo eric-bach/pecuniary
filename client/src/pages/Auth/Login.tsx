@@ -1,30 +1,14 @@
 import { useState, useContext } from 'react';
-import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react';
+import { Grid, Header, Image, Message, Segment } from 'semantic-ui-react';
+import { Form, Input, SubmitButton } from 'formik-semantic-ui-react';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 import { UserContext } from './User';
 
 const Login = () => {
   const [message, setMessage] = useState({ visible: false, error: '' });
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
   const { authenticate }: any = useContext(UserContext);
-
-  const onSubmit = (event: any) => {
-    event.preventDefault();
-
-    authenticate(email, password)
-      .then((data: any) => {
-        console.log('[LOGIN] Authentication succeeded: ', data);
-
-        // Re-direct to /home
-        window.location.pathname = '/home';
-      })
-      .catch((err: any) => {
-        console.error('[LOGIN] Authentication failed');
-        setMessage({ visible: true, error: err });
-      });
-  };
 
   return (
     <>
@@ -34,47 +18,79 @@ const Login = () => {
             <Image src='/img/logo.png' />
             Pecuniary
           </Header>
-          <Form size='large' onSubmit={onSubmit}>
-            <Segment>
-              <Header as='h3' color='blue'>
-                Log into your account
-              </Header>
-              <div>Manage your account</div>
-              <br />
-              <Form.Input
-                fluid
-                icon='user'
-                iconPosition='left'
-                placeholder='E-mail address'
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-              <Form.Input
-                fluid
-                icon='lock'
-                iconPosition='left'
-                placeholder='Password'
-                type='password'
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-              <Button type='submit' color='blue' fluid size='large'>
-                Login
-              </Button>
-              {message.visible && <Message negative header='Authentication failed' content={message.error} />}
-              <br />
-              By continuing I agree to Pecuniary's <a href='/service'>Terms of Service</a>.
-              <br />
-              <br />
-              <br />
-              <a href='/reset'>Forgot your password?</a>
-              <br />
-              <br />
-              <a href='/signup'>Create new account</a>
-              <br />
-              <br />
-            </Segment>
-          </Form>
+          <Formik
+            initialValues={{
+              email: '',
+              password: '',
+            }}
+            onSubmit={(values) => {
+              authenticate(values.email, values.password)
+                .then((data: any) => {
+                  console.log('[LOGIN] Authentication succeeded: ', data);
+
+                  // Re-direct to /home
+                  window.location.pathname = '/home';
+                })
+                .catch((err: any) => {
+                  console.error('[LOGIN] Authentication failed');
+                  setMessage({ visible: true, error: err });
+                });
+            }}
+            validationSchema={Yup.object().shape({
+              email: Yup.string().email().required('Please enter your Email'),
+              password: Yup.string()
+                .min(8, 'Password must be a minimum of 8 characters')
+                .matches(
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
+                  'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
+                )
+                .required('Please enter your password'),
+            })}
+          >
+            <Form size='large'>
+              <Segment>
+                <Header as='h3' color='blue'>
+                  Log into your account
+                </Header>
+                <div>Manage your account</div>
+                <br />
+                <Input
+                  id='email'
+                  fluid
+                  icon='user'
+                  iconPosition='left'
+                  name='email'
+                  placeholder='Email address'
+                  errorPrompt
+                />
+                <Input
+                  id='password'
+                  name='password'
+                  fluid
+                  icon='lock'
+                  iconPosition='left'
+                  placeholder='Enter Password'
+                  type='password'
+                  errorPrompt
+                />
+                <SubmitButton fluid primary>
+                  Login
+                </SubmitButton>
+                {message.visible && <Message negative header='Authentication failed' content={message.error} />}
+                <br />
+                By continuing I agree to Pecuniary's <a href='/service'>Terms of Service</a>.
+                <br />
+                <br />
+                <br />
+                <a href='/reset'>Forgot your password?</a>
+                <br />
+                <br />
+                <a href='/signup'>Create new account</a>
+                <br />
+                <br />
+              </Segment>
+            </Form>
+          </Formik>
         </Grid.Column>
       </Grid>
     </>

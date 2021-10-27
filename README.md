@@ -134,26 +134,26 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
 
 ## Deployment with CodePipeline (optional)
 
-See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/README.md)
+- See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/README.md)
 
 # Projects References
 
-[Saved GraphQL queries/mutations for GraphiQl](docs/GraphQL.md)
-[How to add a new GraphQL API/Command Handler](docs/CommandHandler.md)
-[How to call an authenticated AppSync GraphQL API with Apollo Client](docs/ApolloClient.md)
+- [Saved GraphQL queries/mutations for GraphiQl](docs/GraphQL.md)
+- [How to add a new GraphQL API/Command Handler](docs/CommandHandler.md)
+- [How to call an authenticated AppSync GraphQL API with Apollo Client](docs/ApolloClient.md)
 
 # Resources
 
 ## AppSync
 
-[How to build an authenticated GraphQL AppSync API with CDK](https://github.com/dabit3/build-an-authenticated-api-with-cdk)
-[How to perform a GraphQL Query with Apollo using React hooks](https://www.yannisspyrou.com/querying-app-sync-using-react-hooks)
-[How to perform a GraphQL Mutation with Apollo using React hooks](ttps://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/)
+- [How to build an authenticated GraphQL AppSync API with CDK](https://github.com/dabit3/build-an-authenticated-api-with-cdk)
+- [How to perform a GraphQL Query with Apollo using React hooks](https://www.yannisspyrou.com/querying-app-sync-using-react-hooks)
+- [How to perform a GraphQL Mutation with Apollo using React hooks](ttps://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/)
 
 ## Cognito
 
-[How to add a protected route to React](https://dev.to/olumidesamuel_/implementing-protected-route-and-authentication-in-react-js-3cl4)
-[How to authenticate with Cognito using React hooks](https://github.com/DevAscend/YT-AWS-Cognito-React-Tutorials)
+- [How to add a protected route to React](https://dev.to/olumidesamuel_/implementing-protected-route-and-authentication-in-react-js-3cl4)
+- [How to authenticate with Cognito using React hooks](https://github.com/DevAscend/YT-AWS-Cognito-React-Tutorials)
 
 # License
 
