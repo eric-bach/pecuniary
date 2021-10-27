@@ -1,12 +1,21 @@
 import { useState, useContext, useEffect } from 'react';
-import { Grid, Segment, Header, Form, Button, Select } from 'semantic-ui-react';
+import { Grid, Segment, Header } from 'semantic-ui-react';
 import { useQuery, useMutation, gql } from '@apollo/client';
+import { Formik } from 'formik';
+import { Form, Input, SubmitButton, Select } from 'formik-semantic-ui-react';
+import * as Yup from 'yup';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
 
-const getAccountByAggregateId = gql`
+type SelectList = {
+  key: string;
+  text: string;
+  value: string;
+};
+
+const GET_ACCOUNT_BY_AGGREGATE_ID = gql`
   query GetAccountByAggregateId($aggregateId: ID!) {
     getAccountByAggregateId(aggregateId: $aggregateId) {
       id
@@ -25,7 +34,7 @@ const getAccountByAggregateId = gql`
   }
 `;
 
-const listAccountTypes = gql`
+const LIST_ACCOUNT_TYPES = gql`
   query ListAccountTypes {
     listAccountTypes {
       id
@@ -35,7 +44,7 @@ const listAccountTypes = gql`
   }
 `;
 
-const createAccount = gql`
+const CREATE_ACCOUNT = gql`
   mutation CreateAccount($createAccountInput: CreateEventInput!) {
     createEvent(event: $createAccountInput) {
       id
@@ -49,7 +58,7 @@ const createAccount = gql`
   }
 `;
 
-const updateAccount = gql`
+const UPDATE_ACCOUNT = gql`
   mutation UpdateAccount($updateAccountInput: CreateEventInput!) {
     createEvent(event: $updateAccountInput) {
       aggregateId
@@ -64,23 +73,17 @@ const updateAccount = gql`
 
 const AccountForm = (props: any) => {
   const [aggregateId] = useState(props.match.params.id !== undefined ? props.match.params.id : '');
-  const [name, setName] = useState('');
-  const [accountType, setAccountType] = useState('');
-  const [description, setDescription] = useState('');
   const [username, setUsername] = useState('');
 
-  // Flag to indicate useEffect() has completed loading
-  const [loaded, setLoaded] = useState(false);
-
-  const { data: accountTypes, error: accountTypesError, loading: accountTypesLoading } = useQuery(listAccountTypes);
+  const { data: accountTypes, error: accountTypesError, loading: accountTypesLoading } = useQuery(LIST_ACCOUNT_TYPES);
   const {
     data: account,
     error: accountError,
     loading: accountLoading,
-  } = useQuery(getAccountByAggregateId, { variables: { aggregateId: aggregateId } });
+  } = useQuery(GET_ACCOUNT_BY_AGGREGATE_ID, { variables: { aggregateId: aggregateId } });
 
-  const [createAccountMutation] = useMutation(createAccount);
-  const [updateAccountMutation] = useMutation(updateAccount);
+  const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
+  const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
 
   const { getSession } = useContext(UserContext);
 
@@ -98,20 +101,21 @@ const AccountForm = (props: any) => {
   if (accountTypesError || accountError) return 'Error!'; // You probably want to do more here!
   if (accountTypesLoading || accountLoading) return <Loading />;
 
-  // Get the account after everything loads
-  if (!loaded && account && account.getAccountByAggregateId) {
-    setName(account.getAccountByAggregateId.name);
-    setAccountType(account.getAccountByAggregateId.accountType.description);
-    setDescription(account.getAccountByAggregateId.description);
-    setLoaded(true);
-  }
+  const accountTypesList: SelectList[] = [];
+  accountTypes.listAccountTypes.map((d: any) => {
+    accountTypesList.push({ key: d.id, text: d.name, value: d.description });
+    return true;
+  });
 
-  const onSubmit = (event: any) => {
-    event.preventDefault();
+  const createUpdateAccount = (name: string, accountType: string, description: string) => {
+    const selectedAccountType: SelectList = accountTypesList.find((a) => a.value === accountType) ?? {
+      key: '',
+      text: '',
+      value: '',
+    };
 
     if (!props.match.params.id) {
       console.log('[ACCOUNT FORM] Creating Account...');
-      const selectedAccountType = accountTypesList.find((a) => a.value === accountType);
 
       const params = {
         createAccountInput: {
@@ -132,7 +136,7 @@ const AccountForm = (props: any) => {
 
           setTimeout(() => {
             window.location.pathname = '/accounts';
-          }, 500);
+          }, 1000);
         })
         .catch((err) => {
           console.error('[ACCOUNT FORM] Error occurred creating account');
@@ -140,7 +144,6 @@ const AccountForm = (props: any) => {
         });
     } else {
       console.log('[ACCOUNT FORM] Updating Account...');
-      const selectedAccountType = accountTypesList.find((a) => a.value === accountType);
 
       const params = {
         updateAccountInput: {
@@ -170,57 +173,58 @@ const AccountForm = (props: any) => {
     }
   };
 
-  // TODO Set AccountTypes type from any
-  const accountTypesList: any[] = [];
-  accountTypes.listAccountTypes.map((d: any) => {
-    accountTypesList.push({ key: d.id, text: d.name, value: d.description });
-    return true;
-  });
-
-  const onChange = (event: any, result: any) => {
-    const { value } = result;
-    setAccountType(value);
-  };
-
   return (
     <Grid>
       <Grid.Column width={10}>
         <h2>Account</h2>
         <Segment>
           <Header sub color='teal' content='Account Details' />
-          <Form size='large' onSubmit={onSubmit}>
-            <Form.Input
-              fluid
-              icon='user'
-              iconPosition='left'
-              label='Account Name'
-              placeholder='Account name'
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-            />
-            <Form.Input
-              control={Select}
-              label='Account Type'
-              placeholder='Account Type'
-              selection
-              options={accountTypesList}
-              value={accountType}
-              onChange={onChange}
-            />
-            <Form.Input
-              fluid
-              icon='lock'
-              iconPosition='left'
-              label='Account Description'
-              placeholder='Account description'
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-            />
-
-            <Button positive type='submit' data-test='submit-account-button'>
-              Submit
-            </Button>
-          </Form>
+          <Formik
+            initialValues={{ name: '', accountType: '', description: '' }}
+            onSubmit={(values, actions) => {
+              createUpdateAccount(values.name, values.accountType, values.description);
+            }}
+            validationSchema={Yup.object().shape({
+              name: Yup.string().required('Please enter an Account name'),
+              accountType: Yup.string().required('Please select an Account type'),
+              description: Yup.string().required('Please enter an Account description'),
+            })}
+          >
+            <Form size='large'>
+              <Input
+                id='name'
+                fluid
+                icon='user'
+                iconPosition='left'
+                name='name'
+                label='Account name'
+                placeholder='Account name'
+                errorPrompt
+              />
+              <Select
+                id='accountType'
+                name='accountType'
+                label='Account Type'
+                options={accountTypesList}
+                placeholder='Select an account type'
+                selection
+                errorPrompt
+              />
+              <Input
+                id='description'
+                fluid
+                icon='lock'
+                iconPosition='left'
+                name='description'
+                label='Account description'
+                placeholder='Account description'
+                errorPrompt
+              />
+              <SubmitButton fluid primary>
+                Submit
+              </SubmitButton>
+            </Form>
+          </Formik>
         </Segment>
       </Grid.Column>
     </Grid>

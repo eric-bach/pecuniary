@@ -24,8 +24,10 @@
 - AWS Route 53
 - React.js
 - React Router
-- Zustand
+- Formik
+- Yup
 - Semantic UI React
+- Zustand
 - Cypress
 
 ## Event Bus error handling
