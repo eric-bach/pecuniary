@@ -19,11 +19,12 @@ import { Function, Runtime, Code, StartingPosition } from '@aws-cdk/aws-lambda';
 import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { Rule, EventBus } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
+import { SnsAction } from '@aws-cdk/aws-cloudwatch-actions';
 
 const dotenv = require('dotenv');
 import * as path from 'path';
 import { PecuniaryStackProps } from './PecuniaryStackProps';
-import { SnsAction } from '@aws-cdk/aws-cloudwatch-actions';
+import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
 
 dotenv.config();
 
@@ -72,6 +73,8 @@ export class PecuniaryStack extends Stack {
       accountRecovery: AccountRecovery.EMAIL_ONLY,
       userVerification: {
         emailStyle: VerificationEmailStyle.LINK,
+        emailSubject: 'Pecuniary - Verify your new account',
+        emailBody: VERIFICATION_EMAIL_TEMPLATE,
       },
       autoVerify: {
         email: true,
