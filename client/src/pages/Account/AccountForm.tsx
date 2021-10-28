@@ -183,6 +183,7 @@ const AccountForm = (props: any) => {
             initialValues={{ name: '', accountType: '', description: '' }}
             onSubmit={(values, actions) => {
               createUpdateAccount(values.name, values.accountType, values.description);
+              actions.setSubmitting(false);
             }}
             validationSchema={Yup.object().shape({
               name: Yup.string().required('Please enter an Account name'),

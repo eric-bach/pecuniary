@@ -1,12 +1,13 @@
 import { Stack, Construct, CfnOutput, Expiration, Duration, RemovalPolicy } from '@aws-cdk/core';
 import * as ssm from '@aws-cdk/aws-ssm';
-import { PolicyStatement, Effect } from '@aws-cdk/aws-iam';
+import { PolicyStatement, Policy, Effect } from '@aws-cdk/aws-iam';
 import {
   UserPool,
   CfnUserPoolGroup,
   UserPoolClient,
   AccountRecovery,
   VerificationEmailStyle,
+  UserPoolDomain,
 } from '@aws-cdk/aws-cognito';
 import { Topic } from '@aws-cdk/aws-sns';
 import { EmailSubscription } from '@aws-cdk/aws-sns-subscriptions';
@@ -18,11 +19,12 @@ import { Function, Runtime, Code, StartingPosition } from '@aws-cdk/aws-lambda';
 import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { Rule, EventBus } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
+import { SnsAction } from '@aws-cdk/aws-cloudwatch-actions';
 
 const dotenv = require('dotenv');
 import * as path from 'path';
 import { PecuniaryStackProps } from './PecuniaryStackProps';
-import { SnsAction } from '@aws-cdk/aws-cloudwatch-actions';
+import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
 
 dotenv.config();
 
@@ -44,6 +46,23 @@ export class PecuniaryStack extends Stack {
     });
 
     /***
+     *** AWS Lambda - Cognito post-confirmation trigger
+     ***/
+
+    // AWS Cognito post-confirmation lambda function
+    const cognitoPostConfirmationTrigger = new Function(this, 'CognitoPostConfirmationTrigger', {
+      runtime: Runtime.NODEJS_14_X,
+      functionName: `${props.appName}-cognitoPostConfirmationTrigger`,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoPostConfirmation')),
+      memorySize: 256,
+      timeout: Duration.seconds(10),
+      environment: {
+        REGION: REGION,
+      },
+    });
+
+    /***
      *** AWS Cognito
      ***/
 
@@ -53,7 +72,9 @@ export class PecuniaryStack extends Stack {
       selfSignUpEnabled: true,
       accountRecovery: AccountRecovery.EMAIL_ONLY,
       userVerification: {
-        emailStyle: VerificationEmailStyle.CODE,
+        emailStyle: VerificationEmailStyle.LINK,
+        emailSubject: 'Pecuniary - Verify your new account',
+        emailBody: VERIFICATION_EMAIL_TEMPLATE,
       },
       autoVerify: {
         email: true,
@@ -68,13 +89,25 @@ export class PecuniaryStack extends Stack {
           mutable: true,
         },
       },
+      lambdaTriggers: {
+        postConfirmation: cognitoPostConfirmationTrigger,
+      },
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
+    // Cognito user pool group
     const usersGroup = new CfnUserPoolGroup(this, 'PecuniaryUserGroup', {
       userPoolId: userPool.userPoolId,
       groupName: 'Users',
       description: 'Pecuniary Users',
+    });
+
+    // Cognito user pool domain
+    const userPoolDomain = new UserPoolDomain(this, 'PecuniaryUserPoolDomain', {
+      userPool: userPool,
+      cognitoDomain: {
+        domainPrefix: props.appName,
+      },
     });
 
     // Cognito user client
@@ -82,6 +115,18 @@ export class PecuniaryStack extends Stack {
       userPoolClientName: `${props.appName}_user_client`,
       userPool,
     });
+
+    // Add permissions to add user to Cognito User Pool
+    cognitoPostConfirmationTrigger.role!.attachInlinePolicy(
+      new Policy(this, 'userpool-policy', {
+        statements: [
+          new PolicyStatement({
+            actions: ['cognito-idp:AdminAddUserToGroup'],
+            resources: [userPool.userPoolArn],
+          }),
+        ],
+      })
+    );
 
     /***
      *** AWS SQS - Dead letter Queues
@@ -825,6 +870,7 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
 
     // Lambda functions
+    new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
     new CfnOutput(this, 'CommandHandlerFunctionArn', { value: commandHandlerFunction.functionArn });
     new CfnOutput(this, 'EventBusFunctionArn', { value: eventBusFunction.functionArn });
     new CfnOutput(this, 'AccountCreatedEventFunctionArn', { value: createAccountFunction.functionArn });
