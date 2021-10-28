@@ -7,10 +7,10 @@ type AppSyncEvent = {
     fieldName: string;
   };
   arguments: {
-    event: Event;
     input: Position;
     filter: Filter;
 
+    event: Event;
     userId: string; //getAccountsByUserId
     aggregateId: string; //getAccountByAggregateId
   };
