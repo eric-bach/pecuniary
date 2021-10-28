@@ -19,7 +19,6 @@
 </p>
 
 <p align="center">
-  <a href="diagrams">Diagrams</a> |
   <a href="ARCHITECTURE.md">Architecture</a> |
   <a href="#getting-started">Getting Started</a> |
   <a href="#deployment">Development</a> |
