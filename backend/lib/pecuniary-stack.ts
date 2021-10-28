@@ -55,8 +55,8 @@ export class PecuniaryStack extends Stack {
       functionName: `${props.appName}-cognitoPostConfirmationTrigger`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoPostConfirmation')),
-      memorySize: 256,
-      timeout: Duration.seconds(10),
+      memorySize: 768,
+      timeout: Duration.seconds(5),
       environment: {
         REGION: REGION,
       },
@@ -381,7 +381,7 @@ export class PecuniaryStack extends Stack {
       runtime: Runtime.NODEJS_14_X,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'commandHandler')),
-      memorySize: 704,
+      memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
         EVENT_TABLE_NAME: eventTable.tableName,
@@ -438,7 +438,7 @@ export class PecuniaryStack extends Stack {
       functionName: `${props.appName}-EventBus`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'eventBus')),
-      memorySize: 704,
+      memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
@@ -486,7 +486,7 @@ export class PecuniaryStack extends Stack {
       functionName: `${props.appName}-createAccount`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createAccount')),
-      memorySize: 256,
+      memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
         ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
@@ -508,7 +508,7 @@ export class PecuniaryStack extends Stack {
       functionName: `${props.appName}-updateAccount`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateAccount')),
-      memorySize: 256,
+      memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
         ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
@@ -530,7 +530,7 @@ export class PecuniaryStack extends Stack {
       functionName: `${props.appName}-deleteAccount`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'deleteAccount')),
-      memorySize: 256,
+      memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
         ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
@@ -558,7 +558,7 @@ export class PecuniaryStack extends Stack {
       functionName: `${props.appName}-createTransaction`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createTransaction')),
-      memorySize: 256,
+      memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
@@ -589,7 +589,7 @@ export class PecuniaryStack extends Stack {
       functionName: `${props.appName}-updateTransaction`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateTransaction')),
-      memorySize: 256,
+      memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
@@ -620,7 +620,7 @@ export class PecuniaryStack extends Stack {
       functionName: `${props.appName}-deleteTransaction`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'deleteTransaction')),
-      memorySize: 256,
+      memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
@@ -651,7 +651,7 @@ export class PecuniaryStack extends Stack {
       functionName: `${props.appName}-createUpdatePosition`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createUpdatePosition')),
-      memorySize: 768,
+      memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
         TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
