@@ -46,15 +46,15 @@ export class PecuniaryStack extends Stack {
     });
 
     /***
-     *** AWS Lambda
+     *** AWS Lambda - Cognito post-confirmation trigger
      ***/
 
     // AWS Cognito post-confirmation lambda function
-    const cognitoHandlerFunction = new Function(this, 'CognitoHandler', {
+    const cognitoPostConfirmationTrigger = new Function(this, 'CognitoPostConfirmationTrigger', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-cognitoHandler`,
+      functionName: `${props.appName}-cognitoPostConfirmationTrigger`,
       handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoHandler')),
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoPostConfirmation')),
       memorySize: 256,
       timeout: Duration.seconds(10),
       environment: {
@@ -90,7 +90,7 @@ export class PecuniaryStack extends Stack {
         },
       },
       lambdaTriggers: {
-        postConfirmation: cognitoHandlerFunction,
+        postConfirmation: cognitoPostConfirmationTrigger,
       },
       removalPolicy: RemovalPolicy.DESTROY,
     });
@@ -117,7 +117,7 @@ export class PecuniaryStack extends Stack {
     });
 
     // Add permissions to add user to Cognito User Pool
-    cognitoHandlerFunction.role!.attachInlinePolicy(
+    cognitoPostConfirmationTrigger.role!.attachInlinePolicy(
       new Policy(this, 'userpool-policy', {
         statements: [
           new PolicyStatement({
@@ -870,7 +870,7 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
 
     // Lambda functions
-    new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoHandlerFunction.functionArn });
+    new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
     new CfnOutput(this, 'CommandHandlerFunctionArn', { value: commandHandlerFunction.functionArn });
     new CfnOutput(this, 'EventBusFunctionArn', { value: eventBusFunction.functionArn });
     new CfnOutput(this, 'AccountCreatedEventFunctionArn', { value: createAccountFunction.functionArn });
