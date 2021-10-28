@@ -5,7 +5,6 @@ import Home from './Home';
 import HomePage from './pages/Home/HomePage';
 import Signup from './pages/Auth/Signup';
 import Login from './pages/Auth/Login';
-import Verify from './pages/Auth/Verify';
 import Accounts from './pages/Account/Accounts';
 import AccountForm from './pages/Account/AccountForm';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -25,7 +24,6 @@ function App() {
 
         <Route exact path='/login' component={Login} />
         <Route exact path='/signup' component={Signup} />
-        <Route exact path='/verify' component={Verify} />
         <Container className='main' style={{ paddingTop: '30px' }}>
           <ProtectedRoute exact path='/home' component={HomePage} />
           <ProtectedRoute exact path='/accounts' component={Accounts} />
