@@ -71,6 +71,10 @@ This quick start guide describes how to get the application running. An `AWS acc
    $ npm start
    ```
 
+# Event Sourcing and CQRS Architecture
+
+For more detailed information about the event-driven nature of the Pecuniary application and it's architecture, please see the [Architecture.md](ARCHITECTURE.md)
+
 # Deployment
 
 ## Deployment with CDK CLI
