@@ -144,7 +144,7 @@ These EventBridge events are subscribed to by various event handler `AWS Lambda`
     "N": "0"
   },
   "userId": {
-    "S": "ebach83@gmail.com"
+    "S": "epicuser"
   },
   "updatedAt": {
     "S": "2021-10-27T22:18:28.980Z"
