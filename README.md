@@ -6,13 +6,6 @@
 </h1>
 
 <p align="center">
-  <a href="diagrams">Diagrams</a> |
-  <a href="ARCHITECTURE.md">Architecture</a> |
-  <a href="#getting-started">Getting Started</a> |
-  <a href="#environment-setup">Development</a>
-</p>
-
-<p align="center">
   <a href="https://gitter.im/pecuniary/community">
     <img src="https://img.shields.io/gitter/room/pecuniary/community" alt="Gitter"/>
   </a>
@@ -25,6 +18,13 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="ARCHITECTURE.md">Architecture</a> |
+  <a href="#getting-started">Getting Started</a> |
+  <a href="#deployment">Development</a> |
+  <a href="#project-resources">Resources</a>
+</p>
+
 <h3 align="center">
   Built with event sourcing and CQRS
 </h3>
@@ -35,17 +35,15 @@
 
 ![Top Level](diagrams/toplevel.jpg)
 
-# Roadmap
-
-Please see the [Trello board](https://trello.com/b/7lA2gwTs/pecuniary)
-
 # Getting Started
+
+This quick start guide describes how to get the application running. An `AWS account` is required to deploy the infrastructure required for this project.
 
 1. Clone project and install dependencies
 
    ```bash
-   $ git clone https://github.com/eric-bach/pecuniary-v3.git
-   $ cd pecuniary-v3
+   $ git clone https://github.com/eric-bach/pecuniary.git
+   $ cd pecuniary
    $ cd backend && npm install
    $ cd ../client && npm install
    ```
@@ -54,89 +52,82 @@ Please see the [Trello board](https://trello.com/b/7lA2gwTs/pecuniary)
 
    ```
    # Deploy CDK
-   cmd.exe /c cdk deploy --profile AWS_PROFILE pecuniary-dev
+   $ cmd.exe /c cdk deploy --profile AWS_PROFILE pecuniary-dev
    ```
 
 3. Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values:
 
-   a. DLQ_NOTIFICATIONS - email address to send failed event message notifications to
+   - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
+   - `ALPHA_VANTAGE_API_KEY` - AlphaVantage API key to lookup quotes (sign up for one [here](https://www.alphavantage.co))
 
-   b. ALPHA_VANTAGE_API_KEY - AlphaVantage API key to lookup quotes
+4. Copy the `./client/.env.example` file to `./client/.env` and fill in the parameter values from the CDK stack outputs in step 2:
 
-4. Start the project
+   - `REACT_APP_COGNITO_USER_POOL_ID` - AWS Cognito User Pool Id created in step 2
+   - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
+
+5. Start the client locally on http://localhost:3000/
 
    ```bash
    $ npm start
    ```
 
-5. Run the app
+# Event Sourcing and CQRS Architecture
 
-   ```bash
-   http://localhost:3000/
-   ```
+For more detailed information about the event-driven nature of the Pecuniary application and it's architecture, please see the [Architecture.md](ARCHITECTURE.md)
 
 # Deployment
 
 ## Deployment with CDK CLI
 
-The Pecuniary application consists of the CDK backend and CDK frontend, each of which has an independent method of deploying.
+The Pecuniary application consists of the CDK backend and React frontend, each of which has an independent method of deploying.
 
-### Deploy backend via script
+### Deploy backend via CDK script
 
-1. Ensure AWS credentials are up to date. If using AWS SSO, generate new temporary credentials
-
-   ```
-   aws sso login
-   ```
-
-2. Navigate to `backend` folder
-
-   ```
-   $ cd backend
-   ```
-
-3. Deploy CDK stack
-   ```
-   $ ./deploy-cdk.ps1
-   ```
-
-### Deploy backend via CLI
-
-1. Bootstrap CDK (one-time)
+1. Bootstrap CDK (one-time only)
 
    ```
    $ cdk bootstrap aws://ACCOUNT/us-east-1 --profile PROFILE_NAME
    ```
 
-2. Navigate to `backend` folder
+2. Ensure AWS credentials are up to date. If using AWS SSO, authorize a set of temporary credentials
 
+   ```bash
+   aws sso login
    ```
+
+3. Navigate to the `backend` folder
+
+   ```bash
    $ cd backend
    ```
 
-3. Deploy CDK stack
-   ```
-   $ cdk deploy --profile PROFILE_NAME pecuniary-dev
+4. Deploy CDK stack using the bootstrap PowerShell script. Alternatively you may run the individual commands within this script manually. This script includes the necessary scaffolding to initialize some lookup data in the DynamoDB database required for the application to run.
+
+   ```bash
+   $ ./deploy-cdk.ps1
    ```
 
 ### Deploy frontend
 
 1. Navigate to `client` folder
 
-   ```
+   ```bash
    $ cd client
    ```
 
 2. Deploy CDK stack
-   ```
-   TBA
+
+   ```bash
+   TBA - To be added
    ```
 
 ## Deployment with CodePipeline (optional)
 
-- See [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-v3/blob/main/README.md)
+To deploy the Pecuniary application using a CDK pipeline see the following repository to setup the pipeline: [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-pipeline/blob/main/README.md)
 
 # Projects References
+
+Links to additional documentation specific to the Application
 
 ## AppSync
 
@@ -145,6 +136,8 @@ The Pecuniary application consists of the CDK backend and CDK frontend, each of 
 - [How to call an authenticated AppSync GraphQL API with Apollo Client](docs/ApolloClient.md)
 
 # Resources
+
+Various links to additional articles/tutorials used to build this application.
 
 ## AppSync
 
