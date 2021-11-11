@@ -7,6 +7,7 @@ import Signup from './pages/Auth/Signup';
 import Login from './pages/Auth/Login';
 import Accounts from './pages/Account/Accounts';
 import AccountForm from './pages/Account/AccountForm';
+import AccountDetail from './pages/Account/AccountDetail';
 import ProtectedRoute from './components/ProtectedRoute';
 import { User } from './pages/Auth/User';
 import NavBar from './components/Nav/NavBar';
@@ -28,6 +29,7 @@ function App() {
           <ProtectedRoute exact path='/home' component={HomePage} />
           <ProtectedRoute exact path='/accounts' component={Accounts} />
           <ProtectedRoute path={['/accounts/new', '/accounts/edit/:id']} component={AccountForm} />
+          <ProtectedRoute path={['/accounts/view/:id']} component={AccountDetail} />
         </Container>
       </User>
     </BrowserRouter>
