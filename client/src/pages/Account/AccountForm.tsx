@@ -156,7 +156,7 @@ const AccountForm = (props: any) => {
         },
       };
 
-      console.log('[ACCOUNT FORM] Updaing Account with values: ', params);
+      console.log('[ACCOUNT FORM] Updating Account with values: ', params);
 
       updateAccountMutation({
         variables: params,
@@ -180,7 +180,12 @@ const AccountForm = (props: any) => {
         <Segment>
           <Header sub color='teal' content='Account Details' />
           <Formik
-            initialValues={{ name: '', accountType: '', description: '' }}
+            enableReinitialize
+            initialValues={{
+              name: account.getAccountByAggregateId.name,
+              accountType: account.getAccountByAggregateId.accountType.description,
+              description: account.getAccountByAggregateId.description,
+            }}
             onSubmit={(values, actions) => {
               createUpdateAccount(values.name, values.accountType, values.description);
               actions.setSubmitting(false);
