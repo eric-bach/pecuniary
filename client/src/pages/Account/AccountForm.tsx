@@ -182,9 +182,11 @@ const AccountForm = (props: any) => {
           <Formik
             enableReinitialize
             initialValues={{
-              name: account.getAccountByAggregateId.name,
-              accountType: account.getAccountByAggregateId.accountType.description,
-              description: account.getAccountByAggregateId.description,
+              name: account.getAccountByAggregateId ? account.getAccountByAggregateId.name : '',
+              accountType: account.getAccountByAggregateId
+                ? account.getAccountByAggregateId.accountType.description
+                : '',
+              description: account.getAccountByAggregateId ? account.getAccountByAggregateId.description : '',
             }}
             onSubmit={(values, actions) => {
               createUpdateAccount(values.name, values.accountType, values.description);
