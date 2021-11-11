@@ -100,7 +100,12 @@ const AccountSummary = (account: AccountReadModel) => {
                   />
                   <Button
                     as={Link}
-                    to={`/accounts/edit/${account.aggregateId}`}
+                    to={{
+                      pathname: `/accounts/edit/${account.aggregateId}`,
+                      state: {
+                        account: account,
+                      },
+                    }}
                     color='blue'
                     floated='right'
                     content='Edit'

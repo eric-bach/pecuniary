@@ -15,25 +15,6 @@ type SelectList = {
   value: string;
 };
 
-const GET_ACCOUNT_BY_AGGREGATE_ID = gql`
-  query GetAccountByAggregateId($aggregateId: ID!) {
-    getAccountByAggregateId(aggregateId: $aggregateId) {
-      id
-      aggregateId
-      name
-      description
-      version
-      bookValue
-      marketValue
-      accountType {
-        id
-        name
-        description
-      }
-    }
-  }
-`;
-
 const LIST_ACCOUNT_TYPES = gql`
   query ListAccountTypes {
     listAccountTypes {
@@ -73,14 +54,10 @@ const UPDATE_ACCOUNT = gql`
 
 const AccountForm = (props: any) => {
   const [aggregateId] = useState(props.match.params.id !== undefined ? props.match.params.id : '');
+  const [account] = useState(props.location.state ? props.location.state.account : '');
   const [username, setUsername] = useState('');
 
   const { data: accountTypes, error: accountTypesError, loading: accountTypesLoading } = useQuery(LIST_ACCOUNT_TYPES);
-  const {
-    data: account,
-    error: accountError,
-    loading: accountLoading,
-  } = useQuery(GET_ACCOUNT_BY_AGGREGATE_ID, { variables: { aggregateId: aggregateId } });
 
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
   const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
@@ -98,8 +75,8 @@ const AccountForm = (props: any) => {
     });
   }, [aggregateId, getSession]);
 
-  if (accountTypesError || accountError) return 'Error!'; // You probably want to do more here!
-  if (accountTypesLoading || accountLoading) return <Loading />;
+  if (accountTypesError) return 'Error!'; // You probably want to do more here!
+  if (accountTypesLoading) return <Loading />;
 
   const accountTypesList: SelectList[] = [];
   accountTypes.listAccountTypes.map((d: any) => {
@@ -147,10 +124,10 @@ const AccountForm = (props: any) => {
 
       const params = {
         updateAccountInput: {
-          aggregateId: account.getAccountByAggregateId.aggregateId,
+          aggregateId: account.aggregateId,
           name: 'AccountUpdatedEvent',
-          data: `{"id":"${account.getAccountByAggregateId.id}","name":"${name}","description":"${description}","bookValue":${account.getAccountByAggregateId.bookValue},"marketValue":${account.getAccountByAggregateId.marketValue},"accountType":{"id":"${selectedAccountType.key}","name":"${selectedAccountType.text}","description":"${selectedAccountType.value}"}}`,
-          version: account.getAccountByAggregateId.version + 1,
+          data: `{"id":"${account.id}","name":"${name}","description":"${description}","bookValue":${account.bookValue},"marketValue":${account.marketValue},"accountType":{"id":"${selectedAccountType.key}","name":"${selectedAccountType.text}","description":"${selectedAccountType.value}"}}`,
+          version: account.version + 1,
           userId: `${username}`,
           createdAt: new Date(),
         },
@@ -182,11 +159,9 @@ const AccountForm = (props: any) => {
           <Formik
             enableReinitialize
             initialValues={{
-              name: account.getAccountByAggregateId ? account.getAccountByAggregateId.name : '',
-              accountType: account.getAccountByAggregateId
-                ? account.getAccountByAggregateId.accountType.description
-                : '',
-              description: account.getAccountByAggregateId ? account.getAccountByAggregateId.description : '',
+              name: account ? account.name : '',
+              accountType: account ? account.accountType.description : '',
+              description: account ? account.description : '',
             }}
             onSubmit={(values, actions) => {
               createUpdateAccount(values.name, values.accountType, values.description);
