@@ -386,6 +386,7 @@ export class PecuniaryStack extends Stack {
       environment: {
         EVENT_TABLE_NAME: eventTable.tableName,
         ACCOUNT_TYPE_TABLE_NAME: accountTypeTable.tableName,
+        TRANSACTION_TYPE_TABLE_NAME: transactionTypeTable.tableName,
         ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
       },
       deadLetterQueue: commandHandlerQueue,
@@ -412,6 +413,11 @@ export class PecuniaryStack extends Stack {
     lambdaDataSource.createResolver({
       typeName: 'Query',
       fieldName: 'listAccountTypes',
+    });
+
+    lambdaDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'listTransactionTypes',
     });
 
     lambdaDataSource.createResolver({
@@ -473,6 +479,7 @@ export class PecuniaryStack extends Stack {
     // Enable the Lambda function to access the DynamoDB table (using IAM)
     eventTable.grantFullAccess(commandHandlerFunction);
     accountTypeTable.grantReadData(commandHandlerFunction);
+    transactionTypeTable.grantReadData(commandHandlerFunction);
     accountReadModelTable.grantFullAccess(commandHandlerFunction);
     transactionReadModelTable.grantFullAccess(commandHandlerFunction);
     positionReadModelTable.grantFullAccess(commandHandlerFunction);

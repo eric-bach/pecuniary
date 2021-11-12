@@ -17,21 +17,21 @@ type AccountType @model @aws_api_key @aws_cognito_user_pools {
   accounts: [AccountReadModel]! @connection(name: "AccountType")
 }
 
-type TransactionType @model {
+type TransactionType @model @aws_api_key @aws_cognito_user_pools {
   id: ID!
   name: String!
   description: String!
   transactions: [TransactionReadModel] @connection(name: "TransactionTypes")
 }
 
-type CurrencyType @model {
+type CurrencyType @model @aws_api_key @aws_cognito_user_pools {
   id: ID!
   name: String!
   description: String!
   exchangeTypes: [ExchangeType]! @connection(name: "ExchangeCurrencyTypes")
 }
 
-type ExchangeType @model {
+type ExchangeType @model @aws_api_key @aws_cognito_user_pools {
   id: ID!
   name: String!
   description: String!
@@ -94,7 +94,7 @@ type PositionReadModel @model @aws_api_key @aws_cognito_user_pools {
   positionReadModelAccountId: ID!
 }
 
-type TimeSeries @model @aws_api_key {
+type TimeSeries @model @aws_api_key @aws_cognito_user_pools {
   id: ID!
   symbol: String!
   date: AWSDate!
@@ -214,7 +214,9 @@ type Query {
 
   getAccountByAggregateId(aggregateId: ID!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAccountsByUser(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
+
   listAccountTypes: [AccountType] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  listTransactionTypes: [TransactionType] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {
