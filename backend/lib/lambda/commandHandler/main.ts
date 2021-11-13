@@ -4,6 +4,7 @@ import listEvents from './listEvents';
 import getAccountByAggregateId from './getAccountByAggregateId';
 import getAccountsByUser from './getAccountsByUser';
 import listAccountTypes from './listAccountTypes';
+import listTransactionTypes from './listTransactionTypes';
 
 import AppSyncEvent from './types/AppSyncEvent';
 
@@ -16,6 +17,13 @@ exports.handler = async (event: AppSyncEvent) => {
     case 'listEvents':
       console.debug(`🔔 ListEvents`);
       return await listEvents();
+    case 'listAccountTypes':
+      console.debug(`🔔 ListAccountTypes`);
+      return await listAccountTypes();
+    case 'listTransactionTypes':
+      console.debug(`🔔 ListTransactionTypes`);
+      return await listTransactionTypes();
+
     case 'getAccountByAggregateId':
       console.debug(`🔔 GetAccount: ${JSON.stringify(event.arguments.aggregateId)}`);
       return await getAccountByAggregateId(event.arguments.aggregateId);
@@ -23,9 +31,6 @@ exports.handler = async (event: AppSyncEvent) => {
     case 'getAccountsByUser':
       console.debug(`🔔 GetAccountsByUser: ${JSON.stringify(event.arguments.userId)}`);
       return await getAccountsByUser(event.arguments.userId);
-    case 'listAccountTypes':
-      console.debug(`🔔 ListAccountTypes`);
-      return await listAccountTypes();
 
     // Mutations
     case 'createEvent':
