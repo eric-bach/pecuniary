@@ -3,6 +3,8 @@ import createEvent from './createEvent';
 import listEvents from './listEvents';
 import getAccountByAggregateId from './getAccountByAggregateId';
 import getAccountsByUser from './getAccountsByUser';
+import getPositionsByAccountId from './getPositionsByAccountId';
+import getTransactionsByAccountId from './getTransactionsByAccountId';
 import listAccountTypes from './listAccountTypes';
 import listTransactionTypes from './listTransactionTypes';
 
@@ -27,10 +29,15 @@ exports.handler = async (event: AppSyncEvent) => {
     case 'getAccountByAggregateId':
       console.debug(`🔔 GetAccount: ${JSON.stringify(event.arguments.aggregateId)}`);
       return await getAccountByAggregateId(event.arguments.aggregateId);
-
     case 'getAccountsByUser':
       console.debug(`🔔 GetAccountsByUser: ${JSON.stringify(event.arguments.userId)}`);
       return await getAccountsByUser(event.arguments.userId);
+    case 'getPositionsByAccountId':
+      console.debug(`🔔 GetPositionsByAccountId: ${JSON.stringify(event.arguments.accountId)}`);
+      return await getPositionsByAccountId(event.arguments.accountId);
+    case 'getTransactionsByAccountId':
+      console.debug(`🔔 GetTransactionsByAccountId: ${JSON.stringify(event.arguments.accountId)}`);
+      return await getTransactionsByAccountId(event.arguments.accountId);
 
     // Mutations
     case 'createEvent':

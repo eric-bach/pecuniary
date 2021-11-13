@@ -388,6 +388,8 @@ export class PecuniaryStack extends Stack {
         ACCOUNT_TYPE_TABLE_NAME: accountTypeTable.tableName,
         TRANSACTION_TYPE_TABLE_NAME: transactionTypeTable.tableName,
         ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
+        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
+        POSITION_TABLE_NAME: positionReadModelTable.tableName,
       },
       deadLetterQueue: commandHandlerQueue,
     });
@@ -408,6 +410,16 @@ export class PecuniaryStack extends Stack {
     lambdaDataSource.createResolver({
       typeName: 'Query',
       fieldName: 'getAccountsByUser',
+    });
+
+    lambdaDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getPositionsByAccountId',
+    });
+
+    lambdaDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getTransactionsByAccountId',
     });
 
     lambdaDataSource.createResolver({
@@ -481,6 +493,8 @@ export class PecuniaryStack extends Stack {
     accountTypeTable.grantReadData(commandHandlerFunction);
     transactionTypeTable.grantReadData(commandHandlerFunction);
     accountReadModelTable.grantFullAccess(commandHandlerFunction);
+    transactionReadModelTable.grantFullAccess(commandHandlerFunction);
+    positionReadModelTable.grantFullAccess(commandHandlerFunction);
     transactionReadModelTable.grantFullAccess(commandHandlerFunction);
     positionReadModelTable.grantFullAccess(commandHandlerFunction);
     timeSeriesTable.grantFullAccess(commandHandlerFunction);

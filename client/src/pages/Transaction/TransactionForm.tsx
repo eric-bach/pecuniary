@@ -168,7 +168,7 @@ const TransactionForm = (props: any) => {
                     .matches(/[A-Za-z]{2,4}[\S]*/, 'Stock symbol is invalid'),
                   shares: Yup.string()
                     .required('Please enter the number of shares')
-                    .matches(/^[\d]+[\.]*[\d]+$/, 'Number of shares is invalid'),
+                    .matches(/^[\d]+[.]*[\d]+$/, 'Number of shares is invalid'),
                   price: Yup.string()
                     .required('Please enter the share price')
                     .matches(/^\d+(\.\d{1,2})?$/, 'Price is invalid'),

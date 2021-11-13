@@ -214,6 +214,8 @@ type Query {
 
   getAccountByAggregateId(aggregateId: ID!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAccountsByUser(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getTransactionsByAccountId(accountId: ID!): [TransactionReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getPositionsByAccountId(accountId: ID!): [PositionReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   listAccountTypes: [AccountType] @aws_cognito_user_pools(cognito_groups: ["Users"])
   listTransactionTypes: [TransactionType] @aws_cognito_user_pools(cognito_groups: ["Users"])
