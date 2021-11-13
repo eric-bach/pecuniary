@@ -25,8 +25,8 @@ type Transaction = {
   shares: number;
   price: number;
   commission: number;
-  transactionReadModelAccountId: number;
-  transactionReadModelTransactionTypeId: number;
+  accountId: number;
+  transactionTypeId: number;
 };
 type PositionReadModel = {
   id: string;
@@ -139,7 +139,7 @@ async function savePosition(
     bookValue: bookValue,
     marketValue: marketValue,
     lastTransactionDate: lastTransactionDate,
-    positionReadModelAccountId: transactions[0].transactionReadModelAccountId,
+    accountId: transactions[0].accountId,
   };
 
   const putItemCommandInput = {
@@ -171,7 +171,7 @@ function calculateAdjustedCostBase(transactions: Transaction[]) {
   var bookValue = 0;
 
   for (const t of transactions) {
-    const transactionType = t.transactionReadModelTransactionTypeId == 1 ? 'buy' : 'sell';
+    const transactionType = t.transactionTypeId == 1 ? 'buy' : 'sell';
 
     console.debug(`START-${transactionType.toUpperCase()} acb: $${acb} positions: ${positions}`);
 
@@ -321,7 +321,7 @@ function orderByTransactionDate(a: any, b: any): number {
   if (d1 > d2) {
     return 1;
   }
-  if (a.transactionReadModelTransactionTypeId <= b.transactionReadModelTransactionTypeId) {
+  if (a.transactionTypeId <= b.transactionTypeId) {
     return -1;
   }
 

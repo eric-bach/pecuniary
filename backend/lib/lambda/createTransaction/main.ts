@@ -17,8 +17,8 @@ type Transaction = {
   shares: number;
   price: number;
   commission: number;
-  transactionReadModelAccountId: number;
-  transactionReadModelTransactionTypeId: number;
+  accountId: number;
+  transactionTypeId: number;
 };
 
 exports.handler = async (event: EventBridgeEvent<string, Transaction>) => {
@@ -50,8 +50,8 @@ async function createTransactionAsync(detail: Detail, data: Transaction) {
     shares: data.shares,
     price: data.price,
     commission: data.commission,
-    transactionReadModelAccountId: `${data.transactionReadModelAccountId}`,
-    transactionReadModelTransactionTypeId: `${data.transactionReadModelTransactionTypeId}`,
+    accountId: `${data.accountId}`,
+    transactionTypeId: `${data.transactionTypeId}`,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

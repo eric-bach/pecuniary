@@ -7,12 +7,12 @@ async function getPositionsByAccountId(accountId: string) {
   const params: ScanCommandInput = {
     TableName: process.env.POSITION_TABLE_NAME,
     ExpressionAttributeNames: {
-      '#a': 'positionReadModelAccountId',
+      '#a': 'accountId',
     },
     ExpressionAttributeValues: {
-      ':positionReadModelAccountId': { S: accountId },
+      ':accountId': { S: accountId },
     },
-    FilterExpression: '#a = :positionReadModelAccountId',
+    FilterExpression: '#a = :accountId',
   };
 
   try {

@@ -7,12 +7,12 @@ async function getTransactionsByAccountId(accountId: string) {
   const params: ScanCommandInput = {
     TableName: process.env.TRANSACTION_TABLE_NAME,
     ExpressionAttributeNames: {
-      '#a': 'transactionReadModelAccountId',
+      '#a': 'accountId',
     },
     ExpressionAttributeValues: {
-      ':transactionReadModelAccountId': { S: accountId },
+      ':accountId': { S: accountId },
     },
-    FilterExpression: '#a = :transactionReadModelAccountId',
+    FilterExpression: '#a = :accountId',
   };
 
   try {
@@ -25,7 +25,7 @@ async function getTransactionsByAccountId(accountId: string) {
 
     console.log(`✅ getTransactionsByAccountId found: ${JSON.stringify(transactions)}`);
 
-    return transactions ? transactions : {};
+    return transactions ? transactions : [];
   } catch (err) {
     console.error('❌ getTransactionsByAccountId error: ', err);
 
