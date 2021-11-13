@@ -4,7 +4,7 @@ import { Segment, Item, Label, Button } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
 
 const AccountDetail = (props: any) => {
-  const [account, setAcocunt] = useState(props.location.state.account);
+  const [account] = useState(props.location.state.account);
 
   console.log('[ACCOUNT DETAIL] Account: ', account);
 
