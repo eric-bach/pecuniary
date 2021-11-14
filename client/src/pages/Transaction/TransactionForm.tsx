@@ -106,13 +106,14 @@ const TransactionForm = (props: any) => {
       value: '',
     };
 
-    // Convert transactionDate to AWS date format
-    const date = `${values.transactionDate.getFullYear()}-${values.transactionDate.getMonth()}-${values.transactionDate.getDate()}Z`;
+    // Convert transactionDate to AWSDate format
+    const transactionDate = values.transactionDate.toISOString().substring(0, 10) + 'Z';
+
     const params = {
       createTransactionInput: {
-        aggregateId: uuidv4(),
+        aggregateId: account.aggregateId,
         name: 'TransactionCreatedEvent',
-        data: `{ "transactionReadModelAccountId": "${account.id}", "transactionDate": "${date}", "shares": ${values.shares}, "price": ${values.price}, "commission": ${values.commission}, "symbol": "${values.symbol}", "transactionReadModelTransactionTypeId": ${selectedTransactionType.key} }`,
+        data: `{ "accountId": "${account.id}", "transactionDate": "${transactionDate}", "shares": ${values.shares}, "price": ${values.price}, "commission": ${values.commission}, "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
         version: 1,
         userId: `${username}`,
         createdAt: new Date(),
@@ -168,7 +169,7 @@ const TransactionForm = (props: any) => {
                     .matches(/[A-Za-z]{2,4}[\S]*/, 'Stock symbol is invalid'),
                   shares: Yup.string()
                     .required('Please enter the number of shares')
-                    .matches(/^[\d]+[\.]*[\d]+$/, 'Number of shares is invalid'),
+                    .matches(/^[\d]+[.]*[\d]+$/, 'Number of shares is invalid'),
                   price: Yup.string()
                     .required('Please enter the share price')
                     .matches(/^\d+(\.\d{1,2})?$/, 'Price is invalid'),

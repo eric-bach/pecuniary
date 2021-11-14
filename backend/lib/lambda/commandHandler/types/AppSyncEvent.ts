@@ -13,6 +13,7 @@ type AppSyncEvent = {
     event: Event;
     userId: string; //getAccountsByUserId
     aggregateId: string; //getAccountByAggregateId
+    accountId: string; //getTransactionsByAccountId, getPositionsByAccountId
   };
   identity: {
     username: string;

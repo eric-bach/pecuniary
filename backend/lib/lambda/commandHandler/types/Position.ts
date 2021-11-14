@@ -14,7 +14,7 @@ type Position = {
   bookValue: number;
   marketValue: number;
   lastTransactionDate: Date;
-  positionReadModelAccountId: string;
+  accountId: string;
   createdAt: Date;
   updatedAt: Date;
 };

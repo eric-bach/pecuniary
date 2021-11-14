@@ -69,7 +69,8 @@ type TransactionReadModel @model @aws_api_key @aws_cognito_user_pools {
   updatedAt: AWSDateTime!
   account: AccountReadModel! @connection(name: "Transactions")
   transactionType: TransactionType! @connection(name: "TransactionTypes")
-  transactionReadModelAccountId: ID!
+  accountId: ID!
+  transactionTypeId: ID!
 }
 
 type PositionReadModel @model @aws_api_key @aws_cognito_user_pools {
@@ -91,7 +92,7 @@ type PositionReadModel @model @aws_api_key @aws_cognito_user_pools {
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
   account: AccountReadModel! @connection(name: "Positions")
-  positionReadModelAccountId: ID!
+  accountId: ID!
 }
 
 type TimeSeries @model @aws_api_key @aws_cognito_user_pools {
@@ -214,6 +215,8 @@ type Query {
 
   getAccountByAggregateId(aggregateId: ID!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAccountsByUser(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getTransactionsByAccountId(accountId: ID!): [TransactionReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getPositionsByAccountId(accountId: ID!): [PositionReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   listAccountTypes: [AccountType] @aws_cognito_user_pools(cognito_groups: ["Users"])
   listTransactionTypes: [TransactionType] @aws_cognito_user_pools(cognito_groups: ["Users"])

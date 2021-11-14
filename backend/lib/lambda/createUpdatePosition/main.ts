@@ -17,6 +17,11 @@ type Detail = {
   version: number;
   userId: string;
 };
+type TransactionType = {
+  id: string;
+  name: string;
+  description: string;
+};
 type Transaction = {
   id: string;
   name: string;
@@ -25,8 +30,8 @@ type Transaction = {
   shares: number;
   price: number;
   commission: number;
-  transactionReadModelAccountId: number;
-  transactionReadModelTransactionTypeId: number;
+  accountId: number;
+  transactionType: TransactionType;
 };
 type PositionReadModel = {
   id: string;
@@ -139,7 +144,7 @@ async function savePosition(
     bookValue: bookValue,
     marketValue: marketValue,
     lastTransactionDate: lastTransactionDate,
-    positionReadModelAccountId: transactions[0].transactionReadModelAccountId,
+    accountId: transactions[0].accountId,
   };
 
   const putItemCommandInput = {
@@ -171,9 +176,9 @@ function calculateAdjustedCostBase(transactions: Transaction[]) {
   var bookValue = 0;
 
   for (const t of transactions) {
-    const transactionType = t.transactionReadModelTransactionTypeId == 1 ? 'buy' : 'sell';
+    const transactionType = t.transactionType.name.toUpperCase();
 
-    console.debug(`START-${transactionType.toUpperCase()} acb: $${acb} positions: ${positions}`);
+    console.debug(`START-${transactionType} acb: $${acb} positions: ${positions}`);
 
     if (transactionType.localeCompare('buy', undefined, { sensitivity: 'base' }) === 0) {
       // BUY:  acb = prevAcb + (shares * price + commission)
@@ -189,7 +194,7 @@ function calculateAdjustedCostBase(transactions: Transaction[]) {
       bookValue = bookValue - (t.shares * t.price - t.commission);
     }
 
-    console.debug(`END-${transactionType.toUpperCase()} acb: $${acb} positions: ${positions}`);
+    console.debug(`END-${transactionType} acb: $${acb} positions: ${positions}`);
   }
 
   return { positions, acb, bookValue };
@@ -321,7 +326,7 @@ function orderByTransactionDate(a: any, b: any): number {
   if (d1 > d2) {
     return 1;
   }
-  if (a.transactionReadModelTransactionTypeId <= b.transactionReadModelTransactionTypeId) {
+  if (a.transactionType.id <= b.transactionType.id) {
     return -1;
   }
 

@@ -9,6 +9,11 @@ type Detail = {
   version: number;
   userId: string;
 };
+type TransactionType = {
+  id: string;
+  name: string;
+  description: string;
+};
 type Transaction = {
   id: string;
   transactionDate: Date;
@@ -16,8 +21,8 @@ type Transaction = {
   shares: number;
   price: number;
   commission: number;
-  transactionReadModelAccountId: number;
-  transactionReadModelTransactionTypeId: number;
+  accountId: number;
+  transactionType: TransactionType;
 };
 
 exports.handler = async (event: EventBridgeEvent<string, Transaction>) => {
@@ -41,7 +46,7 @@ async function updateTransactionAsync(detail: Detail, data: Transaction) {
       id: data.id,
     }),
     UpdateExpression:
-      'SET version=:version, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, transactionReadModelTransactionTypeId=:transactionTypeId',
+      'SET version=:version, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, transactionTypeId=:transactionTypeId',
     ExpressionAttributeValues: marshall({
       ':version': detail.version,
       ':transactionDate': data.transactionDate,
@@ -49,7 +54,7 @@ async function updateTransactionAsync(detail: Detail, data: Transaction) {
       ':shares': data.shares,
       ':price': data.price,
       ':commission': data.commission,
-      ':transactionTypeId': `${data.transactionReadModelTransactionTypeId}`,
+      ':transactionType': `${data.transactionType}`,
     }),
     ReturnValues: 'ALL_NEW',
   };

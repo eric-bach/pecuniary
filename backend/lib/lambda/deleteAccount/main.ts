@@ -43,7 +43,7 @@ async function deletePositionsAsync(detail: Detail, data: Account) {
       ':u': { S: detail.userId },
       ':a': { S: data.id },
     },
-    FilterExpression: 'positionReadModelAccountId = :a AND userId = :u',
+    FilterExpression: 'accountId = :a AND userId = :u',
   };
   var result = await dynamoDbCommand(new ScanCommand(input));
 
@@ -79,7 +79,7 @@ async function deleteTransactionsAsync(detail: Detail, data: Account) {
       ':u': { S: detail.userId },
       ':t': { S: data.id },
     },
-    FilterExpression: 'transactionReadModelAccountId = :t AND userId = :u',
+    FilterExpression: 'accountId = :t AND userId = :u',
   };
   var result = await dynamoDbCommand(new ScanCommand(input));
 
