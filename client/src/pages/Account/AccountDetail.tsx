@@ -2,11 +2,81 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Item, Label, Button } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
+import { useQuery, gql } from '@apollo/client';
+
+import Positions from '../Position/Positions';
+import Loading from '../../components/Loading';
+import TransactionList from '../Transaction/TransactionList';
+
+const GET_POSITIONS_BY_ACCOUNT = gql`
+  query getPositionsByAccountId($accountId: ID!) {
+    getPositionsByAccountId(accountId: $accountId) {
+      id
+      aggregateId
+      version
+      symbol
+      exchange
+      country
+      name
+      description
+      shares
+      acb
+      bookValue
+      marketValue
+    }
+  }
+`;
+const GET_TRANSACTIONS_BY_ACCOUNT = gql`
+  query getTransactionsByAccountId($accountId: ID!) {
+    getTransactionsByAccountId(accountId: $accountId) {
+      id
+      aggregateId
+      version
+      transactionDate
+      transactionType {
+        id
+        name
+        description
+      }
+      symbol
+      shares
+      price
+      commission
+
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
 const AccountDetail = (props: any) => {
   const [account] = useState(props.location.state.account);
 
   console.log('[ACCOUNT DETAIL] Account: ', account);
+
+  const {
+    data: pos,
+    error: posError,
+    loading: posLoading,
+  } = useQuery(GET_POSITIONS_BY_ACCOUNT, {
+    variables: { accountId: account.id },
+    fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
+  });
+  const {
+    data: trans,
+    error: transError,
+    loading: transLoading,
+  } = useQuery(GET_TRANSACTIONS_BY_ACCOUNT, {
+    variables: { accountId: account.id },
+    fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
+  });
+
+  // TODO Improve these loading screens
+  if (posError || transError) return 'Error!'; // You probably want to do more here!
+  if (posLoading || transLoading) return <Loading />;
+
+  console.log('[ACCOUNT DETAIL] Positions: ', pos);
+  console.log('[ACCOUNT DETAIL] Transactions: ', trans);
 
   return (
     <>
@@ -42,7 +112,8 @@ const AccountDetail = (props: any) => {
         </Segment>
       </Segment.Group>
       <div>Graph</div>
-      <div>Positions</div>
+      <Positions positions={pos.getPositionsByAccountId} />
+      <br />
       <Button
         as={Link}
         to={{
@@ -56,7 +127,7 @@ const AccountDetail = (props: any) => {
         content='Add Transaction'
         data-test='add-transaction-button'
       />
-      <div>Transactions</div>
+      <TransactionList transactions={trans.getTransactionsByAccountId} />
     </>
   );
 };

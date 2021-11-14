@@ -111,7 +111,7 @@ const TransactionForm = (props: any) => {
 
     const params = {
       createTransactionInput: {
-        aggregateId: uuidv4(),
+        aggregateId: account.aggregateId,
         name: 'TransactionCreatedEvent',
         data: `{ "accountId": "${account.id}", "transactionDate": "${transactionDate}", "shares": ${values.shares}, "price": ${values.price}, "commission": ${values.commission}, "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
         version: 1,
