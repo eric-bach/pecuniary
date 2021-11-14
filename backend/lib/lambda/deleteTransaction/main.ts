@@ -17,7 +17,6 @@ type Transaction = {
   price: number;
   commission: number;
   accountId: number;
-  transactionTypeId: number;
 };
 
 exports.handler = async (event: EventBridgeEvent<string, Transaction>) => {

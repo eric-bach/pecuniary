@@ -169,7 +169,7 @@ mutation DeleteTransaction($deleteTransactionInput: CreateEventInput!) {
         "aggregateId": "1",
         "name": "TransactionCreatedEvent",
         "version": 1,
-        "data": "{\"accountId\":\"71b48a39-2c9a-4b3a-aa0f-a5ed50c559b9\",\"transactionDate\":\"2021-08-31Z\",\"shares\":100,\"price\":80.00,\"commission\":4.50,\"symbol\":\"BMO.TO\",\"transactionTypeId\":1}",
+        "data": "{\"accountId\":\"71b48a39-2c9a-4b3a-aa0f-a5ed50c559b9\",\"transactionDate\":\"2021-08-31Z\",\"shares\":100,\"price\":80.00,\"commission\":4.50,\"symbol\":\"BMO.TO\",\"transactionType\":{\"id\":1,\"name\":\"Buy\",\"description\":\"Buy\"}}",
         "userId": "eric",
         "createdAt": "2020-02-18T00:00:00Z"
   },
@@ -177,7 +177,7 @@ mutation DeleteTransaction($deleteTransactionInput: CreateEventInput!) {
         "aggregateId": "1",
         "name": "TransactionUpdatedEvent",
         "version": 2,
-        "data": "{\"id\":\"7d4afdfb-2599-41b3-83a3-0cb23ea946cd\",\"accountId\":\"374c96f7-59a4-4b3e-8b5e-cf4283df8480\",\"transactionDate\":\"2020-02-14Z\",\"shares\":999,\"price\":80.00,\"commission\":4.50,\"symbol\":\"BMO.TO\",\"transactionTypeId\":1}",
+        "data": "{\"id\":\"7d4afdfb-2599-41b3-83a3-0cb23ea946cd\",\"accountId\":\"374c96f7-59a4-4b3e-8b5e-cf4283df8480\",\"transactionDate\":\"2020-02-14Z\",\"shares\":999,\"price\":80.00,\"commission\":4.50,\"symbol\":\"BMO.TO\",\"transactionType\":{\"id\":1,\"name\":\"Buy\",\"description\":\"Buy\"}}",
         "userId": "eric",
         "createdAt": "2020-11-14T00:00:00Z"
   },

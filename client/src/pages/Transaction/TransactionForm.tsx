@@ -107,13 +107,13 @@ const TransactionForm = (props: any) => {
     };
 
     // Convert transactionDate to AWSDate format
-    const date = values.transactionDate.toISOString().substring(0, 10) + 'Z';
+    const transactionDate = values.transactionDate.toISOString().substring(0, 10) + 'Z';
 
     const params = {
       createTransactionInput: {
         aggregateId: uuidv4(),
         name: 'TransactionCreatedEvent',
-        data: `{ "accountId": "${account.id}", "transactionDate": "${date}", "shares": ${values.shares}, "price": ${values.price}, "commission": ${values.commission}, "symbol": "${values.symbol}", "transactionTypeId": ${selectedTransactionType.key} }`,
+        data: `{ "accountId": "${account.id}", "transactionDate": "${transactionDate}", "shares": ${values.shares}, "price": ${values.price}, "commission": ${values.commission}, "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
         version: 1,
         userId: `${username}`,
         createdAt: new Date(),
