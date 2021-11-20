@@ -1,8 +1,9 @@
-import { Table, Button } from 'semantic-ui-react';
+import { Table } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
+import { TransactionReadModel, TransactionsProps } from './types/Transaction';
 
-const TransactionList = (props: any) => {
-  const { transactions } = props;
+const TransactionList = (props: TransactionsProps) => {
+  const transactions = props.transactions;
   console.log('[TRANSACTIONS] Received transactions: ', transactions);
 
   return (
@@ -21,7 +22,7 @@ const TransactionList = (props: any) => {
         </Table.Header>
 
         <Table.Body>
-          {transactions.map((t: any) => {
+          {transactions.map((t: TransactionReadModel) => {
             let color = t.transactionType.name === 'Buy' ? 'blue' : 'red';
 
             const price = t.price; // ? t.price.toFixed(2) : 0;

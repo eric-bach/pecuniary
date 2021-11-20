@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { Grid, Segment, Header } from 'semantic-ui-react';
-import { useQuery, useMutation, gql } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { Formik } from 'formik';
 import { Form, Input, SubmitButton, Select } from 'formik-semantic-ui-react';
 import * as Yup from 'yup';
@@ -8,78 +8,37 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
+import { LIST_ACCOUNT_TYPES, CREATE_ACCOUNT, UPDATE_ACCOUNT } from './graphql/graphql';
 
-type SelectList = {
-  key: string;
-  text: string;
-  value: string;
-};
+import { CognitoUserSession } from '../types/CognitoUserSession';
+import { SelectList, SelectListItem } from '../types/SelectList';
+import { AccountProps, CreateAccountInput, UpdateAccountInput } from './types/Account';
 
-const LIST_ACCOUNT_TYPES = gql`
-  query ListAccountTypes {
-    listAccountTypes {
-      id
-      name
-      description
-    }
-  }
-`;
-
-const CREATE_ACCOUNT = gql`
-  mutation CreateAccount($createAccountInput: CreateEventInput!) {
-    createEvent(event: $createAccountInput) {
-      id
-      aggregateId
-      name
-      version
-      data
-      userId
-      createdAt
-    }
-  }
-`;
-
-const UPDATE_ACCOUNT = gql`
-  mutation UpdateAccount($updateAccountInput: CreateEventInput!) {
-    createEvent(event: $updateAccountInput) {
-      aggregateId
-      name
-      version
-      data
-      userId
-      createdAt
-    }
-  }
-`;
-
-const AccountForm = (props: any) => {
-  const [aggregateId] = useState(props.match.params.id !== undefined ? props.match.params.id : '');
-  const [account] = useState(props.location.state ? props.location.state.account : '');
+const AccountForm = (props: AccountProps) => {
+  const [account] = useState(props.location.state ? props.location.state.account : undefined);
   const [username, setUsername] = useState('');
-
   const { data: accountTypes, error: accountTypesError, loading: accountTypesLoading } = useQuery(LIST_ACCOUNT_TYPES);
-
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
   const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
-
   const { getSession } = useContext(UserContext);
 
   useEffect(() => {
-    aggregateId
-      ? console.log(`[ACCOUNT FORM] Aggregate Id ${aggregateId} exists. Edit Account mode enabled`)
+    account
+      ? console.log(`[ACCOUNT FORM] Aggregate Id ${account.aggregateId} exists. Edit Account mode enabled`)
       : console.log('[ACCOUNT FORM] Aggregate Id does not exist.  Create Account mode enabled');
 
     // Get the logged in username
-    getSession().then((session: any) => {
+    getSession().then((session: CognitoUserSession) => {
       setUsername(session.idToken.payload.email);
     });
-  }, [aggregateId, getSession]);
+  }, [account, getSession]);
 
-  if (accountTypesError) return 'Error!'; // You probably want to do more here!
+  // TODO Improve this Error page
+  if (accountTypesError) return 'Error!';
   if (accountTypesLoading) return <Loading />;
 
   const accountTypesList: SelectList[] = [];
-  accountTypes.listAccountTypes.map((d: any) => {
+  accountTypes.listAccountTypes.map((d: SelectListItem) => {
     accountTypesList.push({ key: d.id, text: d.name, value: d.description });
     return true;
   });
@@ -91,10 +50,10 @@ const AccountForm = (props: any) => {
       value: '',
     };
 
-    if (!props.match.params.id) {
+    if (!account) {
       console.log('[ACCOUNT FORM] Creating Account...');
 
-      const params = {
+      const params: CreateAccountInput = {
         createAccountInput: {
           aggregateId: uuidv4(),
           name: 'AccountCreatedEvent',
@@ -122,7 +81,7 @@ const AccountForm = (props: any) => {
     } else {
       console.log('[ACCOUNT FORM] Updating Account...');
 
-      const params = {
+      const params: UpdateAccountInput = {
         updateAccountInput: {
           aggregateId: account.aggregateId,
           name: 'AccountUpdatedEvent',

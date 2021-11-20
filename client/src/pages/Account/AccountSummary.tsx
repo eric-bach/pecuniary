@@ -1,37 +1,25 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import NumberFormat from 'react-number-format';
 import { Segment, Item, Button, Label, Message } from 'semantic-ui-react';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+import NumberFormat from 'react-number-format';
+import { relative } from 'path';
 
-import AccountReadModel from './types/Account';
-
-const deleteAccount = gql`
-  mutation DeleteAccount($deleteAccountInput: CreateEventInput!) {
-    createEvent(event: $deleteAccountInput) {
-      id
-      aggregateId
-      name
-      version
-      data
-      userId
-      createdAt
-    }
-  }
-`;
+import { DELETE_ACCOUNT } from './graphql/graphql';
+import { AccountReadModel, DeleteAccountInput } from './types/Account';
 
 const AccountSummary = (account: AccountReadModel) => {
-  const [visible, setVisible] = useState(false);
-  const [deleteAccountMutation] = useMutation(deleteAccount);
+  const [displayDeleteMessage, setMessageVisibility] = useState(false);
+  const [deleteAccountMutation] = useMutation(DELETE_ACCOUNT);
 
   const handleDismiss = () => {
-    setVisible(false);
+    setMessageVisibility(false);
   };
 
   const handleDeleteAccount = (account: AccountReadModel) => {
     console.log('[ACCOUNT SUMMARY] Deleting Account: ', account.aggregateId);
 
-    const params = {
+    const params: DeleteAccountInput = {
       deleteAccountInput: {
         aggregateId: account.aggregateId,
         name: 'AccountDeletedEvent',
@@ -46,7 +34,7 @@ const AccountSummary = (account: AccountReadModel) => {
     })
       .then((res) => {
         console.log('[ACCOUNT SUMMARY] Account deleted successfully');
-        setVisible(true);
+        setMessageVisibility(true);
       })
       .catch((err) => {
         console.error('[ACCOUNT SUMMARY] Error occurred deleting account');
@@ -56,7 +44,7 @@ const AccountSummary = (account: AccountReadModel) => {
 
   return (
     <>
-      {visible && (
+      {displayDeleteMessage && (
         <Message
           positive
           onDismiss={handleDismiss}
@@ -88,17 +76,12 @@ const AccountSummary = (account: AccountReadModel) => {
                     prefix={'$'}
                   />
                 </Item.Meta>
-                <Item.Description>
-                  {account.description}
+                <Item.Description>{account.description}</Item.Description>
+                <Item.Extra style={{ position: relative, top: '-138px' }}>
+                  <Button floated='right' icon='delete' onClick={() => handleDeleteAccount(account)} />
                   <Button
-                    as='a'
-                    color='red'
                     floated='right'
-                    onClick={() => handleDeleteAccount(account)}
-                    content='Delete'
-                    data-test='delete-account-button'
-                  />
-                  <Button
+                    icon='edit'
                     as={Link}
                     to={{
                       pathname: `/accounts/edit/${account.aggregateId}`,
@@ -106,12 +89,10 @@ const AccountSummary = (account: AccountReadModel) => {
                         account: account,
                       },
                     }}
-                    color='blue'
-                    floated='right'
-                    content='Edit'
-                    data-test='edit-account-button'
                   />
                   <Button
+                    floated='right'
+                    icon='file alternate outline'
                     as={Link}
                     to={{
                       pathname: `/accounts/view/${account.aggregateId}`,
@@ -119,12 +100,8 @@ const AccountSummary = (account: AccountReadModel) => {
                         account: account,
                       },
                     }}
-                    color='teal'
-                    floated='right'
-                    content='View'
-                    data-test='view-account-button'
                   />
-                </Item.Description>
+                </Item.Extra>
               </Item.Content>
             </Item>
           </Item.Group>

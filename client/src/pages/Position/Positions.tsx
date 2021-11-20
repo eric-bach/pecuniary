@@ -1,7 +1,8 @@
 import { Table } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
+import { PositionReadModel, PositionsProps } from '../Account/types/Position';
 
-const Positions = (props: any) => {
+const Positions = (props: PositionsProps) => {
   const { positions } = props;
 
   console.log('[POSITIONS] Received positions: ', positions);
@@ -24,7 +25,7 @@ const Positions = (props: any) => {
         </Table.Header>
 
         <Table.Body>
-          {positions.map((p: any) => {
+          {positions.map((p: PositionReadModel) => {
             const pl = p.marketValue - p.bookValue;
             const plPer = ((p.marketValue - p.bookValue) * 100) / p.bookValue;
             return (
