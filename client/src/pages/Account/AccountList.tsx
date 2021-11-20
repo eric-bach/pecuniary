@@ -4,20 +4,24 @@ import { Grid, Button } from 'semantic-ui-react';
 import { useQuery, useSubscription } from '@apollo/client';
 
 import { UserContext } from '../Auth/User';
+import Loading from '../../components/Loading';
 import AccountReadModel from './types/Account';
 import AccountSummary from './AccountSummary';
-import Loading from '../../components/Loading';
-
 import { ACCOUNT_SUBSCRIPTION, GET_ACCOUNT_BY_USER } from './graphql/graphql';
 
 const Accounts = () => {
   const [isLoading, setLoading] = useState(true);
   const [userId, setUserId] = useState('');
-  const { data, error, loading, refetch } = useQuery(GET_ACCOUNT_BY_USER, {
+  const {
+    data: accounts,
+    error,
+    loading,
+    refetch,
+  } = useQuery(GET_ACCOUNT_BY_USER, {
     variables: { userId: userId },
     fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
   });
-  const { data: subData } = useSubscription(ACCOUNT_SUBSCRIPTION);
+  const { data: subscriptions } = useSubscription(ACCOUNT_SUBSCRIPTION);
   const { getSession } = useContext(UserContext);
 
   useEffect(() => {
@@ -34,8 +38,8 @@ const Accounts = () => {
   }, [getSession]);
 
   useEffect(() => {
-    if (subData) {
-      console.log('[ACCOUNTS] Event created: ', subData);
+    if (subscriptions) {
+      console.log('[ACCOUNTS] Event created: ', subscriptions);
 
       // TEMP Force 1000ms delay before re-loading Accounts to ensure backend updates
       setTimeout(() => {
@@ -43,9 +47,9 @@ const Accounts = () => {
         console.log('[ACCOUNTS] Re-render components');
       }, 2000);
     }
-  }, [subData, refetch]);
+  }, [subscriptions, refetch]);
 
-  // TODO Improve these loading screens
+  // TODO Improve the Error screen
   if (error) return 'Error!'; // You probably want to do more here!
   if (loading || isLoading) return <Loading />;
 
@@ -53,7 +57,7 @@ const Accounts = () => {
     <Grid>
       <Grid.Column width={10}>
         <h2>
-          Accounts ({data.getAccountsByUser.length})
+          Accounts ({accounts.getAccountsByUser.length})
           <Button
             as={Link}
             to='/accounts/new'
@@ -69,14 +73,14 @@ const Accounts = () => {
           <Button labelPosition='right' icon='right chevron' content='Next' />
         </Button.Group>
 
-        {data &&
-          data.getAccountsByUser.map((d: AccountReadModel) => {
+        {accounts &&
+          accounts.getAccountsByUser.map((d: AccountReadModel) => {
             return <AccountSummary key={d.id} {...d} />;
           })}
       </Grid.Column>
       <Grid.Column width={5}>
         <h2>Summary</h2>
-        {/* <Doughnut data={data} /> */}
+        {/* <Doughnut data={accounts} /> */}
       </Grid.Column>
     </Grid>
   );
