@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import { Grid, Segment, Header } from 'semantic-ui-react';
+import { useQuery, useMutation } from '@apollo/client';
 import { Formik, Field } from 'formik';
 import { Form, SubmitButton, Select, Input } from 'formik-semantic-ui-react';
 import DatePicker from 'react-datepicker';
 import * as Yup from 'yup';
-import { useQuery, useMutation } from '@apollo/client';
 
 import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
@@ -44,15 +44,12 @@ const FormDatePicker = (props: any) => {
 
 const TransactionForm = (props: any) => {
   const [username, setUsername] = useState('');
-
   const {
     data: transactionTypes,
     error: transactionTypesError,
     loading: transactionTypesLoading,
   } = useQuery(LIST_TRANSACTION_TYPES);
-
   const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
-
   const { getSession } = useContext(UserContext);
 
   useEffect(() => {
@@ -62,6 +59,7 @@ const TransactionForm = (props: any) => {
     });
   }, [getSession]);
 
+  // TODO Improve this Error page
   if (transactionTypesError) return 'Error!'; // You probably want to do more here!
   if (transactionTypesLoading) return <Loading />;
 
