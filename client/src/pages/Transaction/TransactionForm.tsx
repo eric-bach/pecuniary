@@ -10,18 +10,17 @@ import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
 import { LIST_TRANSACTION_TYPES, CREATE_TRANSACTION } from './graphql/graphql';
 
+import { CognitoUserSession } from '../types/CognitoUserSession';
+import { SelectList, SelectListItem } from '../types/SelectList';
+import { AccountProps } from '../Account/types/Account';
+import { CreateTransactionInput, TransactionFormValues } from '../Transaction/types/Transaction';
+
 import 'react-datepicker/dist/react-datepicker.css';
 
-type SelectList = {
-  key: string;
-  text: string;
-  value: string;
-};
-
-const FormDatePicker = (props: any) => {
+const FormDatePicker = () => {
   return (
     <Field name='transactionDate'>
-      {({ field, meta, form: { setFieldValue } }: any) => {
+      {({ field, form: { setFieldValue } }: any) => {
         return (
           <>
             <div className='field'>
@@ -30,7 +29,7 @@ const FormDatePicker = (props: any) => {
                 {...field}
                 placeholderText='Select transaction date'
                 selected={field.value || null}
-                onChange={(val: any) => {
+                onChange={(val: Date) => {
                   setFieldValue(field.name, val);
                 }}
               />
@@ -42,7 +41,7 @@ const FormDatePicker = (props: any) => {
   );
 };
 
-const TransactionForm = (props: any) => {
+const TransactionForm = (props: AccountProps) => {
   const [username, setUsername] = useState('');
   const {
     data: transactionTypes,
@@ -54,7 +53,7 @@ const TransactionForm = (props: any) => {
 
   useEffect(() => {
     // Get the logged in username
-    getSession().then((session: any) => {
+    getSession().then((session: CognitoUserSession) => {
       setUsername(session.idToken.payload.email);
     });
   }, [getSession]);
@@ -64,17 +63,17 @@ const TransactionForm = (props: any) => {
   if (transactionTypesLoading) return <Loading />;
 
   const transactionTypesList: SelectList[] = [];
-  transactionTypes.listTransactionTypes.map((d: any) => {
+  transactionTypes.listTransactionTypes.map((d: SelectListItem) => {
     transactionTypesList.push({ key: d.id, text: d.name, value: d.description });
     return true;
   });
 
-  const createTransaction = (values: any) => {
+  const createTransaction = (values: TransactionFormValues) => {
     console.log('[TRANSACTION FORM] Creating Transaction...');
 
     const account = props.location.state.account;
     const selectedTransactionType: SelectList = transactionTypesList.find(
-      (a) => a.value === values.transactionType
+      (a) => a.value === values.transactionTypeName
     ) ?? {
       key: '',
       text: '',
@@ -84,11 +83,11 @@ const TransactionForm = (props: any) => {
     // Convert transactionDate to AWSDate format
     const transactionDate = values.transactionDate.toISOString().substring(0, 10) + 'Z';
 
-    const params = {
+    const params: CreateTransactionInput = {
       createTransactionInput: {
         aggregateId: account.aggregateId,
         name: 'TransactionCreatedEvent',
-        data: `{ "accountId": "${account.id}", "transactionDate": "${transactionDate}", "shares": ${values.shares}, "price": ${values.price}, "commission": ${values.commission}, "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
+        data: `{ "accountId": "${account.id}", "transactionDate": "${transactionDate}", "shares": "${values.shares}", "price": "${values.price}", "commission": "${values.commission}", "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
         version: 1,
         userId: `${username}`,
         createdAt: new Date(),
@@ -124,39 +123,36 @@ const TransactionForm = (props: any) => {
               <Formik
                 enableReinitialize
                 initialValues={{
-                  transactionType: '',
-                  transactionDate: '',
+                  transactionTypeName: '',
+                  transactionDate: new Date(),
                   symbol: '',
-                  shares: '',
-                  price: '',
-                  commission: '',
+                  shares: 0,
+                  price: 0,
+                  commission: 0,
                 }}
-                onSubmit={(values, actions) => {
+                onSubmit={(values: TransactionFormValues, actions) => {
                   console.log(values);
                   createTransaction(values);
+
                   actions.setSubmitting(false);
                 }}
                 validationSchema={Yup.object().shape({
-                  transactionType: Yup.string().required('Please select a transaction type'),
+                  transactionTypeName: Yup.string().required('Please select a transaction type'),
                   transactionDate: Yup.string().required('Please enter a transaction date'),
                   symbol: Yup.string()
                     .required('Please enter a symbol')
                     .matches(/[A-Za-z]{2,4}[\S]*/, 'Stock symbol is invalid'),
-                  shares: Yup.string()
+                  shares: Yup.number()
                     .required('Please enter the number of shares')
-                    .matches(/^[\d]+[.]*[\d]+$/, 'Number of shares is invalid'),
-                  price: Yup.string()
-                    .required('Please enter the share price')
-                    .matches(/^\d+(\.\d{1,2})?$/, 'Price is invalid'),
-                  commission: Yup.string()
-                    .required('Please enter the commission')
-                    .matches(/^\d+(\.\d{1,2})?$/, 'Commission is invalid'),
+                    .min(1, 'Number of shares is invalid'),
+                  price: Yup.number().required('Please enter the share price').min(0.01, 'Price is invalid'),
+                  commission: Yup.string().required('Please enter the commission').min(0, 'Commission is invalid'),
                 })}
               >
                 <Form size='large'>
                   <Select
-                    id='transactionType'
-                    name='transactionType'
+                    id='transactionTypeName'
+                    name='transactionTypeName'
                     label='Transaction Type'
                     options={transactionTypesList}
                     placeholder='Select a transaction type'

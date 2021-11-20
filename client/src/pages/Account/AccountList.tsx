@@ -5,9 +5,11 @@ import { useQuery, useSubscription } from '@apollo/client';
 
 import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
-import AccountReadModel from './types/Account';
 import AccountSummary from './AccountSummary';
 import { ACCOUNT_SUBSCRIPTION, GET_ACCOUNT_BY_USER } from './graphql/graphql';
+
+import { CognitoUserSession } from '../types/CognitoUserSession';
+import { AccountReadModel } from './types/Account';
 
 const Accounts = () => {
   const [isLoading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ const Accounts = () => {
     // TEMP Force 1000ms delay in loading Account page to ensure backend updates
     setTimeout(() => {
       // Get the logged in username
-      getSession().then((session: any) => {
+      getSession().then((session: CognitoUserSession) => {
         setUserId(session.idToken.payload.email);
       });
 

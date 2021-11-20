@@ -8,8 +8,9 @@ import Loading from '../../components/Loading';
 import Positions from '../Position/Positions';
 import TransactionList from '../Transaction/TransactionList';
 import { GET_POSITIONS_BY_ACCOUNT, GET_TRANSACTIONS_BY_ACCOUNT } from './graphql/graphql';
+import { AccountProps } from './types/Account';
 
-const AccountDetail = (props: any) => {
+const AccountDetail = (props: AccountProps) => {
   const [account] = useState(props.location.state.account);
   const {
     data: pos,

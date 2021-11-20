@@ -5,7 +5,7 @@ import { gql, useMutation, useQuery, useSubscription } from '@apollo/client';
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import AccountReadModel from '../Account/types/Account';
+import { AccountReadModel } from '../Account/types/Account';
 
 // TODO Set userId to currently logged in userId
 const GET_ACCOUNTS = gql`

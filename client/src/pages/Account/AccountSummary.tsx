@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { Segment, Item, Button, Label, Message } from 'semantic-ui-react';
 import { useMutation } from '@apollo/client';
 import NumberFormat from 'react-number-format';
+import { relative } from 'path';
 
 import { DELETE_ACCOUNT } from './graphql/graphql';
-import AccountReadModel from './types/Account';
-import { relative } from 'path';
+import { AccountReadModel, DeleteAccountInput } from './types/Account';
 
 const AccountSummary = (account: AccountReadModel) => {
   const [displayDeleteMessage, setMessageVisibility] = useState(false);
@@ -19,7 +19,7 @@ const AccountSummary = (account: AccountReadModel) => {
   const handleDeleteAccount = (account: AccountReadModel) => {
     console.log('[ACCOUNT SUMMARY] Deleting Account: ', account.aggregateId);
 
-    const params = {
+    const params: DeleteAccountInput = {
       deleteAccountInput: {
         aggregateId: account.aggregateId,
         name: 'AccountDeletedEvent',
