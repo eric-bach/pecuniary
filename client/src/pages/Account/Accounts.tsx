@@ -1,54 +1,19 @@
-//https://www.qualityology.com/tech/connect-to-existing-aws-appsync-api-from-a-react-application/
 import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Button } from 'semantic-ui-react';
-import { useQuery, useSubscription, gql } from '@apollo/client';
+import { useQuery, useSubscription } from '@apollo/client';
 
 import { UserContext } from '../Auth/User';
 import AccountReadModel from './types/Account';
 import AccountSummary from './AccountSummary';
 import Loading from '../../components/Loading';
 
-// TODO Update schema to include parameter to filter by name and userId
-const ACCOUNT_SUBSCRIPTION = gql`
-  subscription OnCreateEvent {
-    onCreateEvent {
-      id
-      name
-      aggregateId
-      version
-      data
-      userId
-      createdAt
-    }
-  }
-`;
-const getAccountsByUser = gql`
-  query getAccountsByUser($userId: String!) {
-    getAccountsByUser(userId: $userId) {
-      id
-      aggregateId
-      version
-      name
-      description
-      bookValue
-      marketValue
-      userId
-      createdAt
-      updatedAt
-      accountType {
-        id
-        name
-        description
-      }
-    }
-  }
-`;
+import { ACCOUNT_SUBSCRIPTION, GET_ACCOUNT_BY_USER } from './graphql/graphql';
 
 const Accounts = () => {
   const [isLoading, setLoading] = useState(true);
   const [userId, setUserId] = useState('');
-  const { data, error, loading, refetch } = useQuery(getAccountsByUser, {
+  const { data, error, loading, refetch } = useQuery(GET_ACCOUNT_BY_USER, {
     variables: { userId: userId },
     fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
   });

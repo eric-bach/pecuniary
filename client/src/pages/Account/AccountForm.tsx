@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { Grid, Segment, Header } from 'semantic-ui-react';
-import { useQuery, useMutation, gql } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { Formik } from 'formik';
 import { Form, Input, SubmitButton, Select } from 'formik-semantic-ui-react';
 import * as Yup from 'yup';
@@ -8,49 +8,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
+import { LIST_ACCOUNT_TYPES, CREATE_ACCOUNT, UPDATE_ACCOUNT } from './graphql/graphql';
 
 type SelectList = {
   key: string;
   text: string;
   value: string;
 };
-
-const LIST_ACCOUNT_TYPES = gql`
-  query ListAccountTypes {
-    listAccountTypes {
-      id
-      name
-      description
-    }
-  }
-`;
-
-const CREATE_ACCOUNT = gql`
-  mutation CreateAccount($createAccountInput: CreateEventInput!) {
-    createEvent(event: $createAccountInput) {
-      id
-      aggregateId
-      name
-      version
-      data
-      userId
-      createdAt
-    }
-  }
-`;
-
-const UPDATE_ACCOUNT = gql`
-  mutation UpdateAccount($updateAccountInput: CreateEventInput!) {
-    createEvent(event: $updateAccountInput) {
-      aggregateId
-      name
-      version
-      data
-      userId
-      createdAt
-    }
-  }
-`;
 
 const AccountForm = (props: any) => {
   const [aggregateId] = useState(props.match.params.id !== undefined ? props.match.params.id : '');

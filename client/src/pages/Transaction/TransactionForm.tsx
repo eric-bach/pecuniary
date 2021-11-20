@@ -1,45 +1,22 @@
-import { useQuery, gql, useMutation } from '@apollo/client';
+import { useContext, useEffect, useState } from 'react';
 import { Grid, Segment, Header } from 'semantic-ui-react';
 import { Formik, Field } from 'formik';
 import { Form, SubmitButton, Select, Input } from 'formik-semantic-ui-react';
 import DatePicker from 'react-datepicker';
 import * as Yup from 'yup';
-import { v4 as uuidv4 } from 'uuid';
+import { useQuery, useMutation } from '@apollo/client';
 
 import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
+import { LIST_TRANSACTION_TYPES, CREATE_TRANSACTION } from './graphql/graphql';
+
 import 'react-datepicker/dist/react-datepicker.css';
-import { useContext, useEffect, useState } from 'react';
 
 type SelectList = {
   key: string;
   text: string;
   value: string;
 };
-
-const LIST_TRANSACTION_TYPES = gql`
-  query ListTransactionTypes {
-    listTransactionTypes {
-      id
-      name
-      description
-    }
-  }
-`;
-
-const CREATE_TRANSACTION = gql`
-  mutation CreateTransaction($createTransactionInput: CreateEventInput!) {
-    createEvent(event: $createTransactionInput) {
-      id
-      aggregateId
-      name
-      version
-      data
-      userId
-      createdAt
-    }
-  }
-`;
 
 const FormDatePicker = (props: any) => {
   return (

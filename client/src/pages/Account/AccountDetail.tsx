@@ -2,52 +2,12 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Item, Label, Button } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import Positions from '../Position/Positions';
 import Loading from '../../components/Loading';
 import TransactionList from '../Transaction/TransactionList';
-
-const GET_POSITIONS_BY_ACCOUNT = gql`
-  query getPositionsByAccountId($accountId: ID!) {
-    getPositionsByAccountId(accountId: $accountId) {
-      id
-      aggregateId
-      version
-      symbol
-      exchange
-      country
-      name
-      description
-      shares
-      acb
-      bookValue
-      marketValue
-    }
-  }
-`;
-const GET_TRANSACTIONS_BY_ACCOUNT = gql`
-  query getTransactionsByAccountId($accountId: ID!) {
-    getTransactionsByAccountId(accountId: $accountId) {
-      id
-      aggregateId
-      version
-      transactionDate
-      transactionType {
-        id
-        name
-        description
-      }
-      symbol
-      shares
-      price
-      commission
-
-      createdAt
-      updatedAt
-    }
-  }
-`;
+import { GET_POSITIONS_BY_ACCOUNT, GET_TRANSACTIONS_BY_ACCOUNT } from './graphql/graphql';
 
 const AccountDetail = (props: any) => {
   const [account] = useState(props.location.state.account);

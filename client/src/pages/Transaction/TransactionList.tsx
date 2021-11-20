@@ -1,4 +1,4 @@
-import { Table, Button } from 'semantic-ui-react';
+import { Table } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
 
 const TransactionList = (props: any) => {

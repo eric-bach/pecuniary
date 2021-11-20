@@ -2,27 +2,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import NumberFormat from 'react-number-format';
 import { Segment, Item, Button, Label, Message } from 'semantic-ui-react';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import AccountReadModel from './types/Account';
-
-const deleteAccount = gql`
-  mutation DeleteAccount($deleteAccountInput: CreateEventInput!) {
-    createEvent(event: $deleteAccountInput) {
-      id
-      aggregateId
-      name
-      version
-      data
-      userId
-      createdAt
-    }
-  }
-`;
+import { DELETE_ACCOUNT } from './graphql/graphql';
 
 const AccountSummary = (account: AccountReadModel) => {
   const [visible, setVisible] = useState(false);
-  const [deleteAccountMutation] = useMutation(deleteAccount);
+  const [deleteAccountMutation] = useMutation(DELETE_ACCOUNT);
 
   const handleDismiss = () => {
     setVisible(false);
