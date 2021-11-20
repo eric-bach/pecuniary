@@ -17,29 +17,26 @@ type SelectList = {
 };
 
 const AccountForm = (props: any) => {
-  const [aggregateId] = useState(props.match.params.id !== undefined ? props.match.params.id : '');
   const [account] = useState(props.location.state ? props.location.state.account : '');
   const [username, setUsername] = useState('');
-
   const { data: accountTypes, error: accountTypesError, loading: accountTypesLoading } = useQuery(LIST_ACCOUNT_TYPES);
-
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
   const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
-
   const { getSession } = useContext(UserContext);
 
   useEffect(() => {
-    aggregateId
-      ? console.log(`[ACCOUNT FORM] Aggregate Id ${aggregateId} exists. Edit Account mode enabled`)
+    account
+      ? console.log(`[ACCOUNT FORM] Aggregate Id ${account.aggregateId} exists. Edit Account mode enabled`)
       : console.log('[ACCOUNT FORM] Aggregate Id does not exist.  Create Account mode enabled');
 
     // Get the logged in username
     getSession().then((session: any) => {
       setUsername(session.idToken.payload.email);
     });
-  }, [aggregateId, getSession]);
+  }, [account, getSession]);
 
-  if (accountTypesError) return 'Error!'; // You probably want to do more here!
+  // TODO Improve this Error page
+  if (accountTypesError) return 'Error!';
   if (accountTypesLoading) return <Loading />;
 
   const accountTypesList: SelectList[] = [];

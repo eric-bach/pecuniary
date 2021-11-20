@@ -1,19 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Item, Label, Button } from 'semantic-ui-react';
-import NumberFormat from 'react-number-format';
 import { useQuery } from '@apollo/client';
+import NumberFormat from 'react-number-format';
 
-import Positions from '../Position/Positions';
 import Loading from '../../components/Loading';
+import Positions from '../Position/Positions';
 import TransactionList from '../Transaction/TransactionList';
 import { GET_POSITIONS_BY_ACCOUNT, GET_TRANSACTIONS_BY_ACCOUNT } from './graphql/graphql';
 
 const AccountDetail = (props: any) => {
   const [account] = useState(props.location.state.account);
-
-  console.log('[ACCOUNT DETAIL] Account: ', account);
-
   const {
     data: pos,
     error: posError,
@@ -31,7 +28,9 @@ const AccountDetail = (props: any) => {
     fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
   });
 
-  // TODO Improve these loading screens
+  console.log('[ACCOUNT DETAIL] Account: ', account);
+
+  // TODO Improve this Error page
   if (posError || transError) return 'Error!'; // You probably want to do more here!
   if (posLoading || transLoading) return <Loading />;
 
@@ -71,6 +70,7 @@ const AccountDetail = (props: any) => {
           </Item.Group>
         </Segment>
       </Segment.Group>
+      {/* TODO Add Graphs here */}
       <div>Graph</div>
       <Positions positions={pos.getPositionsByAccountId} />
       <br />
