@@ -82,12 +82,16 @@ const TransactionForm = (props: AccountProps) => {
 
     // Convert transactionDate to AWSDate format
     const transactionDate = values.transactionDate.toISOString().substring(0, 10) + 'Z';
+    // Sanitize numbers
+    const shares = parseFloat(values.shares.toString());
+    const price = parseFloat(values.price.toString());
+    const commission = parseFloat(values.commission.toString());
 
     const params: CreateTransactionInput = {
       createTransactionInput: {
         aggregateId: account.aggregateId,
         name: 'TransactionCreatedEvent',
-        data: `{ "accountId": "${account.id}", "transactionDate": "${transactionDate}", "shares": "${values.shares}", "price": "${values.price}", "commission": "${values.commission}", "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
+        data: `{ "accountId": "${account.id}", "transactionDate": "${transactionDate}", "shares": ${shares}, "price": ${price}, "commission": ${commission}, "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
         version: 1,
         userId: `${username}`,
         createdAt: new Date(),
