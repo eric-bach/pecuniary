@@ -4,34 +4,15 @@ const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbr
 const { marshall } = require('@aws-sdk/util-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
-type Detail = {
-  id: string;
-  aggregateId: string;
-  version: number;
-  userId: string;
-};
-type TransactionType = {
-  id: string;
-  name: string;
-  description: string;
-};
-type Transaction = {
-  id: string;
-  transactionDate: Date;
-  symbol: string;
-  shares: number;
-  price: number;
-  commission: number;
-  accountId: number;
-  transactionType: TransactionType;
-};
+import { EventBridgeDetail } from '../types/Event';
+import { TransactionData, CreateTransactionEvent } from '../types/Transaction';
 
-exports.handler = async (event: EventBridgeEvent<string, Transaction>) => {
-  var eventString = JSON.stringify(event);
+exports.handler = async (event: EventBridgeEvent<string, TransactionData>) => {
+  const eventString: string = JSON.stringify(event);
   console.debug(`Received event: ${eventString}`);
 
-  var detail = JSON.parse(eventString).detail;
-  var data = JSON.parse(detail.data);
+  const detail: EventBridgeDetail = JSON.parse(eventString).detail;
+  const data: TransactionData = JSON.parse(detail.data);
 
   // Create Transaction
   var successful = await createTransactionAsync(detail, data);
@@ -42,10 +23,10 @@ exports.handler = async (event: EventBridgeEvent<string, Transaction>) => {
   }
 };
 
-async function createTransactionAsync(detail: Detail, data: Transaction) {
+async function createTransactionAsync(detail: EventBridgeDetail, data: TransactionData) {
   var client = new DynamoDBClient({ region: process.env.REGION });
 
-  var item = {
+  var item: CreateTransactionEvent = {
     id: uuidv4(),
     aggregateId: detail.aggregateId,
     version: detail.version,
@@ -86,13 +67,13 @@ async function createTransactionAsync(detail: Detail, data: Transaction) {
   return true;
 }
 
-async function publishEventAsync(detail: Detail, event: EventBridgeEvent<string, Transaction>) {
+async function publishEventAsync(detail: EventBridgeDetail, event: EventBridgeEvent<string, TransactionData>) {
   var params = {
     Entries: [
       {
         Source: event.source,
         EventBusName: process.env.EVENTBUS_PECUNIARY_NAME,
-        DetailType: 'TransactionSavedEvent', // TODO have to hard-code because we cannot access event.detailtype to modify it
+        DetailType: 'TransactionSavedEvent',
         Detail: JSON.stringify(detail),
       },
     ],

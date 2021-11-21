@@ -12,58 +12,34 @@ const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbr
 const { v4: uuid } = require('uuid');
 const { getTimeSeries, getSymbol } = require('./alphaVantage');
 
-type Detail = {
-  id: string;
-  aggregateId: string;
-  version: number;
-  userId: string;
-};
-type TransactionType = {
-  id: string;
-  name: string;
-  description: string;
-};
-type Transaction = {
-  id: string;
-  name: string;
-  transactionDate: Date;
-  symbol: string;
-  shares: number;
-  price: number;
-  commission: number;
-  accountId: number;
-  transactionType: TransactionType;
-};
-type PositionReadModel = {
-  id: string;
-  aggregateId: string;
-  version: number;
-  lastTransactionDate: Date;
-};
+import { EventBridgeDetail } from '../types/Event';
+import { TransactionData, TransactionReadModel } from '../types/Transaction';
+import { PositionReadModel } from '../types/Position';
+import { TimeSeriesReadModel } from '../types/TimeSeries';
 
-exports.handler = async (event: EventBridgeEvent<string, Transaction>) => {
-  var { detail, data } = parseEvent(event);
+exports.handler = async (event: EventBridgeEvent<string, TransactionData>) => {
+  const { detail, data } = parseEvent(event);
 
   // Get all transactions
-  var transactions = await getTransactions(detail, data);
+  const transactions = await getTransactions(detail, data);
 
   // Get current position (if exists)
-  var position = await getPosition(detail, data);
+  const position = await getPosition(detail, data);
 
   // Get last transaction date to get the time series
-  var { prevLastTransactionDate, lastTransactionDate } = getLastTransactionDate(position, data);
+  const { prevLastTransactionDate, lastTransactionDate } = getLastTransactionDate(position, data);
 
   // Calculate ACB
-  var { positions, acb, bookValue } = calculateAdjustedCostBase(transactions);
+  const { positions, acb, bookValue } = calculateAdjustedCostBase(transactions);
 
   // Get AlphaVantage time series
-  var timeSeries = await getTimeSeries(data.symbol, prevLastTransactionDate, data.transactionDate);
+  const timeSeries = await getTimeSeries(data.symbol, prevLastTransactionDate, data.transactionDate);
 
   // CreateTimeSeries - returning the last close
-  var lastClose = await createTimeSeries(data.symbol, timeSeries);
+  const lastClose = await createTimeSeries(data.symbol, timeSeries);
 
   // Save Position - create if not exists, update if exists
-  var savedPosition = await savePosition(
+  const savedPosition = await savePosition(
     position,
     detail,
     data,
@@ -118,7 +94,7 @@ async function createTimeSeries(symbol: string, timeSeries: any): Promise<number
   var lastClose = 0;
 
   await Promise.all(
-    timeSeries.map(async (t: any): Promise<any> => {
+    timeSeries.map(async (t: TimeSeriesReadModel): Promise<any> => {
       const params: PutItemCommandInput = {
         TableName: process.env.TIME_SERIES_TABLE_NAME,
         Item: marshall({
@@ -155,14 +131,14 @@ async function createTimeSeries(symbol: string, timeSeries: any): Promise<number
 }
 
 async function savePosition(
-  position: PositionReadModel | undefined,
-  detail: Detail,
-  data: Transaction,
+  position: PositionReadModel,
+  detail: EventBridgeDetail,
+  data: TransactionData,
   positions: number,
   acb: number,
   bookValue: number,
   lastTransactionDate: Date | null,
-  transactions: Transaction[],
+  transactions: TransactionReadModel[],
   lastClose: number
 ) {
   var result;
@@ -216,7 +192,7 @@ async function savePosition(
   return item;
 }
 
-function calculateAdjustedCostBase(transactions: Transaction[]) {
+function calculateAdjustedCostBase(transactions: TransactionReadModel[]) {
   var acb = 0;
   var positions = 0;
   var bookValue = 0;
@@ -247,7 +223,7 @@ function calculateAdjustedCostBase(transactions: Transaction[]) {
 }
 
 // Returns the last transaction date, if null returns the date of the current transaction
-function getLastTransactionDate(position: PositionReadModel | undefined, data: Transaction) {
+function getLastTransactionDate(position: PositionReadModel, data: TransactionData) {
   var prevLastTransactionDate = null;
   var lastTransactionDate = null;
   if (position) {
@@ -275,7 +251,7 @@ function getLastTransactionDate(position: PositionReadModel | undefined, data: T
   return { prevLastTransactionDate, lastTransactionDate };
 }
 
-async function getPosition(detail: Detail, data: Transaction): Promise<any | undefined> {
+async function getPosition(detail: EventBridgeDetail, data: TransactionData): Promise<PositionReadModel> {
   const params: ScanCommandInput = {
     TableName: process.env.POSITION_TABLE_NAME,
     ExpressionAttributeNames: {
@@ -299,21 +275,21 @@ async function getPosition(detail: Detail, data: Transaction): Promise<any | und
     if (positions) {
       console.log(`🔔 Found Position: ${JSON.stringify(positions[0])}`);
 
-      return positions[0];
+      return positions[0] as PositionReadModel;
     } else {
       console.log(`🔔 No Position found`);
 
-      return undefined;
+      return {} as PositionReadModel;
     }
   } catch (e) {
     console.log(`❌ Error looking for Position: ${e}`);
 
-    return undefined;
+    return {} as PositionReadModel;
   }
 }
 
 // Returns all transactions for the symbol sorted in ascending order
-async function getTransactions(detail: Detail, data: Transaction): Promise<any | undefined> {
+async function getTransactions(detail: EventBridgeDetail, data: TransactionData): Promise<TransactionReadModel[]> {
   const params: ScanCommandInput = {
     TableName: process.env.TRANSACTION_TABLE_NAME,
     ExpressionAttributeNames: {
@@ -332,31 +308,32 @@ async function getTransactions(detail: Detail, data: Transaction): Promise<any |
 
     const client = new DynamoDBClient({});
     const result = await client.send(new ScanCommand(params));
+
     const transactions = result.Items?.map((Item) => unmarshall(Item));
 
     if (transactions) {
       const sortedTransactions = transactions.sort(orderByTransactionDate);
       console.log(`🔔 Found ${transactions.length} Transactions: ${JSON.stringify(sortedTransactions)}`);
 
-      return sortedTransactions;
+      return sortedTransactions as TransactionReadModel[];
     } else {
       console.log(`🔔 No Transactions found`);
 
-      return undefined;
+      return [] as TransactionReadModel[];
     }
   } catch (e) {
     console.log(`❌ Error looking for Transactions: ${e}`);
 
-    return undefined;
+    return [] as TransactionReadModel[];
   }
 }
 
-function parseEvent(event: EventBridgeEvent<string, Transaction>) {
-  var eventString = JSON.stringify(event);
+function parseEvent(event: EventBridgeEvent<string, TransactionData>) {
+  const eventString: string = JSON.stringify(event);
   console.debug(`Received event: ${eventString}`);
 
-  var detail = JSON.parse(eventString).detail;
-  var data = JSON.parse(detail.data);
+  const detail: EventBridgeDetail = JSON.parse(eventString).detail;
+  const data: TransactionData = JSON.parse(detail.data);
 
   return { detail, data };
 }
