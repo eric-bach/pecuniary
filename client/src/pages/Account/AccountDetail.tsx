@@ -54,7 +54,14 @@ const AccountDetail = (props: AccountProps) => {
                 </Item.Header>
                 <Item.Meta>
                   Book Value:{' '}
-                  <NumberFormat value={account.bookValue} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                  <NumberFormat
+                    value={account.bookValue}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
                 </Item.Meta>
                 <Item.Meta>
                   Market Value:{' '}
@@ -63,6 +70,8 @@ const AccountDetail = (props: AccountProps) => {
                     displayType={'text'}
                     thousandSeparator={true}
                     prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
                   />
                 </Item.Meta>
                 <Item.Description>{account.description}</Item.Description>

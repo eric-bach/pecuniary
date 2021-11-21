@@ -25,9 +25,6 @@ const TransactionList = (props: TransactionsProps) => {
           {transactions.map((t: TransactionReadModel) => {
             let color = t.transactionType.name === 'Buy' ? 'blue' : 'red';
 
-            const price = t.price; // ? t.price.toFixed(2) : 0;
-            const commission = t.commission; // ? t.commission.toFixed(2) : 0;
-
             return (
               <Table.Row key={t.id}>
                 <Table.Cell className={`ui ${color} label`} style={{ margin: '8px' }}>
@@ -37,10 +34,24 @@ const TransactionList = (props: TransactionsProps) => {
                 <Table.Cell>{t.symbol}</Table.Cell>
                 <Table.Cell>{t.shares}</Table.Cell>
                 <Table.Cell>
-                  <NumberFormat value={price} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                  <NumberFormat
+                    value={t.price}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
                 </Table.Cell>
                 <Table.Cell>
-                  <NumberFormat value={commission} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                  <NumberFormat
+                    value={t.commission}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
                 </Table.Cell>
               </Table.Row>
             );
