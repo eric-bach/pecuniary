@@ -2,14 +2,15 @@ import { EventBridgeEvent } from 'aws-lambda';
 const { DynamoDBClient, ScanCommand, DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
-import { EventBridgeDetail, DeleteAccountData, Aggregate } from './types/account';
+import { EventBridgeDetail, Aggregate } from '../types/Event';
+import { AccountData } from '../types/Account';
 
-exports.handler = async (event: EventBridgeEvent<string, DeleteAccountData>) => {
+exports.handler = async (event: EventBridgeEvent<string, AccountData>) => {
   const eventString: string = JSON.stringify(event);
   console.debug(`EventBridge event: ${eventString}`);
 
   const detail: EventBridgeDetail = JSON.parse(eventString).detail;
-  const data: DeleteAccountData = JSON.parse(detail.data);
+  const data: AccountData = JSON.parse(detail.data);
 
   // Delete all positions
   await deletePositionsAsync(detail, data);
@@ -21,7 +22,7 @@ exports.handler = async (event: EventBridgeEvent<string, DeleteAccountData>) => 
   await deleteAccountAsync(data);
 };
 
-async function deletePositionsAsync(detail: EventBridgeDetail, data: DeleteAccountData) {
+async function deletePositionsAsync(detail: EventBridgeDetail, data: AccountData) {
   console.log(`Deleting Positions in Account: ${data.id}`);
 
   // Get all positions
@@ -56,7 +57,7 @@ async function deletePositionsAsync(detail: EventBridgeDetail, data: DeleteAccou
   }
 }
 
-async function deleteTransactionsAsync(detail: EventBridgeDetail, data: DeleteAccountData) {
+async function deleteTransactionsAsync(detail: EventBridgeDetail, data: AccountData) {
   console.log(`Deleting Transactions in Account: ${data.id}`);
 
   // Get all transactions
@@ -91,7 +92,7 @@ async function deleteTransactionsAsync(detail: EventBridgeDetail, data: DeleteAc
   }
 }
 
-async function deleteAccountAsync(data: DeleteAccountData) {
+async function deleteAccountAsync(data: AccountData) {
   const input = {
     TableName: process.env.ACCOUNT_TABLE_NAME,
     Key: marshall({

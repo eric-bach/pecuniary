@@ -1,14 +1,7 @@
-export type EventBridgeDetail = {
-  id: string;
-  aggregateId: string;
-  version: number;
-  userId: string;
-  data: string;
-};
-
-export type DeleteAccountData = {
+export type AccountData = {
   id: string;
   name: string;
+  version: number;
   description: string;
   bookValue: number;
   marketValue: number;
@@ -37,8 +30,20 @@ export type CreateEvent = {
   updatedAt: string;
 };
 
-export type Aggregate = {
+export type AccountReadModel = {
   id: string;
   aggregateId: string;
   version: number;
+  userId: string;
+  name: string;
+  description: string;
+  bookValue: number;
+  marketValue: number;
+  accountType: {
+    id: string;
+    name: string;
+    description: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
 };

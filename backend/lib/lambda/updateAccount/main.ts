@@ -2,20 +2,21 @@ import { EventBridgeEvent } from 'aws-lambda';
 const { DynamoDBClient, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
-import { EventBridgeDetail, UpdateAccountData } from './types/account';
+import { EventBridgeDetail } from '../types/Event';
+import { AccountData } from '../types/Account';
 
-exports.handler = async (event: EventBridgeEvent<string, UpdateAccountData>) => {
+exports.handler = async (event: EventBridgeEvent<string, AccountData>) => {
   const eventString: string = JSON.stringify(event);
   console.debug(`Received event: ${eventString}`);
 
   const detail: EventBridgeDetail = JSON.parse(eventString).detail;
-  const data: UpdateAccountData = JSON.parse(detail.data);
+  const data: AccountData = JSON.parse(detail.data);
 
   // Update Account
   await updateAccountAsync(detail, data);
 };
 
-async function updateAccountAsync(detail: EventBridgeDetail, data: UpdateAccountData) {
+async function updateAccountAsync(detail: EventBridgeDetail, data: AccountData) {
   const updateItemCommandInput = {
     TableName: process.env.ACCOUNT_TABLE_NAME,
     Key: marshall({

@@ -2,13 +2,13 @@ import { EventBridgeEvent } from 'aws-lambda';
 const { DynamoDBClient, UpdateItemCommand, GetItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 
-import { UpdateAccountValuesData, AccountReadModel } from './types/Account';
+import { AccountData, AccountReadModel } from '../types/Account';
 
-exports.handler = async (event: EventBridgeEvent<string, UpdateAccountValuesData>) => {
+exports.handler = async (event: EventBridgeEvent<string, AccountData>) => {
   const eventString: string = JSON.stringify(event);
   console.debug(`Received event: ${eventString}`);
 
-  const detail: UpdateAccountValuesData = JSON.parse(eventString).detail;
+  const detail: AccountData = JSON.parse(eventString).detail;
 
   // Get account matching account id
   var account: AccountReadModel = await getAccountAsync(detail.id);
@@ -41,7 +41,7 @@ async function getAccountAsync(id: string): Promise<AccountReadModel> {
   return {} as AccountReadModel;
 }
 
-async function updateAccountValuesAsync(account: AccountReadModel, detail: UpdateAccountValuesData) {
+async function updateAccountValuesAsync(account: AccountReadModel, detail: AccountData) {
   const updateItemCommandInput = {
     TableName: process.env.ACCOUNT_TABLE_NAME,
     Key: marshall({
