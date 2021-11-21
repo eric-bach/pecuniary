@@ -25,12 +25,17 @@ const TransactionList = (props: TransactionsProps) => {
           {transactions.map((t: TransactionReadModel) => {
             let color = t.transactionType.name === 'Buy' ? 'blue' : 'red';
 
+            // Read the transactionDate as it (without timezone offsets)
+            let utcTransactionDate = new Date(t.transactionDate);
+            var timezoneOffset = new Date().getTimezoneOffset() * 60000;
+            let transactionDate = new Date(utcTransactionDate.getTime() - -timezoneOffset);
+
             return (
               <Table.Row key={t.id}>
                 <Table.Cell className={`ui ${color} label`} style={{ margin: '8px' }}>
                   {t.transactionType.name}
                 </Table.Cell>
-                <Table.Cell>{new Date(t.transactionDate).toLocaleDateString()}</Table.Cell>
+                <Table.Cell>{transactionDate.toLocaleDateString()}</Table.Cell>
                 <Table.Cell>{t.symbol}</Table.Cell>
                 <Table.Cell>{t.shares}</Table.Cell>
                 <Table.Cell>
