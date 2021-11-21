@@ -3,39 +3,22 @@ const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
-type Detail = {
-  id: string;
-  aggregateId: string;
-  version: number;
-  userId: string;
-};
-type AccountType = {
-  id: string;
-  name: string;
-  description: string;
-};
-type Account = {
-  id: string;
-  name: string;
-  description: string;
-  bookValue: number;
-  marketValue: number;
-  accountType: AccountType;
-};
+import { EventBridgeDetail } from '../types/Event';
+import { AccountData, CreateEvent } from '../types/Account';
 
-exports.handler = async (event: EventBridgeEvent<string, Account>) => {
-  var eventString = JSON.stringify(event);
+exports.handler = async (event: EventBridgeEvent<string, AccountData>) => {
+  const eventString: string = JSON.stringify(event);
   console.debug(`EventBridge event: ${eventString}`);
 
-  var detail = JSON.parse(eventString).detail;
-  var data = JSON.parse(detail.data);
+  const detail: EventBridgeDetail = JSON.parse(eventString).detail;
+  const data: AccountData = JSON.parse(detail.data);
 
   // Create Account
   await createAccountAsync(detail, data);
 };
 
-async function createAccountAsync(detail: Detail, data: Account) {
-  var item = {
+async function createAccountAsync(detail: EventBridgeDetail, data: AccountData) {
+  var item: CreateEvent = {
     id: uuidv4(),
     aggregateId: detail.aggregateId,
     version: detail.version,

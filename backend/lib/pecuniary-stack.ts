@@ -574,6 +574,28 @@ export class PecuniaryStack extends Stack {
       })
     );
 
+    const updateAccountValuesFunction = new Function(this, 'UpdateAccountValues', {
+      runtime: Runtime.NODEJS_14_X,
+      functionName: `${props.appName}-updateAccountValues`,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateAccountValues')),
+      memorySize: 768,
+      timeout: Duration.seconds(10),
+      environment: {
+        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
+        REGION: REGION,
+      },
+      deadLetterQueue: eventHandlerQueue,
+    });
+    // Add permissions to read/write to DynamoDB table
+    updateAccountValuesFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:getItem', 'dynamodb:UpdateItem'],
+        resources: [accountReadModelTable.tableArn],
+      })
+    );
+
     const createTransactionFunction = new Function(this, 'CreateTransaction', {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-createTransaction`,
@@ -678,6 +700,7 @@ export class PecuniaryStack extends Stack {
         TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
         POSITION_TABLE_NAME: positionReadModelTable.tableName,
         TIME_SERIES_TABLE_NAME: timeSeriesTable.tableName,
+        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
       },
       deadLetterQueue: eventHandlerQueue,
@@ -710,6 +733,14 @@ export class PecuniaryStack extends Stack {
         effect: Effect.ALLOW,
         actions: ['ssm:GetParameter'],
         resources: [alphaVantageApiKey.parameterArn],
+      })
+    );
+    // Add permission to send to EventBridge
+    createUpdatePositionFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['events:PutEvents'],
+        resources: [eventBus.eventBusArn],
       })
     );
 
@@ -844,6 +875,24 @@ export class PecuniaryStack extends Stack {
       })
     );
 
+    // EventBus Rule - PositionUpdatedEventRule
+    const positionUpdatedEventRule = new Rule(this, 'PositionUpdatedEventRule', {
+      ruleName: `${props.appName}-PositionUpdatedEvent`,
+      description: 'PositionUpdatedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['PositionUpdatedEvent'],
+      },
+    });
+    positionUpdatedEventRule.addTarget(
+      new LambdaFunction(updateAccountValuesFunction, {
+        //deadLetterQueue: SqsQueue,
+        maxEventAge: Duration.hours(2),
+        retryAttempts: 2,
+      })
+    );
+
     /***
      *** Outputs
      ***/
@@ -889,6 +938,7 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'TransactionUpdatedEventRuleArn', { value: transactionUpdatedEventRule.ruleArn });
     new CfnOutput(this, 'TransactionDeletedEventRuleArn', { value: transactionDeletedEventRule.ruleArn });
     new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
+    new CfnOutput(this, 'PositionUpdatedEventRuleArn', { value: positionUpdatedEventRule.ruleArn });
 
     // Lambda functions
     new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
@@ -896,6 +946,7 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'EventBusFunctionArn', { value: eventBusFunction.functionArn });
     new CfnOutput(this, 'AccountCreatedEventFunctionArn', { value: createAccountFunction.functionArn });
     new CfnOutput(this, 'AccountUpdatedEventFunctionArn', { value: updateAccountFunction.functionArn });
+    new CfnOutput(this, 'AccountValuesUpdatedEventFunctionArn', { value: updateAccountValuesFunction.functionArn });
     new CfnOutput(this, 'AccountDeletedEventFunctionArn', { value: deleteAccountFunction.functionArn });
     new CfnOutput(this, 'TransactionCreatedEventFunctionArn', { value: createTransactionFunction.functionArn });
     new CfnOutput(this, 'TransactionUpdatedEventFunctionArn', { value: updateTransactionFunction.functionArn });

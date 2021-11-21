@@ -3,28 +3,15 @@ const { DynamoDBClient, DeleteItemCommand } = require('@aws-sdk/client-dynamodb'
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
-type Detail = {
-  id: string;
-  aggregateId: string;
-  version: number;
-  userId: string;
-};
-type Transaction = {
-  id: string;
-  transactionDate: Date;
-  symbol: string;
-  shares: number;
-  price: number;
-  commission: number;
-  accountId: number;
-};
+import { EventBridgeDetail } from '../types/Event';
+import { TransactionData } from './../types/Transaction';
 
-exports.handler = async (event: EventBridgeEvent<string, Transaction>) => {
-  var eventString = JSON.stringify(event);
+exports.handler = async (event: EventBridgeEvent<string, TransactionData>) => {
+  const eventString: string = JSON.stringify(event);
   console.debug(`Received event: ${eventString}`);
 
-  var detail = JSON.parse(eventString).detail;
-  var data = JSON.parse(detail.data);
+  const detail: EventBridgeDetail = JSON.parse(eventString).detail;
+  const data: TransactionData = JSON.parse(detail.data);
 
   // Delete Transactions
   await deleteTransactionsAsync(data);
@@ -33,8 +20,8 @@ exports.handler = async (event: EventBridgeEvent<string, Transaction>) => {
   await publishEventAsync(detail, event);
 };
 
-async function deleteTransactionsAsync(data: Transaction) {
-  console.log(`🔔 Deleting Positions in Account: ${data.id}`);
+async function deleteTransactionsAsync(data: TransactionData) {
+  console.log(`🔔 Deleting Transaction: ${data.id}`);
 
   const input = {
     TableName: process.env.TRANSACTION_TABLE_NAME,
@@ -43,18 +30,17 @@ async function deleteTransactionsAsync(data: Transaction) {
     }),
   };
 
-  console.log(`Deleting Transaction: ${data.id}`);
   await dynamoDbCommand(new DeleteItemCommand(input));
   console.log('✅ Deleted Transaction');
 }
 
-async function publishEventAsync(detail: Detail, event: EventBridgeEvent<string, Transaction>) {
+async function publishEventAsync(detail: EventBridgeDetail, event: EventBridgeEvent<string, TransactionData>) {
   var params = {
     Entries: [
       {
         Source: event.source,
         EventBusName: process.env.EVENTBUS_PECUNIARY_NAME,
-        DetailType: 'TransactionSavedEvent', // TODO have to hard-code because we cannot access event.detailtype to modify it
+        DetailType: 'TransactionSavedEvent',
         Detail: JSON.stringify(detail),
       },
     ],

@@ -1,6 +1,6 @@
 import { Table } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
-import { PositionReadModel, PositionsProps } from '../Account/types/Position';
+import { PositionReadModel, PositionsProps } from './types/Position';
 
 const Positions = (props: PositionsProps) => {
   const { positions } = props;
@@ -34,31 +34,55 @@ const Positions = (props: PositionsProps) => {
                 <Table.Cell>{p.name}</Table.Cell>
                 <Table.Cell>{p.shares}</Table.Cell>
                 <Table.Cell>
-                  <NumberFormat value={p.acb.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
-                </Table.Cell>
-                <Table.Cell>
                   <NumberFormat
-                    value={p.bookValue.toFixed(2)}
+                    value={p.acb}
                     displayType={'text'}
                     thousandSeparator={true}
                     prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
                   />
                 </Table.Cell>
                 <Table.Cell>
                   <NumberFormat
-                    value={p.marketValue.toFixed(2)}
+                    value={p.bookValue}
                     displayType={'text'}
                     thousandSeparator={true}
                     prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
+                </Table.Cell>
+                <Table.Cell>
+                  <NumberFormat
+                    value={p.marketValue}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
+                </Table.Cell>
+                <Table.Cell>
+                  <NumberFormat
+                    value={pl}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
                   />
                 </Table.Cell>
                 <Table.Cell>
                   {' '}
-                  <NumberFormat value={pl.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
-                </Table.Cell>
-                <Table.Cell>
-                  {' '}
-                  <NumberFormat value={plPer.toFixed(2)} displayType={'text'} thousandSeparator={true} suffix={'%'} />
+                  <NumberFormat
+                    value={plPer}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    suffix={'%'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
                 </Table.Cell>
               </Table.Row>
             );
