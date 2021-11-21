@@ -2,26 +2,14 @@ import { EventBridgeEvent } from 'aws-lambda';
 const { DynamoDBClient, ScanCommand, DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
-type Detail = {
-  id: string;
-  aggregateId: string;
-  version: number;
-  userId: string;
-};
-type Account = {
-  id: string;
-  name: string;
-  description: string;
-  bookValue: number;
-  marketValue: number;
-};
+import { EventBridgeDetail, DeleteAccountData, Aggregate } from './types/account';
 
-exports.handler = async (event: EventBridgeEvent<string, Account>) => {
-  var eventString = JSON.stringify(event);
+exports.handler = async (event: EventBridgeEvent<string, DeleteAccountData>) => {
+  const eventString: string = JSON.stringify(event);
   console.debug(`EventBridge event: ${eventString}`);
 
-  var detail = JSON.parse(eventString).detail;
-  var data = JSON.parse(detail.data);
+  const detail: EventBridgeDetail = JSON.parse(eventString).detail;
+  const data: DeleteAccountData = JSON.parse(detail.data);
 
   // Delete all positions
   await deletePositionsAsync(detail, data);
@@ -33,7 +21,7 @@ exports.handler = async (event: EventBridgeEvent<string, Account>) => {
   await deleteAccountAsync(data);
 };
 
-async function deletePositionsAsync(detail: Detail, data: Account) {
+async function deletePositionsAsync(detail: EventBridgeDetail, data: DeleteAccountData) {
   console.log(`Deleting Positions in Account: ${data.id}`);
 
   // Get all positions
@@ -51,8 +39,7 @@ async function deletePositionsAsync(detail: Detail, data: Account) {
     console.log(`Found ${result.Count} position(s) in Account`);
 
     // Delete all positions
-    // TODO change the type of p
-    result.Items.forEach(async (p: Account) => {
+    result.Items.forEach(async (p: Aggregate) => {
       const deleteInput = {
         TableName: process.env.POSITION_TABLE_NAME,
         Key: {
@@ -69,7 +56,7 @@ async function deletePositionsAsync(detail: Detail, data: Account) {
   }
 }
 
-async function deleteTransactionsAsync(detail: Detail, data: Account) {
+async function deleteTransactionsAsync(detail: EventBridgeDetail, data: DeleteAccountData) {
   console.log(`Deleting Transactions in Account: ${data.id}`);
 
   // Get all transactions
@@ -87,8 +74,7 @@ async function deleteTransactionsAsync(detail: Detail, data: Account) {
     console.log(`Found ${result.Count} transactions(s) in Account`);
 
     // Delete all transactions
-    // TODO change the type of p
-    result.Items.forEach(async (p: Account) => {
+    result.Items.forEach(async (p: Aggregate) => {
       const deleteInput = {
         TableName: process.env.TRANSACTION_TABLE_NAME,
         Key: {
@@ -105,7 +91,7 @@ async function deleteTransactionsAsync(detail: Detail, data: Account) {
   }
 }
 
-async function deleteAccountAsync(data: Account) {
+async function deleteAccountAsync(data: DeleteAccountData) {
   const input = {
     TableName: process.env.ACCOUNT_TABLE_NAME,
     Key: marshall({

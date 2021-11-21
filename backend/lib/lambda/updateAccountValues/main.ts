@@ -1,20 +1,14 @@
-import { AccountReadModel } from './../../../../client/src/pages/Account/types/Account.d';
 import { EventBridgeEvent } from 'aws-lambda';
 const { DynamoDBClient, UpdateItemCommand, GetItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 
-type Detail = {
-  id: string;
-  version: number;
-  bookValue: number;
-  marketValue: number;
-};
+import { UpdateAccountValuesData, AccountReadModel } from './types/Account';
 
-exports.handler = async (event: EventBridgeEvent<string, Detail>) => {
-  var eventString = JSON.stringify(event);
+exports.handler = async (event: EventBridgeEvent<string, UpdateAccountValuesData>) => {
+  const eventString: string = JSON.stringify(event);
   console.debug(`Received event: ${eventString}`);
 
-  var detail = JSON.parse(eventString).detail;
+  const detail: UpdateAccountValuesData = JSON.parse(eventString).detail;
 
   // Get account matching account id
   var account: AccountReadModel = await getAccountAsync(detail.id);
@@ -23,14 +17,14 @@ exports.handler = async (event: EventBridgeEvent<string, Detail>) => {
   await updateAccountValuesAsync(account, detail);
 };
 
-async function getAccountAsync(accountId: string): Promise<AccountReadModel> {
+async function getAccountAsync(id: string): Promise<AccountReadModel> {
   const params = {
     TableName: process.env.ACCOUNT_TABLE_NAME,
-    Key: marshall({ id: accountId }),
+    Key: marshall({ id: id }),
   };
 
   try {
-    console.debug('Looking up Account: ', accountId);
+    console.debug('Looking up Account: ', id);
 
     const client = new DynamoDBClient({});
     const result = await client.send(new GetItemCommand(params));
@@ -38,7 +32,7 @@ async function getAccountAsync(accountId: string): Promise<AccountReadModel> {
     if (result.Item) {
       return unmarshall(result.Item);
     } else {
-      console.log(`🔔 Could not find Account with matching Id: ${accountId}`);
+      console.log(`🔔 Could not find Account with matching Id: ${id}`);
     }
   } catch (e) {
     console.log(`❌ Error looking for Account: ${e}`);
@@ -47,7 +41,7 @@ async function getAccountAsync(accountId: string): Promise<AccountReadModel> {
   return {} as AccountReadModel;
 }
 
-async function updateAccountValuesAsync(account: AccountReadModel, detail: Detail) {
+async function updateAccountValuesAsync(account: AccountReadModel, detail: UpdateAccountValuesData) {
   const updateItemCommandInput = {
     TableName: process.env.ACCOUNT_TABLE_NAME,
     Key: marshall({

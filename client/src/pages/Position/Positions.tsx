@@ -1,6 +1,6 @@
 import { Table } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
-import { PositionReadModel, PositionsProps } from '../Account/types/Position';
+import { PositionReadModel, PositionsProps } from './types/Position';
 
 const Positions = (props: PositionsProps) => {
   const { positions } = props;
