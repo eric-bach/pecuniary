@@ -41,7 +41,7 @@ export class PecuniaryStack extends Stack {
     const alphaVantageApiKey = new ssm.StringParameter(this, 'AlphaVantageAPIKey', {
       description: 'AlphaVantage API Key',
       parameterName: `${props.appName}-AlphaVantageAPIKey`,
-      stringValue: process.env.ALPHA_VANTAGE_API_KEY || '',
+      stringValue: props.params.alphaVantageApiKey,
       tier: ssm.ParameterTier.STANDARD,
     });
 
@@ -155,24 +155,24 @@ export class PecuniaryStack extends Stack {
       topicName: `${props.appName}-commandHandler-Topic`,
       displayName: 'Command Handler Topic',
     });
-    if (props.dlqNotifications) {
-      commandHandlerTopic.addSubscription(new EmailSubscription(props.dlqNotifications));
+    if (props.params.dlqNotifications) {
+      commandHandlerTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     const eventBusTopic = new Topic(this, 'EventBusTopic', {
       topicName: `${props.appName}-eventBus-Topic`,
       displayName: 'event Bus Topic',
     });
-    if (props.dlqNotifications) {
-      eventBusTopic.addSubscription(new EmailSubscription(props.dlqNotifications));
+    if (props.params.dlqNotifications) {
+      eventBusTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     const eventHandlerTopic = new Topic(this, 'EventHandlerTopic', {
       topicName: `${props.appName}-eventHandler-Topic`,
       displayName: 'Event Handler Topic',
     });
-    if (props.dlqNotifications) {
-      eventHandlerTopic.addSubscription(new EmailSubscription(props.dlqNotifications));
+    if (props.params.dlqNotifications) {
+      eventHandlerTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     /***

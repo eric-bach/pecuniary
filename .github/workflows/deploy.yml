@@ -17,9 +17,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-        # with:
-        #   fetch-depth: 100
-        #   ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -34,15 +31,7 @@ jobs:
       - name: Install AWS CDK
         run: 'sudo npm install -g aws-cdk'
 
-      # - name: Use Node.js 14.x
-      #   uses: actions/setup-node@v2
-      #   with:
-      #     node-version: '14'
-
       - name: Install CDK packages
-        #run: |
-        #cd ../backend
-        #  npm ci
         run: npm ci
         working-directory: backend
 
