@@ -9,6 +9,7 @@ new PecuniaryStack(app, 'pecuniary-dev', {
   appName: 'pecuniary',
   envName: 'dev',
   dlqNotifications: process.env.DLQ_NOTIFICATIONS,
+  env: { account: process.env.CDK_DEV_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
   tags: {
     env: 'dev',
     application: 'pecuniary',
@@ -19,7 +20,7 @@ new PecuniaryStack(app, 'pecuniary-prod', {
   appName: 'pecuniary',
   envName: 'prod',
   dlqNotifications: process.env.DLQ_NOTIFICATIONS,
-  //env: { account: '830221499166', region: 'us-east-1' },
+  env: { account: process.env.CDK_PROD_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
   tags: {
     env: 'prod',
     application: 'pecuniary',
