@@ -40,14 +40,16 @@ jobs:
       #     node-version: '14'
 
       - name: Install CDK packages
-        run: |
-          cd ../backend
-          npm ci
+        #run: |
+        #cd ../backend
+        #  npm ci
+        run: npm ci
+        working-directory: backend
 
       - name: CDK Synth
         run: cdk synth
         working-directory: backend
 
       - name: CDK Deploy
-        run: cdk deploy
+        run: cdk deploy pecuniary-prod
         working-directory: backend
