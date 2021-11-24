@@ -14,3 +14,14 @@ new PecuniaryStack(app, 'pecuniary-dev', {
     application: 'pecuniary',
   },
 });
+
+new PecuniaryStack(app, 'pecuniary-prod', {
+  appName: 'pecuniary',
+  envName: 'prod',
+  dlqNotifications: process.env.DLQ_NOTIFICATIONS,
+  //env: { account: '830221499166', region: 'us-east-1' },
+  tags: {
+    env: 'prod',
+    application: 'pecuniary',
+  },
+});
