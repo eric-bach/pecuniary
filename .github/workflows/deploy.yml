@@ -41,4 +41,7 @@ jobs:
 
       - name: CDK Deploy
         run: cdk deploy pecuniary-prod --require-approval=never
+        env:
+          DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
+          ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}
         working-directory: backend
