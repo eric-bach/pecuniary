@@ -1,0 +1,53 @@
+name: Deploy AWS CDK
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  aws_cdk:
+    name: Deploy AWS CDK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/client
+    env:
+      GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        # with:
+        #   fetch-depth: 100
+        #   ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-access-key-secret: ${{secrets.AWS_ACCESS_KEY_SECRET}}
+          aws-region: us-east-1
+
+      - name: install npm
+        run: 'sudo apt update -y && sudo apt install nodejs npm -y'
+
+      - name: Install AWS CDK
+        run: 'sudo npm install -g aws-cdk'
+
+      # - name: Use Node.js 14.x
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: '14'
+
+      - name: Install CDK packages
+        run: |
+          cd ../backend
+          npm ci
+
+      - name: CDK Synth
+        run: cdk synth
+        working-directory: backend
+
+      - name: CDK Deploy
+        run: cdk deploy
+        working-directory: backend

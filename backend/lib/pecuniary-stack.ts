@@ -106,7 +106,7 @@ export class PecuniaryStack extends Stack {
     const userPoolDomain = new UserPoolDomain(this, 'PecuniaryUserPoolDomain', {
       userPool: userPool,
       cognitoDomain: {
-        domainPrefix: props.appName,
+        domainPrefix: `${props.appName}-${props.envName}`,
       },
     });
 
