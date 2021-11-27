@@ -702,6 +702,7 @@ export class PecuniaryStack extends Stack {
         TIME_SERIES_TABLE_NAME: timeSeriesTable.tableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
+        ALPHA_VANTAGE_API_KEY: alphaVantageApiKey.parameterName,
       },
       deadLetterQueue: eventHandlerQueue,
     });

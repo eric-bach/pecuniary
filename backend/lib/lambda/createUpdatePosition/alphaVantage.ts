@@ -5,7 +5,7 @@ async function getTimeSeries(symbol: string, startDate: Date, endDate: Date) {
   console.debug(`Getting quote for ${symbol} from ${startDate} to ${endDate}`);
 
   // Call AlphaVantage TIME_SERIES_DAILY_ADJUSTED
-  const apiKey = await getApiKey('pecuniary-AlphaVantageAPIKey');
+  const apiKey = await getApiKey(process.env.ALPHA_VANTAGE_API_KEY || '');
   var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=full&apikey=${apiKey}`;
 
   // Get quotes from AlphaVantage
@@ -52,7 +52,7 @@ async function getSymbol(symbol: string) {
   console.debug(`Looking up symbol for ${symbol}`);
 
   // Call AlphaVantage SYMBOL_SEARCH
-  const apiKey = await getApiKey('pecuniary-AlphaVantageAPIKey');
+  const apiKey = await getApiKey(process.env.ALPHA_VANTAGE_API_KEY || '');
   var url = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${symbol}&apikey=${apiKey}`;
 
   // Get symbol matches from AlphaVantage
@@ -85,7 +85,7 @@ async function getOverview(symbol: string) {
   console.debug(`Getting overview for ${symbol}`);
 
   // Call AlphaVantage OVERVIEW
-  const apiKey = await getApiKey('pecuniary-AlphaVantageAPIKey');
+  const apiKey = await getApiKey(process.env.ALPHA_VANTAGE_API_KEY || '');
   var url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${apiKey}`;
 
   // Get overview from AlphaVantage
