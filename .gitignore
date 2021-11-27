@@ -9,8 +9,9 @@ node_modules
 .cdk.staging
 cdk.out
 
-# Include Apollo client
+# Files to convert to TypeScript
 !/client/src/client.js
+!/client/src/utils/Session.js
 
 # Exclude configuration files (provided with *.example files)
 .env

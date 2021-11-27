@@ -60,12 +60,22 @@ This quick start guide describes how to get the application running. An `AWS acc
    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
    - `ALPHA_VANTAGE_API_KEY` - AlphaVantage API key to lookup quotes (sign up for one [here](https://www.alphavantage.co))
 
-4. Copy the `./client/.env.example` file to `./client/.env` and fill in the parameter values from the CDK stack outputs in step 2:
+4. (optional) Deploy the backend in preparation for step 5111111111111111111111111111111111111111111111111111111111111111111111
+
+5. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
+
+   - aws_project_region: AWS Region,
+   - aws_cognito_region: AWS Cognito Region,
+   - aws_user_pools_id: AWS Cognito User Pool Id
+   - aws_user_pools_web_client_id: AWS Cognito User Pool Web Client Id,
+   - aws_appsync_graphqlEndpoint: AWS AppSync GraphQL Endpoint
+
+6. Copy the `./client/.env.example` file to `./client/.env` and fill in the parameter values from the CDK stack outputs in step 2:
 
    - `REACT_APP_COGNITO_USER_POOL_ID` - AWS Cognito User Pool Id created in step 2
    - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
 
-5. Start the client locally on http://localhost:3000/
+7. Start the client locally on http://localhost:3000/
 
    ```bash
    $ npm start
@@ -86,7 +96,7 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
 1. Bootstrap CDK (one-time only)
 
    ```
-   $ cdk bootstrap aws://ACCOUNT/us-east-1 --profile PROFILE_NAME
+   $ cdk bootstrap aws://{ACCOUNT_ID}/{REGION} --profile {PROFILE_NAME}}
    ```
 
 2. Ensure AWS credentials are up to date. If using AWS SSO, authorize a set of temporary credentials
@@ -121,9 +131,18 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    TBA - To be added
    ```
 
-## Deployment with CodePipeline (optional)
+## Deployment via GitHub Actions
 
-To deploy the Pecuniary application using a CDK pipeline see the following repository to setup the pipeline: [pecuniary-pipeline](https://github.com/eric-bach/pecuniary-pipeline/blob/main/README.md)
+1. Create an AWS user with access id/secret to deploy the CDK stack from GitHub Actions. The user should have Administrative rights.
+
+2. Add the following GitHub Secrets to the repository
+
+   ```
+   AWS_ACCESS_KEY_ID - AWS access key id
+   AWS_ACCESS_KEY_SECRET = AWS access key secret
+   DLQ_NOTIFICATIONS - email address to send DLQ messages to
+   ALPHA_VANTAGE_API_KEY = AlphaVantage API Key
+   ```
 
 # Projects References
 
