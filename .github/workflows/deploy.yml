@@ -25,13 +25,13 @@ jobs:
           aws-secret-access-key: ${{secrets.AWS_ACCESS_KEY_SECRET}}
           aws-region: us-east-1
 
-      - name: install npm
+      - name: Install NPM
         run: 'sudo apt update -y && sudo apt install nodejs npm -y'
 
       - name: Install AWS CDK
         run: 'sudo npm install -g aws-cdk'
 
-      - name: Install CDK packages
+      - name: Install NPM Dependencies
         run: npm ci
         working-directory: backend
 
@@ -39,7 +39,7 @@ jobs:
         run: cdk synth
         working-directory: backend
 
-      - name: CDK Deploy
+      - name: CDK Deploy Prod
         run: cdk deploy pecuniary-prod --require-approval=never
         env:
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}

@@ -40,7 +40,7 @@ export class PecuniaryStack extends Stack {
 
     const alphaVantageApiKey = new ssm.StringParameter(this, 'AlphaVantageAPIKey', {
       description: 'AlphaVantage API Key',
-      parameterName: `${props.appName}-AlphaVantageAPIKey`,
+      parameterName: `${props.appName}-AlphaVantageAPIKey-${props.envName}`,
       stringValue: props.params.alphaVantageApiKey,
       tier: ssm.ParameterTier.STANDARD,
     });
@@ -52,7 +52,7 @@ export class PecuniaryStack extends Stack {
     // AWS Cognito post-confirmation lambda function
     const cognitoPostConfirmationTrigger = new Function(this, 'CognitoPostConfirmationTrigger', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-cognitoPostConfirmationTrigger`,
+      functionName: `${props.appName}-cognitoPostConfirmationTrigger-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoPostConfirmation')),
       memorySize: 768,
@@ -68,7 +68,7 @@ export class PecuniaryStack extends Stack {
 
     // Cognito user pool
     const userPool = new UserPool(this, 'PecuniaryUserPool', {
-      userPoolName: `${props.appName}_user_pool`,
+      userPoolName: `${props.appName}_user_pool_${props.envName}`,
       selfSignUpEnabled: true,
       accountRecovery: AccountRecovery.EMAIL_ONLY,
       userVerification: {
@@ -134,17 +134,17 @@ export class PecuniaryStack extends Stack {
 
     // Command handler DLQ
     const commandHandlerQueue = new Queue(this, 'CommandHandlerQueue', {
-      queueName: `${props.appName}-commandHandler-DeadLetterQueue`,
+      queueName: `${props.appName}-commandHandler-DeadLetterQueue-${props.envName}`,
     });
 
     // Event Bus DLQ
     const eventBusQueue = new Queue(this, 'EventBusQueue', {
-      queueName: `${props.appName}-eventBus-DeadLetterQueue`,
+      queueName: `${props.appName}-eventBus-DeadLetterQueue-${props.envName}`,
     });
 
     // Event handler DLQ
     const eventHandlerQueue = new Queue(this, 'EventHandlerQueue', {
-      queueName: `${props.appName}-eventHandler-DeadLetterQueue`,
+      queueName: `${props.appName}-eventHandler-DeadLetterQueue-${props.envName}`,
     });
 
     /***
@@ -152,7 +152,7 @@ export class PecuniaryStack extends Stack {
      ***/
 
     const commandHandlerTopic = new Topic(this, 'CommandHandlerTopic', {
-      topicName: `${props.appName}-commandHandler-Topic`,
+      topicName: `${props.appName}-commandHandler-Topic-${props.envName}`,
       displayName: 'Command Handler Topic',
     });
     if (props.params.dlqNotifications) {
@@ -160,7 +160,7 @@ export class PecuniaryStack extends Stack {
     }
 
     const eventBusTopic = new Topic(this, 'EventBusTopic', {
-      topicName: `${props.appName}-eventBus-Topic`,
+      topicName: `${props.appName}-eventBus-Topic-${props.envName}`,
       displayName: 'event Bus Topic',
     });
     if (props.params.dlqNotifications) {
@@ -168,7 +168,7 @@ export class PecuniaryStack extends Stack {
     }
 
     const eventHandlerTopic = new Topic(this, 'EventHandlerTopic', {
-      topicName: `${props.appName}-eventHandler-Topic`,
+      topicName: `${props.appName}-eventHandler-Topic-${props.envName}`,
       displayName: 'Event Handler Topic',
     });
     if (props.params.dlqNotifications) {
@@ -180,7 +180,7 @@ export class PecuniaryStack extends Stack {
      ***/
 
     const commandHandlerAlarm = new Alarm(this, 'CommandHandlerAlarm', {
-      alarmName: `${props.appName}-commandHandler-Alarm`,
+      alarmName: `${props.appName}-commandHandler-Alarm-${props.envName}`,
       alarmDescription: 'One or more failed CommandHandler messages',
       metric: new Metric({
         namespace: 'AWS/SQS',
@@ -196,7 +196,7 @@ export class PecuniaryStack extends Stack {
     commandHandlerAlarm.addAlarmAction(new SnsAction(commandHandlerTopic));
 
     const eventBusAlarm = new Alarm(this, 'EventBusAlarm', {
-      alarmName: `${props.appName}-eventBus-Alarm`,
+      alarmName: `${props.appName}-eventBus-Alarm-${props.envName}`,
       alarmDescription: 'One or more failed EventBus messages',
       metric: new Metric({
         namespace: 'AWS/SQS',
@@ -212,7 +212,7 @@ export class PecuniaryStack extends Stack {
     eventBusAlarm.addAlarmAction(new SnsAction(eventBusTopic));
 
     const eventHandlerAlarm = new Alarm(this, 'EventHandlerAlarm', {
-      alarmName: `${props.appName}-eventHandler-Alarm`,
+      alarmName: `${props.appName}-eventHandler-Alarm-${props.envName}`,
       alarmDescription: 'One or more failed EventHandler messages',
       metric: new Metric({
         namespace: 'AWS/SQS',
@@ -233,7 +233,7 @@ export class PecuniaryStack extends Stack {
 
     // AppSync API
     const api = new GraphqlApi(this, 'PecuniaryApi', {
-      name: `${props.appName}-api`,
+      name: `${props.appName}-api-${props.envName}`,
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
       },
@@ -262,7 +262,7 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB table for Events
     const eventTable = new Table(this, 'Event', {
-      tableName: `${props.appName}-Event`,
+      tableName: `${props.appName}-Event-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'id',
@@ -274,7 +274,7 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB table for AccountType
     const accountTypeTable = new Table(this, 'AccountType', {
-      tableName: `${props.appName}-AccountType`,
+      tableName: `${props.appName}-AccountType-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'id',
@@ -285,7 +285,7 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB table for CurrencyType
     const currencyTypeTable = new Table(this, 'CurrencyType', {
-      tableName: `${props.appName}-CurrencyType`,
+      tableName: `${props.appName}-CurrencyType-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'id',
@@ -296,7 +296,7 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB table for ExchangeType
     const exchangeTypeTable = new Table(this, 'ExchangeType', {
-      tableName: `${props.appName}-ExchangeType`,
+      tableName: `${props.appName}-ExchangeType-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'id',
@@ -307,7 +307,7 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB table for TransactionType
     const transactionTypeTable = new Table(this, 'TransactionType', {
-      tableName: `${props.appName}-TransactionType`,
+      tableName: `${props.appName}-TransactionType-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'id',
@@ -318,7 +318,7 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB table for AccountReadModel
     const accountReadModelTable = new Table(this, 'AccountReadModel', {
-      tableName: `${props.appName}-AccountReadModel`,
+      tableName: `${props.appName}-AccountReadModel-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'id',
@@ -329,7 +329,7 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB table for PositionReadModel
     const positionReadModelTable = new Table(this, 'PositionReadModel', {
-      tableName: `${props.appName}-PositionReadModel`,
+      tableName: `${props.appName}-PositionReadModel-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'id',
@@ -340,7 +340,7 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB table for TransactionReadModel
     const transactionReadModelTable = new Table(this, 'TransactionReadModel', {
-      tableName: `${props.appName}-TransactionReadModel`,
+      tableName: `${props.appName}-TransactionReadModel-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'id',
@@ -351,7 +351,7 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB table for TimeSeries
     const timeSeriesTable = new Table(this, 'TimeSeries', {
-      tableName: `${props.appName}-TimeSeries`,
+      tableName: `${props.appName}-TimeSeries-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'id',
@@ -377,7 +377,7 @@ export class PecuniaryStack extends Stack {
 
     // Command handler Lambda function for AppSync events
     const commandHandlerFunction = new Function(this, 'CommandHandler', {
-      functionName: `${props.appName}-CommandHandler`,
+      functionName: `${props.appName}-CommandHandler-${props.envName}`,
       runtime: Runtime.NODEJS_14_X,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'commandHandler')),
@@ -443,7 +443,7 @@ export class PecuniaryStack extends Stack {
 
     // EventBus
     const eventBus = new EventBus(this, 'PecuniaryEventBus', {
-      eventBusName: `${props.appName}-bus`,
+      eventBusName: `${props.appName}-bus-${props.envName}`,
     });
 
     /***
@@ -453,7 +453,7 @@ export class PecuniaryStack extends Stack {
     // Event bus handler for DynamoDB streams events
     const eventBusFunction = new Function(this, 'EventBus', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-EventBus`,
+      functionName: `${props.appName}-EventBus-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'eventBus')),
       memorySize: 1024,
@@ -504,7 +504,7 @@ export class PecuniaryStack extends Stack {
      ***/
     const createAccountFunction = new Function(this, 'CreateAccount', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-createAccount`,
+      functionName: `${props.appName}-createAccount-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createAccount')),
       memorySize: 768,
@@ -526,7 +526,7 @@ export class PecuniaryStack extends Stack {
 
     const updateAccountFunction = new Function(this, 'UpdateAccount', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-updateAccount`,
+      functionName: `${props.appName}-updateAccount-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateAccount')),
       memorySize: 768,
@@ -548,7 +548,7 @@ export class PecuniaryStack extends Stack {
 
     const deleteAccountFunction = new Function(this, 'DeleteAccount', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-deleteAccount`,
+      functionName: `${props.appName}-deleteAccount-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'deleteAccount')),
       memorySize: 768,
@@ -576,7 +576,7 @@ export class PecuniaryStack extends Stack {
 
     const updateAccountValuesFunction = new Function(this, 'UpdateAccountValues', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-updateAccountValues`,
+      functionName: `${props.appName}-updateAccountValues-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateAccountValues')),
       memorySize: 768,
@@ -598,7 +598,7 @@ export class PecuniaryStack extends Stack {
 
     const createTransactionFunction = new Function(this, 'CreateTransaction', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-createTransaction`,
+      functionName: `${props.appName}-createTransaction-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createTransaction')),
       memorySize: 768,
@@ -629,7 +629,7 @@ export class PecuniaryStack extends Stack {
 
     const updateTransactionFunction = new Function(this, 'UpdateTransaction', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-updateTransaction`,
+      functionName: `${props.appName}-updateTransaction-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateTransaction')),
       memorySize: 768,
@@ -660,7 +660,7 @@ export class PecuniaryStack extends Stack {
 
     const deleteTransactionFunction = new Function(this, 'DeleteTransaction', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-deleteTransaction`,
+      functionName: `${props.appName}-deleteTransaction-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'deleteTransaction')),
       memorySize: 768,
@@ -691,7 +691,7 @@ export class PecuniaryStack extends Stack {
 
     const createUpdatePositionFunction = new Function(this, 'CreateUpdatePosition', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-createUpdatePosition`,
+      functionName: `${props.appName}-createUpdatePosition-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createUpdatePosition')),
       memorySize: 1024,
@@ -749,7 +749,7 @@ export class PecuniaryStack extends Stack {
      ***/
     // EventBus Rule - AccountCreatedEventRule
     const accountCreatedEventRule = new Rule(this, 'AccountCreatedEventRule', {
-      ruleName: `${props.appName}-AccountCreatedEvent`,
+      ruleName: `${props.appName}-AccountCreatedEvent-${props.envName}`,
       description: 'AccountCreatedEvent',
       eventBus: eventBus,
       eventPattern: {
@@ -767,7 +767,7 @@ export class PecuniaryStack extends Stack {
 
     // EventBus Rule - AccountUpdatedEventRule
     const accountUpdatedEventRule = new Rule(this, 'AccountUpdatedEventRule', {
-      ruleName: `${props.appName}-AccountUpdatedEvent`,
+      ruleName: `${props.appName}-AccountUpdatedEvent-${props.envName}`,
       description: 'AccountUpdatedEvent',
       eventBus: eventBus,
       eventPattern: {
@@ -785,7 +785,7 @@ export class PecuniaryStack extends Stack {
 
     // EventBus Rule - AccountDeletedEventRule
     const accountDeletedEventRule = new Rule(this, 'AccountDeletedEventRule', {
-      ruleName: `${props.appName}-AccountDeletedEvent`,
+      ruleName: `${props.appName}-AccountDeletedEvent-${props.envName}`,
       description: 'AccountDeletedEvent',
       eventBus: eventBus,
       eventPattern: {
@@ -803,7 +803,7 @@ export class PecuniaryStack extends Stack {
 
     // EventBus Rule - TransactionCreatedEventRule
     const transactionCreatedEventRule = new Rule(this, 'TransactionCreatedEventRule', {
-      ruleName: `${props.appName}-TransactionCreatedEvent`,
+      ruleName: `${props.appName}-TransactionCreatedEvent-${props.envName}`,
       description: 'TransactionCreatedEvent',
       eventBus: eventBus,
       eventPattern: {
@@ -821,7 +821,7 @@ export class PecuniaryStack extends Stack {
 
     // EventBus Rule - TransactionUpdatedEventRule
     const transactionUpdatedEventRule = new Rule(this, 'TransactionUpdatedEventRule', {
-      ruleName: `${props.appName}-TransactionUpdatedEvent`,
+      ruleName: `${props.appName}-TransactionUpdatedEvent-${props.envName}`,
       description: 'TransactionUpdatedEvent',
       eventBus: eventBus,
       eventPattern: {
@@ -840,7 +840,7 @@ export class PecuniaryStack extends Stack {
 
     // EventBus Rule - TransactionDeletedEventRule
     const transactionDeletedEventRule = new Rule(this, 'TransactionDeletedEventRule', {
-      ruleName: `${props.appName}-TransactionDeletedEvent`,
+      ruleName: `${props.appName}-TransactionDeletedEvent-${props.envName}`,
       description: 'TransactionDeletedEvent',
       eventBus: eventBus,
       eventPattern: {
@@ -859,7 +859,7 @@ export class PecuniaryStack extends Stack {
 
     // EventBus Rule - TransactionSavedEventRule
     const transactionSavedEventRule = new Rule(this, 'TransactionSavedEventRule', {
-      ruleName: `${props.appName}-TransactionSavedEvent`,
+      ruleName: `${props.appName}-TransactionSavedEvent-${props.envName}`,
       description: 'TransactionSavedEvent',
       eventBus: eventBus,
       eventPattern: {
@@ -877,7 +877,7 @@ export class PecuniaryStack extends Stack {
 
     // EventBus Rule - PositionUpdatedEventRule
     const positionUpdatedEventRule = new Rule(this, 'PositionUpdatedEventRule', {
-      ruleName: `${props.appName}-PositionUpdatedEvent`,
+      ruleName: `${props.appName}-PositionUpdatedEvent-${props.envName}`,
       description: 'PositionUpdatedEvent',
       eventBus: eventBus,
       eventPattern: {
