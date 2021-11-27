@@ -1,6 +1,6 @@
 import { Stack, Construct, CfnOutput, Expiration, Duration, RemovalPolicy } from '@aws-cdk/core';
 import * as ssm from '@aws-cdk/aws-ssm';
-import { PolicyStatement, Policy, Effect } from '@aws-cdk/aws-iam';
+import { PolicyStatement, Policy, Effect, CanonicalUserPrincipal } from '@aws-cdk/aws-iam';
 import {
   UserPool,
   CfnUserPoolGroup,
@@ -20,11 +20,20 @@ import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { Rule, EventBus } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { SnsAction } from '@aws-cdk/aws-cloudwatch-actions';
+import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from '@aws-cdk/aws-s3-deployment';
 
 const dotenv = require('dotenv');
 import * as path from 'path';
 import { PecuniaryStackProps } from './PecuniaryStackProps';
 import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
+import { BlockPublicAccess, Bucket, HttpMethods, StorageClass } from '@aws-cdk/aws-s3';
+import {
+  CloudFrontAllowedMethods,
+  CloudFrontWebDistribution,
+  Distribution,
+  OriginAccessIdentity,
+} from '@aws-cdk/aws-cloudfront';
+import { HostedZone } from '@aws-cdk/aws-route53';
 
 dotenv.config();
 
@@ -893,6 +902,77 @@ export class PecuniaryStack extends Stack {
         retryAttempts: 2,
       })
     );
+
+    /***
+     *** Client app
+     ***/
+
+    // CloudFront OAI
+    const cloudfrontOAI = new OriginAccessIdentity(this, 'cloudfront-OAI', {
+      comment: `OAI for ${id}`,
+    });
+
+    // S3 bucket for client app
+    const hostingBucket = new Bucket(this, 'PecuniaryHostingBucket', {
+      bucketName: `${props.appName}-hosting-bucket-${props.envName}`,
+      websiteIndexDocument: 'index.html',
+      publicReadAccess: false,
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      cors: [
+        {
+          allowedHeaders: ['Authorization', 'Content-Length'],
+          allowedMethods: [HttpMethods.GET],
+          allowedOrigins: ['*'],
+          maxAge: 3000,
+        },
+      ],
+      removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+    });
+    // Grant access to CloudFront
+    hostingBucket.addToResourcePolicy(
+      new PolicyStatement({
+        actions: ['s3:GetObject'],
+        resources: [hostingBucket.arnForObjects('*')],
+        principals: [new CanonicalUserPrincipal(cloudfrontOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)],
+      })
+    );
+
+    // CloudFront distribution
+    const distribution = new CloudFrontWebDistribution(this, 'PecuniaryWebsiteCloudFront', {
+      originConfigs: [
+        {
+          s3OriginSource: {
+            s3BucketSource: hostingBucket,
+            originAccessIdentity: cloudfrontOAI,
+          },
+          behaviors: [
+            {
+              isDefaultBehavior: true,
+              //overriding some default behavior to adjust later as required
+              defaultTtl: Duration.hours(1),
+              minTtl: Duration.seconds(0),
+              maxTtl: Duration.days(1),
+              compress: true,
+              allowedMethods: CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+            },
+          ],
+        },
+      ],
+    });
+
+    // S3 bucket deployment
+    new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
+      sources: [Source.asset('../client/build')],
+      destinationBucket: hostingBucket,
+      retainOnDelete: false,
+      contentLanguage: 'en',
+      //storageClass: StorageClass.INTELLIGENT_TIERING,
+      serverSideEncryption: ServerSideEncryption.AES_256,
+      cacheControl: [CacheControl.setPublic(), CacheControl.maxAge(Duration.minutes(1))],
+      distribution,
+      distributionPaths: ['/static/css/*'],
+    });
 
     /***
      *** Outputs

@@ -10,7 +10,6 @@ const url = AppSyncConfig.aws_appsync_graphqlEndpoint;
 const region = AppSyncConfig.aws_project_region;
 const auth = {
   type: AppSyncConfig.aws_appsync_authenticationType,
-  //jwtToken: localStorage.getItem('accessToken'),
   jwtToken: getAccessToken(),
 };
 
