@@ -18,7 +18,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials for prod account
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
@@ -31,7 +31,7 @@ jobs:
       - name: Install AWS CDK
         run: 'sudo npm install -g aws-cdk'
 
-      - name: Install NPM Dependencies
+      - name: Install NPM Dependencies (Backend)
         run: npm ci
         working-directory: backend
 
@@ -39,8 +39,30 @@ jobs:
         run: cdk synth
         working-directory: backend
 
-      - name: CDK Deploy Prod
+      - name: CDK Deploy Backend
         run: cdk deploy pecuniary-prod --require-approval=never
+        env:
+          DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
+          ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}
+        working-directory: backend
+
+      - name: Configure AWS Credentials for iam account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID_IAM}}
+          aws-secret-access-key: ${{secrets.AWS_ACCESS_KEY_SECRET_IAM}}
+          aws-region: us-east-1
+
+      - name: Install NPM Dependencies (Client)
+        run: npm ci
+        working-directory: client
+
+      - name: Build Client
+        run: npm run build:prod
+        working-directory: client
+
+      - name: CDK Deploy Website
+        run: cdk deploy pecuniary-web-prod --require-approval=never
         env:
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
           ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}

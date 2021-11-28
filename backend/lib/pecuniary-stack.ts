@@ -32,8 +32,14 @@ import {
   CloudFrontWebDistribution,
   Distribution,
   OriginAccessIdentity,
+  PriceClass,
+  SecurityPolicyProtocol,
+  SSLMethod,
+  ViewerCertificate,
 } from '@aws-cdk/aws-cloudfront';
-import { HostedZone } from '@aws-cdk/aws-route53';
+import { ARecord, HostedZone, RecordTarget } from '@aws-cdk/aws-route53';
+import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets';
+import { Certificate } from '@aws-cdk/aws-certificatemanager';
 
 dotenv.config();
 
@@ -904,77 +910,6 @@ export class PecuniaryStack extends Stack {
     );
 
     /***
-     *** Client app
-     ***/
-
-    // CloudFront OAI
-    const cloudfrontOAI = new OriginAccessIdentity(this, 'cloudfront-OAI', {
-      comment: `OAI for ${id}`,
-    });
-
-    // S3 bucket for client app
-    const hostingBucket = new Bucket(this, 'PecuniaryHostingBucket', {
-      bucketName: `${props.appName}-hosting-bucket-${props.envName}`,
-      websiteIndexDocument: 'index.html',
-      publicReadAccess: false,
-      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-      cors: [
-        {
-          allowedHeaders: ['Authorization', 'Content-Length'],
-          allowedMethods: [HttpMethods.GET],
-          allowedOrigins: ['*'],
-          maxAge: 3000,
-        },
-      ],
-      removalPolicy: RemovalPolicy.DESTROY,
-      autoDeleteObjects: true,
-    });
-    // Grant access to CloudFront
-    hostingBucket.addToResourcePolicy(
-      new PolicyStatement({
-        actions: ['s3:GetObject'],
-        resources: [hostingBucket.arnForObjects('*')],
-        principals: [new CanonicalUserPrincipal(cloudfrontOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)],
-      })
-    );
-
-    // CloudFront distribution
-    const distribution = new CloudFrontWebDistribution(this, 'PecuniaryWebsiteCloudFront', {
-      originConfigs: [
-        {
-          s3OriginSource: {
-            s3BucketSource: hostingBucket,
-            originAccessIdentity: cloudfrontOAI,
-          },
-          behaviors: [
-            {
-              isDefaultBehavior: true,
-              //overriding some default behavior to adjust later as required
-              defaultTtl: Duration.hours(1),
-              minTtl: Duration.seconds(0),
-              maxTtl: Duration.days(1),
-              compress: true,
-              allowedMethods: CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
-            },
-          ],
-        },
-      ],
-    });
-
-    // S3 bucket deployment
-    new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
-      sources: [Source.asset('../client/build')],
-      destinationBucket: hostingBucket,
-      retainOnDelete: false,
-      contentLanguage: 'en',
-      //storageClass: StorageClass.INTELLIGENT_TIERING,
-      serverSideEncryption: ServerSideEncryption.AES_256,
-      cacheControl: [CacheControl.setPublic(), CacheControl.maxAge(Duration.minutes(1))],
-      distribution,
-      distributionPaths: ['/static/css/*'],
-    });
-
-    /***
      *** Outputs
      ***/
 
@@ -1033,5 +968,96 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'TransactionUpdatedEventFunctionArn', { value: updateTransactionFunction.functionArn });
     new CfnOutput(this, 'TransactionDeletedEventFunctionArn', { value: deleteTransactionFunction.functionArn });
     new CfnOutput(this, 'CreateUpdatePositionFunctionArn', { value: createUpdatePositionFunction.functionArn });
+  }
+}
+
+// Deployed to iambach account
+// TODO Have to deploy to iambach account because dev account cannot get existing ACM certificate which is needed for CloudFront
+export class PecuniaryHostingyStack extends Stack {
+  constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
+    super(scope, id, props);
+
+    // CloudFront OAI
+    const cloudfrontOAI = new OriginAccessIdentity(this, 'cloudfront-OAI', {
+      comment: `OAI for ${id}`,
+    });
+
+    // S3 bucket for client app
+    const hostingBucket = new Bucket(this, 'PecuniaryHostingBucket', {
+      bucketName: `${props.appName}-hosting-bucket-${props.envName}`,
+      websiteIndexDocument: 'index.html',
+      publicReadAccess: false,
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      cors: [
+        {
+          allowedHeaders: ['Authorization', 'Content-Length'],
+          allowedMethods: [HttpMethods.GET],
+          allowedOrigins: ['*'],
+          maxAge: 3000,
+        },
+      ],
+      removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+    });
+    // Grant access to CloudFront
+    hostingBucket.addToResourcePolicy(
+      new PolicyStatement({
+        actions: ['s3:GetObject'],
+        resources: [hostingBucket.arnForObjects('*')],
+        principals: [new CanonicalUserPrincipal(cloudfrontOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)],
+      })
+    );
+
+    // Existing ACM certificate
+    const certificate = Certificate.fromCertificateArn(this, 'Certificate', process.env.CERTIFICATE_ARN || '');
+
+    // CloudFront distribution
+    const distribution = new CloudFrontWebDistribution(this, 'PecuniaryWebsiteCloudFront', {
+      priceClass: PriceClass.PRICE_CLASS_100,
+      originConfigs: [
+        {
+          s3OriginSource: {
+            s3BucketSource: hostingBucket,
+            originAccessIdentity: cloudfrontOAI,
+          },
+          behaviors: [
+            {
+              isDefaultBehavior: true,
+              defaultTtl: Duration.hours(1),
+              minTtl: Duration.seconds(0),
+              maxTtl: Duration.days(1),
+              compress: true,
+              allowedMethods: CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+            },
+          ],
+        },
+      ],
+      viewerCertificate: ViewerCertificate.fromAcmCertificate(certificate, {
+        aliases: [`${props.appName}.ericbach.dev`],
+        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021, // default
+        sslMethod: SSLMethod.SNI, // default
+      }),
+    });
+
+    // S3 bucket deployment
+    new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
+      sources: [Source.asset('../client/build')],
+      destinationBucket: hostingBucket,
+      retainOnDelete: false,
+      contentLanguage: 'en',
+      //storageClass: StorageClass.INTELLIGENT_TIERING,
+      serverSideEncryption: ServerSideEncryption.AES_256,
+      cacheControl: [CacheControl.setPublic(), CacheControl.maxAge(Duration.minutes(1))],
+      distribution,
+      distributionPaths: ['/static/css/*'],
+    });
+
+    // Route53 HostedZone A record
+    var existingHostedZone = HostedZone.fromLookup(this, 'Zone', { domainName: 'ericbach.dev' });
+    new ARecord(this, 'AliasRecord', {
+      zone: existingHostedZone,
+      recordName: `${props.appName}.ericbach.dev`,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+    });
   }
 }

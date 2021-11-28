@@ -14,6 +14,6 @@ cdk.out
 !/client/src/utils/Session.js
 
 # Exclude configuration files (provided with *.example files)
-.env
+.env*
 backend/deploy-cdk.ps1
 aws-exports.js

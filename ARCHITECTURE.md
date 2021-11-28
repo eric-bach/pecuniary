@@ -14,7 +14,9 @@ This diagram represents how each of the pieces of the application interface with
 
 For an listing of the technologies used please see <a href="#technology-stack">Technology stack</a>.
 
-![Top Level](diagrams/toplevel.jpg)
+![Top Level](diagrams/toplevel_accounts.png)
+
+_The application is deployed to 2 separate AWS accounts, mainly because a lot of legacy web hosting infrastructure is already deployed to one account. It is possible to deploy the entire application in a single AWS account but some modification to the CDK stacks will be necessary._
 
 # Detailed architecture
 
