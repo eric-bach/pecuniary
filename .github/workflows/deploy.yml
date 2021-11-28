@@ -46,6 +46,20 @@ jobs:
           echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
           cp .env .env.prod
           cat .env.prod
+          touch src/aws-exports.js
+          echo /* eslint-disable */ >> src/aws-exports.js
+          echo const awsmobile = { >> src/aws-exports.js
+          echo aws_project_region: 'us-east-1', >> src/aws-exports.js
+          echo aws_cognito_region: 'us-east-1', >> src/aws-exports.js
+          echo aws_user_pools_id: '${{secrets.REACT_APP_COGNITO_USER_POOL_ID}}', >> src/aws-exports.js
+          echo aws_user_pools_web_client_id: '${{ secrets.REACT_APP_COGNITO_CLIENT_ID }}', >> src/aws-exports.js
+          echo echo aws_appsync_graphqlEndpoint: '${{ secrets.AWS_APPSYNC_GRAPHQL_ENDPOINT }}', >> src/aws-exports.js
+          echo aws_appsync_region: 'us-east-1', >> src/aws-exports.js
+          echo aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS', >> src/aws-exports.js
+          echo }; >> src/aws-exports.js
+          echo >> src/aws-exports.js
+          echo export default awsmobile; >> src/aws-exports.js
+          cat src/aws-exports.js
 
       - name: Build Client
         run: npm run build:prod
