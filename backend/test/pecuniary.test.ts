@@ -55,7 +55,7 @@ describe('Stack contains expected resources', () => {
     expectCDK(stack).to(
       haveResource('AWS::SNS::Topic', { TopicName: `pecuniary-eventHandler-Topic-${props.envName}` })
     );
-    //expectCDK(stack).to(haveResource('AWS::SNS::Subscription', { Protocol: 'email' }));
+    expectCDK(stack).to(haveResource('AWS::SNS::Subscription', { Protocol: 'email' }));
   });
 
   test('CloudWatch Alarms', () => {
