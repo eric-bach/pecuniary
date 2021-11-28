@@ -12,6 +12,7 @@ describe('Stack contains expected resources', () => {
       application: 'pecuniary',
     },
     params: {
+      certificateArn: 'arn',
       dlqNotifications: 'test@test.com',
       alphaVantageApiKey: 'ABC',
     },
