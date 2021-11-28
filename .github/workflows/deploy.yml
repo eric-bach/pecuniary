@@ -39,6 +39,14 @@ jobs:
         run: npm ci
         working-directory: client
 
+      - name: Create env file
+        run: |
+          touch .env
+          echo REACT_APP_COGNITO_USER_POOL_ID=${{secrets.REACT_APP_COGNITO_USER_POOL_ID}} >> .env
+          echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
+          cp .env .env.prod
+          cat .env.prod
+
       - name: Build Client
         run: npm run build:prod
         working-directory: client
