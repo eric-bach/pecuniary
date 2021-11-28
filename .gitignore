@@ -2,7 +2,6 @@
 !jest.config.js
 *.d.ts
 node_modules
-/client/package-lock.json
 /client/build
 
 # CDK asset staging directory
