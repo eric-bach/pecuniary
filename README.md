@@ -57,6 +57,7 @@ This quick start guide describes how to get the application running. An `AWS acc
 
 3. Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values:
 
+   - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
    - `ALPHA_VANTAGE_API_KEY` - AlphaVantage API key to lookup quotes (sign up for one [here](https://www.alphavantage.co))
 
@@ -70,7 +71,7 @@ This quick start guide describes how to get the application running. An `AWS acc
    - aws_user_pools_web_client_id: AWS Cognito User Pool Web Client Id,
    - aws_appsync_graphqlEndpoint: AWS AppSync GraphQL Endpoint
 
-6. Copy the `./client/.env.example` file to `./client/.env` and fill in the parameter values from the CDK stack outputs in step 2:
+6. Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
 
    - `REACT_APP_COGNITO_USER_POOL_ID` - AWS Cognito User Pool Id created in step 2
    - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
@@ -138,8 +139,11 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
 2. Add the following GitHub Secrets to the repository
 
    ```
-   AWS_ACCESS_KEY_ID - AWS access key id
-   AWS_ACCESS_KEY_SECRET = AWS access key secret
+   AWS_ACCESS_KEY_ID - AWS access key id (to prod account for backend resources)
+   AWS_ACCESS_KEY_SECRET = AWS access key secret (to prod account for backend resources)
+   AWS_ACCESS_KEY_ID_IAM - AWS access key id (to iam account for web hosting resources)
+   AWS_ACCESS_KEY_SECRET_IAM = AWS access key secret (to iam account for web hosting resources)
+   CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
    ALPHA_VANTAGE_API_KEY = AlphaVantage API Key
    ```

@@ -39,6 +39,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:prod": "env-cmd -f .env.prod npm run-script build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -63,6 +64,7 @@
   "devDependencies": {
     "@types/react-datepicker": "^4.1.7",
     "@types/react-router-dom": "^5.1.9",
-    "@types/uuid": "^8.3.1"
+    "@types/uuid": "^8.3.1",
+    "env-cmd": "^10.1.0"
   }
 }
