@@ -42,6 +42,7 @@ jobs:
       - name: CDK Deploy Backend
         run: cdk deploy pecuniary-prod --require-approval=never
         env:
+          CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
           ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}
         working-directory: backend
@@ -64,6 +65,7 @@ jobs:
       - name: CDK Deploy Website
         run: cdk deploy pecuniary-web-prod --require-approval=never
         env:
+          CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
           ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}
         working-directory: backend

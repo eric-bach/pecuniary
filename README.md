@@ -143,6 +143,7 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    AWS_ACCESS_KEY_SECRET = AWS access key secret (to prod account for backend resources)
    AWS_ACCESS_KEY_ID_IAM - AWS access key id (to iam account for web hosting resources)
    AWS_ACCESS_KEY_SECRET_IAM = AWS access key secret (to iam account for web hosting resources)
+   CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
    ALPHA_VANTAGE_API_KEY = AlphaVantage API Key
    ```
