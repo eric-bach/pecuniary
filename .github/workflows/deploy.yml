@@ -36,7 +36,9 @@ jobs:
         working-directory: backend
 
       - name: CDK Synth
-        run: cdk synth
+        run: |
+          cdk synth pecuniary-prod
+          cdk synth pecuniary-web-prod
         working-directory: backend
 
       - name: CDK Deploy Backend
