@@ -6,16 +6,19 @@
 </h1>
 
 <p align="center">
-  <a href="https://gitter.im/pecuniary/community">
-    <img src="https://img.shields.io/gitter/room/pecuniary/community" alt="Gitter"/>
-  </a>
-  <a href="https://www.codefactor.io/repository/github/eric-bach/pecuniary"><img src="https://www.codefactor.io/repository/github/eric-bach/pecuniary/badge" alt="CodeFactor" /></a>
-  <a href="https://cypress.io">
-    <img src="https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square" alt="cypress"/>
-  </a>
-  <a href="https://github.com/eric-bach/pecuniary/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" />
-  </a>
+   <a href="https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml">
+      <img src="https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml/badge.svg" alt="Github"/>
+   </a>
+   <a href="https://www.codefactor.io/repository/github/eric-bach/pecuniary"><img src="https://www.codefactor.io/repository/github/eric-bach/pecuniary/badge" alt="CodeFactor" /></a>
+   <a href="https://cypress.io">
+   <img src="https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square" alt="cypress"/>
+   </a>
+   <a href="https://gitter.im/pecuniary/community">
+      <img src="https://img.shields.io/gitter/room/pecuniary/community" alt="Gitter"/>
+   </a>
+   <a href="https://github.com/eric-bach/pecuniary/blob/master/LICENSE">
+   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" />
+   </a>
 </p>
 
 <p align="center">
