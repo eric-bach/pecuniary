@@ -76,7 +76,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: artifact
-          path: *
+          path: /
 
   aws_backend:
     name: Deploy Backend
@@ -115,7 +115,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: artifact
-          
+
       - name: Configure AWS Credentials for iam account
         uses: aws-actions/configure-aws-credentials@v1
         with:
