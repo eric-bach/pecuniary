@@ -5,12 +5,12 @@ on:
     branches: [main]
 
 jobs:
-  aws_cdk:
-    name: Deploy AWS Prod
+  build:
+    name: Build Dependencies
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ github.workspace }}/client
+        working-directory: ${{ github.workspace }}
     env:
       GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
 
@@ -72,6 +72,16 @@ jobs:
         run: cdk synth
         working-directory: backend
 
+  aws_backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/backend
+    env:
+      GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
+
+    steps:
       - name: CDK Deploy Backend
         run: cdk deploy pecuniary-prod --require-approval=never
         env:
@@ -80,6 +90,16 @@ jobs:
           ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}
         working-directory: backend
 
+  aws_client:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/client
+    env:
+      GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
+
+    steps:
       - name: Configure AWS Credentials for iam account
         uses: aws-actions/configure-aws-credentials@v1
         with:
