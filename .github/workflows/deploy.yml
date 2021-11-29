@@ -80,6 +80,7 @@ jobs:
         working-directory: ${{ github.workspace }}/backend
     env:
       GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
+    needs: build
 
     steps:
       - name: CDK Deploy Backend
@@ -98,6 +99,7 @@ jobs:
         working-directory: ${{ github.workspace }}/client
     env:
       GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
+    needs: [build, aws_backend]
 
     steps:
       - name: Configure AWS Credentials for iam account
