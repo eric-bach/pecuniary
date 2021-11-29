@@ -73,6 +73,11 @@ jobs:
         run: cdk synth
         working-directory: backend
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: artifact
+          path: *
+
   aws_backend:
     name: Deploy Backend
     runs-on: ubuntu-latest
@@ -84,6 +89,10 @@ jobs:
     needs: build
 
     steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifact
+
       - name: CDK Deploy Backend
         run: cdk deploy pecuniary-prod --require-approval=never
         env:
@@ -103,6 +112,10 @@ jobs:
     needs: [build, aws_backend]
 
     steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifact
+          
       - name: Configure AWS Credentials for iam account
         uses: aws-actions/configure-aws-credentials@v1
         with:
