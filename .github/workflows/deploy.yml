@@ -5,8 +5,8 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    name: Build Dependencies
+  aws_cdk:
+    name: Deploy AWS Prod
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -63,8 +63,6 @@ jobs:
           echo const awsmobile = { aws_project_region: 'us-east-1', aws_cognito_region: 'us-east-1', aws_user_pools_id: '${{secrets.REACT_APP_COGNITO_USER_POOL_ID}}', aws_user_pools_web_client_id: '${{ secrets.REACT_APP_COGNITO_CLIENT_ID }}', aws_appsync_graphqlEndpoint: '${{ secrets.AWS_APPSYNC_GRAPHQL_ENDPOINT }}', aws_appsync_region: 'us-east-1', aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS', }; >> src/aws-exports.js
           echo export default awsmobile; >> src/aws-exports.js
           cat src/aws-exports.js
-        working-directory: client
-
       - name: Build Client
         run: npm run build:prod
         working-directory: client
@@ -73,26 +71,6 @@ jobs:
         run: cdk synth
         working-directory: backend
 
-      - uses: actions/upload-artifact@v2
-        with:
-          name: artifact
-          path: /home/runner/work/pecuniary/pecuniary
-
-  aws_backend:
-    name: Deploy Backend
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ github.workspace }}/backend
-    env:
-      GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
-    needs: build
-
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: artifact
-
       - name: CDK Deploy Backend
         run: cdk deploy pecuniary-prod --require-approval=never
         env:
@@ -100,21 +78,6 @@ jobs:
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
           ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}
         working-directory: backend
-
-  aws_client:
-    name: Deploy Frontend
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ github.workspace }}/client
-    env:
-      GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
-    needs: [build, aws_backend]
-
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: artifact
 
       - name: Configure AWS Credentials for iam account
         uses: aws-actions/configure-aws-credentials@v1
