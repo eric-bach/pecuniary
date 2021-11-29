@@ -35,6 +35,19 @@ jobs:
         run: npm ci
         working-directory: backend
 
+      - name: Create env file
+        run: |
+          touch .env
+          echo CDK_DEV_ACCOUNT=524849261220 >> .env
+          echo CDK_PROD_ACCOUNT=830221499166 >> .env
+          echo CDK_IAM_ACCOUNT=115499684434 >> .env
+          echo CDK_DEFAULT_REGION=us-east-1 >> .env
+          echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
+          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
+          echo ALPHA_VANTAGE_API_KEY=${{ secrets.ALPHA_VANTAGE_API_KEY }} >> .env
+          cat .env
+        working-directory: backend
+
       - name: Install NPM Dependencies (Client)
         run: npm ci
         working-directory: client
