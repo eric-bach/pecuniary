@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/client
     env:
       GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
 
@@ -38,10 +38,10 @@ jobs:
       - name: Create backend/.env file
         run: |
           touch .env
-          echo CDK_DEV_ACCOUNT=524849261220 >> .env
-          echo CDK_PROD_ACCOUNT=830221499166 >> .env
-          echo CDK_IAM_ACCOUNT=115499684434 >> .env
-          echo CDK_DEFAULT_REGION=us-east-1 >> .env
+          echo CDK_DEV_ACCOUNT=${{ secrets.CDK_DEV_ACCOUNT }} >> .env
+          echo CDK_PROD_ACCOUNT=${{ secrets.CDK_PROD_ACCOUNT }} >> .env
+          echo CDK_IAM_ACCOUNT=${{ secrets.CDK_IAM_ACCOUNT }} >> .env
+          echo CDK_DEFAULT_REGION=${{ secrets.CDK_DEFAULT_REGION }} >> .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
           echo ALPHA_VANTAGE_API_KEY=${{ secrets.ALPHA_VANTAGE_API_KEY }} >> .env
@@ -55,7 +55,7 @@ jobs:
       - name: Create client/.env file
         run: |
           touch .env
-          echo REACT_APP_COGNITO_USER_POOL_ID=${{secrets.REACT_APP_COGNITO_USER_POOL_ID}} >> .env
+          echo REACT_APP_COGNITO_USER_POOL_ID=${{ secrets.REACT_APP_COGNITO_USER_POOL_ID }} >> .env
           echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
           cp .env .env.prod
           cat .env.prod
@@ -64,7 +64,8 @@ jobs:
       - name: Create client/src/aws-exports.js file
         run: |
           touch aws-exports.js
-          echo aGVsbG8= | base64 -d >> src/aws-exports.js
+          echo const awsmobile = { aws_project_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_cognito_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_user_pools_id: '${{secrets.REACT_APP_COGNITO_USER_POOL_ID}}', aws_user_pools_web_client_id: '${{ secrets.REACT_APP_COGNITO_CLIENT_ID }}', aws_appsync_graphqlEndpoint: '${{ secrets.AWS_APPSYNC_GRAPHQL_ENDPOINT }}', aws_appsync_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS', }; >> aws-exports.js
+          echo export default awsmobile; >> aws-exports.js
           cat aws-exports.js
         working-directory: client/src
 
