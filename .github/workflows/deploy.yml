@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ github.workspace }}/client
+        working-directory: ${{ github.workspace }}
     env:
       GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
 
@@ -62,6 +62,7 @@ jobs:
           touch src/aws-exports.js
           echo ${{ secrets.AWS_EXPORTS_BASE_64 }} | base64 -d > src/aws-exports.js
           cat src/aws-exports.js
+        working-directory: client
 
       - name: Build Client
         run: npm run build:prod
