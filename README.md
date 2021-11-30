@@ -6,8 +6,11 @@
 </h1>
 
 <p align="center">
+   <a href="https://github.com/eric-bach/pecuniary/actions/workflows/build.yml">
+      <img src="https://github.com/eric-bach/pecuniary/actions/workflows/build.yml/badge.svg" alt="Build"/>
+   </a>
    <a href="https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml">
-      <img src="https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml/badge.svg" alt="Github"/>
+      <img src="https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml/badge.svg" alt="Deploy"/>
    </a>
    <a href="https://www.codefactor.io/repository/github/eric-bach/pecuniary"><img src="https://www.codefactor.io/repository/github/eric-bach/pecuniary/badge" alt="CodeFactor" /></a>
    <a href="https://cypress.io">
@@ -146,9 +149,16 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    AWS_ACCESS_KEY_SECRET = AWS access key secret (to prod account for backend resources)
    AWS_ACCESS_KEY_ID_IAM - AWS access key id (to iam account for web hosting resources)
    AWS_ACCESS_KEY_SECRET_IAM = AWS access key secret (to iam account for web hosting resources)
+   CDK_DEFAULT_REGION - AWS default region for all resources to be created
+   CDK_DEV_ACCOUNT - AWS Account Id of development account
+   CDK_PROD_ACCOUNT - AWS Account Id of production account
+   CDK_IAM_ACCOUNT - AWS Account Id of web hosting account
    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
    ALPHA_VANTAGE_API_KEY = AlphaVantage API Key
+   REACT_APP_COGNITO_CLIENT_ID - Cognito User Pool Client Id
+   REACT_APP_COGNITO_USER_POOL_ID - Cognito User Pool Id
+   AWS_APPSYNC_GRAPHQL_ENDPOINT - AWS AppSync GraphQL endpoint URL
    ```
 
 # Projects References

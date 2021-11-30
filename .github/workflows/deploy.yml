@@ -1,4 +1,4 @@
-name: Deploy AWS Prod
+name: deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   aws_cdk:
-    name: Deploy AWS Prod
+    name: Deploy CDK
     runs-on: ubuntu-latest
     defaults:
       run:
