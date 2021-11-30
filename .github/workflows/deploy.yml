@@ -64,7 +64,7 @@ jobs:
       - name: Create client/src/aws-exports.js file
         run: |
           touch aws-exports.js
-          echo aGVsbG8= | base64 -d > src/aws-exports.js
+          echo aGVsbG8= | base64 -d >> src/aws-exports.js
           cat aws-exports.js
         working-directory: client/src
 
