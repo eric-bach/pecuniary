@@ -60,8 +60,7 @@ jobs:
           cp .env .env.prod
           cat .env.prod
           touch src/aws-exports.js
-          echo const awsmobile = { aws_project_region: 'us-east-1', aws_cognito_region: 'us-east-1', aws_user_pools_id: '${{secrets.REACT_APP_COGNITO_USER_POOL_ID}}', aws_user_pools_web_client_id: '${{ secrets.REACT_APP_COGNITO_CLIENT_ID }}', aws_appsync_graphqlEndpoint: '${{ secrets.AWS_APPSYNC_GRAPHQL_ENDPOINT }}', aws_appsync_region: 'us-east-1', aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS', }; >> src/aws-exports.js
-          echo export default awsmobile; >> src/aws-exports.js
+          echo ${{ secrets.AWS_EXPORTS_BASE_64 }} | base64 -d > src/aws-exports.js
           cat src/aws-exports.js
 
       - name: Build Client
