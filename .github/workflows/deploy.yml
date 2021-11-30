@@ -35,7 +35,7 @@ jobs:
         run: npm ci
         working-directory: backend
 
-      - name: Create env file
+      - name: Create backend/.env file
         run: |
           touch .env
           echo CDK_DEV_ACCOUNT=524849261220 >> .env
@@ -52,17 +52,21 @@ jobs:
         run: npm ci
         working-directory: client
 
-      - name: Create env file
+      - name: Create client/.env file
         run: |
           touch .env
           echo REACT_APP_COGNITO_USER_POOL_ID=${{secrets.REACT_APP_COGNITO_USER_POOL_ID}} >> .env
           echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
           cp .env .env.prod
           cat .env.prod
-          touch src/aws-exports.js
-          echo ${{ secrets.AWS_EXPORTS_BASE_64 }} | base64 -d > src/aws-exports.js
-          cat src/aws-exports.js
         working-directory: client
+
+      - name: Create client/src/aws-exports.js file
+        run: |
+          touch aws-exports.js
+          echo ${{ secrets.AWS_EXPORTS_BASE_64 }} | base64 -d > src/aws-exports.js
+          cat aws-exports.js
+        working-directory: client/src
 
       - name: Build Client
         run: npm run build:prod
