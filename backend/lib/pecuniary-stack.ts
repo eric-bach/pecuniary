@@ -1032,6 +1032,14 @@ export class PecuniaryHostingyStack extends Stack {
           ],
         },
       ],
+      errorConfigurations: [
+        {
+          errorCode: 403,
+          errorCachingMinTtl: 60,
+          responseCode: 200,
+          responsePagePath: '/index.html',
+        },
+      ],
       viewerCertificate: ViewerCertificate.fromAcmCertificate(certificate, {
         aliases: [`${props.appName}.ericbach.dev`],
         securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021, // default
