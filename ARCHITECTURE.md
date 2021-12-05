@@ -170,6 +170,30 @@ The newly created Account then appears on the `/accounts` page.
 
 ![Accounts](diagrams/architecture/account_view.png)
 
+## Example: creating a Transaction
+
+When a Transaction is added to an Account, a number of events occur to ensure the entire domain is updated properly. These are handled by asynchronous event handlers through each stage of the event flow:
+
+![Transaction](diagrams/architecture/create_transaction_events.png)
+
+- the Transaction needs to be created in the read model
+- a Position representing the total asset owned needs to be created/updated (if exists) and the market data representing the TimeSeries is retrieved for the symbol
+- the Account market and book values are updated
+
+When a Transaction is created the Account view looks like the following. A series of events are processed to update each domain of the read model.
+
+![Transaction](diagrams/architecture/create_transaction.png)
+
+In the above diagram when the `CreateTransactionEvent` is handled by the CreateTransaction event handler to de-normalize the transaction data to the read store. The event handler then publishes a `TransactionSavedEvent` to allow the Position/TimeSeries to be created/updated.
+
+The CreateUpdatePosition event handler processes the `TransactionSavedEvent` by performing several operations to update the Position and TimeSeries read models.
+
+- First it will retrieve market data for the Symbol in the Transaction through the`AlphaVantage` APIs. This gets saved as TimeSeries data in the read model.
+- Then it must create or update a Position representing the total asset owned for the symbol in the Transaction, updating the book and market value in the process.
+- Finally the event handler publishes a `PositionUpdatedEvent` to allow for the Account market and book value to be re-calculated and updated.
+
+Once the `PositionUpdatedEvent` handler is published, the PositionUpdated event handler updates the book and market value for the Account based on the TimeSeries data retrieved from the previous event handler. All of this data is updated in the Account read store.
+
 ## Event Bus error handling
 
 The Pecuniary event bus has a DLQ that holds failed events from the DynamoDB event stream. A CloudWatch Alarm is configured to monitor for any messages (metric: NumberOfMessagesSent) and publishes to a SNS queue which has an email subscription.
