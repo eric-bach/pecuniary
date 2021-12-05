@@ -28,19 +28,30 @@ async function getTimeSeries(symbol: string, startDate: Date, endDate: Date) {
   for (var day = from; day <= to; day.setDate(day.getDate() + 1)) {
     var date = day.toISOString().substring(0, 10);
 
-    console.log(`${date}: ${timeSeries[`${date}`]['4. close']}`);
+    // Ignore weekends
+    if (day.getDay() == 6 || day.getDay() == 0) {
+      console.log('🔔 Skipping weekend days: ', date);
+      continue;
+    }
 
-    result.push({
-      date: date,
-      open: timeSeries[`${date}`]['1. open'],
-      high: timeSeries[`${date}`]['2. high'],
-      low: timeSeries[`${date}`]['3. low'],
-      close: timeSeries[`${date}`]['4. close'],
-      adjusted_close: timeSeries[`${date}`]['5. adjusted close'],
-      volume: timeSeries[`${date}`]['6. volume'],
-      dividend: timeSeries[`${date}`]['7. dividend amount'],
-      split_coefficient: timeSeries[`${date}`]['8. split coefficient'],
-    });
+    try {
+      console.log(`${date}: ${timeSeries[`${date}`]['4. close']}`);
+
+      result.push({
+        date: date,
+        open: timeSeries[`${date}`]['1. open'],
+        high: timeSeries[`${date}`]['2. high'],
+        low: timeSeries[`${date}`]['3. low'],
+        close: timeSeries[`${date}`]['4. close'],
+        adjusted_close: timeSeries[`${date}`]['5. adjusted close'],
+        volume: timeSeries[`${date}`]['6. volume'],
+        dividend: timeSeries[`${date}`]['7. dividend amount'],
+        split_coefficient: timeSeries[`${date}`]['8. split coefficient'],
+      });
+    } catch (error) {
+      console.log('🔔 No market data for: ', date);
+      continue;
+    }
   }
 
   console.log(`✅ ${JSON.stringify(result)}`);
