@@ -598,6 +598,7 @@ export class PecuniaryStack extends Stack {
       timeout: Duration.seconds(10),
       environment: {
         ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
+        POSITION_TABLE_NAME: positionReadModelTable.tableName,
         REGION: REGION,
       },
       deadLetterQueue: eventHandlerQueue,
@@ -608,6 +609,13 @@ export class PecuniaryStack extends Stack {
         effect: Effect.ALLOW,
         actions: ['dynamodb:getItem', 'dynamodb:UpdateItem'],
         resources: [accountReadModelTable.tableArn],
+      })
+    );
+    updateAccountValuesFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:scan'],
+        resources: [positionReadModelTable.tableArn],
       })
     );
 

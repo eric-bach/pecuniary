@@ -13,6 +13,7 @@
       <img src="https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml/badge.svg" alt="Deploy"/>
    </a>
    <a href="https://www.codefactor.io/repository/github/eric-bach/pecuniary"><img src="https://www.codefactor.io/repository/github/eric-bach/pecuniary/badge" alt="CodeFactor" /></a>
+   <br />
    <a href="https://cypress.io">
    <img src="https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square" alt="cypress"/>
    </a>
@@ -28,6 +29,7 @@
   <a href="ARCHITECTURE.md">Architecture</a> |
   <a href="#getting-started">Getting Started</a> |
   <a href="#deployment">Development</a> |
+  <a href="https://trello.com/b/7lA2gwTs/pecuniary">Trello</a> |
   <a href="#project-resources">Resources</a>
 </p>
 
