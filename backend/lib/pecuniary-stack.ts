@@ -1,6 +1,8 @@
-import { Stack, Construct, CfnOutput, Expiration, Duration, RemovalPolicy } from '@aws-cdk/core';
-import * as ssm from '@aws-cdk/aws-ssm';
-import { PolicyStatement, Policy, Effect, CanonicalUserPrincipal } from '@aws-cdk/aws-iam';
+import { Stack, CfnOutput, Expiration, Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+
+import { StringParameter, ParameterTier } from 'aws-cdk-lib/aws-ssm';
+import { Function, Runtime, Code, StartingPosition } from 'aws-cdk-lib/aws-lambda';
 import {
   UserPool,
   CfnUserPoolGroup,
@@ -8,38 +10,40 @@ import {
   AccountRecovery,
   VerificationEmailStyle,
   UserPoolDomain,
-} from '@aws-cdk/aws-cognito';
-import { Topic } from '@aws-cdk/aws-sns';
-import { EmailSubscription } from '@aws-cdk/aws-sns-subscriptions';
-import { Queue } from '@aws-cdk/aws-sqs';
-import { Alarm, Metric, ComparisonOperator } from '@aws-cdk/aws-cloudwatch';
-import { GraphqlApi, Schema, FieldLogLevel, AuthorizationType } from '@aws-cdk/aws-appsync';
-import { Table, BillingMode, AttributeType, StreamViewType } from '@aws-cdk/aws-dynamodb';
-import { Function, Runtime, Code, StartingPosition } from '@aws-cdk/aws-lambda';
-import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { Rule, EventBus } from '@aws-cdk/aws-events';
-import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { SnsAction } from '@aws-cdk/aws-cloudwatch-actions';
-import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from '@aws-cdk/aws-s3-deployment';
-
-const dotenv = require('dotenv');
-import * as path from 'path';
-import { PecuniaryStackProps } from './PecuniaryStackProps';
-import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
-import { BlockPublicAccess, Bucket, HttpMethods, StorageClass } from '@aws-cdk/aws-s3';
+} from 'aws-cdk-lib/aws-cognito';
+import { PolicyStatement, Policy, Effect, CanonicalUserPrincipal } from 'aws-cdk-lib/aws-iam';
+import { Queue } from 'aws-cdk-lib/aws-sqs';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
+import { Alarm, Metric, ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
+// TODO CDK 2.0.0 does not support higher level AppSync, only the CFN ones
+import { GraphqlApi, Schema, FieldLogLevel, AuthorizationType } from 'aws-cdk-lib/aws-appsync';
+import { Table, BillingMode, AttributeType, StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
+import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { Rule, EventBus } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
+import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { BlockPublicAccess, Bucket, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import {
   CloudFrontAllowedMethods,
   CloudFrontWebDistribution,
-  Distribution,
   OriginAccessIdentity,
   PriceClass,
   SecurityPolicyProtocol,
   SSLMethod,
   ViewerCertificate,
-} from '@aws-cdk/aws-cloudfront';
-import { ARecord, HostedZone, RecordTarget } from '@aws-cdk/aws-route53';
-import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets';
-import { Certificate } from '@aws-cdk/aws-certificatemanager';
+} from 'aws-cdk-lib/aws-cloudfront';
+import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+
+import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
+
+const dotenv = require('dotenv');
+import * as path from 'path';
+import { PecuniaryStackProps } from './PecuniaryStackProps';
+import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
 
 dotenv.config();
 
@@ -53,11 +57,11 @@ export class PecuniaryStack extends Stack {
      *** AWS SSM
      ***/
 
-    const alphaVantageApiKey = new ssm.StringParameter(this, 'AlphaVantageAPIKey', {
+    const alphaVantageApiKey = new StringParameter(this, 'AlphaVantageAPIKey', {
       description: 'AlphaVantage API Key',
       parameterName: `${props.appName}-AlphaVantageAPIKey-${props.envName}`,
       stringValue: props.params.alphaVantageApiKey,
-      tier: ssm.ParameterTier.STANDARD,
+      tier: ParameterTier.STANDARD,
     });
 
     /***
@@ -201,8 +205,8 @@ export class PecuniaryStack extends Stack {
         namespace: 'AWS/SQS',
         metricName: 'NumberOfMessagesSent',
       }),
-      statistic: 'Sum',
-      period: Duration.seconds(300),
+      //statistic: 'Sum',
+      //period: Duration.seconds(300),
       datapointsToAlarm: 1,
       evaluationPeriods: 2,
       threshold: 1,
@@ -217,8 +221,8 @@ export class PecuniaryStack extends Stack {
         namespace: 'AWS/SQS',
         metricName: 'NumberOfMessagesSent',
       }),
-      statistic: 'Sum',
-      period: Duration.seconds(300),
+      //statistic: 'Sum',
+      //period: Duration.seconds(300),
       datapointsToAlarm: 1,
       evaluationPeriods: 2,
       threshold: 1,
@@ -233,8 +237,8 @@ export class PecuniaryStack extends Stack {
         namespace: 'AWS/SQS',
         metricName: 'NumberOfMessagesSent',
       }),
-      statistic: 'Sum',
-      period: Duration.seconds(300),
+      //statistic: 'Sum',
+      //period: Duration.seconds(300),
       datapointsToAlarm: 1,
       evaluationPeriods: 2,
       threshold: 1,
@@ -916,6 +920,11 @@ export class PecuniaryStack extends Stack {
         retryAttempts: 2,
       })
     );
+
+    /***
+     *** Test
+     ***/
+    const cloudFront = new CloudFrontToS3(this, 'test-cloudfront-s3', {});
 
     /***
      *** Outputs
