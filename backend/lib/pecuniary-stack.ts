@@ -198,15 +198,21 @@ export class PecuniaryStack extends Stack {
      *** AWS CloudWatch - Alarms
      ***/
 
+    // Generic metric
+    const metric = new Metric({
+      namespace: 'AWS/SQS',
+      metricName: 'NumberOfMessagesSent',
+    });
+    // TODO Doesn't seem to work
+    metric.with({
+      statistic: 'Sum',
+      period: Duration.seconds(300),
+    });
+
     const commandHandlerAlarm = new Alarm(this, 'CommandHandlerAlarm', {
       alarmName: `${props.appName}-commandHandler-Alarm-${props.envName}`,
       alarmDescription: 'One or more failed CommandHandler messages',
-      metric: new Metric({
-        namespace: 'AWS/SQS',
-        metricName: 'NumberOfMessagesSent',
-      }),
-      //statistic: 'Sum',
-      //period: Duration.seconds(300),
+      metric: metric,
       datapointsToAlarm: 1,
       evaluationPeriods: 2,
       threshold: 1,
@@ -217,12 +223,7 @@ export class PecuniaryStack extends Stack {
     const eventBusAlarm = new Alarm(this, 'EventBusAlarm', {
       alarmName: `${props.appName}-eventBus-Alarm-${props.envName}`,
       alarmDescription: 'One or more failed EventBus messages',
-      metric: new Metric({
-        namespace: 'AWS/SQS',
-        metricName: 'NumberOfMessagesSent',
-      }),
-      //statistic: 'Sum',
-      //period: Duration.seconds(300),
+      metric: metric,
       datapointsToAlarm: 1,
       evaluationPeriods: 2,
       threshold: 1,
@@ -233,12 +234,7 @@ export class PecuniaryStack extends Stack {
     const eventHandlerAlarm = new Alarm(this, 'EventHandlerAlarm', {
       alarmName: `${props.appName}-eventHandler-Alarm-${props.envName}`,
       alarmDescription: 'One or more failed EventHandler messages',
-      metric: new Metric({
-        namespace: 'AWS/SQS',
-        metricName: 'NumberOfMessagesSent',
-      }),
-      //statistic: 'Sum',
-      //period: Duration.seconds(300),
+      metric: metric,
       datapointsToAlarm: 1,
       evaluationPeriods: 2,
       threshold: 1,
