@@ -52,7 +52,7 @@ const Accounts = () => {
   }, [subscriptions, refetch]);
 
   // TODO Improve the Error screen
-  if (error) return 'Error!'; // You probably want to do more here!
+  if (error) return <div>${JSON.stringify(error)}</div>; // You probably want to do more here!
   if (loading || isLoading) return <Loading />;
 
   return (
