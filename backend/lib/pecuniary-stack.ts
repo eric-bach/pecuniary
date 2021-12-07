@@ -982,9 +982,9 @@ export class PecuniaryStack extends Stack {
     );
 
     /***
-     *** Test
+     *** Test Constructs 2.0.0
      ***/
-    const cloudFront = new CloudFrontToS3(this, 'test-cloudfront-s3', {});
+    // const cloudFront = new CloudFrontToS3(this, 'test-cloudfront-s3', {});
 
     /***
      *** Outputs
