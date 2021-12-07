@@ -11,13 +11,13 @@ import {
   VerificationEmailStyle,
   UserPoolDomain,
 } from 'aws-cdk-lib/aws-cognito';
-import { PolicyStatement, Policy, Effect, CanonicalUserPrincipal } from 'aws-cdk-lib/aws-iam';
+import { PolicyStatement, Role, Policy, Effect, ServicePrincipal, CanonicalUserPrincipal } from 'aws-cdk-lib/aws-iam';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Alarm, Metric, ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
-// TODO CDK 2.0.0 does not support higher level AppSync, only the CFN ones
-import { GraphqlApi, Schema, FieldLogLevel, AuthorizationType } from 'aws-cdk-lib/aws-appsync';
+// TODO CDK 2.0.0 does not support higher level AppSync yet, only the CFN ones
+import { CfnGraphQLApi, CfnGraphQLSchema, CfnApiKey, CfnDataSource, CfnResolver } from 'aws-cdk-lib/aws-appsync';
 import { Table, BillingMode, AttributeType, StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Rule, EventBus } from 'aws-cdk-lib/aws-events';
@@ -250,30 +250,34 @@ export class PecuniaryStack extends Stack {
      *** AWS AppSync
      ***/
 
-    // AppSync API
-    const api = new GraphqlApi(this, 'PecuniaryApi', {
+    // GraphQL API
+    const api = new CfnGraphQLApi(this, 'PecuniaryApi', {
       name: `${props.appName}-api-${props.envName}`,
-      logConfig: {
-        fieldLogLevel: FieldLogLevel.ALL,
-      },
-      schema: Schema.fromAsset(path.join(__dirname, './graphql/schema.graphql')),
-      authorizationConfig: {
-        defaultAuthorization: {
-          authorizationType: AuthorizationType.API_KEY,
-          apiKeyConfig: {
-            expires: Expiration.after(Duration.days(365)),
+      authenticationType: 'API_KEY',
+      additionalAuthenticationProviders: [
+        {
+          authenticationType: 'AMAZON_COGNITO_USER_POOLS',
+          userPoolConfig: {
+            awsRegion: REGION,
+            userPoolId: userPool.userPoolId,
           },
         },
-        additionalAuthorizationModes: [
-          {
-            authorizationType: AuthorizationType.USER_POOL,
-            userPoolConfig: {
-              userPool,
-            },
-          },
-        ],
-      },
+      ],
     });
+
+    // GraphQL schema
+    var fs = require('fs');
+    const schema = new CfnGraphQLSchema(this, 'PecuniarySchema', {
+      apiId: api.attrApiId,
+      definition: fs.readFileSync('./lib/graphql/schema.graphql').toString(),
+    });
+
+    // GraphQL API Key
+    const apiKey = new CfnApiKey(this, 'PecuniaryApiKey', {
+      apiId: api.attrApiId,
+      expires: 1670290258,
+    });
+    apiKey.addDependsOn(schema);
 
     /***
      *** AWS DynamoDB
@@ -413,48 +417,108 @@ export class PecuniaryStack extends Stack {
       deadLetterQueue: commandHandlerQueue,
     });
 
+    // AppSync resolver role
+    const apiDataSourcePolicy = new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ['lambda:InvokeFunction'],
+      resources: [commandHandlerFunction.functionArn],
+    });
+    const apiDataSourceRole = new Role(this, 'apiDataSourceRole', {
+      assumedBy: new ServicePrincipal('appsync.amazonaws.com'),
+    });
+    apiDataSourceRole.addToPolicy(apiDataSourcePolicy);
+
     // Set the new Lambda function as a data source for the AppSync API
-    const lambdaDataSource = api.addLambdaDataSource('lambdaDataSource', commandHandlerFunction);
+    const lambdaDataSource = new CfnDataSource(this, 'LambdaDataSource', {
+      apiId: api.attrApiId,
+      name: 'lambdaDataSource',
+      type: 'AWS_LAMBDA',
+      lambdaConfig: {
+        lambdaFunctionArn: commandHandlerFunction.functionArn,
+      },
+      serviceRoleArn: apiDataSourceRole.roleArn,
+    });
 
-    lambdaDataSource.createResolver({
-      typeName: 'Mutation',
+    // Resolvers
+    const createEventResolver = new CfnResolver(this, 'createEventResolver', {
+      apiId: api.attrApiId,
       fieldName: 'createEvent',
+      typeName: 'Mutation',
+      dataSourceName: lambdaDataSource.name,
+      kind: 'UNIT',
     });
+    createEventResolver.addDependsOn(lambdaDataSource);
+    createEventResolver.addDependsOn(schema);
 
-    lambdaDataSource.createResolver({
-      typeName: 'Query',
+    const getAccountByAggregateIdResolver = new CfnResolver(this, 'getAccountByAggregateIdResolver', {
+      apiId: api.attrApiId,
       fieldName: 'getAccountByAggregateId',
-    });
-
-    lambdaDataSource.createResolver({
       typeName: 'Query',
+      dataSourceName: lambdaDataSource.name,
+      kind: 'UNIT',
+    });
+    getAccountByAggregateIdResolver.addDependsOn(lambdaDataSource);
+    getAccountByAggregateIdResolver.addDependsOn(schema);
+
+    const getAccountsByUserResolver = new CfnResolver(this, 'getAccountsByUserResolver', {
+      apiId: api.attrApiId,
       fieldName: 'getAccountsByUser',
-    });
-
-    lambdaDataSource.createResolver({
       typeName: 'Query',
+      dataSourceName: lambdaDataSource.name,
+      kind: 'UNIT',
+    });
+    getAccountsByUserResolver.addDependsOn(lambdaDataSource);
+    getAccountsByUserResolver.addDependsOn(schema);
+
+    const getPositionsByAccountIdResolver = new CfnResolver(this, 'getPositionsByAccountIdResolver', {
+      apiId: api.attrApiId,
       fieldName: 'getPositionsByAccountId',
-    });
-
-    lambdaDataSource.createResolver({
       typeName: 'Query',
+      dataSourceName: lambdaDataSource.name,
+      kind: 'UNIT',
+    });
+    getPositionsByAccountIdResolver.addDependsOn(lambdaDataSource);
+    getPositionsByAccountIdResolver.addDependsOn(schema);
+
+    const getTransactionsByAccountIdResolver = new CfnResolver(this, 'getTransactionsByAccountIdResolver', {
+      apiId: api.attrApiId,
       fieldName: 'getTransactionsByAccountId',
-    });
-
-    lambdaDataSource.createResolver({
       typeName: 'Query',
+      dataSourceName: lambdaDataSource.name,
+      kind: 'UNIT',
+    });
+    getTransactionsByAccountIdResolver.addDependsOn(lambdaDataSource);
+    getTransactionsByAccountIdResolver.addDependsOn(schema);
+
+    const listAccountTypesResolver = new CfnResolver(this, 'listAccountTypesResolver', {
+      apiId: api.attrApiId,
       fieldName: 'listAccountTypes',
-    });
-
-    lambdaDataSource.createResolver({
       typeName: 'Query',
+      dataSourceName: lambdaDataSource.name,
+      kind: 'UNIT',
+    });
+    listAccountTypesResolver.addDependsOn(lambdaDataSource);
+    listAccountTypesResolver.addDependsOn(schema);
+
+    const listTransactionTypesResolver = new CfnResolver(this, 'listTransactionTypesResolver', {
+      apiId: api.attrApiId,
       fieldName: 'listTransactionTypes',
-    });
-
-    lambdaDataSource.createResolver({
       typeName: 'Query',
-      fieldName: 'listEvents',
+      dataSourceName: lambdaDataSource.name,
+      kind: 'UNIT',
     });
+    listTransactionTypesResolver.addDependsOn(lambdaDataSource);
+    listTransactionTypesResolver.addDependsOn(schema);
+
+    const listEventsResolver = new CfnResolver(this, 'listEventsResolver', {
+      apiId: api.attrApiId,
+      fieldName: 'listEvents',
+      typeName: 'Query',
+      dataSourceName: lambdaDataSource.name,
+      kind: 'UNIT',
+    });
+    listEventsResolver.addDependsOn(lambdaDataSource);
+    listEventsResolver.addDependsOn(schema);
 
     /***
      *** AWS EventBridge - Event Bus
@@ -948,8 +1012,8 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'EventHandlerTopicArn', { value: eventHandlerTopic.topicArn });
 
     // AppSync API
-    new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
-    new CfnOutput(this, 'AppSyncAPIKey', { value: api.apiKey || '' });
+    new CfnOutput(this, 'GraphQLApiUrl', { value: api.attrGraphQlUrl });
+    new CfnOutput(this, 'AppSyncAPIKey', { value: apiKey.attrApiKey || '' });
 
     // DynamoDB tables
     new CfnOutput(this, 'eventTableArn', { value: eventTable.tableArn });
