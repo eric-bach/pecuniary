@@ -56,20 +56,29 @@ This quick start guide describes how to get the application running. An `AWS acc
    $ cd ../client && npm install
    ```
 
-2. Copy the `./backend/deploy-cdk.ps1.example` file to `./backend/deploy-cdk.ps1` and replace `AWS_PROFILE` in the file with your AWS credentials profile name
+2. Copy the `./backend/deploy.sh.example` file to `./backend/deploy.sh` and replace `AWS_PROFILE` in the file with your AWS credentials profile name
 
    ```
    # Deploy CDK
-   $ cmd.exe /c cdk deploy --profile AWS_PROFILE pecuniary-dev
+   $ cdk deploy --profile AWS_PROFILE pecuniary-dev --require-approval=never
    ```
 
 3. Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values:
 
+   - `CDK_DEV_ACCOUNT` - AWS account Id
+   - `CDK_PROD_ACCOUNT` - AWS account Id
+   - `CDK_IAM_ACCOUNT` - AWS account Id
+   - `CDK_DEFAULT_REGION` - AWS region
    - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
    - `ALPHA_VANTAGE_API_KEY` - AlphaVantage API key to lookup quotes (sign up for one [here](https://www.alphavantage.co))
 
-4. (optional) Deploy the backend in preparation for step 5111111111111111111111111111111111111111111111111111111111111111111111
+4. Deploy the backend
+
+   ```
+   $ cd backend
+   $ ./deploy.sh
+   ```
 
 5. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
 
