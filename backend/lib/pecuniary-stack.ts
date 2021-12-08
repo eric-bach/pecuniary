@@ -1,19 +1,8 @@
-import {
-  Stack,
-  CfnOutput,
-  Expiration,
-  Duration,
-  RemovalPolicy,
-} from 'aws-cdk-lib';
+import { Stack, CfnOutput, Expiration, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 import { StringParameter, ParameterTier } from 'aws-cdk-lib/aws-ssm';
-import {
-  Function,
-  Runtime,
-  Code,
-  StartingPosition,
-} from 'aws-cdk-lib/aws-lambda';
+import { Function, Runtime, Code, StartingPosition } from 'aws-cdk-lib/aws-lambda';
 import {
   UserPool,
   CfnUserPoolGroup,
@@ -22,38 +11,18 @@ import {
   VerificationEmailStyle,
   UserPoolDomain,
 } from 'aws-cdk-lib/aws-cognito';
-import {
-  PolicyStatement,
-  Policy,
-  Effect,
-  CanonicalUserPrincipal,
-} from 'aws-cdk-lib/aws-iam';
+import { PolicyStatement, Policy, Effect, CanonicalUserPrincipal } from 'aws-cdk-lib/aws-iam';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Alarm, Metric, ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
-import {
-  GraphqlApi,
-  FieldLogLevel,
-  AuthorizationType,
-  Schema,
-} from '@aws-cdk/aws-appsync-alpha';
-import {
-  Table,
-  BillingMode,
-  AttributeType,
-  StreamViewType,
-} from 'aws-cdk-lib/aws-dynamodb';
+import { GraphqlApi, FieldLogLevel, AuthorizationType, Schema } from '@aws-cdk/aws-appsync-alpha';
+import { Table, BillingMode, AttributeType, StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Rule, EventBus } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
-import {
-  BucketDeployment,
-  CacheControl,
-  ServerSideEncryption,
-  Source,
-} from 'aws-cdk-lib/aws-s3-deployment';
+import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { BlockPublicAccess, Bucket, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import {
   CloudFrontAllowedMethods,
@@ -66,8 +35,8 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
-import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
+import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
 
 const dotenv = require('dotenv');
@@ -99,23 +68,17 @@ export class PecuniaryStack extends Stack {
      ***/
 
     // AWS Cognito post-confirmation lambda function
-    const cognitoPostConfirmationTrigger = new Function(
-      this,
-      'CognitoPostConfirmationTrigger',
-      {
-        runtime: Runtime.NODEJS_14_X,
-        functionName: `${props.appName}-cognitoPostConfirmationTrigger-${props.envName}`,
-        handler: 'main.handler',
-        code: Code.fromAsset(
-          path.resolve(__dirname, 'lambda', 'cognitoPostConfirmation')
-        ),
-        memorySize: 768,
-        timeout: Duration.seconds(5),
-        environment: {
-          REGION: REGION,
-        },
-      }
-    );
+    const cognitoPostConfirmationTrigger = new Function(this, 'CognitoPostConfirmationTrigger', {
+      runtime: Runtime.NODEJS_14_X,
+      functionName: `${props.appName}-cognitoPostConfirmationTrigger-${props.envName}`,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoPostConfirmation')),
+      memorySize: 768,
+      timeout: Duration.seconds(5),
+      environment: {
+        REGION: REGION,
+      },
+    });
 
     /***
      *** AWS Cognito
@@ -211,9 +174,7 @@ export class PecuniaryStack extends Stack {
       displayName: 'Command Handler Topic',
     });
     if (props.params.dlqNotifications) {
-      commandHandlerTopic.addSubscription(
-        new EmailSubscription(props.params.dlqNotifications)
-      );
+      commandHandlerTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     const eventBusTopic = new Topic(this, 'EventBusTopic', {
@@ -221,9 +182,7 @@ export class PecuniaryStack extends Stack {
       displayName: 'event Bus Topic',
     });
     if (props.params.dlqNotifications) {
-      eventBusTopic.addSubscription(
-        new EmailSubscription(props.params.dlqNotifications)
-      );
+      eventBusTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     const eventHandlerTopic = new Topic(this, 'EventHandlerTopic', {
@@ -231,9 +190,7 @@ export class PecuniaryStack extends Stack {
       displayName: 'Event Handler Topic',
     });
     if (props.params.dlqNotifications) {
-      eventHandlerTopic.addSubscription(
-        new EmailSubscription(props.params.dlqNotifications)
-      );
+      eventHandlerTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     /***
@@ -293,9 +250,7 @@ export class PecuniaryStack extends Stack {
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
       },
-      schema: Schema.fromAsset(
-        path.join(__dirname, './graphql/schema.graphql')
-      ),
+      schema: Schema.fromAsset(path.join(__dirname, './graphql/schema.graphql')),
       authorizationConfig: {
         defaultAuthorization: {
           authorizationType: AuthorizationType.API_KEY,
@@ -453,10 +408,7 @@ export class PecuniaryStack extends Stack {
     });
 
     // Set the new Lambda function as a data source for the AppSync API
-    const lambdaDataSource = api.addLambdaDataSource(
-      'lambdaDataSource',
-      commandHandlerFunction
-    );
+    const lambdaDataSource = api.addLambdaDataSource('lambdaDataSource', commandHandlerFunction);
 
     // Resolvers
     lambdaDataSource.createResolver({
@@ -628,34 +580,24 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Scan', 'dynamodb:DeleteItem'],
-        resources: [
-          accountReadModelTable.tableArn,
-          positionReadModelTable.tableArn,
-          transactionReadModelTable.tableArn,
-        ],
+        resources: [accountReadModelTable.tableArn, positionReadModelTable.tableArn, transactionReadModelTable.tableArn],
       })
     );
 
-    const updateAccountValuesFunction = new Function(
-      this,
-      'UpdateAccountValues',
-      {
-        runtime: Runtime.NODEJS_14_X,
-        functionName: `${props.appName}-updateAccountValues-${props.envName}`,
-        handler: 'main.handler',
-        code: Code.fromAsset(
-          path.resolve(__dirname, 'lambda', 'updateAccountValues')
-        ),
-        memorySize: 768,
-        timeout: Duration.seconds(10),
-        environment: {
-          ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
-          POSITION_TABLE_NAME: positionReadModelTable.tableName,
-          REGION: REGION,
-        },
-        deadLetterQueue: eventHandlerQueue,
-      }
-    );
+    const updateAccountValuesFunction = new Function(this, 'UpdateAccountValues', {
+      runtime: Runtime.NODEJS_14_X,
+      functionName: `${props.appName}-updateAccountValues-${props.envName}`,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateAccountValues')),
+      memorySize: 768,
+      timeout: Duration.seconds(10),
+      environment: {
+        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
+        POSITION_TABLE_NAME: positionReadModelTable.tableName,
+        REGION: REGION,
+      },
+      deadLetterQueue: eventHandlerQueue,
+    });
     // Add permissions to read/write to DynamoDB table
     updateAccountValuesFunction.addToRolePolicy(
       new PolicyStatement({
@@ -676,9 +618,7 @@ export class PecuniaryStack extends Stack {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-createTransaction-${props.envName}`,
       handler: 'main.handler',
-      code: Code.fromAsset(
-        path.resolve(__dirname, 'lambda', 'createTransaction')
-      ),
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createTransaction')),
       memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
@@ -709,9 +649,7 @@ export class PecuniaryStack extends Stack {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-updateTransaction-${props.envName}`,
       handler: 'main.handler',
-      code: Code.fromAsset(
-        path.resolve(__dirname, 'lambda', 'updateTransaction')
-      ),
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateTransaction')),
       memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
@@ -742,9 +680,7 @@ export class PecuniaryStack extends Stack {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-deleteTransaction-${props.envName}`,
       handler: 'main.handler',
-      code: Code.fromAsset(
-        path.resolve(__dirname, 'lambda', 'deleteTransaction')
-      ),
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'deleteTransaction')),
       memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
@@ -771,38 +707,29 @@ export class PecuniaryStack extends Stack {
       })
     );
 
-    const createUpdatePositionFunction = new Function(
-      this,
-      'CreateUpdatePosition',
-      {
-        runtime: Runtime.NODEJS_14_X,
-        functionName: `${props.appName}-createUpdatePosition-${props.envName}`,
-        handler: 'main.handler',
-        code: Code.fromAsset(
-          path.resolve(__dirname, 'lambda', 'createUpdatePosition')
-        ),
-        memorySize: 1024,
-        timeout: Duration.seconds(10),
-        environment: {
-          TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
-          POSITION_TABLE_NAME: positionReadModelTable.tableName,
-          TIME_SERIES_TABLE_NAME: timeSeriesTable.tableName,
-          EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
-          REGION: REGION,
-          ALPHA_VANTAGE_API_KEY: alphaVantageApiKey.parameterName,
-        },
-        deadLetterQueue: eventHandlerQueue,
-      }
-    );
+    const createUpdatePositionFunction = new Function(this, 'CreateUpdatePosition', {
+      runtime: Runtime.NODEJS_14_X,
+      functionName: `${props.appName}-createUpdatePosition-${props.envName}`,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createUpdatePosition')),
+      memorySize: 1024,
+      timeout: Duration.seconds(10),
+      environment: {
+        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
+        POSITION_TABLE_NAME: positionReadModelTable.tableName,
+        TIME_SERIES_TABLE_NAME: timeSeriesTable.tableName,
+        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
+        REGION: REGION,
+        ALPHA_VANTAGE_API_KEY: alphaVantageApiKey.parameterName,
+      },
+      deadLetterQueue: eventHandlerQueue,
+    });
     // Add permissions to call DynamoDB
     createUpdatePositionFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Scan'],
-        resources: [
-          transactionReadModelTable.tableArn,
-          positionReadModelTable.tableArn,
-        ],
+        resources: [transactionReadModelTable.tableArn, positionReadModelTable.tableArn],
       })
     );
     createUpdatePositionFunction.addToRolePolicy(
@@ -894,19 +821,15 @@ export class PecuniaryStack extends Stack {
     );
 
     // EventBus Rule - TransactionCreatedEventRule
-    const transactionCreatedEventRule = new Rule(
-      this,
-      'TransactionCreatedEventRule',
-      {
-        ruleName: `${props.appName}-TransactionCreatedEvent-${props.envName}`,
-        description: 'TransactionCreatedEvent',
-        eventBus: eventBus,
-        eventPattern: {
-          source: ['custom.pecuniary'],
-          detailType: ['TransactionCreatedEvent'],
-        },
-      }
-    );
+    const transactionCreatedEventRule = new Rule(this, 'TransactionCreatedEventRule', {
+      ruleName: `${props.appName}-TransactionCreatedEvent-${props.envName}`,
+      description: 'TransactionCreatedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['TransactionCreatedEvent'],
+      },
+    });
     transactionCreatedEventRule.addTarget(
       new LambdaFunction(createTransactionFunction, {
         //deadLetterQueue: SqsQueue,
@@ -916,19 +839,15 @@ export class PecuniaryStack extends Stack {
     );
 
     // EventBus Rule - TransactionUpdatedEventRule
-    const transactionUpdatedEventRule = new Rule(
-      this,
-      'TransactionUpdatedEventRule',
-      {
-        ruleName: `${props.appName}-TransactionUpdatedEvent-${props.envName}`,
-        description: 'TransactionUpdatedEvent',
-        eventBus: eventBus,
-        eventPattern: {
-          source: ['custom.pecuniary'],
-          detailType: ['TransactionUpdatedEvent'],
-        },
-      }
-    );
+    const transactionUpdatedEventRule = new Rule(this, 'TransactionUpdatedEventRule', {
+      ruleName: `${props.appName}-TransactionUpdatedEvent-${props.envName}`,
+      description: 'TransactionUpdatedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['TransactionUpdatedEvent'],
+      },
+    });
 
     transactionUpdatedEventRule.addTarget(
       new LambdaFunction(updateTransactionFunction, {
@@ -939,19 +858,15 @@ export class PecuniaryStack extends Stack {
     );
 
     // EventBus Rule - TransactionDeletedEventRule
-    const transactionDeletedEventRule = new Rule(
-      this,
-      'TransactionDeletedEventRule',
-      {
-        ruleName: `${props.appName}-TransactionDeletedEvent-${props.envName}`,
-        description: 'TransactionDeletedEvent',
-        eventBus: eventBus,
-        eventPattern: {
-          source: ['custom.pecuniary'],
-          detailType: ['TransactionDeletedEvent'],
-        },
-      }
-    );
+    const transactionDeletedEventRule = new Rule(this, 'TransactionDeletedEventRule', {
+      ruleName: `${props.appName}-TransactionDeletedEvent-${props.envName}`,
+      description: 'TransactionDeletedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['TransactionDeletedEvent'],
+      },
+    });
 
     transactionDeletedEventRule.addTarget(
       new LambdaFunction(deleteTransactionFunction, {
@@ -962,19 +877,15 @@ export class PecuniaryStack extends Stack {
     );
 
     // EventBus Rule - TransactionSavedEventRule
-    const transactionSavedEventRule = new Rule(
-      this,
-      'TransactionSavedEventRule',
-      {
-        ruleName: `${props.appName}-TransactionSavedEvent-${props.envName}`,
-        description: 'TransactionSavedEvent',
-        eventBus: eventBus,
-        eventPattern: {
-          source: ['custom.pecuniary'],
-          detailType: ['TransactionSavedEvent'],
-        },
-      }
-    );
+    const transactionSavedEventRule = new Rule(this, 'TransactionSavedEventRule', {
+      ruleName: `${props.appName}-TransactionSavedEvent-${props.envName}`,
+      description: 'TransactionSavedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['TransactionSavedEvent'],
+      },
+    });
     transactionSavedEventRule.addTarget(
       new LambdaFunction(createUpdatePositionFunction, {
         //deadLetterQueue: SqsQueue,
@@ -984,19 +895,15 @@ export class PecuniaryStack extends Stack {
     );
 
     // EventBus Rule - PositionUpdatedEventRule
-    const positionUpdatedEventRule = new Rule(
-      this,
-      'PositionUpdatedEventRule',
-      {
-        ruleName: `${props.appName}-PositionUpdatedEvent-${props.envName}`,
-        description: 'PositionUpdatedEvent',
-        eventBus: eventBus,
-        eventPattern: {
-          source: ['custom.pecuniary'],
-          detailType: ['PositionUpdatedEvent'],
-        },
-      }
-    );
+    const positionUpdatedEventRule = new Rule(this, 'PositionUpdatedEventRule', {
+      ruleName: `${props.appName}-PositionUpdatedEvent-${props.envName}`,
+      description: 'PositionUpdatedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['PositionUpdatedEvent'],
+      },
+    });
     positionUpdatedEventRule.addTarget(
       new LambdaFunction(updateAccountValuesFunction, {
         //deadLetterQueue: SqsQueue,
@@ -1006,42 +913,25 @@ export class PecuniaryStack extends Stack {
     );
 
     /***
-     *** Test Constructs 2.0.0
-     ***/
-    // const cloudFront = new CloudFrontToS3(this, 'test-cloudfront-s3', {});
-
-    /***
      *** Outputs
      ***/
 
     // SSM Parameter Keys
-    new CfnOutput(this, 'AlphaVantageAPIKeyArn', {
-      value: alphaVantageApiKey.parameterArn,
-    });
+    new CfnOutput(this, 'AlphaVantageAPIKeyArn', { value: alphaVantageApiKey.parameterArn });
 
     // Cognito User Pool
     new CfnOutput(this, 'UserPoolId', { value: userPool.userPoolId });
-    new CfnOutput(this, 'UserPoolClientId', {
-      value: userPoolClient.userPoolClientId,
-    });
+    new CfnOutput(this, 'UserPoolClientId', { value: userPoolClient.userPoolClientId });
 
     // Dead Letter Queues
-    new CfnOutput(this, 'CommandHandlerQueueArn', {
-      value: commandHandlerQueue.queueArn,
-    });
+    new CfnOutput(this, 'CommandHandlerQueueArn', { value: commandHandlerQueue.queueArn });
     new CfnOutput(this, 'EventBusQueueArn', { value: eventBusQueue.queueArn });
-    new CfnOutput(this, 'EventHandlerQueueArn', {
-      value: eventHandlerQueue.queueArn,
-    });
+    new CfnOutput(this, 'EventHandlerQueueArn', { value: eventHandlerQueue.queueArn });
 
     // SNS Topics
-    new CfnOutput(this, 'CommandHandlerTopicArn', {
-      value: commandHandlerTopic.topicArn,
-    });
+    new CfnOutput(this, 'CommandHandlerTopicArn', { value: commandHandlerTopic.topicArn });
     new CfnOutput(this, 'EventBusTopicArn', { value: eventBusTopic.topicArn });
-    new CfnOutput(this, 'EventHandlerTopicArn', {
-      value: eventHandlerTopic.topicArn,
-    });
+    new CfnOutput(this, 'EventHandlerTopicArn', { value: eventHandlerTopic.topicArn });
 
     // AppSync API
     new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
@@ -1049,95 +939,43 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB tables
     new CfnOutput(this, 'eventTableArn', { value: eventTable.tableArn });
-    new CfnOutput(this, 'accountTypeTableArn', {
-      value: accountTypeTable.tableArn,
-    });
-    new CfnOutput(this, 'currencyTypeTableArn', {
-      value: currencyTypeTable.tableArn,
-    });
-    new CfnOutput(this, 'exchangeTypeTableArn', {
-      value: exchangeTypeTable.tableArn,
-    });
-    new CfnOutput(this, 'transactionTypeTableArn', {
-      value: transactionTypeTable.tableArn,
-    });
-    new CfnOutput(this, 'accountReadModelTableArn', {
-      value: accountReadModelTable.tableArn,
-    });
-    new CfnOutput(this, 'positionReadModelTable', {
-      value: positionReadModelTable.tableArn,
-    });
-    new CfnOutput(this, 'transactionReadModelTable', {
-      value: transactionReadModelTable.tableArn,
-    });
+    new CfnOutput(this, 'accountTypeTableArn', { value: accountTypeTable.tableArn });
+    new CfnOutput(this, 'currencyTypeTableArn', { value: currencyTypeTable.tableArn });
+    new CfnOutput(this, 'exchangeTypeTableArn', { value: exchangeTypeTable.tableArn });
+    new CfnOutput(this, 'transactionTypeTableArn', { value: transactionTypeTable.tableArn });
+    new CfnOutput(this, 'accountReadModelTableArn', { value: accountReadModelTable.tableArn });
+    new CfnOutput(this, 'positionReadModelTable', { value: positionReadModelTable.tableArn });
+    new CfnOutput(this, 'transactionReadModelTable', { value: transactionReadModelTable.tableArn });
     new CfnOutput(this, 'timeSeriesTable', { value: timeSeriesTable.tableArn });
 
     // EventBridge
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
-    new CfnOutput(this, 'AccountCreatedEventRuleArn', {
-      value: accountCreatedEventRule.ruleArn,
-    });
-    new CfnOutput(this, 'AccountUpdatedEventRuleArn', {
-      value: accountUpdatedEventRule.ruleArn,
-    });
-    new CfnOutput(this, 'AccountDeletedEventRuleArn', {
-      value: accountDeletedEventRule.ruleArn,
-    });
-    new CfnOutput(this, 'TransactionCreatedEventRuleArn', {
-      value: transactionCreatedEventRule.ruleArn,
-    });
-    new CfnOutput(this, 'TransactionUpdatedEventRuleArn', {
-      value: transactionUpdatedEventRule.ruleArn,
-    });
-    new CfnOutput(this, 'TransactionDeletedEventRuleArn', {
-      value: transactionDeletedEventRule.ruleArn,
-    });
-    new CfnOutput(this, 'TransactionSavedEventRuleArn', {
-      value: transactionSavedEventRule.ruleArn,
-    });
-    new CfnOutput(this, 'PositionUpdatedEventRuleArn', {
-      value: positionUpdatedEventRule.ruleArn,
-    });
+    new CfnOutput(this, 'AccountCreatedEventRuleArn', { value: accountCreatedEventRule.ruleArn });
+    new CfnOutput(this, 'AccountUpdatedEventRuleArn', { value: accountUpdatedEventRule.ruleArn });
+    new CfnOutput(this, 'AccountDeletedEventRuleArn', { value: accountDeletedEventRule.ruleArn });
+    new CfnOutput(this, 'TransactionCreatedEventRuleArn', { value: transactionCreatedEventRule.ruleArn });
+    new CfnOutput(this, 'TransactionUpdatedEventRuleArn', { value: transactionUpdatedEventRule.ruleArn });
+    new CfnOutput(this, 'TransactionDeletedEventRuleArn', { value: transactionDeletedEventRule.ruleArn });
+    new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
+    new CfnOutput(this, 'PositionUpdatedEventRuleArn', { value: positionUpdatedEventRule.ruleArn });
 
     // Lambda functions
-    new CfnOutput(this, 'CognitoHandlerFunctionArn', {
-      value: cognitoPostConfirmationTrigger.functionArn,
-    });
-    new CfnOutput(this, 'CommandHandlerFunctionArn', {
-      value: commandHandlerFunction.functionArn,
-    });
-    new CfnOutput(this, 'EventBusFunctionArn', {
-      value: eventBusFunction.functionArn,
-    });
-    new CfnOutput(this, 'AccountCreatedEventFunctionArn', {
-      value: createAccountFunction.functionArn,
-    });
-    new CfnOutput(this, 'AccountUpdatedEventFunctionArn', {
-      value: updateAccountFunction.functionArn,
-    });
-    new CfnOutput(this, 'AccountValuesUpdatedEventFunctionArn', {
-      value: updateAccountValuesFunction.functionArn,
-    });
-    new CfnOutput(this, 'AccountDeletedEventFunctionArn', {
-      value: deleteAccountFunction.functionArn,
-    });
-    new CfnOutput(this, 'TransactionCreatedEventFunctionArn', {
-      value: createTransactionFunction.functionArn,
-    });
-    new CfnOutput(this, 'TransactionUpdatedEventFunctionArn', {
-      value: updateTransactionFunction.functionArn,
-    });
-    new CfnOutput(this, 'TransactionDeletedEventFunctionArn', {
-      value: deleteTransactionFunction.functionArn,
-    });
-    new CfnOutput(this, 'CreateUpdatePositionFunctionArn', {
-      value: createUpdatePositionFunction.functionArn,
-    });
+    new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
+    new CfnOutput(this, 'CommandHandlerFunctionArn', { value: commandHandlerFunction.functionArn });
+    new CfnOutput(this, 'EventBusFunctionArn', { value: eventBusFunction.functionArn });
+    new CfnOutput(this, 'AccountCreatedEventFunctionArn', { value: createAccountFunction.functionArn });
+    new CfnOutput(this, 'AccountUpdatedEventFunctionArn', { value: updateAccountFunction.functionArn });
+    new CfnOutput(this, 'AccountValuesUpdatedEventFunctionArn', { value: updateAccountValuesFunction.functionArn });
+    new CfnOutput(this, 'AccountDeletedEventFunctionArn', { value: deleteAccountFunction.functionArn });
+    new CfnOutput(this, 'TransactionCreatedEventFunctionArn', { value: createTransactionFunction.functionArn });
+    new CfnOutput(this, 'TransactionUpdatedEventFunctionArn', { value: updateTransactionFunction.functionArn });
+    new CfnOutput(this, 'TransactionDeletedEventFunctionArn', { value: deleteTransactionFunction.functionArn });
+    new CfnOutput(this, 'CreateUpdatePositionFunctionArn', { value: createUpdatePositionFunction.functionArn });
   }
 }
 
 // Deployed to iambach account
-// TODO Have to deploy to iambach account because dev account cannot get existing ACM certificate which is needed for CloudFront
+// TODO Have to deploy to iambach account because cannot get existing ACM certificate from a different account which is needed for CloudFront
 export class PecuniaryHostingyStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
     super(scope, id, props);
@@ -1169,60 +1007,48 @@ export class PecuniaryHostingyStack extends Stack {
       new PolicyStatement({
         actions: ['s3:GetObject'],
         resources: [hostingBucket.arnForObjects('*')],
-        principals: [
-          new CanonicalUserPrincipal(
-            cloudfrontOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId
-          ),
-        ],
+        principals: [new CanonicalUserPrincipal(cloudfrontOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)],
       })
     );
 
     // Existing ACM certificate
-    const certificate = Certificate.fromCertificateArn(
-      this,
-      'Certificate',
-      process.env.CERTIFICATE_ARN || ''
-    );
+    const certificate = Certificate.fromCertificateArn(this, 'Certificate', process.env.CERTIFICATE_ARN || '');
 
     // CloudFront distribution
-    const distribution = new CloudFrontWebDistribution(
-      this,
-      'PecuniaryWebsiteCloudFront',
-      {
-        priceClass: PriceClass.PRICE_CLASS_100,
-        originConfigs: [
-          {
-            s3OriginSource: {
-              s3BucketSource: hostingBucket,
-              originAccessIdentity: cloudfrontOAI,
+    const distribution = new CloudFrontWebDistribution(this, 'PecuniaryWebsiteCloudFront', {
+      priceClass: PriceClass.PRICE_CLASS_100,
+      originConfigs: [
+        {
+          s3OriginSource: {
+            s3BucketSource: hostingBucket,
+            originAccessIdentity: cloudfrontOAI,
+          },
+          behaviors: [
+            {
+              isDefaultBehavior: true,
+              defaultTtl: Duration.hours(1),
+              minTtl: Duration.seconds(0),
+              maxTtl: Duration.days(1),
+              compress: true,
+              allowedMethods: CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
             },
-            behaviors: [
-              {
-                isDefaultBehavior: true,
-                defaultTtl: Duration.hours(1),
-                minTtl: Duration.seconds(0),
-                maxTtl: Duration.days(1),
-                compress: true,
-                allowedMethods: CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
-              },
-            ],
-          },
-        ],
-        errorConfigurations: [
-          {
-            errorCode: 403,
-            errorCachingMinTtl: 60,
-            responseCode: 200,
-            responsePagePath: '/index.html',
-          },
-        ],
-        viewerCertificate: ViewerCertificate.fromAcmCertificate(certificate, {
-          aliases: [`${props.appName}.ericbach.dev`],
-          securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021, // default
-          sslMethod: SSLMethod.SNI, // default
-        }),
-      }
-    );
+          ],
+        },
+      ],
+      errorConfigurations: [
+        {
+          errorCode: 403,
+          errorCachingMinTtl: 60,
+          responseCode: 200,
+          responsePagePath: '/index.html',
+        },
+      ],
+      viewerCertificate: ViewerCertificate.fromAcmCertificate(certificate, {
+        aliases: [`${props.appName}.ericbach.dev`],
+        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
+        sslMethod: SSLMethod.SNI,
+      }),
+    });
 
     // S3 bucket deployment
     new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
@@ -1232,10 +1058,7 @@ export class PecuniaryHostingyStack extends Stack {
       contentLanguage: 'en',
       //storageClass: StorageClass.INTELLIGENT_TIERING,
       serverSideEncryption: ServerSideEncryption.AES_256,
-      cacheControl: [
-        CacheControl.setPublic(),
-        CacheControl.maxAge(Duration.minutes(1)),
-      ],
+      cacheControl: [CacheControl.setPublic(), CacheControl.maxAge(Duration.minutes(1))],
       distribution,
       distributionPaths: ['/static/css/*'],
     });
