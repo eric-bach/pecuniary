@@ -14,5 +14,5 @@ cdk.out
 
 # Exclude configuration files (provided with *.example files)
 .env*
-backend/deploy-cdk.ps1
+backend/deploy.sh
 aws-exports.js
