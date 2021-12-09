@@ -23,14 +23,22 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install CDK packages
-        run: |
-          cd ../backend
-          npm ci
-          cd ../client
+      - name: Install NPM Dependencies (Backend)
+        run: npm ci
+        working-directory: backend
+
+      - name: Build Backend
+        run: npm run build
+        working-directory: backend
+
+      - name: Install NPM Dependencies (Client)
+        run: npm ci
+        working-directory: client
+
+      - name: Build Client
+        run: npm run build:prod
+        working-directory: client
 
       - name: Run CDK Unit Tests
-        run: |
-          npm build
-          cd ../backend
-          npm run test
+        run: npm run test
+        working-directory: backend

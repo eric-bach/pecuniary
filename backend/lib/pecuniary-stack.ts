@@ -994,7 +994,7 @@ export class PecuniaryStack extends Stack {
     });
 
     // S3 bucket deployment
-    new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
+    const bucketDeployment = new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
       sources: [Source.asset('../client/build')],
       destinationBucket: hostingBucket,
       retainOnDelete: false,
