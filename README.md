@@ -67,7 +67,6 @@ This quick start guide describes how to get the application running. An `AWS acc
 
    - `CDK_DEV_ACCOUNT` - AWS account Id
    - `CDK_PROD_ACCOUNT` - AWS account Id
-   - `CDK_IAM_ACCOUNT` - AWS account Id
    - `CDK_DEFAULT_REGION` - AWS region
    - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
@@ -158,12 +157,9 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    ```
    AWS_ACCESS_KEY_ID - AWS access key id (to prod account for backend resources)
    AWS_ACCESS_KEY_SECRET = AWS access key secret (to prod account for backend resources)
-   AWS_ACCESS_KEY_ID_IAM - AWS access key id (to iam account for web hosting resources)
-   AWS_ACCESS_KEY_SECRET_IAM = AWS access key secret (to iam account for web hosting resources)
    CDK_DEFAULT_REGION - AWS default region for all resources to be created
    CDK_DEV_ACCOUNT - AWS Account Id of development account
    CDK_PROD_ACCOUNT - AWS Account Id of production account
-   CDK_IAM_ACCOUNT - AWS Account Id of web hosting account
    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
    ALPHA_VANTAGE_API_KEY = AlphaVantage API Key

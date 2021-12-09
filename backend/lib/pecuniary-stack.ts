@@ -580,7 +580,11 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Scan', 'dynamodb:DeleteItem'],
-        resources: [accountReadModelTable.tableArn, positionReadModelTable.tableArn, transactionReadModelTable.tableArn],
+        resources: [
+          accountReadModelTable.tableArn,
+          positionReadModelTable.tableArn,
+          transactionReadModelTable.tableArn,
+        ],
       })
     );
 
@@ -913,72 +917,8 @@ export class PecuniaryStack extends Stack {
     );
 
     /***
-     *** Outputs
+     *** Deploy web hosting to prod account only
      ***/
-
-    // SSM Parameter Keys
-    new CfnOutput(this, 'AlphaVantageAPIKeyArn', { value: alphaVantageApiKey.parameterArn });
-
-    // Cognito User Pool
-    new CfnOutput(this, 'UserPoolId', { value: userPool.userPoolId });
-    new CfnOutput(this, 'UserPoolClientId', { value: userPoolClient.userPoolClientId });
-
-    // Dead Letter Queues
-    new CfnOutput(this, 'CommandHandlerQueueArn', { value: commandHandlerQueue.queueArn });
-    new CfnOutput(this, 'EventBusQueueArn', { value: eventBusQueue.queueArn });
-    new CfnOutput(this, 'EventHandlerQueueArn', { value: eventHandlerQueue.queueArn });
-
-    // SNS Topics
-    new CfnOutput(this, 'CommandHandlerTopicArn', { value: commandHandlerTopic.topicArn });
-    new CfnOutput(this, 'EventBusTopicArn', { value: eventBusTopic.topicArn });
-    new CfnOutput(this, 'EventHandlerTopicArn', { value: eventHandlerTopic.topicArn });
-
-    // AppSync API
-    new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
-    new CfnOutput(this, 'AppSyncAPIKey', { value: api.apiKey || '' });
-
-    // DynamoDB tables
-    new CfnOutput(this, 'eventTableArn', { value: eventTable.tableArn });
-    new CfnOutput(this, 'accountTypeTableArn', { value: accountTypeTable.tableArn });
-    new CfnOutput(this, 'currencyTypeTableArn', { value: currencyTypeTable.tableArn });
-    new CfnOutput(this, 'exchangeTypeTableArn', { value: exchangeTypeTable.tableArn });
-    new CfnOutput(this, 'transactionTypeTableArn', { value: transactionTypeTable.tableArn });
-    new CfnOutput(this, 'accountReadModelTableArn', { value: accountReadModelTable.tableArn });
-    new CfnOutput(this, 'positionReadModelTable', { value: positionReadModelTable.tableArn });
-    new CfnOutput(this, 'transactionReadModelTable', { value: transactionReadModelTable.tableArn });
-    new CfnOutput(this, 'timeSeriesTable', { value: timeSeriesTable.tableArn });
-
-    // EventBridge
-    new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
-    new CfnOutput(this, 'AccountCreatedEventRuleArn', { value: accountCreatedEventRule.ruleArn });
-    new CfnOutput(this, 'AccountUpdatedEventRuleArn', { value: accountUpdatedEventRule.ruleArn });
-    new CfnOutput(this, 'AccountDeletedEventRuleArn', { value: accountDeletedEventRule.ruleArn });
-    new CfnOutput(this, 'TransactionCreatedEventRuleArn', { value: transactionCreatedEventRule.ruleArn });
-    new CfnOutput(this, 'TransactionUpdatedEventRuleArn', { value: transactionUpdatedEventRule.ruleArn });
-    new CfnOutput(this, 'TransactionDeletedEventRuleArn', { value: transactionDeletedEventRule.ruleArn });
-    new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
-    new CfnOutput(this, 'PositionUpdatedEventRuleArn', { value: positionUpdatedEventRule.ruleArn });
-
-    // Lambda functions
-    new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
-    new CfnOutput(this, 'CommandHandlerFunctionArn', { value: commandHandlerFunction.functionArn });
-    new CfnOutput(this, 'EventBusFunctionArn', { value: eventBusFunction.functionArn });
-    new CfnOutput(this, 'AccountCreatedEventFunctionArn', { value: createAccountFunction.functionArn });
-    new CfnOutput(this, 'AccountUpdatedEventFunctionArn', { value: updateAccountFunction.functionArn });
-    new CfnOutput(this, 'AccountValuesUpdatedEventFunctionArn', { value: updateAccountValuesFunction.functionArn });
-    new CfnOutput(this, 'AccountDeletedEventFunctionArn', { value: deleteAccountFunction.functionArn });
-    new CfnOutput(this, 'TransactionCreatedEventFunctionArn', { value: createTransactionFunction.functionArn });
-    new CfnOutput(this, 'TransactionUpdatedEventFunctionArn', { value: updateTransactionFunction.functionArn });
-    new CfnOutput(this, 'TransactionDeletedEventFunctionArn', { value: deleteTransactionFunction.functionArn });
-    new CfnOutput(this, 'CreateUpdatePositionFunctionArn', { value: createUpdatePositionFunction.functionArn });
-  }
-}
-
-// Deployed to iambach account
-// TODO Have to deploy to iambach account because cannot get existing ACM certificate from a different account which is needed for CloudFront
-export class PecuniaryHostingyStack extends Stack {
-  constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
-    super(scope, id, props);
 
     // CloudFront OAI
     const cloudfrontOAI = new OriginAccessIdentity(this, 'cloudfront-OAI', {
@@ -1043,11 +983,14 @@ export class PecuniaryHostingyStack extends Stack {
           responsePagePath: '/index.html',
         },
       ],
-      viewerCertificate: ViewerCertificate.fromAcmCertificate(certificate, {
-        aliases: [`${props.appName}.ericbach.dev`],
-        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
-        sslMethod: SSLMethod.SNI,
-      }),
+      viewerCertificate:
+        props.envName === 'prod'
+          ? ViewerCertificate.fromAcmCertificate(certificate, {
+              aliases: [`${props.appName}.ericbach.dev`],
+              securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
+              sslMethod: SSLMethod.SNI,
+            })
+          : undefined,
     });
 
     // S3 bucket deployment
@@ -1063,14 +1006,76 @@ export class PecuniaryHostingyStack extends Stack {
       distributionPaths: ['/static/css/*'],
     });
 
-    // Route53 HostedZone A record
-    var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
-      domainName: 'ericbach.dev',
-    });
-    new ARecord(this, 'AliasRecord', {
-      zone: existingHostedZone,
-      recordName: `${props.appName}.ericbach.dev`,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-    });
+    if (props.env === 'prod') {
+      // Route53 HostedZone A record
+      var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
+        domainName: 'ericbach.dev',
+      });
+      const aliasRecord = new ARecord(this, 'AliasRecord', {
+        zone: existingHostedZone,
+        recordName: `${props.appName}.ericbach.dev`,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+      });
+    }
+
+    /***
+     *** Outputs
+     ***/
+
+    // SSM Parameter Keys
+    new CfnOutput(this, 'AlphaVantageAPIKeyArn', { value: alphaVantageApiKey.parameterArn });
+
+    // Cognito User Pool
+    new CfnOutput(this, 'UserPoolId', { value: userPool.userPoolId });
+    new CfnOutput(this, 'UserPoolClientId', { value: userPoolClient.userPoolClientId });
+
+    // Dead Letter Queues
+    new CfnOutput(this, 'CommandHandlerQueueArn', { value: commandHandlerQueue.queueArn });
+    new CfnOutput(this, 'EventBusQueueArn', { value: eventBusQueue.queueArn });
+    new CfnOutput(this, 'EventHandlerQueueArn', { value: eventHandlerQueue.queueArn });
+
+    // SNS Topics
+    new CfnOutput(this, 'CommandHandlerTopicArn', { value: commandHandlerTopic.topicArn });
+    new CfnOutput(this, 'EventBusTopicArn', { value: eventBusTopic.topicArn });
+    new CfnOutput(this, 'EventHandlerTopicArn', { value: eventHandlerTopic.topicArn });
+
+    // AppSync API
+    new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
+    new CfnOutput(this, 'AppSyncAPIKey', { value: api.apiKey || '' });
+
+    // DynamoDB tables
+    new CfnOutput(this, 'eventTableArn', { value: eventTable.tableArn });
+    new CfnOutput(this, 'accountTypeTableArn', { value: accountTypeTable.tableArn });
+    new CfnOutput(this, 'currencyTypeTableArn', { value: currencyTypeTable.tableArn });
+    new CfnOutput(this, 'exchangeTypeTableArn', { value: exchangeTypeTable.tableArn });
+    new CfnOutput(this, 'transactionTypeTableArn', { value: transactionTypeTable.tableArn });
+    new CfnOutput(this, 'accountReadModelTableArn', { value: accountReadModelTable.tableArn });
+    new CfnOutput(this, 'positionReadModelTable', { value: positionReadModelTable.tableArn });
+    new CfnOutput(this, 'transactionReadModelTable', { value: transactionReadModelTable.tableArn });
+    new CfnOutput(this, 'timeSeriesTable', { value: timeSeriesTable.tableArn });
+
+    // EventBridge
+    new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
+    new CfnOutput(this, 'AccountCreatedEventRuleArn', { value: accountCreatedEventRule.ruleArn });
+    new CfnOutput(this, 'AccountUpdatedEventRuleArn', { value: accountUpdatedEventRule.ruleArn });
+    new CfnOutput(this, 'AccountDeletedEventRuleArn', { value: accountDeletedEventRule.ruleArn });
+    new CfnOutput(this, 'TransactionCreatedEventRuleArn', { value: transactionCreatedEventRule.ruleArn });
+    new CfnOutput(this, 'TransactionUpdatedEventRuleArn', { value: transactionUpdatedEventRule.ruleArn });
+    new CfnOutput(this, 'TransactionDeletedEventRuleArn', { value: transactionDeletedEventRule.ruleArn });
+    new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
+    new CfnOutput(this, 'PositionUpdatedEventRuleArn', { value: positionUpdatedEventRule.ruleArn });
+
+    // Lambda functions
+    new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
+    new CfnOutput(this, 'CommandHandlerFunctionArn', { value: commandHandlerFunction.functionArn });
+    new CfnOutput(this, 'EventBusFunctionArn', { value: eventBusFunction.functionArn });
+    new CfnOutput(this, 'AccountCreatedEventFunctionArn', { value: createAccountFunction.functionArn });
+    new CfnOutput(this, 'AccountUpdatedEventFunctionArn', { value: updateAccountFunction.functionArn });
+    new CfnOutput(this, 'AccountValuesUpdatedEventFunctionArn', { value: updateAccountValuesFunction.functionArn });
+    new CfnOutput(this, 'AccountDeletedEventFunctionArn', { value: deleteAccountFunction.functionArn });
+    new CfnOutput(this, 'TransactionCreatedEventFunctionArn', { value: createTransactionFunction.functionArn });
+    new CfnOutput(this, 'TransactionUpdatedEventFunctionArn', { value: updateTransactionFunction.functionArn });
+    new CfnOutput(this, 'TransactionDeletedEventFunctionArn', { value: deleteTransactionFunction.functionArn });
+    new CfnOutput(this, 'CreateUpdatePositionFunctionArn', { value: createUpdatePositionFunction.functionArn });
   }
 }

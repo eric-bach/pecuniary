@@ -40,7 +40,6 @@ jobs:
           touch .env
           echo CDK_DEV_ACCOUNT=${{ secrets.CDK_DEV_ACCOUNT }} >> .env
           echo CDK_PROD_ACCOUNT=${{ secrets.CDK_PROD_ACCOUNT }} >> .env
-          echo CDK_IAM_ACCOUNT=${{ secrets.CDK_IAM_ACCOUNT }} >> .env
           echo CDK_DEFAULT_REGION=${{ secrets.CDK_DEFAULT_REGION }} >> .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
@@ -77,23 +76,8 @@ jobs:
         run: cdk synth
         working-directory: backend
 
-      - name: CDK Deploy Backend
+      - name: CDK Deploy
         run: cdk deploy pecuniary-prod --require-approval=never
-        env:
-          CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
-          DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-          ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}
-        working-directory: backend
-
-      - name: Configure AWS Credentials for iam account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID_IAM}}
-          aws-secret-access-key: ${{secrets.AWS_ACCESS_KEY_SECRET_IAM}}
-          aws-region: us-east-1
-
-      - name: CDK Deploy Website
-        run: cdk deploy pecuniary-web-prod --require-approval=never
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
