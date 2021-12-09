@@ -38,7 +38,7 @@ new PecuniaryStack(app, 'pecuniary-prod', {
 new PecuniaryHostingyStack(app, 'pecuniary-web-prod', {
   appName: 'pecuniary',
   envName: 'prod',
-  env: { account: process.env.CDK_IAM_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+  env: { account: process.env.CDK_PROD_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
   tags: {
     env: 'prod',
     application: 'pecuniary',
