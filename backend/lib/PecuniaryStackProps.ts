@@ -1,4 +1,4 @@
-import { StackProps } from '@aws-cdk/core';
+import { StackProps } from 'aws-cdk-lib';
 
 export interface PecuniaryStackProps extends StackProps {
   appName: string;

@@ -1,6 +1,8 @@
-import { Stack, Construct, CfnOutput, Expiration, Duration, RemovalPolicy } from '@aws-cdk/core';
-import * as ssm from '@aws-cdk/aws-ssm';
-import { PolicyStatement, Policy, Effect, CanonicalUserPrincipal } from '@aws-cdk/aws-iam';
+import { Stack, CfnOutput, Expiration, Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+
+import { StringParameter, ParameterTier } from 'aws-cdk-lib/aws-ssm';
+import { Function, Runtime, Code, StartingPosition } from 'aws-cdk-lib/aws-lambda';
 import {
   UserPool,
   CfnUserPoolGroup,
@@ -8,38 +10,39 @@ import {
   AccountRecovery,
   VerificationEmailStyle,
   UserPoolDomain,
-} from '@aws-cdk/aws-cognito';
-import { Topic } from '@aws-cdk/aws-sns';
-import { EmailSubscription } from '@aws-cdk/aws-sns-subscriptions';
-import { Queue } from '@aws-cdk/aws-sqs';
-import { Alarm, Metric, ComparisonOperator } from '@aws-cdk/aws-cloudwatch';
-import { GraphqlApi, Schema, FieldLogLevel, AuthorizationType } from '@aws-cdk/aws-appsync';
-import { Table, BillingMode, AttributeType, StreamViewType } from '@aws-cdk/aws-dynamodb';
-import { Function, Runtime, Code, StartingPosition } from '@aws-cdk/aws-lambda';
-import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { Rule, EventBus } from '@aws-cdk/aws-events';
-import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { SnsAction } from '@aws-cdk/aws-cloudwatch-actions';
-import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from '@aws-cdk/aws-s3-deployment';
-
-const dotenv = require('dotenv');
-import * as path from 'path';
-import { PecuniaryStackProps } from './PecuniaryStackProps';
-import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
-import { BlockPublicAccess, Bucket, HttpMethods, StorageClass } from '@aws-cdk/aws-s3';
+} from 'aws-cdk-lib/aws-cognito';
+import { PolicyStatement, Policy, Effect, CanonicalUserPrincipal } from 'aws-cdk-lib/aws-iam';
+import { Queue } from 'aws-cdk-lib/aws-sqs';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
+import { Alarm, Metric, ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
+import { GraphqlApi, FieldLogLevel, AuthorizationType, Schema } from '@aws-cdk/aws-appsync-alpha';
+import { Table, BillingMode, AttributeType, StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
+import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { Rule, EventBus } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
+import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { BlockPublicAccess, Bucket, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import {
   CloudFrontAllowedMethods,
   CloudFrontWebDistribution,
-  Distribution,
   OriginAccessIdentity,
   PriceClass,
   SecurityPolicyProtocol,
   SSLMethod,
   ViewerCertificate,
-} from '@aws-cdk/aws-cloudfront';
-import { ARecord, HostedZone, RecordTarget } from '@aws-cdk/aws-route53';
-import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets';
-import { Certificate } from '@aws-cdk/aws-certificatemanager';
+} from 'aws-cdk-lib/aws-cloudfront';
+import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+
+import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
+import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
+
+const dotenv = require('dotenv');
+import * as path from 'path';
+import { PecuniaryStackProps } from './PecuniaryStackProps';
+import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
 
 dotenv.config();
 
@@ -53,11 +56,11 @@ export class PecuniaryStack extends Stack {
      *** AWS SSM
      ***/
 
-    const alphaVantageApiKey = new ssm.StringParameter(this, 'AlphaVantageAPIKey', {
+    const alphaVantageApiKey = new StringParameter(this, 'AlphaVantageAPIKey', {
       description: 'AlphaVantage API Key',
       parameterName: `${props.appName}-AlphaVantageAPIKey-${props.envName}`,
       stringValue: props.params.alphaVantageApiKey,
-      tier: ssm.ParameterTier.STANDARD,
+      tier: ParameterTier.STANDARD,
     });
 
     /***
@@ -194,15 +197,21 @@ export class PecuniaryStack extends Stack {
      *** AWS CloudWatch - Alarms
      ***/
 
+    // Generic metric
+    const metric = new Metric({
+      namespace: 'AWS/SQS',
+      metricName: 'NumberOfMessagesSent',
+    });
+    // TODO Doesn't seem to work
+    metric.with({
+      statistic: 'Sum',
+      period: Duration.seconds(300),
+    });
+
     const commandHandlerAlarm = new Alarm(this, 'CommandHandlerAlarm', {
       alarmName: `${props.appName}-commandHandler-Alarm-${props.envName}`,
       alarmDescription: 'One or more failed CommandHandler messages',
-      metric: new Metric({
-        namespace: 'AWS/SQS',
-        metricName: 'NumberOfMessagesSent',
-      }),
-      statistic: 'Sum',
-      period: Duration.seconds(300),
+      metric: metric,
       datapointsToAlarm: 1,
       evaluationPeriods: 2,
       threshold: 1,
@@ -213,12 +222,7 @@ export class PecuniaryStack extends Stack {
     const eventBusAlarm = new Alarm(this, 'EventBusAlarm', {
       alarmName: `${props.appName}-eventBus-Alarm-${props.envName}`,
       alarmDescription: 'One or more failed EventBus messages',
-      metric: new Metric({
-        namespace: 'AWS/SQS',
-        metricName: 'NumberOfMessagesSent',
-      }),
-      statistic: 'Sum',
-      period: Duration.seconds(300),
+      metric: metric,
       datapointsToAlarm: 1,
       evaluationPeriods: 2,
       threshold: 1,
@@ -229,12 +233,7 @@ export class PecuniaryStack extends Stack {
     const eventHandlerAlarm = new Alarm(this, 'EventHandlerAlarm', {
       alarmName: `${props.appName}-eventHandler-Alarm-${props.envName}`,
       alarmDescription: 'One or more failed EventHandler messages',
-      metric: new Metric({
-        namespace: 'AWS/SQS',
-        metricName: 'NumberOfMessagesSent',
-      }),
-      statistic: 'Sum',
-      period: Duration.seconds(300),
+      metric: metric,
       datapointsToAlarm: 1,
       evaluationPeriods: 2,
       threshold: 1,
@@ -246,7 +245,6 @@ export class PecuniaryStack extends Stack {
      *** AWS AppSync
      ***/
 
-    // AppSync API
     const api = new GraphqlApi(this, 'PecuniaryApi', {
       name: `${props.appName}-api-${props.envName}`,
       logConfig: {
@@ -412,6 +410,7 @@ export class PecuniaryStack extends Stack {
     // Set the new Lambda function as a data source for the AppSync API
     const lambdaDataSource = api.addLambdaDataSource('lambdaDataSource', commandHandlerFunction);
 
+    // Resolvers
     lambdaDataSource.createResolver({
       typeName: 'Mutation',
       fieldName: 'createEvent',
@@ -581,11 +580,7 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Scan', 'dynamodb:DeleteItem'],
-        resources: [
-          accountReadModelTable.tableArn,
-          positionReadModelTable.tableArn,
-          transactionReadModelTable.tableArn,
-        ],
+        resources: [accountReadModelTable.tableArn, positionReadModelTable.tableArn, transactionReadModelTable.tableArn],
       })
     );
 
@@ -980,7 +975,7 @@ export class PecuniaryStack extends Stack {
 }
 
 // Deployed to iambach account
-// TODO Have to deploy to iambach account because dev account cannot get existing ACM certificate which is needed for CloudFront
+// TODO Have to deploy to iambach account because cannot get existing ACM certificate from a different account which is needed for CloudFront
 export class PecuniaryHostingyStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
     super(scope, id, props);
@@ -1050,8 +1045,8 @@ export class PecuniaryHostingyStack extends Stack {
       ],
       viewerCertificate: ViewerCertificate.fromAcmCertificate(certificate, {
         aliases: [`${props.appName}.ericbach.dev`],
-        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021, // default
-        sslMethod: SSLMethod.SNI, // default
+        securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
+        sslMethod: SSLMethod.SNI,
       }),
     });
 
@@ -1069,7 +1064,9 @@ export class PecuniaryHostingyStack extends Stack {
     });
 
     // Route53 HostedZone A record
-    var existingHostedZone = HostedZone.fromLookup(this, 'Zone', { domainName: 'ericbach.dev' });
+    var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
+      domainName: 'ericbach.dev',
+    });
     new ARecord(this, 'AliasRecord', {
       zone: existingHostedZone,
       recordName: `${props.appName}.ericbach.dev`,

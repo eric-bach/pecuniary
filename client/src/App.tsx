@@ -19,19 +19,21 @@ import 'semantic-ui-css/semantic.min.css';
 function App() {
   return (
     <BrowserRouter>
-      <Route exact path='/' component={Home} />
-      <User>
-        <NavBar />
-        <Route exact path='/login' component={Login} />
-        <Route exact path='/signup' component={Signup} />
-        <Container className='main' style={{ paddingTop: '30px' }}>
-          <ProtectedRoute exact path='/home' component={HomePage} />
-          <ProtectedRoute exact path='/accounts' component={AccountList} />
-          <ProtectedRoute path={['/accounts/new', '/accounts/edit/:id']} component={AccountForm} />
-          <ProtectedRoute path={['/accounts/view/:id']} component={AccountDetail} />
-          <ProtectedRoute path='/transactions/new' component={TransactionForm} />
-        </Container>
-      </User>
+      <div style={{ overflow: 'auto', paddingBottom: '80px' }}>
+        <Route exact path='/' component={Home} />
+        <User>
+          <NavBar />
+          <Route exact path='/login' component={Login} />
+          <Route exact path='/signup' component={Signup} />
+          <Container className='main' style={{ paddingTop: '30px' }}>
+            <ProtectedRoute exact path='/home' component={HomePage} />
+            <ProtectedRoute exact path='/accounts' component={AccountList} />
+            <ProtectedRoute path={['/accounts/new', '/accounts/edit/:id']} component={AccountForm} />
+            <ProtectedRoute path={['/accounts/view/:id']} component={AccountDetail} />
+            <ProtectedRoute path='/transactions/new' component={TransactionForm} />
+          </Container>
+        </User>
+      </div>
     </BrowserRouter>
   );
 }

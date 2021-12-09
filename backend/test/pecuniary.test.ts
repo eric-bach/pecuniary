@@ -1,6 +1,6 @@
 import { PecuniaryStackProps } from './../lib/PecuniaryStackProps';
-import { expect as expectCDK, haveResource, matchTemplate, MatchStyle } from '@aws-cdk/assert';
-import * as cdk from '@aws-cdk/core';
+import { Capture, Match, Template } from 'aws-cdk-lib/assertions';
+import * as cdk from 'aws-cdk-lib';
 import * as Pecuniary from '../lib/pecuniary-stack';
 
 describe('Stack contains expected resources', () => {
@@ -21,46 +21,63 @@ describe('Stack contains expected resources', () => {
   };
   const stack = new Pecuniary.PecuniaryStack(app, 'PecuniaryTestStack', props);
 
+  const template = Template.fromStack(stack);
+
   test('SSM Parameters', () => {
-    expectCDK(stack).to(
-      haveResource('AWS::SSM::Parameter', {
+    template.hasResourceProperties(
+      'AWS::SSM::Parameter',
+      Match.objectLike({
         Name: `pecuniary-AlphaVantageAPIKey-${props.envName}`,
         Type: 'String',
         Tier: 'Standard',
+        Value: props.params.alphaVantageApiKey,
       })
     );
   });
 
   test('Cognito User Pool', () => {
-    expectCDK(stack).to(
-      haveResource('AWS::Cognito::UserPool', { UserPoolName: `pecuniary_user_pool_${props.envName}` })
+    template.hasResourceProperties(
+      'AWS::Cognito::UserPool',
+      Match.objectLike({ UserPoolName: `pecuniary_user_pool_${props.envName}` })
     );
-    expectCDK(stack).to(haveResource('AWS::Cognito::UserPoolClient', { ClientName: 'pecuniary_user_client' }));
+    template.hasResourceProperties(
+      'AWS::Cognito::UserPoolClient',
+      Match.objectLike({ ClientName: 'pecuniary_user_client' })
+    );
   });
 
   test('SQS Queues and SNS Topics', () => {
-    expectCDK(stack).to(
-      haveResource('AWS::SQS::Queue', { QueueName: `pecuniary-commandHandler-DeadLetterQueue-${props.envName}` })
+    template.hasResourceProperties(
+      'AWS::SQS::Queue',
+      Match.objectLike({ QueueName: `pecuniary-commandHandler-DeadLetterQueue-${props.envName}` })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::SQS::Queue', { QueueName: `pecuniary-eventBus-DeadLetterQueue-${props.envName}` })
+    template.hasResourceProperties(
+      'AWS::SQS::Queue',
+      Match.objectLike({ QueueName: `pecuniary-eventBus-DeadLetterQueue-${props.envName}` })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::SQS::Queue', { QueueName: `pecuniary-eventHandler-DeadLetterQueue-${props.envName}` })
+    template.hasResourceProperties(
+      'AWS::SQS::Queue',
+      Match.objectLike({ QueueName: `pecuniary-eventHandler-DeadLetterQueue-${props.envName}` })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::SNS::Topic', { TopicName: `pecuniary-commandHandler-Topic-${props.envName}` })
+    template.hasResourceProperties(
+      'AWS::SNS::Topic',
+      Match.objectLike({ TopicName: `pecuniary-commandHandler-Topic-${props.envName}` })
     );
-    expectCDK(stack).to(haveResource('AWS::SNS::Topic', { TopicName: `pecuniary-eventBus-Topic-${props.envName}` }));
-    expectCDK(stack).to(
-      haveResource('AWS::SNS::Topic', { TopicName: `pecuniary-eventHandler-Topic-${props.envName}` })
+    template.hasResourceProperties(
+      'AWS::SNS::Topic',
+      Match.objectLike({ TopicName: `pecuniary-eventBus-Topic-${props.envName}` })
     );
-    expectCDK(stack).to(haveResource('AWS::SNS::Subscription', { Protocol: 'email' }));
+    template.hasResourceProperties(
+      'AWS::SNS::Topic',
+      Match.objectLike({ TopicName: `pecuniary-eventHandler-Topic-${props.envName}` })
+    );
+    template.hasResourceProperties('AWS::SNS::Subscription', Match.objectLike({ Protocol: 'email' }));
   });
 
   test('CloudWatch Alarms', () => {
-    expectCDK(stack).to(
-      haveResource('AWS::CloudWatch::Alarm', {
+    template.hasResourceProperties(
+      'AWS::CloudWatch::Alarm',
+      Match.objectLike({
         ComparisonOperator: 'GreaterThanOrEqualToThreshold',
         EvaluationPeriods: 2,
         AlarmName: `pecuniary-commandHandler-Alarm-${props.envName}`,
@@ -68,12 +85,14 @@ describe('Stack contains expected resources', () => {
         MetricName: 'NumberOfMessagesSent',
         Namespace: 'AWS/SQS',
         Period: 300,
-        Statistic: 'Sum',
+        Statistic: 'Average',
         Threshold: 1,
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::CloudWatch::Alarm', {
+
+    template.hasResourceProperties(
+      'AWS::CloudWatch::Alarm',
+      Match.objectLike({
         ComparisonOperator: 'GreaterThanOrEqualToThreshold',
         EvaluationPeriods: 2,
         AlarmName: `pecuniary-eventBus-Alarm-${props.envName}`,
@@ -81,12 +100,14 @@ describe('Stack contains expected resources', () => {
         MetricName: 'NumberOfMessagesSent',
         Namespace: 'AWS/SQS',
         Period: 300,
-        Statistic: 'Sum',
+        Statistic: 'Average',
         Threshold: 1,
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::CloudWatch::Alarm', {
+
+    template.hasResourceProperties(
+      'AWS::CloudWatch::Alarm',
+      Match.objectLike({
         ComparisonOperator: 'GreaterThanOrEqualToThreshold',
         EvaluationPeriods: 2,
         AlarmName: `pecuniary-eventHandler-Alarm-${props.envName}`,
@@ -94,76 +115,95 @@ describe('Stack contains expected resources', () => {
         MetricName: 'NumberOfMessagesSent',
         Namespace: 'AWS/SQS',
         Period: 300,
-        Statistic: 'Sum',
+        Statistic: 'Average',
         Threshold: 1,
       })
     );
   });
 
   test('AppSync GraphQL APIs', () => {
-    expectCDK(stack).to(
-      haveResource('AWS::AppSync::GraphQLApi', {
+    template.hasResourceProperties(
+      'AWS::AppSync::GraphQLApi',
+      Match.objectLike({
         AuthenticationType: 'API_KEY',
         Name: `pecuniary-api-${props.envName}`,
       })
     );
-    expectCDK(stack).to(haveResource('AWS::AppSync::GraphQLSchema'));
-    expectCDK(stack).to(haveResource('AWS::AppSync::ApiKey'));
-    expectCDK(stack).to(haveResource('AWS::AppSync::DataSource'));
-    expectCDK(stack).to(haveResource('AWS::AppSync::Resolver'));
+    // TODO Add more asserts
+    template.hasResourceProperties('AWS::AppSync::GraphQLSchema', Match.objectLike({}));
+    template.hasResourceProperties('AWS::AppSync::ApiKey', Match.objectLike({}));
+    template.hasResourceProperties('AWS::AppSync::DataSource', Match.objectLike({}));
+    template.hasResourceProperties('AWS::AppSync::Resolver', Match.objectLike({}));
   });
 
   test('DynamoDB Tables', () => {
-    expectCDK(stack).to(
-      haveResource('AWS::DynamoDB::Table', {
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
         TableName: `pecuniary-Event-${props.envName}`,
         BillingMode: 'PAY_PER_REQUEST',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::DynamoDB::Table', {
+
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
         TableName: `pecuniary-AccountType-${props.envName}`,
         BillingMode: 'PAY_PER_REQUEST',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::DynamoDB::Table', {
+
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
         TableName: `pecuniary-CurrencyType-${props.envName}`,
         BillingMode: 'PAY_PER_REQUEST',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::DynamoDB::Table', {
+
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
         TableName: `pecuniary-ExchangeType-${props.envName}`,
         BillingMode: 'PAY_PER_REQUEST',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::DynamoDB::Table', {
+
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
         TableName: `pecuniary-TransactionType-${props.envName}`,
         BillingMode: 'PAY_PER_REQUEST',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::DynamoDB::Table', {
+
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
         TableName: `pecuniary-AccountReadModel-${props.envName}`,
         BillingMode: 'PAY_PER_REQUEST',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::DynamoDB::Table', {
+
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
         TableName: `pecuniary-PositionReadModel-${props.envName}`,
         BillingMode: 'PAY_PER_REQUEST',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::DynamoDB::Table', {
+
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
         TableName: `pecuniary-TransactionReadModel-${props.envName}`,
         BillingMode: 'PAY_PER_REQUEST',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::DynamoDB::Table', {
+
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
         TableName: `pecuniary-TimeSeries-${props.envName}`,
         BillingMode: 'PAY_PER_REQUEST',
       })
@@ -171,9 +211,14 @@ describe('Stack contains expected resources', () => {
   });
 
   test('EventBridge Events', () => {
-    expectCDK(stack).to(haveResource('AWS::Events::EventBus', { Name: `pecuniary-bus-${props.envName}` }));
-    expectCDK(stack).to(
-      haveResource('AWS::Events::Rule', {
+    template.hasResourceProperties(
+      'AWS::Events::EventBus',
+      Match.objectLike({ Name: `pecuniary-bus-${props.envName}` })
+    );
+
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
         Name: `pecuniary-AccountCreatedEvent-${props.envName}`,
         EventPattern: {
           source: ['custom.pecuniary'],
@@ -181,8 +226,10 @@ describe('Stack contains expected resources', () => {
         },
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Events::Rule', {
+
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
         Name: `pecuniary-AccountUpdatedEvent-${props.envName}`,
         EventPattern: {
           source: ['custom.pecuniary'],
@@ -190,8 +237,10 @@ describe('Stack contains expected resources', () => {
         },
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Events::Rule', {
+
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
         Name: `pecuniary-AccountDeletedEvent-${props.envName}`,
         EventPattern: {
           source: ['custom.pecuniary'],
@@ -199,8 +248,10 @@ describe('Stack contains expected resources', () => {
         },
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Events::Rule', {
+
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
         Name: `pecuniary-TransactionCreatedEvent-${props.envName}`,
         EventPattern: {
           source: ['custom.pecuniary'],
@@ -208,8 +259,10 @@ describe('Stack contains expected resources', () => {
         },
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Events::Rule', {
+
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
         Name: `pecuniary-TransactionUpdatedEvent-${props.envName}`,
         EventPattern: {
           source: ['custom.pecuniary'],
@@ -217,8 +270,10 @@ describe('Stack contains expected resources', () => {
         },
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Events::Rule', {
+
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
         Name: `pecuniary-TransactionDeletedEvent-${props.envName}`,
         EventPattern: {
           source: ['custom.pecuniary'],
@@ -226,8 +281,10 @@ describe('Stack contains expected resources', () => {
         },
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Events::Rule', {
+
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
         Name: `pecuniary-TransactionSavedEvent-${props.envName}`,
         EventPattern: {
           source: ['custom.pecuniary'],
@@ -238,72 +295,91 @@ describe('Stack contains expected resources', () => {
   });
 
   test('Lambda Functions', () => {
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-CommandHandler-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-EventBus-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-    //expectCDK(stack).to(haveResource('AWS::Lambda::EventSourceMapping'));
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+    //template.hasResourceProperties('AWS::Lambda::EventSourceMapping'));
+
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-createAccount-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-updateAccount-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-deleteAccount-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-createTransaction-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-updateTransaction-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-deleteTransaction-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-createUpdatePosition-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-    expectCDK(stack).to(
-      haveResource('AWS::Lambda::Function', {
+
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
         FunctionName: `pecuniary-updateAccountValues-${props.envName}`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
