@@ -14,7 +14,7 @@ This diagram represents how each of the pieces of the application interface with
 
 For an listing of the technologies used please see <a href="#technology-stack">Technology stack</a>.
 
-![Top Level](diagrams/toplevel.png)
+![Top Level](diagrams/toplevel.jpg)
 
 # Detailed architecture
 
