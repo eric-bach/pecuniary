@@ -1,14 +1,17 @@
-const { SSMClient, GetParameterCommand } = require('@aws-sdk/client-ssm');
-const https = require('https');
 const yahooFinance = require('yahoo-finance2').default;
 
 async function getTimeSeries(symbol: string, startDate: Date, endDate: Date) {
   console.debug(`Getting quote for ${symbol} from ${startDate} to ${endDate}`);
 
+  let start = new Date(startDate);
+  // Yahoo Finance needs next day
+  let end = new Date(new Date(endDate).getTime() + 1000 * 60 * 60 * 24);
+
   // Get quotes from Yahoo Finance
   const data = await yahooFinance.historical(symbol, {
-    period1: startDate,
-    period2: endDate,
+    period1: start.toISOString().substring(0, 10),
+    period2: end.toISOString().substring(0, 10),
+    includeAdjustedClose: true,
   });
 
   if (!data) {
@@ -19,10 +22,12 @@ async function getTimeSeries(symbol: string, startDate: Date, endDate: Date) {
 
   // TODO Set type for d
   data.map((d: any) => {
-    console.debug(`${d.date}: ${d.close}`);
+    let date = d.date.toISOString().substring(0, 10);
+
+    console.debug(`${date}: ${d.close}`);
 
     result.push({
-      date: d.date,
+      date: date,
       open: d.open,
       high: d.high,
       low: d.low,

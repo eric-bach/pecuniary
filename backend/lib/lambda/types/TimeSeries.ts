@@ -1,11 +1,9 @@
 export type TimeSeriesReadModel = {
   date: string;
-  open: string;
-  high: string;
-  low: string;
+  open: number;
+  high: number;
+  low: number;
   close: number;
-  adjusted_close: string;
-  volume: string;
-  dividend: string;
-  split_coefficient: string;
+  adjusted_close: number;
+  volume: number;
 };

@@ -107,7 +107,6 @@ async function createTimeSeries(symbol: string, timeSeries: any): Promise<number
           close: t.close,
           adjusted_close: t.adjusted_close,
           volume: t.volume,
-          split_coefficient: t.split_coefficient,
         }),
       };
 
@@ -157,7 +156,7 @@ async function savePosition(
     userId: detail.userId,
     symbol: data.symbol,
     name: symbol.name,
-    description: symbol.longName,
+    description: symbol.description,
     exchange: symbol.exchange,
     currency: symbol.currency,
     country: symbol.region,

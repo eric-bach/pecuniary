@@ -47,23 +47,36 @@
 
 This quick start guide describes how to get the application running. An `AWS account` is required to deploy the infrastructure required for this project.
 
-1. Clone project and install dependencies
+1. Clone the project
 
    ```bash
    $ git clone https://github.com/eric-bach/pecuniary.git
-   $ cd pecuniary
-   $ cd backend && npm install
-   $ cd ../client && npm install
    ```
 
-2. Copy the `./backend/deploy.sh.example` file to `./backend/deploy.sh` and replace `AWS_PROFILE` in the file with your AWS credentials profile name
+2. Install backend dependencies for CDK and lambda
+
+   ```bash
+   $ cd ./backend
+   $ npm install
+   # For each lambda in the lib/lambda folder
+   $ cd lib/lambda/cognitoPostConfirmation && npm install
+   ```
+
+3. Install client dependencies
+
+   ```bash
+   $ cd ./client
+   $ npm install
+   ```
+
+4. Copy the `./backend/deploy.sh.example` file to `./backend/deploy.sh` and replace `AWS_PROFILE` in the file with your AWS credentials profile name
 
    ```
    # Deploy CDK
    $ cdk deploy --profile AWS_PROFILE pecuniary-dev --require-approval=never
    ```
 
-3. Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values:
+5. Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values:
 
    - `CDK_DEV_ACCOUNT` - AWS account Id
    - `CDK_PROD_ACCOUNT` - AWS account Id
@@ -71,14 +84,14 @@ This quick start guide describes how to get the application running. An `AWS acc
    - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
 
-4. Deploy the backend
+6. Deploy the backend
 
    ```
    $ cd backend
    $ ./deploy.sh
    ```
 
-5. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
+7. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
 
    - aws_project_region: AWS Region,
    - aws_cognito_region: AWS Cognito Region,
@@ -86,12 +99,12 @@ This quick start guide describes how to get the application running. An `AWS acc
    - aws_user_pools_web_client_id: AWS Cognito User Pool Web Client Id,
    - aws_appsync_graphqlEndpoint: AWS AppSync GraphQL Endpoint
 
-6. Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
+8. Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
 
    - `REACT_APP_COGNITO_USER_POOL_ID` - AWS Cognito User Pool Id created in step 2
    - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
 
-7. Start the client locally on http://localhost:3000/
+9. Start the client locally on http://localhost:3000/
 
    ```bash
    $ npm start
