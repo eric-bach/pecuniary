@@ -70,7 +70,6 @@ This quick start guide describes how to get the application running. An `AWS acc
    - `CDK_DEFAULT_REGION` - AWS region
    - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
-   - `ALPHA_VANTAGE_API_KEY` - AlphaVantage API key to lookup quotes (sign up for one [here](https://www.alphavantage.co))
 
 4. Deploy the backend
 
@@ -162,7 +161,6 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    CDK_PROD_ACCOUNT - AWS Account Id of production account
    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
-   ALPHA_VANTAGE_API_KEY = AlphaVantage API Key
    REACT_APP_COGNITO_CLIENT_ID - Cognito User Pool Client Id
    REACT_APP_COGNITO_USER_POOL_ID - Cognito User Pool Id
    AWS_APPSYNC_GRAPHQL_ENDPOINT - AWS AppSync GraphQL endpoint URL

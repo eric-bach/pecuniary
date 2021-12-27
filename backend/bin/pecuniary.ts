@@ -15,7 +15,6 @@ new PecuniaryStack(app, 'pecuniary-dev', {
   },
   params: {
     certificateArn: process.env.CERTIFICATE_ARN ?? '',
-    alphaVantageApiKey: process.env.ALPHA_VANTAGE_API_KEY ?? '',
     dlqNotifications: process.env.DLQ_NOTIFICATIONS,
   },
 });
@@ -30,7 +29,6 @@ new PecuniaryStack(app, 'pecuniary-prod', {
   },
   params: {
     certificateArn: process.env.CERTIFICATE_ARN ?? '',
-    alphaVantageApiKey: process.env.ALPHA_VANTAGE_API_KEY ?? '',
     dlqNotifications: process.env.DLQ_NOTIFICATIONS,
   },
 });

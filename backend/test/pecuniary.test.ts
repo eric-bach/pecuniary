@@ -16,24 +16,11 @@ describe('Stack contains expected resources', () => {
     params: {
       certificateArn: 'arn',
       dlqNotifications: 'test@test.com',
-      alphaVantageApiKey: 'ABC',
     },
   };
   const stack = new Pecuniary.PecuniaryStack(app, 'PecuniaryTestStack', props);
 
   const template = Template.fromStack(stack);
-
-  test('SSM Parameters', () => {
-    template.hasResourceProperties(
-      'AWS::SSM::Parameter',
-      Match.objectLike({
-        Name: `pecuniary-AlphaVantageAPIKey-${props.envName}`,
-        Type: 'String',
-        Tier: 'Standard',
-        Value: props.params.alphaVantageApiKey,
-      })
-    );
-  });
 
   test('Cognito User Pool', () => {
     template.hasResourceProperties(

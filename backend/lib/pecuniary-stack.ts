@@ -1,7 +1,6 @@
 import { Stack, CfnOutput, Expiration, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
-import { StringParameter, ParameterTier } from 'aws-cdk-lib/aws-ssm';
 import { Function, Runtime, Code, StartingPosition } from 'aws-cdk-lib/aws-lambda';
 import {
   UserPool,
@@ -51,17 +50,6 @@ export class PecuniaryStack extends Stack {
     super(scope, id, props);
 
     const REGION = Stack.of(this).region;
-
-    /***
-     *** AWS SSM
-     ***/
-
-    const alphaVantageApiKey = new StringParameter(this, 'AlphaVantageAPIKey', {
-      description: 'AlphaVantage API Key',
-      parameterName: `${props.appName}-AlphaVantageAPIKey-${props.envName}`,
-      stringValue: props.params.alphaVantageApiKey,
-      tier: ParameterTier.STANDARD,
-    });
 
     /***
      *** AWS Lambda - Cognito post-confirmation trigger
@@ -724,7 +712,6 @@ export class PecuniaryStack extends Stack {
         TIME_SERIES_TABLE_NAME: timeSeriesTable.tableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
-        ALPHA_VANTAGE_API_KEY: alphaVantageApiKey.parameterName,
       },
       deadLetterQueue: eventHandlerQueue,
     });
@@ -748,14 +735,6 @@ export class PecuniaryStack extends Stack {
         effect: Effect.ALLOW,
         actions: ['dynamodb:PutItem'],
         resources: [timeSeriesTable.tableArn, positionReadModelTable.tableArn],
-      })
-    );
-    // Add permissions to call SSM
-    createUpdatePositionFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['ssm:GetParameter'],
-        resources: [alphaVantageApiKey.parameterArn],
       })
     );
     // Add permission to send to EventBridge
@@ -1021,9 +1000,6 @@ export class PecuniaryStack extends Stack {
     /***
      *** Outputs
      ***/
-
-    // SSM Parameter Keys
-    new CfnOutput(this, 'AlphaVantageAPIKeyArn', { value: alphaVantageApiKey.parameterArn });
 
     // Cognito User Pool
     new CfnOutput(this, 'UserPoolId', { value: userPool.userPoolId });
