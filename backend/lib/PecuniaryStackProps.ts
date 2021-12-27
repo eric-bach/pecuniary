@@ -5,7 +5,6 @@ export interface PecuniaryStackProps extends StackProps {
   envName: string;
   params: {
     certificateArn: string;
-    alphaVantageApiKey: string;
     dlqNotifications?: string;
   };
 }

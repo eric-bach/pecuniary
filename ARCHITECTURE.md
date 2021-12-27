@@ -186,7 +186,7 @@ In the above diagram when the `CreateTransactionEvent` is handled by the CreateT
 
 The CreateUpdatePosition event handler processes the `TransactionSavedEvent` by performing several operations to update the Position and TimeSeries read models.
 
-- First it will retrieve market data for the Symbol in the Transaction through the`AlphaVantage` APIs. This gets saved as TimeSeries data in the read model.
+- First it will retrieve market data for the Symbol in the Transaction through the`Yahoo Finance` APIs. This gets saved as TimeSeries data in the read model.
 - Then it must create or update a Position representing the total asset owned for the symbol in the Transaction, updating the book and market value in the process.
 - Finally the event handler publishes a `PositionUpdatedEvent` to allow for the Account market and book value to be re-calculated and updated.
 

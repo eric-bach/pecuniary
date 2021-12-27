@@ -10,7 +10,7 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 
 const { v4: uuid } = require('uuid');
-const { getTimeSeries, getSymbol } = require('./alphaVantage');
+const { getTimeSeries, getSymbol } = require('./yahooFinance');
 
 import { EventBridgeDetail } from '../types/Event';
 import { TransactionData, TransactionReadModel } from '../types/Transaction';
@@ -32,7 +32,7 @@ exports.handler = async (event: EventBridgeEvent<string, TransactionData>) => {
   // Calculate ACB
   const { positions, acb, bookValue } = calculateAdjustedCostBase(transactions);
 
-  // Get AlphaVantage time series
+  // Get time series
   const timeSeries = await getTimeSeries(data.symbol, prevLastTransactionDate, data.transactionDate);
 
   // CreateTimeSeries - returning the last close
@@ -107,7 +107,6 @@ async function createTimeSeries(symbol: string, timeSeries: any): Promise<number
           close: t.close,
           adjusted_close: t.adjusted_close,
           volume: t.volume,
-          split_coefficient: t.split_coefficient,
         }),
       };
 
@@ -146,7 +145,7 @@ async function savePosition(
   // Calculate market value
   var marketValue = lastClose * positions;
 
-  // Get AlphaVantage stock info
+  // Get stock info
   var symbol = await getSymbol(data.symbol);
   console.log(`Overview: ${JSON.stringify(symbol)}`);
 
@@ -157,8 +156,8 @@ async function savePosition(
     userId: detail.userId,
     symbol: data.symbol,
     name: symbol.name,
-    description: symbol.name,
-    exchange: symbol.region,
+    description: symbol.description,
+    exchange: symbol.exchange,
     currency: symbol.currency,
     country: symbol.region,
     shares: positions,

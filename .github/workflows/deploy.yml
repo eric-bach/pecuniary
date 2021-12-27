@@ -43,7 +43,6 @@ jobs:
           echo CDK_DEFAULT_REGION=${{ secrets.CDK_DEFAULT_REGION }} >> .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-          echo ALPHA_VANTAGE_API_KEY=${{ secrets.ALPHA_VANTAGE_API_KEY }} >> .env
           cat .env
         working-directory: backend
 
@@ -81,5 +80,4 @@ jobs:
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-          ALPHA_VANTAGE_API_KEY: ${{secrets.ALPHA_VANTAGE_API_KEY}}
         working-directory: backend
