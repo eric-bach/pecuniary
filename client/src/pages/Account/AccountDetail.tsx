@@ -41,6 +41,7 @@ const AccountDetail = (props: AccountProps) => {
   let netWorth = 0;
   pos.getPositionsByAccountId.map((p: any) => {
     netWorth += p.marketValue;
+    return netWorth;
   });
   console.log('[ACCOUNT DETAIL] NetWorth: ', netWorth);
 
