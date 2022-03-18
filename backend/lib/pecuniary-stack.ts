@@ -138,11 +138,6 @@ export class PecuniaryStack extends Stack {
      *** AWS SQS - Dead letter Queues
      ***/
 
-    // Command handler DLQ
-    const commandHandlerQueue = new Queue(this, 'CommandHandlerQueue', {
-      queueName: `${props.appName}-commandHandler-DeadLetterQueue-${props.envName}`,
-    });
-
     // Event Bus DLQ
     const eventBusQueue = new Queue(this, 'EventBusQueue', {
       queueName: `${props.appName}-eventBus-DeadLetterQueue-${props.envName}`,
@@ -156,14 +151,6 @@ export class PecuniaryStack extends Stack {
     /***
      *** AWS SNS - Topics
      ***/
-
-    const commandHandlerTopic = new Topic(this, 'CommandHandlerTopic', {
-      topicName: `${props.appName}-commandHandler-Topic-${props.envName}`,
-      displayName: 'Command Handler Topic',
-    });
-    if (props.params.dlqNotifications) {
-      commandHandlerTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
-    }
 
     const eventBusTopic = new Topic(this, 'EventBusTopic', {
       topicName: `${props.appName}-eventBus-Topic-${props.envName}`,
@@ -195,17 +182,6 @@ export class PecuniaryStack extends Stack {
       statistic: 'Sum',
       period: Duration.seconds(300),
     });
-
-    const commandHandlerAlarm = new Alarm(this, 'CommandHandlerAlarm', {
-      alarmName: `${props.appName}-commandHandler-Alarm-${props.envName}`,
-      alarmDescription: 'One or more failed CommandHandler messages',
-      metric: metric,
-      datapointsToAlarm: 1,
-      evaluationPeriods: 2,
-      threshold: 1,
-      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-    });
-    commandHandlerAlarm.addAlarmAction(new SnsAction(commandHandlerTopic));
 
     const eventBusAlarm = new Alarm(this, 'EventBusAlarm', {
       alarmName: `${props.appName}-eventBus-Alarm-${props.envName}`,
@@ -260,18 +236,6 @@ export class PecuniaryStack extends Stack {
     /***
      *** AWS DynamoDB
      ***/
-
-    // DynamoDB table for Events
-    const eventTable = new Table(this, 'Event', {
-      tableName: `${props.appName}-Event-${props.envName}`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING,
-      },
-      stream: StreamViewType.NEW_IMAGE,
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
 
     // DynamoDB table for AccountType
     const accountTypeTable = new Table(this, 'AccountType', {
@@ -373,73 +337,6 @@ export class PecuniaryStack extends Stack {
     */
 
     /***
-     *** AWS AppSync resolver - AWS Lambda
-     ***/
-
-    // Command handler Lambda function for AppSync events
-    const commandHandlerFunction = new Function(this, 'CommandHandler', {
-      functionName: `${props.appName}-CommandHandler-${props.envName}`,
-      runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'commandHandler')),
-      memorySize: 1024,
-      timeout: Duration.seconds(10),
-      environment: {
-        EVENT_TABLE_NAME: eventTable.tableName,
-        ACCOUNT_TYPE_TABLE_NAME: accountTypeTable.tableName,
-        TRANSACTION_TYPE_TABLE_NAME: transactionTypeTable.tableName,
-        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
-        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
-        POSITION_TABLE_NAME: positionReadModelTable.tableName,
-      },
-      deadLetterQueue: commandHandlerQueue,
-    });
-
-    // Set the new Lambda function as a data source for the AppSync API
-    const lambdaDataSource = api.addLambdaDataSource('lambdaDataSource', commandHandlerFunction);
-
-    // Resolvers
-    lambdaDataSource.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'createEvent',
-    });
-
-    lambdaDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'getAccountByAggregateId',
-    });
-
-    lambdaDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'getAccountsByUser',
-    });
-
-    lambdaDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'getPositionsByAccountId',
-    });
-
-    lambdaDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'getTransactionsByAccountId',
-    });
-
-    lambdaDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'listAccountTypes',
-    });
-
-    lambdaDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'listTransactionTypes',
-    });
-
-    lambdaDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'listEvents',
-    });
-
-    /***
      *** AWS EventBridge - Event Bus
      ***/
 
@@ -449,132 +346,217 @@ export class PecuniaryStack extends Stack {
     });
 
     /***
-     *** AWS Lambda - Event Bus
+     *** AWS AppSync resolvers - AWS Lambda
      ***/
 
-    // Event bus handler for DynamoDB streams events
-    const eventBusFunction = new Function(this, 'EventBus', {
+    // Resolver for Accounts
+    const accountHandlerFunction = new Function(this, 'AccountHandler', {
+      functionName: `${props.appName}-AccountHandler-${props.envName}`,
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-EventBus-${props.envName}`,
       handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'eventBus')),
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'accountHandler')),
+      memorySize: 1024,
+      timeout: Duration.seconds(10),
+      environment: {
+        ACCOUNT_TYPE_TABLE_NAME: accountTypeTable.tableName,
+        TRANSACTION_TYPE_TABLE_NAME: transactionTypeTable.tableName,
+        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
+        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
+        POSITION_TABLE_NAME: positionReadModelTable.tableName,
+      },
+      //deadLetterQueue: commandHandlerQueue,
+    });
+    // Add permissions to write to DynamoDB table
+    accountHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem'],
+        resources: [accountReadModelTable.tableArn],
+      })
+    );
+    // Add permissions to write to DynamoDB table
+    accountHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:Scan', 'dynamodb:DeleteItem'],
+        resources: [accountReadModelTable.tableArn, positionReadModelTable.tableArn, transactionReadModelTable.tableArn],
+      })
+    );
+    // Set the new Lambda function as a data source for the AppSync API
+    const accountHandlerDataSource = api.addLambdaDataSource('accountDataSource', accountHandlerFunction);
+    // Resolvers
+    accountHandlerDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getAccountByAggregateId',
+    });
+    accountHandlerDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getAccountsByUser',
+    });
+    accountHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'createAccount',
+    });
+    accountHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'updateAccount',
+    });
+    accountHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'deleteAccount',
+    });
+
+    // Resolver for Transactions
+    const transactionHandlerFunction = new Function(this, 'TransactionHandler', {
+      functionName: `${props.appName}-TransactionHandler-${props.envName}`,
+      runtime: Runtime.NODEJS_14_X,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'transactionHandler')),
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
+        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
+        REGION: REGION,
       },
-      deadLetterQueue: eventBusQueue,
+      //deadLetterQueue: commandHandlerQueue,
     });
-    // Add DynamoDB streams as an Event Source to the Lambda function
-    eventBusFunction.addEventSource(
-      new DynamoEventSource(eventTable, {
-        startingPosition: StartingPosition.TRIM_HORIZON,
-        batchSize: 5,
-        bisectBatchOnError: true,
-        //onFailure: new SqsDlq(deadLetterQueue),
-        retryAttempts: 3,
+    // Add permissions to write to DynamoDB table
+    transactionHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:Scan', 'dynamodb:DeleteItem'],
+        resources: [transactionReadModelTable.tableArn],
       })
     );
-    // Add permissions to put event on EventBus
-    eventBusFunction.addToRolePolicy(
+    // Add permission to send to EventBridge
+    transactionHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['events:PutEvents'],
         resources: [eventBus.eventBusArn],
       })
     );
+    // Set the new Lambda function as a data source for the AppSync API
+    const transactionHandlerDataSource = api.addLambdaDataSource('transactionDataSource', transactionHandlerFunction);
+    // Resolvers
+    transactionHandlerDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getTransactionsByAccountId',
+    });
+    transactionHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'createTransaction',
+    });
+    transactionHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'updateTransaction',
+    });
+    transactionHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'deleteTransaction',
+    });
+
+    // Resolver for Positions
+    const positionHandlerFunction = new Function(this, 'PositionHandler', {
+      functionName: `${props.appName}-PositionHandler-${props.envName}`,
+      runtime: Runtime.NODEJS_14_X,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'positionHandler')),
+      memorySize: 1024,
+      timeout: Duration.seconds(10),
+      environment: {
+        POSITION_TABLE_NAME: positionReadModelTable.tableName,
+      },
+      //deadLetterQueue: commandHandlerQueue,
+    });
+    // Add permissions to write to DynamoDB table
+    accountHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:Scan'],
+        resources: [positionReadModelTable.tableArn],
+      })
+    );
+    // Set the new Lambda function as a data source for the AppSync API
+    const positionHandlerDataSource = api.addLambdaDataSource('positionDataSource', positionHandlerFunction);
+    // Resolvers
+    positionHandlerDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getPositionsByAccountId',
+    });
+
+    // Resolver for AccountTypes
+    const accountTypeHandlerFunction = new Function(this, 'AccountTypeHandler', {
+      functionName: `${props.appName}-AccountTypeHandler-${props.envName}`,
+      runtime: Runtime.NODEJS_14_X,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'accountTypeHandler')),
+      memorySize: 1024,
+      timeout: Duration.seconds(10),
+      environment: {
+        ACCOUNT_TYPE_TABLE_NAME: accountTypeTable.tableName,
+      },
+      //deadLetterQueue: commandHandlerQueue,
+    });
+    // Add permissions to write to DynamoDB table
+    accountTypeHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:Scan'],
+        resources: [accountTypeTable.tableArn],
+      })
+    );
+    // Set the new Lambda function as a data source for the AppSync API
+    const accountTypeHandlerDataSource = api.addLambdaDataSource('accountTypeDataSource', accountTypeHandlerFunction);
+    // Resolvers
+    accountTypeHandlerDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'listAccountTypes',
+    });
+
+    // Resolver for TransactionTypes
+    const transactionTypeHandlerFunction = new Function(this, 'TransactionTypeHandler', {
+      functionName: `${props.appName}-TransactionTypeHandler-${props.envName}`,
+      runtime: Runtime.NODEJS_14_X,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'transactionTypeHandler')),
+      memorySize: 1024,
+      timeout: Duration.seconds(10),
+      environment: {
+        TRANSACTION_TYPE_TABLE_NAME: transactionTypeTable.tableName,
+      },
+      //deadLetterQueue: commandHandlerQueue,
+    });
+    // Add permissions to write to DynamoDB table
+    transactionTypeHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:Scan'],
+        resources: [transactionTypeTable.tableArn],
+      })
+    );
+    // Set the new Lambda function as a data source for the AppSync API
+    const transactionTypeHandlerDataSource = api.addLambdaDataSource('transactionTypeDataSource', transactionTypeHandlerFunction);
+    // Resolvers
+    accountTypeHandlerDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'listTransactionTypes',
+    });
 
     /***
      *** AWS DynamoDB
      ***/
 
     // Allow DynamoDB streams from Event table to send event source mapping to EventBus lambda function
-    eventTable.grantWriteData(eventBusFunction);
+    //eventTable.grantWriteData(eventBusFunction);
     // Enable the Lambda function to access the DynamoDB table (using IAM)
-    eventTable.grantFullAccess(commandHandlerFunction);
-    accountTypeTable.grantReadData(commandHandlerFunction);
-    transactionTypeTable.grantReadData(commandHandlerFunction);
-    accountReadModelTable.grantFullAccess(commandHandlerFunction);
-    transactionReadModelTable.grantFullAccess(commandHandlerFunction);
-    positionReadModelTable.grantFullAccess(commandHandlerFunction);
-    transactionReadModelTable.grantFullAccess(commandHandlerFunction);
-    positionReadModelTable.grantFullAccess(commandHandlerFunction);
-    timeSeriesTable.grantFullAccess(commandHandlerFunction);
+    // accountTypeTable.grantFullAccess(accountHandlerFunction);
+    // transactionTypeTable.grantReadData(accountHandlerFunction);
 
     /***
      *** AWS Lambda - Event Handlers
      ***/
-    const createAccountFunction = new Function(this, 'CreateAccount', {
-      runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-createAccount-${props.envName}`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createAccount')),
-      memorySize: 768,
-      timeout: Duration.seconds(10),
-      environment: {
-        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
-        REGION: REGION,
-      },
-      deadLetterQueue: eventHandlerQueue,
-    });
-    // Add permissions to write to DynamoDB table
-    createAccountFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:PutItem'],
-        resources: [accountReadModelTable.tableArn],
-      })
-    );
-
-    const updateAccountFunction = new Function(this, 'UpdateAccount', {
-      runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-updateAccount-${props.envName}`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateAccount')),
-      memorySize: 768,
-      timeout: Duration.seconds(10),
-      environment: {
-        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
-        REGION: REGION,
-      },
-      deadLetterQueue: eventHandlerQueue,
-    });
-    // Add permissions to write to DynamoDB table
-    updateAccountFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:UpdateItem'],
-        resources: [accountReadModelTable.tableArn],
-      })
-    );
-
-    const deleteAccountFunction = new Function(this, 'DeleteAccount', {
-      runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-deleteAccount-${props.envName}`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'deleteAccount')),
-      memorySize: 768,
-      timeout: Duration.seconds(10),
-      environment: {
-        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
-        POSITION_TABLE_NAME: positionReadModelTable.tableName,
-        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
-        REGION: REGION,
-      },
-      deadLetterQueue: eventHandlerQueue,
-    });
-    // Add permissions to write to DynamoDB table
-    deleteAccountFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Scan', 'dynamodb:DeleteItem'],
-        resources: [
-          accountReadModelTable.tableArn,
-          positionReadModelTable.tableArn,
-          transactionReadModelTable.tableArn,
-        ],
-      })
-    );
 
     const updateAccountValuesFunction = new Function(this, 'UpdateAccountValues', {
       runtime: Runtime.NODEJS_14_X,
@@ -606,102 +588,9 @@ export class PecuniaryStack extends Stack {
       })
     );
 
-    const createTransactionFunction = new Function(this, 'CreateTransaction', {
+    const createUpdatePositiopnFunction = new Function(this, 'CreateUpdatePosition', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-createTransaction-${props.envName}`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createTransaction')),
-      memorySize: 768,
-      timeout: Duration.seconds(10),
-      environment: {
-        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
-        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
-        REGION: REGION,
-      },
-      deadLetterQueue: eventHandlerQueue,
-    });
-    // Add permissions to write to DynamoDB table
-    createTransactionFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:PutItem'],
-        resources: [transactionReadModelTable.tableArn],
-      })
-    );
-    // Add permission to send to EventBridge
-    createTransactionFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['events:PutEvents'],
-        resources: [eventBus.eventBusArn],
-      })
-    );
-
-    const updateTransactionFunction = new Function(this, 'UpdateTransaction', {
-      runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-updateTransaction-${props.envName}`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateTransaction')),
-      memorySize: 768,
-      timeout: Duration.seconds(10),
-      environment: {
-        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
-        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
-        REGION: REGION,
-      },
-      deadLetterQueue: eventHandlerQueue,
-    });
-    // Add permissions to write to DynamoDB table
-    updateTransactionFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:UpdateItem'],
-        resources: [transactionReadModelTable.tableArn],
-      })
-    );
-    // Add permission to send to EventBridge
-    updateTransactionFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['events:PutEvents'],
-        resources: [eventBus.eventBusArn],
-      })
-    );
-
-    const deleteTransactionFunction = new Function(this, 'DeleteTransaction', {
-      runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-deleteTransaction-${props.envName}`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'deleteTransaction')),
-      memorySize: 768,
-      timeout: Duration.seconds(10),
-      environment: {
-        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
-        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
-        REGION: REGION,
-      },
-      deadLetterQueue: eventHandlerQueue,
-    });
-    // Add permissions to write to DynamoDB table
-    deleteTransactionFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Scan', 'dynamodb:DeleteItem'],
-        resources: [transactionReadModelTable.tableArn],
-      })
-    );
-    // Add permission to send to EventBridge
-    deleteTransactionFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['events:PutEvents'],
-        resources: [eventBus.eventBusArn],
-      })
-    );
-
-    const createUpdatePositionFunction = new Function(this, 'CreateUpdatePosition', {
-      runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-createUpdatePosition-${props.envName}`,
+      functionName: `${props.appName}-CreateUpdatePosition-${props.envName}`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createUpdatePosition')),
       memorySize: 1024,
@@ -716,21 +605,21 @@ export class PecuniaryStack extends Stack {
       deadLetterQueue: eventHandlerQueue,
     });
     // Add permissions to call DynamoDB
-    createUpdatePositionFunction.addToRolePolicy(
+    createUpdatePositiopnFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Scan'],
         resources: [transactionReadModelTable.tableArn, positionReadModelTable.tableArn],
       })
     );
-    createUpdatePositionFunction.addToRolePolicy(
+    createUpdatePositiopnFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:GetItem'],
         resources: [positionReadModelTable.tableArn],
       })
     );
-    createUpdatePositionFunction.addToRolePolicy(
+    createUpdatePositiopnFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:PutItem'],
@@ -738,7 +627,7 @@ export class PecuniaryStack extends Stack {
       })
     );
     // Add permission to send to EventBridge
-    createUpdatePositionFunction.addToRolePolicy(
+    createUpdatePositiopnFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['events:PutEvents'],
@@ -749,115 +638,6 @@ export class PecuniaryStack extends Stack {
     /***
      *** AWS EventBridge - Event Bus Rules
      ***/
-    // EventBus Rule - AccountCreatedEventRule
-    const accountCreatedEventRule = new Rule(this, 'AccountCreatedEventRule', {
-      ruleName: `${props.appName}-AccountCreatedEvent-${props.envName}`,
-      description: 'AccountCreatedEvent',
-      eventBus: eventBus,
-      eventPattern: {
-        source: ['custom.pecuniary'],
-        detailType: ['AccountCreatedEvent'],
-      },
-    });
-    accountCreatedEventRule.addTarget(
-      new LambdaFunction(createAccountFunction, {
-        //deadLetterQueue: SqsQueue,
-        maxEventAge: Duration.hours(2),
-        retryAttempts: 2,
-      })
-    );
-
-    // EventBus Rule - AccountUpdatedEventRule
-    const accountUpdatedEventRule = new Rule(this, 'AccountUpdatedEventRule', {
-      ruleName: `${props.appName}-AccountUpdatedEvent-${props.envName}`,
-      description: 'AccountUpdatedEvent',
-      eventBus: eventBus,
-      eventPattern: {
-        source: ['custom.pecuniary'],
-        detailType: ['AccountUpdatedEvent'],
-      },
-    });
-    accountUpdatedEventRule.addTarget(
-      new LambdaFunction(updateAccountFunction, {
-        //deadLetterQueue: SqsQueue,
-        maxEventAge: Duration.hours(2),
-        retryAttempts: 2,
-      })
-    );
-
-    // EventBus Rule - AccountDeletedEventRule
-    const accountDeletedEventRule = new Rule(this, 'AccountDeletedEventRule', {
-      ruleName: `${props.appName}-AccountDeletedEvent-${props.envName}`,
-      description: 'AccountDeletedEvent',
-      eventBus: eventBus,
-      eventPattern: {
-        source: ['custom.pecuniary'],
-        detailType: ['AccountDeletedEvent'],
-      },
-    });
-    accountDeletedEventRule.addTarget(
-      new LambdaFunction(deleteAccountFunction, {
-        //deadLetterQueue: SqsQueue,
-        maxEventAge: Duration.hours(2),
-        retryAttempts: 2,
-      })
-    );
-
-    // EventBus Rule - TransactionCreatedEventRule
-    const transactionCreatedEventRule = new Rule(this, 'TransactionCreatedEventRule', {
-      ruleName: `${props.appName}-TransactionCreatedEvent-${props.envName}`,
-      description: 'TransactionCreatedEvent',
-      eventBus: eventBus,
-      eventPattern: {
-        source: ['custom.pecuniary'],
-        detailType: ['TransactionCreatedEvent'],
-      },
-    });
-    transactionCreatedEventRule.addTarget(
-      new LambdaFunction(createTransactionFunction, {
-        //deadLetterQueue: SqsQueue,
-        maxEventAge: Duration.hours(2),
-        retryAttempts: 2,
-      })
-    );
-
-    // EventBus Rule - TransactionUpdatedEventRule
-    const transactionUpdatedEventRule = new Rule(this, 'TransactionUpdatedEventRule', {
-      ruleName: `${props.appName}-TransactionUpdatedEvent-${props.envName}`,
-      description: 'TransactionUpdatedEvent',
-      eventBus: eventBus,
-      eventPattern: {
-        source: ['custom.pecuniary'],
-        detailType: ['TransactionUpdatedEvent'],
-      },
-    });
-
-    transactionUpdatedEventRule.addTarget(
-      new LambdaFunction(updateTransactionFunction, {
-        //deadLetterQueue: SqsQueue,
-        maxEventAge: Duration.hours(2),
-        retryAttempts: 2,
-      })
-    );
-
-    // EventBus Rule - TransactionDeletedEventRule
-    const transactionDeletedEventRule = new Rule(this, 'TransactionDeletedEventRule', {
-      ruleName: `${props.appName}-TransactionDeletedEvent-${props.envName}`,
-      description: 'TransactionDeletedEvent',
-      eventBus: eventBus,
-      eventPattern: {
-        source: ['custom.pecuniary'],
-        detailType: ['TransactionDeletedEvent'],
-      },
-    });
-
-    transactionDeletedEventRule.addTarget(
-      new LambdaFunction(deleteTransactionFunction, {
-        //deadLetterQueue: SqsQueue,
-        maxEventAge: Duration.hours(2),
-        retryAttempts: 2,
-      })
-    );
 
     // EventBus Rule - TransactionSavedEventRule
     const transactionSavedEventRule = new Rule(this, 'TransactionSavedEventRule', {
@@ -870,7 +650,7 @@ export class PecuniaryStack extends Stack {
       },
     });
     transactionSavedEventRule.addTarget(
-      new LambdaFunction(createUpdatePositionFunction, {
+      new LambdaFunction(createUpdatePositiopnFunction, {
         //deadLetterQueue: SqsQueue,
         maxEventAge: Duration.hours(2),
         retryAttempts: 2,
@@ -1006,12 +786,10 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'UserPoolClientId', { value: userPoolClient.userPoolClientId });
 
     // Dead Letter Queues
-    new CfnOutput(this, 'CommandHandlerQueueArn', { value: commandHandlerQueue.queueArn });
     new CfnOutput(this, 'EventBusQueueArn', { value: eventBusQueue.queueArn });
     new CfnOutput(this, 'EventHandlerQueueArn', { value: eventHandlerQueue.queueArn });
 
     // SNS Topics
-    new CfnOutput(this, 'CommandHandlerTopicArn', { value: commandHandlerTopic.topicArn });
     new CfnOutput(this, 'EventBusTopicArn', { value: eventBusTopic.topicArn });
     new CfnOutput(this, 'EventHandlerTopicArn', { value: eventHandlerTopic.topicArn });
 
@@ -1020,7 +798,6 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'AppSyncAPIKey', { value: api.apiKey || '' });
 
     // DynamoDB tables
-    new CfnOutput(this, 'eventTableArn', { value: eventTable.tableArn });
     new CfnOutput(this, 'accountTypeTableArn', { value: accountTypeTable.tableArn });
     new CfnOutput(this, 'currencyTypeTableArn', { value: currencyTypeTable.tableArn });
     new CfnOutput(this, 'exchangeTypeTableArn', { value: exchangeTypeTable.tableArn });
@@ -1032,26 +809,17 @@ export class PecuniaryStack extends Stack {
 
     // EventBridge
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
-    new CfnOutput(this, 'AccountCreatedEventRuleArn', { value: accountCreatedEventRule.ruleArn });
-    new CfnOutput(this, 'AccountUpdatedEventRuleArn', { value: accountUpdatedEventRule.ruleArn });
-    new CfnOutput(this, 'AccountDeletedEventRuleArn', { value: accountDeletedEventRule.ruleArn });
-    new CfnOutput(this, 'TransactionCreatedEventRuleArn', { value: transactionCreatedEventRule.ruleArn });
-    new CfnOutput(this, 'TransactionUpdatedEventRuleArn', { value: transactionUpdatedEventRule.ruleArn });
-    new CfnOutput(this, 'TransactionDeletedEventRuleArn', { value: transactionDeletedEventRule.ruleArn });
     new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
     new CfnOutput(this, 'PositionUpdatedEventRuleArn', { value: positionUpdatedEventRule.ruleArn });
 
     // Lambda functions
     new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
-    new CfnOutput(this, 'CommandHandlerFunctionArn', { value: commandHandlerFunction.functionArn });
-    new CfnOutput(this, 'EventBusFunctionArn', { value: eventBusFunction.functionArn });
-    new CfnOutput(this, 'AccountCreatedEventFunctionArn', { value: createAccountFunction.functionArn });
-    new CfnOutput(this, 'AccountUpdatedEventFunctionArn', { value: updateAccountFunction.functionArn });
+    new CfnOutput(this, 'AccountHandlerFunctionArn', { value: accountHandlerFunction.functionArn });
+    new CfnOutput(this, 'TransactionHandlerFunctionArn', { value: transactionHandlerFunction.functionArn });
+    new CfnOutput(this, 'PositionHandlerFunctionArn', { value: positionHandlerFunction.functionArn });
+    new CfnOutput(this, 'AccountTypeHandlerFunctionArn', { value: accountTypeHandlerFunction.functionArn });
+    new CfnOutput(this, 'TransactionTypeHandlerFunctionArn', { value: transactionTypeHandlerFunction.functionArn });
+    new CfnOutput(this, 'CreateUpdatePositionFunctionArn', { value: createUpdatePositiopnFunction.functionArn });
     new CfnOutput(this, 'AccountValuesUpdatedEventFunctionArn', { value: updateAccountValuesFunction.functionArn });
-    new CfnOutput(this, 'AccountDeletedEventFunctionArn', { value: deleteAccountFunction.functionArn });
-    new CfnOutput(this, 'TransactionCreatedEventFunctionArn', { value: createTransactionFunction.functionArn });
-    new CfnOutput(this, 'TransactionUpdatedEventFunctionArn', { value: updateTransactionFunction.functionArn });
-    new CfnOutput(this, 'TransactionDeletedEventFunctionArn', { value: deleteTransactionFunction.functionArn });
-    new CfnOutput(this, 'CreateUpdatePositionFunctionArn', { value: createUpdatePositionFunction.functionArn });
   }
 }

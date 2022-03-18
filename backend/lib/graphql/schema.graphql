@@ -1,14 +1,3 @@
-# Event Store
-type Event @model @aws_api_key @aws_cognito_user_pools {
-  id: ID!
-  aggregateId: ID!
-  name: String!
-  version: Int!
-  data: String!
-  userId: ID!
-  createdAt: AWSDateTime!
-}
-
 # Lookup Types
 type AccountType @model @aws_api_key @aws_cognito_user_pools {
   id: ID!
@@ -108,124 +97,89 @@ type TimeSeries @model @aws_api_key @aws_cognito_user_pools {
   split_coefficient: Float!
 }
 
-# Enums
-enum ModelAttributeTypes {
-  binary
-  binarySet
-  bool
-  list
-  map
-  number
-  numberSet
-  string
-  stringSet
-  _null
-}
-
-# Filter Models
-input ModelIDInput {
-  ne: ID
-  eq: ID
-  le: ID
-  lt: ID
-  ge: ID
-  gt: ID
-  contains: ID
-  notContains: ID
-  between: [ID]
-  beginsWith: ID
-  attributeExists: Boolean
-  attributeType: ModelAttributeTypes
-  size: ModelSizeInput
-}
-
-input ModelStringInput {
-  ne: String
-  eq: String
-  le: String
-  lt: String
-  ge: String
-  gt: String
-  contains: String
-  notContains: String
-  between: [String]
-  beginsWith: String
-  attributeExists: Boolean
-  attributeType: ModelAttributeTypes
-  size: ModelSizeInput
-}
-
-input ModelIntInput {
-  ne: Int
-  eq: Int
-  le: Int
-  lt: Int
-  ge: Int
-  gt: Int
-  between: [Int]
-  attributeExists: Boolean
-  attributeType: ModelAttributeTypes
-}
-
-input ModelSizeInput {
-  ne: Int
-  eq: Int
-  le: Int
-  lt: Int
-  ge: Int
-  gt: Int
-  between: [Int]
-}
-
-# Inputs
-input EventFilterInput {
-  id: ModelIDInput
-  aggregateId: ModelIDInput
-  name: ModelStringInput
-  version: ModelIntInput
-  data: ModelStringInput
-  userId: ModelIDInput
-  createdAt: ModelStringInput
-  and: [EventFilterInput]
-  or: [EventFilterInput]
-  not: EventFilterInput
-}
-
-input CreateEventInput {
-  id: ID
-  aggregateId: ID!
-  name: String!
-  version: Int!
-  data: String!
+input CreateAccountInput {
   userId: ID!
-  createdAt: AWSDateTime
+  name: String!
+  description: String
+  accountTypeId: ID!
+  accountTypeName: String!
+  accountTypeDescription: String!
 }
 
-# Return types
-type EventsModel @aws_api_key @aws_cognito_user_pools {
-  items: [Event]
-  nextToken: String
+
+input UpdateAccountInput {
+  aggregateId: ID!
+  userId: ID!
+  name: String!
+  description: String
+  bookValue: Float!
+  marketValue: Float!
+  accountTypeId: ID
+  accountTypeName: String
+  accountTypeDescription: String
 }
+
+input DeleteAccountInput {
+  id: ID!
+  userId: ID!  
+}
+
+input CreateTransactionInput {
+  accountId: ID!
+  aggregateId: ID!
+  userId: ID!
+  transactionDate: AWSDate!
+  symbol: String!
+  shares: Int!
+  price: Float!
+  commission: Float!
+  transactionTypeId: ID!
+  transactionTypeName: String!
+  transactionTypeDescription: String!
+}
+
+input UpdateTransactionInput {
+  id: ID!
+  version: Int!
+  accountId: ID!
+  aggregateId: ID!
+  userId: ID!
+  transactionDate: AWSDate!
+  symbol: String!
+  shares: Int!
+  price: Float!
+  commission: Float!
+  transactionTypeId: ID
+  transactionTypeName: String
+  transactionTypeDescription: String
+}
+
+input DeleteTransactionInput {
+  id: ID!
+  userId: ID!  
+}
+
 
 # GraphQL actions
 type Query {
-  listEvents(filter: EventFilterInput, limit: Int, nextToken: String): EventsModel
-    @aws_api_key
-    @aws_cognito_user_pools(cognito_groups: ["Users"])
-
   getAccountByAggregateId(aggregateId: ID!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAccountsByUser(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getTransactionsByAccountId(accountId: ID!): [TransactionReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPositionsByAccountId(accountId: ID!): [PositionReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
-
   listAccountTypes: [AccountType] @aws_cognito_user_pools(cognito_groups: ["Users"])
   listTransactionTypes: [TransactionType] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {
-  createEvent(event: CreateEventInput!): Event @aws_cognito_user_pools(cognito_groups: ["Users"])
+  # ToDo How to return void
+  createAccount(createAccountInput: CreateAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updateAccount(updateAccountInput: UpdateAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteAccount(deleteAccountInput: DeleteAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createTransaction(createTransactionInput: CreateTransactionInput!): TransactionReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updateTransaction(updateTransactionInput: UpdateTransactionInput!): TransactionReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): TransactionReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Subscription {
-  onCreateEvent: Event @aws_subscribe(mutations: ["createEvent"]) @aws_cognito_user_pools(cognito_groups: ["Users"])
+  #onCreateEvent: Event @aws_subscribe(mutations: ["createEvent"]) @aws_cognito_user_pools(cognito_groups: ["Users"])
 }

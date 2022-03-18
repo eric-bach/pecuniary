@@ -3,14 +3,14 @@ const { DynamoDBClient, UpdateItemCommand, GetItemCommand } = require('@aws-sdk/
 import { ScanCommand, ScanCommandInput } from '@aws-sdk/client-dynamodb';
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 
-import { AccountData, AccountReadModel } from '../types/Account';
+import { AccountReadModel } from '../types/Account';
 import { PositionReadModel } from '../types/Position';
 
-exports.handler = async (event: EventBridgeEvent<string, AccountData>) => {
+exports.handler = async (event: EventBridgeEvent<string, AccountReadModel>) => {
   const eventString: string = JSON.stringify(event);
   console.debug(`Received event: ${eventString}`);
 
-  const detail: AccountData = JSON.parse(eventString).detail;
+  const detail: AccountReadModel = JSON.parse(eventString).detail;
 
   // Get account matching account id
   var account: AccountReadModel = await getAccountAsync(detail.id);

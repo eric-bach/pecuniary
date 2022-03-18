@@ -1,41 +1,33 @@
-import { EventBridgeEvent } from 'aws-lambda';
 const { DynamoDBClient, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
-import { EventBridgeDetail } from '../types/Event';
-import { TransactionData } from '../types/Transaction';
+import { UpdateTransactionInput } from '../types/Transaction';
 
-exports.handler = async (event: EventBridgeEvent<string, TransactionData>) => {
-  const eventString: string = JSON.stringify(event);
-  console.debug(`Received event: ${eventString}`);
-
-  const detail: EventBridgeDetail = JSON.parse(eventString).detail;
-  const data: TransactionData = JSON.parse(detail.data);
-
+async function updateTransaction(input: UpdateTransactionInput) {
   // update Transaction
-  await updateTransactionAsync(detail, data);
+  await updateTransactionAsync(input);
 
   // Publish event to update positions
-  await publishEventAsync(detail, event);
-};
+  await publishEventAsync(input);
+}
 
-async function updateTransactionAsync(detail: EventBridgeDetail, data: TransactionData) {
+async function updateTransactionAsync(input: UpdateTransactionInput) {
   const updateItemCommandInput = {
     TableName: process.env.TRANSACTION_TABLE_NAME,
     Key: marshall({
-      id: data.id,
+      id: input.id,
     }),
     UpdateExpression:
       'SET version=:version, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, transactionTypeId=:transactionTypeId',
     ExpressionAttributeValues: marshall({
-      ':version': detail.version,
-      ':transactionDate': data.transactionDate,
-      ':symbol': data.symbol,
-      ':shares': data.shares,
-      ':price': data.price,
-      ':commission': data.commission,
-      ':transactionType': `${data.transactionType}`,
+      ':version': input.version + 1,
+      ':transactionDate': input.transactionDate,
+      ':symbol': input.symbol,
+      ':shares': input.shares,
+      ':price': input.price,
+      ':commission': input.commission,
+      ':transactionType': `{ id: ${input.transactionTypeId}, name: ${input.transactionTypeName}, description: ${input.transactionTypeDescription} }`,
     }),
     ReturnValues: 'ALL_NEW',
   };
@@ -56,14 +48,14 @@ async function updateTransactionAsync(detail: EventBridgeDetail, data: Transacti
   console.log(`✅ Updated item in DynamoDB: ${JSON.stringify(result)}`);
 }
 
-async function publishEventAsync(detail: EventBridgeDetail, event: EventBridgeEvent<string, TransactionData>) {
+async function publishEventAsync(input: UpdateTransactionInput) {
   var params = {
     Entries: [
       {
-        Source: event.source,
+        Source: 'custom.pecuniary',
         EventBusName: process.env.EVENTBUS_PECUNIARY_NAME,
         DetailType: 'TransactionSavedEvent',
-        Detail: JSON.stringify(detail),
+        Detail: JSON.stringify(input),
       },
     ],
   };
@@ -82,3 +74,5 @@ async function publishEventAsync(detail: EventBridgeDetail, event: EventBridgeEv
     console.log(`✅ Successfully sent ${params.Entries.length} event(s) to EventBridge: ${JSON.stringify(result)}`);
   }
 }
+
+export default updateTransaction;

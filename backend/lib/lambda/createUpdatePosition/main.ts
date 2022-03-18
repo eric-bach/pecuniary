@@ -1,11 +1,5 @@
 import { EventBridgeEvent } from 'aws-lambda';
-import {
-  DynamoDBClient,
-  PutItemCommand,
-  PutItemCommandInput,
-  ScanCommand,
-  ScanCommandInput,
-} from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, PutItemCommand, PutItemCommandInput, ScanCommand, ScanCommandInput } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 
@@ -13,11 +7,11 @@ const { v4: uuid } = require('uuid');
 const { getTimeSeries, getSymbol } = require('./yahooFinance');
 
 import { EventBridgeDetail } from '../types/Event';
-import { TransactionData, TransactionReadModel } from '../types/Transaction';
+import { CreateTransactionInput, TransactionReadModel } from '../types/Transaction';
 import { PositionReadModel } from '../types/Position';
 import { TimeSeriesReadModel } from '../types/TimeSeries';
 
-exports.handler = async (event: EventBridgeEvent<string, TransactionData>) => {
+exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>) => {
   const { detail, data } = parseEvent(event);
 
   // Get all transactions
@@ -39,17 +33,7 @@ exports.handler = async (event: EventBridgeEvent<string, TransactionData>) => {
   const lastClose = await createTimeSeries(data.symbol, timeSeries);
 
   // Save Position - create if not exists, update if exists
-  const savedPosition = await savePosition(
-    position,
-    detail,
-    data,
-    positions,
-    acb,
-    bookValue,
-    lastTransactionDate,
-    transactions,
-    lastClose
-  );
+  const savedPosition = await savePosition(position, detail, data, positions, acb, bookValue, lastTransactionDate, transactions, lastClose);
 
   // Publish PositionUpdatedEvent to EventBridge for marketValue and bookValue to be updated
   await publishEventAsync(savedPosition);
@@ -132,7 +116,7 @@ async function createTimeSeries(symbol: string, timeSeries: any): Promise<number
 async function savePosition(
   position: PositionReadModel,
   detail: EventBridgeDetail,
-  data: TransactionData,
+  data: CreateTransactionInput,
   positions: number,
   acb: number,
   bookValue: number,
@@ -222,7 +206,7 @@ function calculateAdjustedCostBase(transactions: TransactionReadModel[]) {
 }
 
 // Returns the last transaction date, if null returns the date of the current transaction
-function getLastTransactionDate(position: PositionReadModel, data: TransactionData) {
+function getLastTransactionDate(position: PositionReadModel, data: CreateTransactionInput) {
   var prevLastTransactionDate = null;
   var lastTransactionDate = null;
   if (position) {
@@ -250,7 +234,7 @@ function getLastTransactionDate(position: PositionReadModel, data: TransactionDa
   return { prevLastTransactionDate, lastTransactionDate };
 }
 
-async function getPosition(detail: EventBridgeDetail, data: TransactionData): Promise<PositionReadModel> {
+async function getPosition(detail: EventBridgeDetail, data: CreateTransactionInput): Promise<PositionReadModel> {
   const params: ScanCommandInput = {
     TableName: process.env.POSITION_TABLE_NAME,
     ExpressionAttributeNames: {
@@ -288,7 +272,7 @@ async function getPosition(detail: EventBridgeDetail, data: TransactionData): Pr
 }
 
 // Returns all transactions for the symbol sorted in ascending order
-async function getTransactions(detail: EventBridgeDetail, data: TransactionData): Promise<TransactionReadModel[]> {
+async function getTransactions(detail: EventBridgeDetail, data: CreateTransactionInput): Promise<TransactionReadModel[]> {
   const params: ScanCommandInput = {
     TableName: process.env.TRANSACTION_TABLE_NAME,
     ExpressionAttributeNames: {
@@ -327,12 +311,12 @@ async function getTransactions(detail: EventBridgeDetail, data: TransactionData)
   }
 }
 
-function parseEvent(event: EventBridgeEvent<string, TransactionData>) {
+function parseEvent(event: EventBridgeEvent<string, CreateTransactionInput>) {
   const eventString: string = JSON.stringify(event);
   console.debug(`Received event: ${eventString}`);
 
   const detail: EventBridgeDetail = JSON.parse(eventString).detail;
-  const data: TransactionData = JSON.parse(detail.data);
+  const data: CreateTransactionInput = JSON.parse(detail.data);
 
   return { detail, data };
 }

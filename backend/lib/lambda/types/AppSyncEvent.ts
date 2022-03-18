@@ -1,6 +1,6 @@
 import Event from './Event';
 import Filter from './Filter';
-import Position from './Position';
+import { Position } from './Position';
 
 type AppSyncEvent = {
   info: {

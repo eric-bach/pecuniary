@@ -1,46 +1,38 @@
-import { EventBridgeEvent } from 'aws-lambda';
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
-import { EventBridgeDetail } from '../types/Event';
-import { TransactionData, CreateTransactionEvent } from '../types/Transaction';
+import { CreateTransactionInput, TransactionReadModel } from '../types/Transaction';
 
-exports.handler = async (event: EventBridgeEvent<string, TransactionData>) => {
-  const eventString: string = JSON.stringify(event);
-  console.debug(`Received event: ${eventString}`);
-
-  const detail: EventBridgeDetail = JSON.parse(eventString).detail;
-  const data: TransactionData = JSON.parse(detail.data);
-
+async function createTransaction(input: CreateTransactionInput) {
   // Create Transaction
-  var successful = await createTransactionAsync(detail, data);
+  var successful = await createTransactionAsync(input);
 
   // Publish event to update positions
   if (successful === true) {
-    await publishEventAsync(detail, event);
+    await publishEventAsync(input);
   }
-};
+}
 
-async function createTransactionAsync(detail: EventBridgeDetail, data: TransactionData) {
+async function createTransactionAsync(input: CreateTransactionInput) {
   var client = new DynamoDBClient({ region: process.env.REGION });
 
-  var item: CreateTransactionEvent = {
+  var item: TransactionReadModel = {
     id: uuidv4(),
-    aggregateId: detail.aggregateId,
-    version: detail.version,
-    userId: detail.userId,
-    transactionDate: data.transactionDate,
-    symbol: data.symbol,
-    shares: data.shares,
-    price: data.price,
-    commission: data.commission,
-    accountId: `${data.accountId}`,
+    aggregateId: input.aggregateId,
+    version: 1,
+    userId: input.userId,
+    transactionDate: input.transactionDate,
+    symbol: input.symbol,
+    shares: input.shares,
+    price: input.price,
+    commission: input.commission,
+    accountId: `${input.accountId}`,
     transactionType: {
-      id: data.transactionType.id,
-      name: data.transactionType.name,
-      description: data.transactionType.description,
+      id: input.transactionTypeId,
+      name: input.transactionTypeName,
+      description: input.transactionTypeDescription,
     },
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -67,14 +59,14 @@ async function createTransactionAsync(detail: EventBridgeDetail, data: Transacti
   return true;
 }
 
-async function publishEventAsync(detail: EventBridgeDetail, event: EventBridgeEvent<string, TransactionData>) {
+async function publishEventAsync(input: CreateTransactionInput) {
   var params = {
     Entries: [
       {
-        Source: event.source,
+        Source: 'custom.pecuniary',
         EventBusName: process.env.EVENTBUS_PECUNIARY_NAME,
         DetailType: 'TransactionSavedEvent',
-        Detail: JSON.stringify(detail),
+        Detail: JSON.stringify(input),
       },
     ],
   };
@@ -93,3 +85,5 @@ async function publishEventAsync(detail: EventBridgeDetail, event: EventBridgeEv
     console.log(`✅ Successfully sent ${params.Entries.length} event(s) to EventBridge: ${JSON.stringify(result)}`);
   }
 }
+
+export default createTransaction;

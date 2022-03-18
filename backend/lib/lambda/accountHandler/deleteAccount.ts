@@ -1,40 +1,33 @@
-import { EventBridgeEvent } from 'aws-lambda';
 const { DynamoDBClient, ScanCommand, DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
-import { EventBridgeDetail, Aggregate } from '../types/Event';
-import { AccountData } from '../types/Account';
+import { DeleteAccountInput } from '../types/Account';
+import { Aggregate } from '../types/Event';
 
-exports.handler = async (event: EventBridgeEvent<string, AccountData>) => {
-  const eventString: string = JSON.stringify(event);
-  console.debug(`EventBridge event: ${eventString}`);
-
-  const detail: EventBridgeDetail = JSON.parse(eventString).detail;
-  const data: AccountData = JSON.parse(detail.data);
-
+async function deleteAccount(input: DeleteAccountInput) {
   // Delete all positions
-  await deletePositionsAsync(detail, data);
+  await deletePositionsAsync(input);
 
   // Delete all transactions
-  await deleteTransactionsAsync(detail, data);
+  await deleteTransactionsAsync(input);
 
   // Delete Account
-  await deleteAccountAsync(data);
-};
+  await deleteAccountAsync(input);
+}
 
-async function deletePositionsAsync(detail: EventBridgeDetail, data: AccountData) {
-  console.log(`Deleting Positions in Account: ${data.id}`);
+async function deletePositionsAsync(input: DeleteAccountInput) {
+  console.log(`Deleting Positions in Account: ${input.id}`);
 
   // Get all positions
-  const input = {
+  const posInput = {
     TableName: process.env.POSITION_TABLE_NAME,
     ExpressionAttributeValues: {
-      ':u': { S: detail.userId },
-      ':a': { S: data.id },
+      ':u': { S: input.userId },
+      ':a': { S: input.id },
     },
     FilterExpression: 'accountId = :a AND userId = :u',
   };
-  var result = await dynamoDbCommand(new ScanCommand(input));
+  var result = await dynamoDbCommand(new ScanCommand(posInput));
 
   if (result && result.Items) {
     console.log(`Found ${result.Count} position(s) in Account`);
@@ -57,19 +50,19 @@ async function deletePositionsAsync(detail: EventBridgeDetail, data: AccountData
   }
 }
 
-async function deleteTransactionsAsync(detail: EventBridgeDetail, data: AccountData) {
-  console.log(`Deleting Transactions in Account: ${data.id}`);
+async function deleteTransactionsAsync(input: DeleteAccountInput) {
+  console.log(`Deleting Transactions in Account: ${input.id}`);
 
   // Get all transactions
-  const input = {
+  const transInput = {
     TableName: process.env.TRANSACTION_TABLE_NAME,
     ExpressionAttributeValues: {
-      ':u': { S: detail.userId },
-      ':t': { S: data.id },
+      ':u': { S: input.userId },
+      ':t': { S: input.id },
     },
     FilterExpression: 'accountId = :t AND userId = :u',
   };
-  var result = await dynamoDbCommand(new ScanCommand(input));
+  var result = await dynamoDbCommand(new ScanCommand(transInput));
 
   if (result && result.Items) {
     console.log(`Found ${result.Count} transactions(s) in Account`);
@@ -92,16 +85,16 @@ async function deleteTransactionsAsync(detail: EventBridgeDetail, data: AccountD
   }
 }
 
-async function deleteAccountAsync(data: AccountData) {
-  const input = {
+async function deleteAccountAsync(input: DeleteAccountInput) {
+  const accInput = {
     TableName: process.env.ACCOUNT_TABLE_NAME,
     Key: marshall({
-      id: data.id,
+      id: input.id,
     }),
   };
 
-  console.log(`🔔 Deleting Account: ${data.id}`);
-  await dynamoDbCommand(new DeleteItemCommand(input));
+  console.log(`🔔 Deleting Account: ${input.id}`);
+  await dynamoDbCommand(new DeleteItemCommand(accInput));
   console.log('✅ Deleted Account');
 }
 
@@ -119,3 +112,5 @@ async function dynamoDbCommand(command: typeof DeleteItemCommand) {
 
   return result;
 }
+
+export default deleteAccount;
