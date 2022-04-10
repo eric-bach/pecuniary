@@ -106,7 +106,6 @@ input CreateAccountInput {
   accountTypeDescription: String!
 }
 
-
 input UpdateAccountInput {
   aggregateId: ID!
   userId: ID!
@@ -121,7 +120,7 @@ input UpdateAccountInput {
 
 input DeleteAccountInput {
   id: ID!
-  userId: ID!  
+  userId: ID!
 }
 
 input CreateTransactionInput {
@@ -156,9 +155,8 @@ input UpdateTransactionInput {
 
 input DeleteTransactionInput {
   id: ID!
-  userId: ID!  
+  userId: ID!
 }
-
 
 # GraphQL actions
 type Query {
@@ -175,11 +173,14 @@ type Mutation {
   createAccount(createAccountInput: CreateAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateAccount(updateAccountInput: UpdateAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
   deleteAccount(deleteAccountInput: DeleteAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
-  createTransaction(createTransactionInput: CreateTransactionInput!): TransactionReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
-  updateTransaction(updateTransactionInput: UpdateTransactionInput!): TransactionReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): TransactionReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createTransaction(createTransactionInput: CreateTransactionInput!): TransactionReadModel
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updateTransaction(updateTransactionInput: UpdateTransactionInput!): TransactionReadModel
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): TransactionReadModel
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
-type Subscription {
-  #onCreateEvent: Event @aws_subscribe(mutations: ["createEvent"]) @aws_cognito_user_pools(cognito_groups: ["Users"])
-}
+#type Subscription {
+#onCreateEvent: Event @aws_subscribe(mutations: ["createEvent"]) @aws_cognito_user_pools(cognito_groups: ["Users"])
+#}

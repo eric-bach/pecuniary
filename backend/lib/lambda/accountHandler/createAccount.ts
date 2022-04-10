@@ -1,5 +1,5 @@
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
-const { marshall } = require('@aws-sdk/util-dynamodb');
+const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
 import { CreateAccountInput, AccountReadModel } from '../types/Account';
@@ -38,10 +38,12 @@ async function createAccount(input: CreateAccountInput) {
 
     result = await client.send(command);
   } catch (error) {
-    console.error(`❌ Error with saving DynamoDB item`, error);
+    console.error(`❌ Error with saving DynamoDB item\n`, error);
+    return error;
   }
 
-  console.log(`✅ Saved item to DynamoDB: ${JSON.stringify(result)}`);
+  console.log(`✅ Saved item to DynamoDB: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
+  return unmarshall(putItemCommandInput.Item);
 }
 
 export default createAccount;

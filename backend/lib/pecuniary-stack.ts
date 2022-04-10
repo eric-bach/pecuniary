@@ -119,6 +119,7 @@ export class PecuniaryStack extends Stack {
     // Cognito user client
     const userPoolClient = new UserPoolClient(this, 'PecuniaryUserClient', {
       userPoolClientName: `${props.appName}_user_client`,
+      accessTokenValidity: Duration.hours(8),
       userPool,
     });
 
