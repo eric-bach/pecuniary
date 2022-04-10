@@ -1,6 +1,7 @@
 const { DynamoDBClient, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { UpdateAccountInput } from '../types/Account';
 
 async function updateAccount(input: UpdateAccountInput) {
@@ -36,9 +37,11 @@ async function updateAccount(input: UpdateAccountInput) {
     result = await client.send(command);
   } catch (error) {
     console.error(`❌ Error with updating DynamoDB item`, error);
+    return error;
   }
 
   console.log(`✅ Updated item in DynamoDB: ${JSON.stringify(result)}`);
+  return unmarshall(result.Attributes);
 }
 
 export default updateAccount;

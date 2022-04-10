@@ -107,15 +107,16 @@ input CreateAccountInput {
 }
 
 input UpdateAccountInput {
-  aggregateId: ID!
+  id: ID!
+  version: Int!
   userId: ID!
   name: String!
-  description: String
+  description: String!
   bookValue: Float!
   marketValue: Float!
-  accountTypeId: ID
-  accountTypeName: String
-  accountTypeDescription: String
+  accountTypeId: ID!
+  accountTypeName: String!
+  accountTypeDescription: String!
 }
 
 input DeleteAccountInput {
