@@ -1,3 +1,117 @@
+# Version 2
+
+```
+mutation CreateAccount {
+  createAccount(createAccountInput: {
+    name: "Test"
+    description: "Test Account"
+    userId: "eric"
+    accountTypeId: 1
+    accountTypeName: "TFSA"
+    accountTypeDescription: "Tax Free Savings Account"
+  })
+  {
+    id
+    aggregateId
+    version
+    name
+    description
+  }
+}
+
+mutation UpdateAccount {
+  updateAccount(updateAccountInput: {
+    id: "6e215222-f26a-42b0-a283-bf273900c75f"
+    version: 1
+    name: "New Name"
+    description: "New Account"
+    bookValue: 0
+    marketValue: 0
+    userId: "eric"
+    accountTypeId: 1
+    accountTypeName:"TFSA"
+    accountTypeDescription: "Tax Free Savings Account"
+  })
+  {
+    id
+    aggregateId
+    version
+    name
+    description
+  }
+}
+
+mutation DeleteAccount {
+  deleteAccount(deleteAccountInput: {
+    id: "6e215222-f26a-42b0-a283-bf273900c75f"
+    userId:"eric"
+  })
+  {
+    id
+  }
+}
+
+mutation CreateTransaction {
+  createTransaction(createTransactionInput: {
+    accountId: "4d0f9f8c-6418-415d-8869-5f1475eabbba"
+    aggregateId: "b9fa6509-ff9d-4c5c-82d0-42fa8792425b"
+    userId: "eric"
+    transactionDate: "2022-04-11Z"
+    symbol: "AAPL"
+    shares: 500
+    price: 124.88
+    commission: 5.49
+    transactionTypeId: 1
+    transactionTypeName: "Buy"
+    transactionTypeDescription: "Buy"
+  })
+  {
+    id
+    aggregateId
+  	symbol
+    shares
+    price
+    commission
+  }
+}
+
+mutation UpdateTransaction {
+  updateTransaction(updateTransactionInput: {
+    id: "72f530de-4e1f-4f4b-831e-a5c3a4c8aff3"
+    version: 2
+    accountId: "4d0f9f8c-6418-415d-8869-5f1475eabbba"
+    aggregateId: "b9fa6509-ff9d-4c5c-82d0-42fa8792425b"
+    userId: "eric"
+    transactionDate: "2022-04-11"
+    symbol: "AAPL"
+    shares: 999
+    price: 123.55
+    commission: 5.49
+    transactionTypeId: 1
+    transactionTypeName: "Buy"
+    transactionTypeDescription: "Buy"
+  })
+  {
+    id
+    aggregateId
+  	symbol
+    shares
+    price
+    commission
+  }
+}
+
+mutation DeleteTransaction {
+  deleteTransaction(deleteTransactionInput: {
+    id: "72f530de-4e1f-4f4b-831e-a5c3a4c8aff3"
+   	userId:"eric"
+  })
+  {
+    id
+  }
+}
+```
+
 # Queries and Mutations
 
 ```

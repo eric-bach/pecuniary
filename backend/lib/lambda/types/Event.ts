@@ -1,4 +1,4 @@
-export type Event = {
+type Event = {
   id: string;
   aggrgateId: string;
   name: string;
@@ -7,6 +7,8 @@ export type Event = {
   userId: string;
   createdAt: Date;
 };
+
+export default Event;
 
 export type Aggregate = {
   id: string;

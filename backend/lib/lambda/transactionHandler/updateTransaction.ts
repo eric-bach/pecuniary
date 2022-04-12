@@ -1,15 +1,12 @@
 const { DynamoDBClient, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
-const { marshall } = require('@aws-sdk/util-dynamodb');
+const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 
 import { UpdateTransactionInput } from '../types/Transaction';
 
 async function updateTransaction(input: UpdateTransactionInput) {
   // update Transaction
-  await updateTransactionAsync(input);
-
-  // Publish event to update positions
-  await publishEventAsync(input);
+  return await updateTransactionAsync(input);
 }
 
 async function updateTransactionAsync(input: UpdateTransactionInput) {
@@ -19,7 +16,7 @@ async function updateTransactionAsync(input: UpdateTransactionInput) {
       id: input.id,
     }),
     UpdateExpression:
-      'SET version=:version, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, transactionTypeId=:transactionTypeId',
+      'SET version=:version, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, transactionType=:transactionType',
     ExpressionAttributeValues: marshall({
       ':version': input.version + 1,
       ':transactionDate': input.transactionDate,
@@ -43,9 +40,14 @@ async function updateTransactionAsync(input: UpdateTransactionInput) {
     result = await client.send(command);
   } catch (error) {
     console.error(`❌ Error with updating DynamoDB item`, error);
+    return error;
   }
 
+  // Publish event to update positions
+  await publishEventAsync(input);
+
   console.log(`✅ Updated item in DynamoDB: ${JSON.stringify(result)}`);
+  return unmarshall(result.Attributes);
 }
 
 async function publishEventAsync(input: UpdateTransactionInput) {

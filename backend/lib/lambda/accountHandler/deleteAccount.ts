@@ -12,7 +12,10 @@ async function deleteAccount(input: DeleteAccountInput) {
   await deleteTransactionsAsync(input);
 
   // Delete Account
-  await deleteAccountAsync(input);
+  let result = await deleteAccountAsync(input);
+
+  console.log('✅ Deleted Account: ', result);
+  return result;
 }
 
 async function deletePositionsAsync(input: DeleteAccountInput) {
@@ -85,7 +88,7 @@ async function deleteTransactionsAsync(input: DeleteAccountInput) {
   }
 }
 
-async function deleteAccountAsync(input: DeleteAccountInput) {
+async function deleteAccountAsync(input: DeleteAccountInput): Promise<boolean> {
   const accInput = {
     TableName: process.env.ACCOUNT_TABLE_NAME,
     Key: marshall({
@@ -94,8 +97,7 @@ async function deleteAccountAsync(input: DeleteAccountInput) {
   };
 
   console.log(`🔔 Deleting Account: ${input.id}`);
-  await dynamoDbCommand(new DeleteItemCommand(accInput));
-  console.log('✅ Deleted Account');
+  return await dynamoDbCommand(new DeleteItemCommand(accInput));
 }
 
 async function dynamoDbCommand(command: typeof DeleteItemCommand) {
@@ -108,6 +110,7 @@ async function dynamoDbCommand(command: typeof DeleteItemCommand) {
     console.log(`DynamoDB result:\n${JSON.stringify(result)}`);
   } catch (error) {
     console.error(`❌ Error with DynamoDB command:\n`, error);
+    return error;
   }
 
   return result;

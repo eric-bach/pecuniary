@@ -159,6 +159,11 @@ input DeleteTransactionInput {
   userId: ID!
 }
 
+input DeleteResponse {
+  id: ID!
+  userId: ID!
+}
+
 # GraphQL actions
 type Query {
   getAccountByAggregateId(aggregateId: ID!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
@@ -173,13 +178,12 @@ type Mutation {
   # ToDo How to return void
   createAccount(createAccountInput: CreateAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateAccount(updateAccountInput: UpdateAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteAccount(deleteAccountInput: DeleteAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteAccount(deleteAccountInput: DeleteAccountInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
   createTransaction(createTransactionInput: CreateTransactionInput!): TransactionReadModel
     @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateTransaction(updateTransactionInput: UpdateTransactionInput!): TransactionReadModel
     @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): TransactionReadModel
-    @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 #type Subscription {

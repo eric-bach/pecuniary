@@ -6,10 +6,7 @@ import { DeleteTransactionInput } from '../types/Transaction';
 
 async function deleteTransaction(input: DeleteTransactionInput) {
   // Delete Transactions
-  await deleteTransactionAsync(input);
-
-  // Publish event to update positions
-  await publishEventAsync(input);
+  return await deleteTransactionAsync(input);
 }
 
 async function deleteTransactionAsync(input: DeleteTransactionInput) {
@@ -22,8 +19,15 @@ async function deleteTransactionAsync(input: DeleteTransactionInput) {
     }),
   };
 
-  await dynamoDbCommand(new DeleteItemCommand(delInput));
-  console.log('✅ Deleted Transaction');
+  let result = await dynamoDbCommand(new DeleteItemCommand(delInput));
+
+  // Publish event to update positions
+  if (result === true) {
+    await publishEventAsync(input);
+  }
+
+  console.log('✅ Deleted Transaction: ', { id: input.id });
+  return { id: input.id };
 }
 
 async function dynamoDbCommand(command: typeof DeleteItemCommand) {
@@ -36,9 +40,10 @@ async function dynamoDbCommand(command: typeof DeleteItemCommand) {
     console.log(`DynamoDB result:\n${JSON.stringify(result)}`);
   } catch (error) {
     console.error(`❌ Error with DynamoDB command:\n`, error);
+    return false;
   }
 
-  return result;
+  return true;
 }
 
 async function publishEventAsync(input: DeleteTransactionInput) {
