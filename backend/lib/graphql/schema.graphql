@@ -56,7 +56,7 @@ type TransactionReadModel @model @aws_api_key @aws_cognito_user_pools {
   symbol: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
-  account: AccountReadModel! @connection(name: "Transactions")
+  #account: AccountReadModel! @connection(name: "Transactions")
   transactionType: TransactionType! @connection(name: "TransactionTypes")
   accountId: ID!
   transactionTypeId: ID!

@@ -1,18 +1,13 @@
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
-const { marshall } = require('@aws-sdk/util-dynamodb');
+const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
 import { CreateTransactionInput, TransactionReadModel } from '../types/Transaction';
 
 async function createTransaction(input: CreateTransactionInput) {
   // Create Transaction
-  var successful = await createTransactionAsync(input);
-
-  // Publish event to update positions
-  if (successful === true) {
-    await publishEventAsync(input);
-  }
+  return await createTransactionAsync(input);
 }
 
 async function createTransactionAsync(input: CreateTransactionInput) {
@@ -52,11 +47,14 @@ async function createTransactionAsync(input: CreateTransactionInput) {
     result = await client.send(command);
   } catch (error) {
     console.error(`❌ Error with saving DynamoDB item`, error);
-    return false;
+    return error;
   }
 
-  console.log(`✅ Saved item to DynamoDB: ${JSON.stringify(result)}`);
-  return true;
+  // Publish event to update positions
+  await publishEventAsync(input);
+
+  console.log(`✅ Saved item to DynamoDB: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
+  return unmarshall(putItemCommandInput.Item);
 }
 
 async function publishEventAsync(input: CreateTransactionInput) {
