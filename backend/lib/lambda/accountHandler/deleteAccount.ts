@@ -12,10 +12,15 @@ async function deleteAccount(input: DeleteAccountInput) {
   await deleteTransactionsAsync(input);
 
   // Delete Account
-  let result = await deleteAccountAsync(input);
+  let result: any = await deleteAccountAsync(input);
 
-  console.log('✅ Deleted Account: ', result);
-  return result;
+  if (!result.$metadata || result.$metadata.httpStatusCode !== 200) {
+    console.error(`❌ Error deleting account. Please see CloudWatch logs for more details.`);
+    return result;
+  }
+
+  console.log('✅ Deleted Account: ', { id: input.id });
+  return { id: input.id };
 }
 
 async function deletePositionsAsync(input: DeleteAccountInput) {
