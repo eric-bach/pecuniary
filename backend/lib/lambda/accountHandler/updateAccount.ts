@@ -5,7 +5,7 @@ import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { UpdateAccountInput } from '../types/Account';
 
 async function updateAccount(input: UpdateAccountInput) {
-  console.log(`Updating Account: ${input.aggregateId}`);
+  console.log(`Update Account: ${input.aggregateId}`);
 
   // Get account
   const queryCommandInput = {
@@ -64,7 +64,7 @@ async function dynamoDbCommand(command: any) {
     var client = new DynamoDBClient({ region: process.env.REGION });
     console.debug(`DynamoDB command:\n${JSON.stringify(command)}`);
     result = await client.send(command);
-    console.log(`DynamoDB result:\n${JSON.stringify(result)}`);
+    console.log(`🔔 DynamoDB result:\n${JSON.stringify(result)}`);
     return result;
   } catch (error) {
     console.error(`❌ Error with DynamoDB command:\n`, error);

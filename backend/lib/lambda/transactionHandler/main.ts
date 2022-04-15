@@ -15,6 +15,7 @@ exports.handler = async (event: TransactionAppSyncEvent) => {
       console.debug(`🔔 GetTransactionsByAccountId: ${JSON.stringify(event.arguments.accountId)}`);
       return await getTransactionsByAccountId(event.arguments.accountId);
 
+    // Mutations
     case 'createTransaction':
       console.debug(`🔔 ${event.info.fieldName} GraphQL data: ${JSON.stringify(event.arguments.createTransactionInput)}`);
       return await createTransaction(event.arguments.createTransactionInput);

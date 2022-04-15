@@ -53,7 +53,7 @@ async function dynamoDbCommand(command: any) {
 
   try {
     var client = new DynamoDBClient({ region: process.env.REGION });
-    console.debug(`DynamoDB command:\n${JSON.stringify(command)}`);
+    console.debug(`🔔 DynamoDB command:\n${JSON.stringify(command)}`);
     result = await client.send(command);
     console.log(`DynamoDB result:\n${JSON.stringify(result)}`);
     return result;

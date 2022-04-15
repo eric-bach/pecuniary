@@ -1,60 +1,41 @@
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
-const { v4: uuidv4 } = require('uuid');
 
 import { CreateTransactionInput, TransactionReadModel } from '../types/Transaction';
 
 async function createTransaction(input: CreateTransactionInput) {
-  // Create Transaction
-  return await createTransactionAsync(input);
-}
-
-async function createTransactionAsync(input: CreateTransactionInput) {
-  var client = new DynamoDBClient({ region: process.env.REGION });
-
   var item: TransactionReadModel = {
-    id: uuidv4(),
+    userId: input.userId,
     aggregateId: input.aggregateId,
-    version: 1,
+    entity: 'transaction',
+    type: input.type,
     transactionDate: input.transactionDate,
     symbol: input.symbol,
     shares: input.shares,
     price: input.price,
     commission: input.commission,
-    accountId: `${input.accountId}`,
-    transactionType: {
-      id: input.transactionTypeId,
-      name: input.transactionTypeName,
-      description: input.transactionTypeDescription,
-    },
-    userId: input.userId,
+    exchange: input.exchange,
+    currency: input.currency,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
   const putItemCommandInput = {
-    TableName: process.env.TRANSACTION_TABLE_NAME,
+    TableName: process.env.DATA_TABLE_NAME,
     Item: marshall(item),
   };
-  const command = new PutItemCommand(putItemCommandInput);
+  let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
-  var result;
-  try {
-    console.log('🔔 Saving item to DynamoDB');
-    console.debug(`DynamoDB item: ${JSON.stringify(putItemCommandInput)}`);
+  if (result && result.$metadata.httpStatusCode === 200) {
+    console.log(`✅ Saved item to DynamoDB: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
 
-    result = await client.send(command);
-  } catch (error) {
-    console.error(`❌ Error with saving DynamoDB item`, error);
-    return error;
+    // Publish event to update positions
+    await publishEventAsync(input);
+
+    return unmarshall(putItemCommandInput.Item);
   }
-
-  // Publish event to update positions
-  await publishEventAsync(input);
-
-  console.log(`✅ Saved item to DynamoDB: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
-  return unmarshall(putItemCommandInput.Item);
+  return {};
 }
 
 async function publishEventAsync(input: CreateTransactionInput) {
@@ -81,6 +62,21 @@ async function publishEventAsync(input: CreateTransactionInput) {
     console.error(`❌ Error with sending EventBridge event`, error);
   } finally {
     console.log(`✅ Successfully sent ${params.Entries.length} event(s) to EventBridge: ${JSON.stringify(result)}`);
+  }
+}
+
+async function dynamoDbCommand(command: any) {
+  var result;
+
+  try {
+    var client = new DynamoDBClient({ region: process.env.REGION });
+    console.debug(`DynamoDB command:\n${JSON.stringify(command)}`);
+    result = await client.send(command);
+    console.log(`🔔 DynamoDB result:\n${JSON.stringify(result)}`);
+    return result;
+  } catch (error) {
+    console.error(`❌ Error with DynamoDB command:\n`, error);
+    return error;
   }
 }
 

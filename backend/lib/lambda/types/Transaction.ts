@@ -1,56 +1,49 @@
 export type TransactionReadModel = {
-  id: string;
-  aggregateId: string;
-  version: number;
   userId: string;
-  accountId: string;
+  createdAt: string;
+  updatedAt: string;
+  aggregateId: string;
+  entity: string;
+  type: string;
   transactionDate: Date;
   symbol: string;
   shares: number;
   price: number;
   commission: number;
-  transactionType: {
-    id: string;
-    name: string;
-    description: string;
-  };
-  createdAt: string;
-  updatedAt: string;
+  exchange: string;
+  currency: string;
 };
 
 export type CreateTransactionInput = {
-  accountId: string;
-  aggregateId: string;
   userId: string;
+  aggregateId: string;
+  type: string;
   transactionDate: Date;
   symbol: string;
   shares: number;
   price: number;
   commission: number;
-  transactionTypeId: string;
-  transactionTypeName: string;
-  transactionTypeDescription: string;
+  exchange: string;
+  currency: string;
 };
 
 export type UpdateTransactionInput = {
-  id: string;
-  version: number;
-  accountId: string;
-  aggregateId: string;
   userId: string;
+  createdAt: string;
+  aggregateId: string;
+  type: string;
   transactionDate: string;
   symbol: string;
   shares: number;
   price: number;
   commission: number;
-  transactionTypeId: string;
-  transactionTypeName: string;
-  transactionTypeDescription: string;
+  exchange: string;
+  currency: string;
 };
 
 export type DeleteTransactionInput = {
-  id: string;
   userId: string;
+  aggregateId: string;
 };
 
 export type TransactionAppSyncEvent = {

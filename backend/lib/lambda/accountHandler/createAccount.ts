@@ -2,6 +2,7 @@ const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
+import { PutItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { CreateAccountInput, AccountReadModel } from '../types/Account';
 
 async function createAccount(input: CreateAccountInput) {
@@ -16,27 +17,35 @@ async function createAccount(input: CreateAccountInput) {
     updatedAt: new Date().toISOString(),
   };
 
-  const putItemCommandInput = {
+  const putItemCommandInput: PutItemCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     Item: marshall(item),
   };
-  const command = new PutItemCommand(putItemCommandInput);
+  let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
-  var result;
-  try {
-    var client = new DynamoDBClient({ region: process.env.REGION });
+  if (result && result.$metadata.httpStatusCode === 200) {
+    console.log(`✅ Saved item to DynamoDB: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
 
-    console.log('🔔 Saving item to DynamoDB');
-    console.debug(`DynamoDB item: ${JSON.stringify(putItemCommandInput)}`);
-
-    result = await client.send(command);
-  } catch (error) {
-    console.error(`❌ Error with saving DynamoDB item\n`, error);
-    return error;
+    return unmarshall(putItemCommandInput.Item);
   }
 
-  console.log(`✅ Saved item to DynamoDB: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
-  return unmarshall(putItemCommandInput.Item);
+  console.error(`❌ Error saving item to DynamoDB:\n`, result);
+  return {};
+}
+
+async function dynamoDbCommand(command: any) {
+  var result;
+
+  try {
+    var client = new DynamoDBClient({ region: process.env.REGION });
+    console.debug(`DynamoDB command:\n${JSON.stringify(command)}`);
+    result = await client.send(command);
+    console.log(`🔔 DynamoDB result:\n${JSON.stringify(result)}`);
+    return result;
+  } catch (error) {
+    console.error(`❌ Error with DynamoDB command:\n`, error);
+    return error;
+  }
 }
 
 export default createAccount;

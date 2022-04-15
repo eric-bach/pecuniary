@@ -1,54 +1,77 @@
-const { DynamoDBClient, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBClient, QueryCommand, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 
+import { QueryCommandInput } from '@aws-sdk/client-dynamodb';
 import { UpdateTransactionInput } from '../types/Transaction';
 
 async function updateTransaction(input: UpdateTransactionInput) {
-  // update Transaction
-  return await updateTransactionAsync(input);
-}
+  console.log(`Update Transaction: ${input.aggregateId}`);
 
-async function updateTransactionAsync(input: UpdateTransactionInput) {
-  const updateItemCommandInput = {
-    TableName: process.env.TRANSACTION_TABLE_NAME,
-    Key: marshall({
-      id: input.id,
-    }),
-    UpdateExpression:
-      'SET version=:version, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt, transactionType=:transactionType',
-    ExpressionAttributeValues: marshall({
-      ':version': input.version + 1,
-      ':transactionDate': input.transactionDate,
-      ':symbol': input.symbol,
-      ':shares': input.shares,
-      ':price': input.price,
-      ':commission': input.commission,
-      ':updatedAt': new Date().toISOString(),
-      ':transactionType': `{ id: ${input.transactionTypeId}, name: ${input.transactionTypeName}, description: ${input.transactionTypeDescription} }`,
-    }),
-    ReturnValues: 'ALL_NEW',
+  // Get transaction
+  const queryCommandInput: QueryCommandInput = {
+    TableName: process.env.DATA_TABLE_NAME,
+    // BUG Querying with the LSI does not return data in the SDK only (works in console and CLI)
+    //IndexName: 'aggregateId-index',
+    Limit: 1,
+    KeyConditionExpression: 'userId = :v1 AND createdAt = :v2',
+    FilterExpression: 'aggregateId = :v3 AND entity = :v4',
+    ExpressionAttributeValues: {
+      ':v1': { S: input.userId },
+      ':v2': { S: input.createdAt },
+      ':v3': { S: input.aggregateId },
+      ':v4': { S: 'transaction' },
+    },
   };
-  const command = new UpdateItemCommand(updateItemCommandInput);
+  var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
 
-  var result;
-  try {
-    var client = new DynamoDBClient({ region: process.env.REGION });
+  if (result.$metadata.httpStatusCode === 200 && result.Count > 0) {
+    // TODO Get first item of result
+    var r = unmarshall(result.Items[0]);
+    console.log('🔔 Returned item: ', r);
 
-    console.log('🔔 Updating DynamoDB item');
-    console.debug(`DynamoDB item: ${JSON.stringify(updateItemCommandInput)}`);
+    const updateItemCommandInput = {
+      TableName: process.env.DATA_TABLE_NAME,
+      Key: marshall({
+        userId: input.userId,
+        createdAt: input.createdAt,
+      }),
+      UpdateExpression:
+        'SET #type=:type, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt, exchange=:exchange, currency=:currency',
+      ExpressionAttributeValues: marshall({
+        ':type': input.type,
+        ':transactionDate': input.transactionDate,
+        ':symbol': input.symbol,
+        ':shares': input.shares,
+        ':price': input.price,
+        ':commission': input.commission,
+        ':exchange': input.exchange,
+        ':currency': input.currency,
+        ':updatedAt': new Date().toISOString(),
+      }),
+      ExpressionAttributeNames: {
+        '#type': 'type',
+      },
+      ReturnValues: 'ALL_NEW',
+    };
+    var updateResult = await dynamoDbCommand(new UpdateItemCommand(updateItemCommandInput));
 
-    result = await client.send(command);
-  } catch (error) {
-    console.error(`❌ Error with updating DynamoDB item`, error);
-    return error;
+    if (updateResult && updateResult.$metadata.httpStatusCode === 200) {
+      console.log(`🔔 Updated item in DynamoDB: ${JSON.stringify(updateResult)}`);
+
+      // Publish event to update positions
+      await publishEventAsync(input);
+
+      console.log(`✅ Updated item in DynamoDB: ${JSON.stringify(updateResult)}`);
+      return unmarshall(updateResult.Attributes);
+    }
+
+    console.log(`❌ Could not update transaction\n`, updateResult);
+    return {};
   }
 
-  // Publish event to update positions
-  await publishEventAsync(input);
-
-  console.log(`✅ Updated item in DynamoDB: ${JSON.stringify(result)}`);
-  return unmarshall(result.Attributes);
+  console.log(`🔔 Could not find transaction to update`);
+  return {};
 }
 
 async function publishEventAsync(input: UpdateTransactionInput) {
@@ -75,6 +98,21 @@ async function publishEventAsync(input: UpdateTransactionInput) {
     console.error(`❌ Error with sending EventBridge event`, error);
   } finally {
     console.log(`✅ Successfully sent ${params.Entries.length} event(s) to EventBridge: ${JSON.stringify(result)}`);
+  }
+}
+
+async function dynamoDbCommand(command: any) {
+  var result;
+
+  try {
+    var client = new DynamoDBClient({ region: process.env.REGION });
+    console.debug(`DynamoDB command:\n${JSON.stringify(command)}`);
+    result = await client.send(command);
+    console.log(`🔔 DynamoDB result:\n${JSON.stringify(result)}`);
+    return result;
+  } catch (error) {
+    console.error(`❌ Error with DynamoDB command:\n`, error);
+    return error;
   }
 }
 
