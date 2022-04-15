@@ -302,14 +302,22 @@ export class PecuniaryStack extends Stack {
       },
       //deadLetterQueue: commandHandlerQueue,
     });
-    // Add permissions to write to DynamoDB table
+    // Add permissions to DynamoDB table
     accountHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:Query', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+        resources: [dataTable.tableArn],
+      })
+    );
+    accountHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:Query'],
         resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-index', dataTable.tableArn + '/index/entity-index'],
       })
     );
+
     // Set the new Lambda function as a data source for the AppSync API
     const accountHandlerDataSource = api.addLambdaDataSource('accountDataSource', accountHandlerFunction);
     // Resolvers
@@ -339,18 +347,25 @@ export class PecuniaryStack extends Stack {
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
-        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         DATA_TABLE_NAME: dataTable.tableName,
+        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
       },
       //deadLetterQueue: commandHandlerQueue,
     });
-    // Add permissions to write to DynamoDB table
+    // Add permissions to DynamoDB table
     transactionHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:Query', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
         resources: [dataTable.tableArn],
+      })
+    );
+    transactionHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:Query'],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-index', dataTable.tableArn + '/index/entity-index'],
       })
     );
     // Add permission to send to EventBridge
@@ -361,6 +376,7 @@ export class PecuniaryStack extends Stack {
         resources: [eventBus.eventBusArn],
       })
     );
+
     // Set the new Lambda function as a data source for the AppSync API
     const transactionHandlerDataSource = api.addLambdaDataSource('transactionDataSource', transactionHandlerFunction);
     // Resolvers
@@ -372,14 +388,14 @@ export class PecuniaryStack extends Stack {
       typeName: 'Mutation',
       fieldName: 'createTransaction',
     });
-    // transactionHandlerDataSource.createResolver({
-    //   typeName: 'Mutation',
-    //   fieldName: 'updateTransaction',
-    // });
-    // transactionHandlerDataSource.createResolver({
-    //   typeName: 'Mutation',
-    //   fieldName: 'deleteTransaction',
-    // });
+    transactionHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'updateTransaction',
+    });
+    transactionHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'deleteTransaction',
+    });
 
     // Resolver for Positions
     const positionHandlerFunction = new Function(this, 'PositionHandler', {
