@@ -87,6 +87,7 @@ input UpdateTransactionInput {
 
 input DeleteTransactionInput {
   userId: ID!
+  createdAt: AWSDateTime!
   aggregateId: ID!
 }
 

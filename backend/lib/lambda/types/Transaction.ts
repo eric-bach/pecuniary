@@ -43,6 +43,7 @@ export type UpdateTransactionInput = {
 
 export type DeleteTransactionInput = {
   userId: string;
+  createdAt: string;
   aggregateId: string;
 };
 

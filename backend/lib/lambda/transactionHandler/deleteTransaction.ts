@@ -2,32 +2,29 @@ const { DynamoDBClient, DeleteItemCommand } = require('@aws-sdk/client-dynamodb'
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
+import { DeleteItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { DeleteTransactionInput } from '../types/Transaction';
 
 async function deleteTransaction(input: DeleteTransactionInput) {
-  // Delete Transactions
-  return await deleteTransactionAsync(input);
-}
+  console.log(`Deleting Transaction: ${input.aggregateId}`);
 
-async function deleteTransactionAsync(input: DeleteTransactionInput) {
-  console.log(`🔔 Deleting Transaction: ${input.id}`);
-
-  const delInput = {
-    TableName: process.env.TRANSACTION_TABLE_NAME,
+  const deleteItemCommandInput: DeleteItemCommandInput = {
+    TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({
-      id: input.id,
+      userId: input.userId,
+      createdAt: input.createdAt,
     }),
   };
-
-  let result = await dynamoDbCommand(new DeleteItemCommand(delInput));
+  let result = await dynamoDbCommand(new DeleteItemCommand(deleteItemCommandInput));
 
   // Publish event to update positions
-  if (result === true) {
+  if (result.$metadata.httpStatusCode === 200) {
+    console.log('✅ Deleted Transaction: ', { aggregateId: input.aggregateId });
+
     await publishEventAsync(input);
   }
 
-  console.log('✅ Deleted Transaction: ', { id: input.id });
-  return { id: input.id };
+  return { aggregateId: input.aggregateId };
 }
 
 async function dynamoDbCommand(command: typeof DeleteItemCommand) {
@@ -37,13 +34,13 @@ async function dynamoDbCommand(command: typeof DeleteItemCommand) {
     var client = new DynamoDBClient({ region: process.env.REGION });
     console.debug(`DynamoDB command:\n${JSON.stringify(command)}`);
     result = await client.send(command);
-    console.log(`DynamoDB result:\n${JSON.stringify(result)}`);
+    console.log(`🔔 DynamoDB result:\n${JSON.stringify(result)}`);
   } catch (error) {
     console.error(`❌ Error with DynamoDB command:\n`, error);
-    return false;
+    return error;
   }
 
-  return true;
+  return result;
 }
 
 async function publishEventAsync(input: DeleteTransactionInput) {
