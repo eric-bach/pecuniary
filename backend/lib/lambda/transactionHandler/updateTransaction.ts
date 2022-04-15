@@ -16,7 +16,7 @@ async function updateTransactionAsync(input: UpdateTransactionInput) {
       id: input.id,
     }),
     UpdateExpression:
-      'SET version=:version, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, transactionType=:transactionType',
+      'SET version=:version, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt, transactionType=:transactionType',
     ExpressionAttributeValues: marshall({
       ':version': input.version + 1,
       ':transactionDate': input.transactionDate,
@@ -24,6 +24,7 @@ async function updateTransactionAsync(input: UpdateTransactionInput) {
       ':shares': input.shares,
       ':price': input.price,
       ':commission': input.commission,
+      ':updatedAt': new Date().toISOString(),
       ':transactionType': `{ id: ${input.transactionTypeId}, name: ${input.transactionTypeName}, description: ${input.transactionTypeDescription} }`,
     }),
     ReturnValues: 'ALL_NEW',

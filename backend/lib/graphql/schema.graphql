@@ -1,91 +1,32 @@
-# Lookup Types
-type AccountType @model @aws_api_key @aws_cognito_user_pools {
-  id: ID!
-  name: String!
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Data @model @aws_cognito_user_pools {
+  userId: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  aggregateId: ID!
+  entity: String!
+  type: String
+  name: String
   description: String
-  accounts: [AccountReadModel]! @connection(name: "AccountType")
+  transactionDate: AWSDate
+  symbol: String
+  shares: Float
+  price: Float
+  commission: Float
+  exchange: String
+  currency: String
+  bookValue: Float
+  marketValue: Float
+  acb: Float
+  payee: String
+  amount: Float
 }
 
-type TransactionType @model @aws_api_key @aws_cognito_user_pools {
-  id: ID!
-  name: String!
-  description: String!
-  transactions: [TransactionReadModel] @connection(name: "TransactionTypes")
-}
-
-type CurrencyType @model @aws_api_key @aws_cognito_user_pools {
-  id: ID!
-  name: String!
-  description: String!
-  exchangeTypes: [ExchangeType]! @connection(name: "ExchangeCurrencyTypes")
-}
-
-type ExchangeType @model @aws_api_key @aws_cognito_user_pools {
-  id: ID!
-  name: String!
-  description: String!
-  currencyType: CurrencyType! @connection(name: "ExchangeCurrencyTypes")
-}
-
-# Read Store
-type AccountReadModel @model @aws_api_key @aws_cognito_user_pools {
-  id: ID!
-  aggregateId: ID!
-  version: Int!
-  userId: ID!
-  name: String!
-  description: String
-  bookValue: Float!
-  marketValue: Float!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-  accountType: AccountType! @connection(name: "AccountType")
-  transactions: [TransactionReadModel] @connection(name: "Transactions")
-  positions: [PositionReadModel] @connection(name: "Positions")
-}
-
-type TransactionReadModel @model @aws_api_key @aws_cognito_user_pools {
-  id: ID!
-  aggregateId: ID!
-  version: Int!
-  userId: ID!
-  transactionDate: AWSDate!
-  shares: Int!
-  price: Float!
-  commission: Float!
-  symbol: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-  #account: AccountReadModel! @connection(name: "Transactions")
-  transactionType: TransactionType! @connection(name: "TransactionTypes")
-  accountId: ID!
-  transactionTypeId: ID!
-}
-
-type PositionReadModel @model @aws_api_key @aws_cognito_user_pools {
-  id: ID!
-  aggregateId: ID!
-  version: Int!
-  userId: ID!
-  symbol: String!
-  name: String!
-  description: String!
-  exchange: String!
-  currency: String!
-  country: String!
-  shares: Int!
-  acb: Float!
-  bookValue: Float!
-  marketValue: Float!
-  lastTransactionDate: AWSDate
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-  account: AccountReadModel! @connection(name: "Positions")
-  accountId: ID!
-}
-
-type TimeSeries @model @aws_api_key @aws_cognito_user_pools {
-  id: ID!
+type TimeSeries @model @aws_cognito_user_pools {
   symbol: String!
   date: AWSDate!
   open: Float!
@@ -99,93 +40,37 @@ type TimeSeries @model @aws_api_key @aws_cognito_user_pools {
 
 input CreateAccountInput {
   userId: ID!
-  name: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  aggregateId: ID!
+  entity: String!
+  type: String
+  name: String
   description: String
-  accountTypeId: ID!
-  accountTypeName: String!
-  accountTypeDescription: String!
-}
-
-input UpdateAccountInput {
-  id: ID!
-  version: Int!
-  userId: ID!
-  name: String!
-  description: String!
-  bookValue: Float!
-  marketValue: Float!
-  accountTypeId: ID!
-  accountTypeName: String!
-  accountTypeDescription: String!
-}
-
-input DeleteAccountInput {
-  id: ID!
-  userId: ID!
 }
 
 input CreateTransactionInput {
-  accountId: ID!
+  userId: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
   aggregateId: ID!
-  userId: ID!
-  transactionDate: AWSDate!
-  symbol: String!
-  shares: Int!
-  price: Float!
-  commission: Float!
-  transactionTypeId: ID!
-  transactionTypeName: String!
-  transactionTypeDescription: String!
-}
-
-input UpdateTransactionInput {
-  id: ID!
-  version: Int!
-  accountId: ID!
-  aggregateId: ID!
-  userId: ID!
-  transactionDate: AWSDate!
-  symbol: String!
-  shares: Int!
-  price: Float!
-  commission: Float!
-  transactionTypeId: ID
-  transactionTypeName: String
-  transactionTypeDescription: String
-}
-
-input DeleteTransactionInput {
-  id: ID!
-  userId: ID!
-}
-
-type DeleteResponse @aws_cognito_user_pools {
-  id: ID!
-  userId: ID!
+  entity: String!
+  type: String
+  transactionDate: AWSDate
+  symbol: String
+  shares: Float
+  price: Float
+  commission: Float
+  exchange: String
+  currency: String
 }
 
 # GraphQL actions
 type Query {
-  getAccountByAggregateId(aggregateId: ID!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
-  getAccountsByUser(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
-  getTransactionsByAccountId(accountId: ID!): [TransactionReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
-  getPositionsByAccountId(accountId: ID!): [PositionReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
-  listAccountTypes: [AccountType] @aws_cognito_user_pools(cognito_groups: ["Users"])
-  listTransactionTypes: [TransactionType] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccounts(userId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {
-  # ToDo How to return void
-  createAccount(createAccountInput: CreateAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
-  updateAccount(updateAccountInput: UpdateAccountInput!): AccountReadModel @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteAccount(deleteAccountInput: DeleteAccountInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
-  createTransaction(createTransactionInput: CreateTransactionInput!): TransactionReadModel
-    @aws_cognito_user_pools(cognito_groups: ["Users"])
-  updateTransaction(updateTransactionInput: UpdateTransactionInput!): TransactionReadModel
-    @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createAccount(input: CreateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createTransaction(input: CreateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
-
-#type Subscription {
-#onCreateEvent: Event @aws_subscribe(mutations: ["createEvent"]) @aws_cognito_user_pools(cognito_groups: ["Users"])
-#}

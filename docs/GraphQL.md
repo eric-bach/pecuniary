@@ -44,6 +44,7 @@ mutation UpdateAccount {
 mutation DeleteAccount {
   deleteAccount(deleteAccountInput: {
     id: "6e215222-f26a-42b0-a283-bf273900c75f"
+    aggregateId: "b9fa6509-ff9d-4c5c-82d0-42fa8792425b"
     userId:"eric"
   })
   {
@@ -103,7 +104,8 @@ mutation UpdateTransaction {
 
 mutation DeleteTransaction {
   deleteTransaction(deleteTransactionInput: {
-    id: "72f530de-4e1f-4f4b-831e-a5c3a4c8aff3"
+    id: "33b42177-8700-4a01-8844-b37ba6f813f8"
+    aggregateId: "b9fa6509-ff9d-4c5c-82d0-42fa8792425b"
    	userId:"eric"
   })
   {

@@ -17,7 +17,6 @@ async function createTransactionAsync(input: CreateTransactionInput) {
     id: uuidv4(),
     aggregateId: input.aggregateId,
     version: 1,
-    userId: input.userId,
     transactionDate: input.transactionDate,
     symbol: input.symbol,
     shares: input.shares,
@@ -29,6 +28,7 @@ async function createTransactionAsync(input: CreateTransactionInput) {
       name: input.transactionTypeName,
       description: input.transactionTypeDescription,
     },
+    userId: input.userId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

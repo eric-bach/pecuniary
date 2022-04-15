@@ -218,19 +218,11 @@ export class PecuniaryStack extends Stack {
       schema: Schema.fromAsset(path.join(__dirname, './graphql/schema.graphql')),
       authorizationConfig: {
         defaultAuthorization: {
-          authorizationType: AuthorizationType.API_KEY,
-          apiKeyConfig: {
-            expires: Expiration.after(Duration.days(365)),
+          authorizationType: AuthorizationType.USER_POOL,
+          userPoolConfig: {
+            userPool,
           },
         },
-        additionalAuthorizationModes: [
-          {
-            authorizationType: AuthorizationType.USER_POOL,
-            userPoolConfig: {
-              userPool,
-            },
-          },
-        ],
       },
     });
 
@@ -238,81 +230,34 @@ export class PecuniaryStack extends Stack {
      *** AWS DynamoDB
      ***/
 
-    // DynamoDB table for AccountType
-    const accountTypeTable = new Table(this, 'AccountType', {
-      tableName: `${props.appName}-AccountType-${props.envName}`,
+    // DynamoDB table for Data
+    const dataTable = new Table(this, 'Data', {
+      tableName: `${props.appName}-Data-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
-        name: 'id',
+        name: 'userId',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'createdAt',
         type: AttributeType.STRING,
       },
       removalPolicy: RemovalPolicy.DESTROY,
     });
-
-    // DynamoDB table for CurrencyType
-    const currencyTypeTable = new Table(this, 'CurrencyType', {
-      tableName: `${props.appName}-CurrencyType-${props.envName}`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
+    // LSIs for Data table
+    dataTable.addLocalSecondaryIndex({
+      indexName: 'aggregateId-index',
+      sortKey: {
+        name: 'aggregateId',
         type: AttributeType.STRING,
       },
-      removalPolicy: RemovalPolicy.DESTROY,
     });
-
-    // DynamoDB table for ExchangeType
-    const exchangeTypeTable = new Table(this, 'ExchangeType', {
-      tableName: `${props.appName}-ExchangeType-${props.envName}`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
+    dataTable.addLocalSecondaryIndex({
+      indexName: 'entity-index',
+      sortKey: {
+        name: 'entity',
         type: AttributeType.STRING,
       },
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-
-    // DynamoDB table for TransactionType
-    const transactionTypeTable = new Table(this, 'TransactionType', {
-      tableName: `${props.appName}-TransactionType-${props.envName}`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING,
-      },
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-
-    // DynamoDB table for AccountReadModel
-    const accountReadModelTable = new Table(this, 'AccountReadModel', {
-      tableName: `${props.appName}-AccountReadModel-${props.envName}`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING,
-      },
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-
-    // DynamoDB table for PositionReadModel
-    const positionReadModelTable = new Table(this, 'PositionReadModel', {
-      tableName: `${props.appName}-PositionReadModel-${props.envName}`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING,
-      },
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-
-    // DynamoDB table for TransactionReadModel
-    const transactionReadModelTable = new Table(this, 'TransactionReadModel', {
-      tableName: `${props.appName}-TransactionReadModel-${props.envName}`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING,
-      },
-      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     // DynamoDB table for TimeSeries
@@ -320,22 +265,15 @@ export class PecuniaryStack extends Stack {
       tableName: `${props.appName}-TimeSeries-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
-        name: 'id',
+        name: 'symbol',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'date',
         type: AttributeType.STRING,
       },
       removalPolicy: RemovalPolicy.DESTROY,
     });
-
-    // Add a global secondary index to enable another data access pattern
-    /*
-    productTable.addGlobalSecondaryIndex({
-      indexName: 'productsByCategory',
-      partitionKey: {
-        name: 'category',
-        type: AttributeType.STRING,
-      },
-    });
-    */
 
     /***
      *** AWS EventBridge - Event Bus
@@ -359,11 +297,7 @@ export class PecuniaryStack extends Stack {
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
-        ACCOUNT_TYPE_TABLE_NAME: accountTypeTable.tableName,
-        TRANSACTION_TYPE_TABLE_NAME: transactionTypeTable.tableName,
-        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
-        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
-        POSITION_TABLE_NAME: positionReadModelTable.tableName,
+        DATA_TABLE_NAME: dataTable.tableName,
       },
       //deadLetterQueue: commandHandlerQueue,
     });
@@ -371,16 +305,8 @@ export class PecuniaryStack extends Stack {
     accountHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem'],
-        resources: [accountReadModelTable.tableArn],
-      })
-    );
-    // Add permissions to write to DynamoDB table
-    accountHandlerFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Scan', 'dynamodb:DeleteItem'],
-        resources: [accountReadModelTable.tableArn, positionReadModelTable.tableArn, transactionReadModelTable.tableArn],
+        actions: ['dynamodb:Query', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+        resources: [dataTable.tableArn],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
@@ -388,24 +314,20 @@ export class PecuniaryStack extends Stack {
     // Resolvers
     accountHandlerDataSource.createResolver({
       typeName: 'Query',
-      fieldName: 'getAccountByAggregateId',
-    });
-    accountHandlerDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'getAccountsByUser',
+      fieldName: 'getAccounts',
     });
     accountHandlerDataSource.createResolver({
       typeName: 'Mutation',
       fieldName: 'createAccount',
     });
-    accountHandlerDataSource.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'updateAccount',
-    });
-    accountHandlerDataSource.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'deleteAccount',
-    });
+    // accountHandlerDataSource.createResolver({
+    //   typeName: 'Mutation',
+    //   fieldName: 'updateAccount',
+    // });
+    // accountHandlerDataSource.createResolver({
+    //   typeName: 'Mutation',
+    //   fieldName: 'deleteAccount',
+    // });
 
     // Resolver for Transactions
     const transactionHandlerFunction = new Function(this, 'TransactionHandler', {
@@ -417,7 +339,7 @@ export class PecuniaryStack extends Stack {
       timeout: Duration.seconds(10),
       environment: {
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
-        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
+        DATA_TABLE_NAME: dataTable.tableName,
         REGION: REGION,
       },
       //deadLetterQueue: commandHandlerQueue,
@@ -426,8 +348,8 @@ export class PecuniaryStack extends Stack {
     transactionHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:Scan', 'dynamodb:DeleteItem'],
-        resources: [transactionReadModelTable.tableArn],
+        actions: ['dynamodb:Query', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+        resources: [dataTable.tableArn],
       })
     );
     // Add permission to send to EventBridge
@@ -441,22 +363,22 @@ export class PecuniaryStack extends Stack {
     // Set the new Lambda function as a data source for the AppSync API
     const transactionHandlerDataSource = api.addLambdaDataSource('transactionDataSource', transactionHandlerFunction);
     // Resolvers
-    transactionHandlerDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'getTransactionsByAccountId',
-    });
+    // transactionHandlerDataSource.createResolver({
+    //   typeName: 'Query',
+    //   fieldName: 'getTransactionsByAccountId',
+    // });
     transactionHandlerDataSource.createResolver({
       typeName: 'Mutation',
       fieldName: 'createTransaction',
     });
-    transactionHandlerDataSource.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'updateTransaction',
-    });
-    transactionHandlerDataSource.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'deleteTransaction',
-    });
+    // transactionHandlerDataSource.createResolver({
+    //   typeName: 'Mutation',
+    //   fieldName: 'updateTransaction',
+    // });
+    // transactionHandlerDataSource.createResolver({
+    //   typeName: 'Mutation',
+    //   fieldName: 'deleteTransaction',
+    // });
 
     // Resolver for Positions
     const positionHandlerFunction = new Function(this, 'PositionHandler', {
@@ -467,7 +389,7 @@ export class PecuniaryStack extends Stack {
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
-        POSITION_TABLE_NAME: positionReadModelTable.tableName,
+        DATA_TABLE_NAME: dataTable.tableName,
       },
       //deadLetterQueue: commandHandlerQueue,
     });
@@ -475,75 +397,17 @@ export class PecuniaryStack extends Stack {
     accountHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:Scan'],
-        resources: [positionReadModelTable.tableArn],
+        actions: ['dynamodb:Query'],
+        resources: [dataTable.tableArn],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
     const positionHandlerDataSource = api.addLambdaDataSource('positionDataSource', positionHandlerFunction);
     // Resolvers
-    positionHandlerDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'getPositionsByAccountId',
-    });
-
-    // Resolver for AccountTypes
-    const accountTypeHandlerFunction = new Function(this, 'AccountTypeHandler', {
-      functionName: `${props.appName}-AccountTypeHandler-${props.envName}`,
-      runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'accountTypeHandler')),
-      memorySize: 1024,
-      timeout: Duration.seconds(10),
-      environment: {
-        ACCOUNT_TYPE_TABLE_NAME: accountTypeTable.tableName,
-      },
-      //deadLetterQueue: commandHandlerQueue,
-    });
-    // Add permissions to write to DynamoDB table
-    accountTypeHandlerFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Scan'],
-        resources: [accountTypeTable.tableArn],
-      })
-    );
-    // Set the new Lambda function as a data source for the AppSync API
-    const accountTypeHandlerDataSource = api.addLambdaDataSource('accountTypeDataSource', accountTypeHandlerFunction);
-    // Resolvers
-    accountTypeHandlerDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'listAccountTypes',
-    });
-
-    // Resolver for TransactionTypes
-    const transactionTypeHandlerFunction = new Function(this, 'TransactionTypeHandler', {
-      functionName: `${props.appName}-TransactionTypeHandler-${props.envName}`,
-      runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'transactionTypeHandler')),
-      memorySize: 1024,
-      timeout: Duration.seconds(10),
-      environment: {
-        TRANSACTION_TYPE_TABLE_NAME: transactionTypeTable.tableName,
-      },
-      //deadLetterQueue: commandHandlerQueue,
-    });
-    // Add permissions to write to DynamoDB table
-    transactionTypeHandlerFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Scan'],
-        resources: [transactionTypeTable.tableArn],
-      })
-    );
-    // Set the new Lambda function as a data source for the AppSync API
-    const transactionTypeHandlerDataSource = api.addLambdaDataSource('transactionTypeDataSource', transactionTypeHandlerFunction);
-    // Resolvers
-    accountTypeHandlerDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'listTransactionTypes',
-    });
+    // positionHandlerDataSource.createResolver({
+    //   typeName: 'Query',
+    //   fieldName: 'getPositionsByAccountId',
+    // });
 
     /***
      *** AWS DynamoDB
@@ -567,8 +431,7 @@ export class PecuniaryStack extends Stack {
       memorySize: 768,
       timeout: Duration.seconds(10),
       environment: {
-        ACCOUNT_TABLE_NAME: accountReadModelTable.tableName,
-        POSITION_TABLE_NAME: positionReadModelTable.tableName,
+        DATA_NAME: dataTable.tableName,
         REGION: REGION,
       },
       deadLetterQueue: eventHandlerQueue,
@@ -577,15 +440,8 @@ export class PecuniaryStack extends Stack {
     updateAccountValuesFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:getItem', 'dynamodb:UpdateItem'],
-        resources: [accountReadModelTable.tableArn],
-      })
-    );
-    updateAccountValuesFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:scan'],
-        resources: [positionReadModelTable.tableArn],
+        actions: ['dynamodb:Query', 'dynamodb:GetItem', 'dynamodb:UpdateItem'],
+        resources: [dataTable.tableArn],
       })
     );
 
@@ -597,8 +453,7 @@ export class PecuniaryStack extends Stack {
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
-        TRANSACTION_TABLE_NAME: transactionReadModelTable.tableName,
-        POSITION_TABLE_NAME: positionReadModelTable.tableName,
+        DATA_TABLE_NAME: dataTable.tableName,
         TIME_SERIES_TABLE_NAME: timeSeriesTable.tableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
@@ -609,22 +464,15 @@ export class PecuniaryStack extends Stack {
     createUpdatePositiopnFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:Scan'],
-        resources: [transactionReadModelTable.tableArn, positionReadModelTable.tableArn],
-      })
-    );
-    createUpdatePositiopnFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:GetItem'],
-        resources: [positionReadModelTable.tableArn],
+        actions: ['dynamodb:GetItem', 'dynamodb:Scan'],
+        resources: [dataTable.tableArn],
       })
     );
     createUpdatePositiopnFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:PutItem'],
-        resources: [timeSeriesTable.tableArn, positionReadModelTable.tableArn],
+        resources: [timeSeriesTable.tableArn],
       })
     );
     // Add permission to send to EventBridge
@@ -799,13 +647,7 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'AppSyncAPIKey', { value: api.apiKey || '' });
 
     // DynamoDB tables
-    new CfnOutput(this, 'accountTypeTableArn', { value: accountTypeTable.tableArn });
-    new CfnOutput(this, 'currencyTypeTableArn', { value: currencyTypeTable.tableArn });
-    new CfnOutput(this, 'exchangeTypeTableArn', { value: exchangeTypeTable.tableArn });
-    new CfnOutput(this, 'transactionTypeTableArn', { value: transactionTypeTable.tableArn });
-    new CfnOutput(this, 'accountReadModelTableArn', { value: accountReadModelTable.tableArn });
-    new CfnOutput(this, 'positionReadModelTable', { value: positionReadModelTable.tableArn });
-    new CfnOutput(this, 'transactionReadModelTable', { value: transactionReadModelTable.tableArn });
+    new CfnOutput(this, 'dataTableArn', { value: dataTable.tableArn });
     new CfnOutput(this, 'timeSeriesTable', { value: timeSeriesTable.tableArn });
 
     // EventBridge
@@ -818,8 +660,6 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'AccountHandlerFunctionArn', { value: accountHandlerFunction.functionArn });
     new CfnOutput(this, 'TransactionHandlerFunctionArn', { value: transactionHandlerFunction.functionArn });
     new CfnOutput(this, 'PositionHandlerFunctionArn', { value: positionHandlerFunction.functionArn });
-    new CfnOutput(this, 'AccountTypeHandlerFunctionArn', { value: accountTypeHandlerFunction.functionArn });
-    new CfnOutput(this, 'TransactionTypeHandlerFunctionArn', { value: transactionTypeHandlerFunction.functionArn });
     new CfnOutput(this, 'CreateUpdatePositionFunctionArn', { value: createUpdatePositiopnFunction.functionArn });
     new CfnOutput(this, 'AccountValuesUpdatedEventFunctionArn', { value: updateAccountValuesFunction.functionArn });
   }
