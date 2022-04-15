@@ -40,13 +40,22 @@ type TimeSeries @model @aws_cognito_user_pools {
 
 input CreateAccountInput {
   userId: ID!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-  aggregateId: ID!
-  entity: String!
   type: String
   name: String
   description: String
+}
+
+input UpdateAccountInput {
+  userId: ID!
+  aggregateId: ID!
+  type: String
+  name: String
+  description: String
+}
+
+input DeleteAccountInput {
+  userId: ID!
+  aggregateId: ID!
 }
 
 input CreateTransactionInput {
@@ -65,12 +74,18 @@ input CreateTransactionInput {
   currency: String
 }
 
+type DeleteAccountResponse {
+  aggregateId: String
+}
+
 # GraphQL actions
 type Query {
   getAccounts(userId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {
-  createAccount(input: CreateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createAccount(createAccountInput: CreateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updateAccount(updateAccountInput: UpdateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteAccount(deleteAccountInput: DeleteAccountInput!): DeleteAccountResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
   createTransaction(input: CreateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
 }

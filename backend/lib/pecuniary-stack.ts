@@ -120,6 +120,7 @@ export class PecuniaryStack extends Stack {
     const userPoolClient = new UserPoolClient(this, 'PecuniaryUserClient', {
       userPoolClientName: `${props.appName}_user_client`,
       accessTokenValidity: Duration.hours(8),
+      idTokenValidity: Duration.hours(8),
       userPool,
     });
 
@@ -306,7 +307,7 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
-        resources: [dataTable.tableArn],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-index', dataTable.tableArn + '/index/entity-index'],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
@@ -320,14 +321,14 @@ export class PecuniaryStack extends Stack {
       typeName: 'Mutation',
       fieldName: 'createAccount',
     });
-    // accountHandlerDataSource.createResolver({
-    //   typeName: 'Mutation',
-    //   fieldName: 'updateAccount',
-    // });
-    // accountHandlerDataSource.createResolver({
-    //   typeName: 'Mutation',
-    //   fieldName: 'deleteAccount',
-    // });
+    accountHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'updateAccount',
+    });
+    accountHandlerDataSource.createResolver({
+      typeName: 'Mutation',
+      fieldName: 'deleteAccount',
+    });
 
     // Resolver for Transactions
     const transactionHandlerFunction = new Function(this, 'TransactionHandler', {

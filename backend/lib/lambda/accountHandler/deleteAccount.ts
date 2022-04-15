@@ -1,111 +1,54 @@
-const { DynamoDBClient, ScanCommand, DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
-const { marshall } = require('@aws-sdk/util-dynamodb');
+const { DynamoDBClient, QueryCommand, DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
 
 import { DeleteAccountInput } from '../types/Account';
-import { Aggregate } from '../types/Event';
 
 async function deleteAccount(input: DeleteAccountInput) {
-  // Delete all positions
-  await deletePositionsAsync(input);
+  console.log(`Deleting everything in Account: ${input.aggregateId}`);
 
-  // Delete all transactions
-  await deleteTransactionsAsync(input);
-
-  // Delete Account
-  let result: any = await deleteAccountAsync(input);
-
-  if (!result.$metadata || result.$metadata.httpStatusCode !== 200) {
-    console.error(`❌ Error deleting account. Please see CloudWatch logs for more details.`);
-    return result;
-  }
-
-  console.log('✅ Deleted Account: ', { id: input.id });
-  return { id: input.id };
-}
-
-async function deletePositionsAsync(input: DeleteAccountInput) {
-  console.log(`Deleting Positions in Account: ${input.id}`);
-
-  // Get all positions
-  const posInput = {
-    TableName: process.env.POSITION_TABLE_NAME,
+  // Get all aggregates
+  const queryCommandInput = {
+    TableName: process.env.DATA_TABLE_NAME,
+    IndexName: 'aggregateId-index',
+    // TODO Handle if more than 100 items
+    //Limit: 100,
+    KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
     ExpressionAttributeValues: {
-      ':u': { S: input.userId },
-      ':a': { S: input.id },
+      ':v1': { S: input.userId },
+      ':v2': { S: input.aggregateId },
     },
-    FilterExpression: 'accountId = :a AND userId = :u',
   };
-  var result = await dynamoDbCommand(new ScanCommand(posInput));
+  var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
 
   if (result && result.Items) {
-    console.log(`Found ${result.Count} position(s) in Account`);
+    console.log(`Found ${result.Count} aggregates(s) in Account`);
 
-    // Delete all positions
-    result.Items.forEach(async (p: Aggregate) => {
+    // Delete all aggregates
+    for (const t of result.Items) {
       const deleteInput = {
-        TableName: process.env.POSITION_TABLE_NAME,
+        TableName: process.env.DATA_TABLE_NAME,
         Key: {
-          id: p.id,
+          userId: t.userId,
+          createdAt: t.createdAt,
+        },
+        ConditionExpression: 'aggregateId = :v1',
+        ExpressionAttributeValues: {
+          ':v1': { S: input.aggregateId },
         },
       };
 
       await dynamoDbCommand(new DeleteItemCommand(deleteInput));
-    });
+    }
 
-    console.log(`🔔 Deleted ${result.Count} position(s) in account`);
+    console.log(`🔔 Deleted ${result.Count} aggregates(s) in account`);
+    console.log(`✅ Deleted Account: {aggregateId: ${input.aggregateId}}`);
+    return { aggregateId: input.aggregateId };
   } else {
-    console.log(`🔔 No positions found in account`);
+    console.log(`🔔 No aggregates found in account`);
+    return { aggregateId: '' };
   }
 }
 
-async function deleteTransactionsAsync(input: DeleteAccountInput) {
-  console.log(`Deleting Transactions in Account: ${input.id}`);
-
-  // Get all transactions
-  const transInput = {
-    TableName: process.env.TRANSACTION_TABLE_NAME,
-    ExpressionAttributeValues: {
-      ':u': { S: input.userId },
-      ':t': { S: input.id },
-    },
-    FilterExpression: 'accountId = :t AND userId = :u',
-  };
-  var result = await dynamoDbCommand(new ScanCommand(transInput));
-
-  if (result && result.Items) {
-    console.log(`Found ${result.Count} transactions(s) in Account`);
-
-    // Delete all transactions
-    result.Items.forEach(async (p: Aggregate) => {
-      const deleteInput = {
-        TableName: process.env.TRANSACTION_TABLE_NAME,
-        Key: {
-          id: p.id,
-        },
-      };
-
-      await dynamoDbCommand(new DeleteItemCommand(deleteInput));
-    });
-
-    console.log(`🔔 Deleted ${result.Count} transactions(s) in account`);
-  } else {
-    console.log(`🔔 No transactions found in account`);
-  }
-}
-
-async function deleteAccountAsync(input: DeleteAccountInput): Promise<boolean> {
-  const accInput = {
-    TableName: process.env.ACCOUNT_TABLE_NAME,
-    Key: marshall({
-      id: input.id,
-    }),
-  };
-
-  console.log(`🔔 Deleting Account: ${input.id}`);
-  return await dynamoDbCommand(new DeleteItemCommand(accInput));
-}
-
-async function dynamoDbCommand(command: typeof DeleteItemCommand) {
+async function dynamoDbCommand(command: any) {
   var result;
 
   try {
@@ -113,12 +56,11 @@ async function dynamoDbCommand(command: typeof DeleteItemCommand) {
     console.debug(`DynamoDB command:\n${JSON.stringify(command)}`);
     result = await client.send(command);
     console.log(`DynamoDB result:\n${JSON.stringify(result)}`);
+    return result;
   } catch (error) {
     console.error(`❌ Error with DynamoDB command:\n`, error);
     return error;
   }
-
-  return result;
 }
 
 export default deleteAccount;

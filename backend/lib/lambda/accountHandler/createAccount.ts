@@ -6,25 +6,18 @@ import { CreateAccountInput, AccountReadModel } from '../types/Account';
 
 async function createAccount(input: CreateAccountInput) {
   var item: AccountReadModel = {
-    id: uuidv4(),
-    aggregateId: uuidv4(),
-    version: 1,
     userId: input.userId,
+    aggregateId: uuidv4(),
+    entity: 'account',
+    type: input.type,
     name: input.name,
     description: input.description,
-    bookValue: 0,
-    marketValue: 0,
-    accountType: {
-      id: input.accountTypeId,
-      name: input.accountTypeName,
-      description: input.accountTypeDescription,
-    },
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
   const putItemCommandInput = {
-    TableName: process.env.ACCOUNT_TABLE_NAME,
+    TableName: process.env.DATA_TABLE_NAME,
     Item: marshall(item),
   };
   const command = new PutItemCommand(putItemCommandInput);

@@ -1,4 +1,3 @@
-import getAccountByAggregateId from './getAccountByAggregateId';
 import getAccountsByUser from './getAccountsByUser';
 import createAccount from './createAccount';
 import updateAccount from './updateAccount';
@@ -13,11 +12,8 @@ exports.handler = async (event: AccountAppSyncEvent) => {
 
   switch (event.info.fieldName) {
     // Queries
-    case 'getAccountByAggregateId':
-      console.debug(`🔔 GetAccount: ${JSON.stringify(event.arguments.aggregateId)}`);
-      return await getAccountByAggregateId(event.arguments.aggregateId);
-    case 'getAccountsByUser':
-      console.debug(`🔔 GetAccountsByUser: ${JSON.stringify(event.arguments.userId)}`);
+    case 'getAccounts':
+      console.debug(`🔔 GetAccounts: ${JSON.stringify(event.arguments.userId)}`);
       return await getAccountsByUser(event.arguments.userId);
 
     // Mutations
