@@ -27,7 +27,7 @@ exports.handler = async (event: TransactionAppSyncEvent) => {
       return await deleteTransaction(event.arguments.deleteTransactionInput);
 
     default:
-      console.error(`❌ No AppSync resolver defined for ${event.info.fieldName}`);
+      console.error(`🛑 No AppSync resolver defined for ${event.info.fieldName}`);
       return null;
   }
 };

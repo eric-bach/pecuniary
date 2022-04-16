@@ -1,13 +1,15 @@
-const { DynamoDBClient, QueryCommand, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
+const { QueryCommand, UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 
+import dynamoDbCommand from './helpers/dynamoDbCommand';
 import { UpdateAccountInput } from '../types/Account';
 
 async function updateAccount(input: UpdateAccountInput) {
-  console.log(`Update Account: ${input.aggregateId}`);
+  console.debug(`🕧 Update Account initialized`);
 
   // Get account
+  console.debug(`🕧 Getting Account ${input.aggregateId}`);
   const queryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'aggregateId-index',
@@ -24,14 +26,14 @@ async function updateAccount(input: UpdateAccountInput) {
 
   if (result && result.Items) {
     // TODO Get first item of result
-    var r = unmarshall(result.Items[0]);
-    console.log('🔔 Returned item: ', r);
+    var account = unmarshall(result.Items[0]);
+    console.log(`🔔 Found Account: ${JSON.stringify(account)}`);
 
     const updateItemCommandInput = {
       TableName: process.env.DATA_TABLE_NAME,
       Key: marshall({
-        userId: r.userId,
-        createdAt: r.createdAt,
+        userId: account.userId,
+        createdAt: account.createdAt,
       }),
       UpdateExpression: 'SET #type=:type, #name=:name, description=:description, updatedAt=:updatedAt',
       ExpressionAttributeValues: marshall({
@@ -47,29 +49,17 @@ async function updateAccount(input: UpdateAccountInput) {
       ReturnValues: 'ALL_NEW',
     };
     var updateResult = await dynamoDbCommand(new UpdateItemCommand(updateItemCommandInput));
-    console.log(`🔔 Updated item in DynamoDB: ${JSON.stringify(result)}`);
 
-    console.log(`✅ Updated Account: ${JSON.stringify(unmarshall(updateResult.Attributes))}`);
-    return unmarshall(updateResult.Attributes);
+    if (updateResult.$metadata.httpStatusCode === 200) {
+      console.log(`🔔 Updated Account: ${JSON.stringify(result)}`);
+
+      console.log(`✅ Updated Account: ${JSON.stringify(unmarshall(updateResult.Attributes))}`);
+      return unmarshall(updateResult.Attributes);
+    }
   }
 
-  console.log(`🔔 Could not find Account to update`);
+  console.log(`🛑 Could not update Account`);
   return {};
-}
-
-async function dynamoDbCommand(command: any) {
-  var result;
-
-  try {
-    var client = new DynamoDBClient({ region: process.env.REGION });
-    console.debug(`DynamoDB command:\n${JSON.stringify(command)}`);
-    result = await client.send(command);
-    console.log(`🔔 DynamoDB result:\n${JSON.stringify(result)}`);
-    return result;
-  } catch (error) {
-    console.error(`❌ Error with DynamoDB command:\n`, error);
-    return error;
-  }
 }
 
 export default updateAccount;

@@ -31,11 +31,10 @@ async function createTransaction(input: CreateTransactionInput) {
   let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
   if (result.$metadata.httpStatusCode === 200) {
-    console.log(`✅ Saved Transaction: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
-
     // Publish event to update positions
     await publishEventAsync('TransactionSavedEvent', input);
 
+    console.log(`✅ Saved Transaction: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
     return unmarshall(putItemCommandInput.Item);
   }
 

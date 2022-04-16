@@ -28,7 +28,7 @@ exports.handler = async (event: AccountAppSyncEvent) => {
       return await deleteAccount(event.arguments.deleteAccountInput);
 
     default:
-      console.error(`❌ No AppSync resolver defined for ${event.info.fieldName}`);
+      console.error(`🛑 No AppSync resolver defined for ${event.info.fieldName}`);
       return null;
   }
 };
