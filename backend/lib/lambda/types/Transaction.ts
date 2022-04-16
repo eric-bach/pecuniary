@@ -52,7 +52,8 @@ export type TransactionAppSyncEvent = {
     fieldName: string;
   };
   arguments: {
-    accountId: string; //getTransactionsByAccountId, getPositionsByAccountId
+    userId: string; //getTransactions
+    aggregateId: string; //getTransactions
 
     createTransactionInput: CreateTransactionInput;
     updateTransactionInput: UpdateTransactionInput;

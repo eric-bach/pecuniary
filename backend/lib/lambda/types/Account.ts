@@ -34,8 +34,7 @@ export type AccountAppSyncEvent = {
     fieldName: string;
   };
   arguments: {
-    userId: string; //getAccountsByUserId
-    aggregateId: string; //getAccountByAggregateId
+    userId: string; //getAccounts
 
     createAccountInput: CreateAccountInput;
     updateAccountInput: UpdateAccountInput;

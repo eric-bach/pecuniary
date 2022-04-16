@@ -381,10 +381,10 @@ export class PecuniaryStack extends Stack {
     // Set the new Lambda function as a data source for the AppSync API
     const transactionHandlerDataSource = api.addLambdaDataSource('transactionDataSource', transactionHandlerFunction);
     // Resolvers
-    // transactionHandlerDataSource.createResolver({
-    //   typeName: 'Query',
-    //   fieldName: 'getTransactionsByAccountId',
-    // });
+    transactionHandlerDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getTransactions',
+    });
     transactionHandlerDataSource.createResolver({
       typeName: 'Mutation',
       fieldName: 'createTransaction',

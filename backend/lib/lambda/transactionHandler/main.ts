@@ -1,4 +1,4 @@
-import getTransactionsByAccountId from './getTransactionsByAccountId';
+import getTransactions from './getTransactions';
 import createTransaction from './createTransaction';
 import updateTransaction from './updateTransaction';
 import deleteTransaction from './deleteTransaction';
@@ -6,14 +6,14 @@ import deleteTransaction from './deleteTransaction';
 import { TransactionAppSyncEvent } from '../types/Transaction';
 
 exports.handler = async (event: TransactionAppSyncEvent) => {
-  console.debug(`AppSync event: ${JSON.stringify(event)}`);
-  console.debug(`AppSync info: ${JSON.stringify(event.info)}`);
-  console.debug(`AppSync arguments: ${JSON.stringify(event.arguments)}`);
+  console.debug(`🕧 AppSync event: ${JSON.stringify(event)}`);
+  console.debug(`🕧 AppSync info: ${JSON.stringify(event.info)}`);
+  console.debug(`🕧 AppSync arguments: ${JSON.stringify(event.arguments)}`);
 
   switch (event.info.fieldName) {
-    case 'getTransactionsByAccountId':
-      console.debug(`🔔 GetTransactionsByAccountId: ${JSON.stringify(event.arguments.accountId)}`);
-      return await getTransactionsByAccountId(event.arguments.accountId);
+    case 'getTransactions':
+      console.debug(`🔔 GetTransactions: ${JSON.stringify({userId: event.arguments.userId, aggregateId: event.arguments.aggregateId)}`);
+      return await getTransactions(event.arguments.userId, event.arguments.aggregateId);
 
     // Mutations
     case 'createTransaction':

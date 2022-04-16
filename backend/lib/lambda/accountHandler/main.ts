@@ -1,4 +1,4 @@
-import getAccountsByUser from './getAccountsByUser';
+import getAccounts from './getAccounts';
 import createAccount from './createAccount';
 import updateAccount from './updateAccount';
 import deleteAccount from './deleteAccount';
@@ -6,15 +6,15 @@ import deleteAccount from './deleteAccount';
 import { AccountAppSyncEvent } from '../types/Account';
 
 exports.handler = async (event: AccountAppSyncEvent) => {
-  console.debug(`AppSync event: ${JSON.stringify(event)}`);
-  console.debug(`AppSync info: ${JSON.stringify(event.info)}`);
-  console.debug(`AppSync arguments: ${JSON.stringify(event.arguments)}`);
+  console.debug(`🕧 AppSync event: ${JSON.stringify(event)}`);
+  console.debug(`🕧 AppSync info: ${JSON.stringify(event.info)}`);
+  console.debug(`🕧 AppSync arguments: ${JSON.stringify(event.arguments)}`);
 
   switch (event.info.fieldName) {
     // Queries
     case 'getAccounts':
       console.debug(`🔔 GetAccounts: ${JSON.stringify(event.arguments.userId)}`);
-      return await getAccountsByUser(event.arguments.userId);
+      return await getAccounts(event.arguments.userId);
 
     // Mutations
     case 'createAccount':

@@ -23,7 +23,7 @@ mutation CreateAccount {
 mutation DeleteAccount {
   deleteAccount(deleteAccountInput: {
     userId: "eric"
-    aggregateId: "f5b525f0-6df5-42ce-994c-f38eeada64bd"
+    aggregateId: "acc4fc07-46e9-4ae2-9bff-490c4f4742e5"
   }) {
     aggregateId
   }
@@ -32,7 +32,7 @@ mutation DeleteAccount {
 mutation UpdateAccount {
   updateAccount(updateAccountInput: {
     userId: "eric"
-    aggregateId: "79e89f8b-6b66-43bb-9bba-77a39a6bc2a6"
+    aggregateId: "acc4fc07-46e9-4ae2-9bff-490c4f4742e5"
     type: "RRSP"
     name: "Test"
     description:"My description"
@@ -42,6 +42,91 @@ mutation UpdateAccount {
     type
     name
     description
+  }
+}
+
+mutation CreateTransaction {
+	createTransaction(createTransactionInput:{
+    userId: "eric"
+    aggregateId:"a0c41702-0d14-4a96-895f-45c52da87dac"
+		type: "Buy"
+    transactionDate: "2022-04-11"
+    symbol: "AAPL"
+    shares: 100
+    price: 124.88
+    commission: 4.99
+    exchange: "NYSE"
+    currency: "USD"
+  })
+  {
+    aggregateId
+    entity
+    symbol
+    shares
+    price
+    commission
+  }
+}
+
+mutation UpdateTransaction {
+	updateTransaction(updateTransactionInput:{
+    userId: "eric"
+    createdAt: "2022-04-15T21:49:58.143Z"
+    aggregateId:"a0c41702-0d14-4a96-895f-45c52da87dac"
+		type: "Buy"
+    transactionDate: "2022-04-11"
+    symbol: "AAPL"
+    shares: 100
+    price: 200.00
+    commission: 4.99
+    exchange: "NYSE"
+    currency: "USD"
+  })
+  {
+    aggregateId
+    entity
+    symbol
+    shares
+    price
+    commission
+  }
+}
+
+mutation DeleteTransaction {
+  deleteTransaction(deleteTransactionInput:{
+    userId: "eric"
+    createdAt: "2022-04-15T21:49:58.143Z"
+    aggregateId:"a0c41702-0d14-4a96-895f-45c52da87dac"
+  })
+  {
+    aggregateId
+  }
+}
+
+query GetAccounts {
+  getAccounts(userId:"eric")
+  {
+    aggregateId
+    name
+    type
+    description
+  }
+}
+
+query GetTransactions {
+  getTransactions(
+    userId :"eric"
+    aggregateId:"36b20b9f-b28b-406c-9aa0-0300e8a9b55b"
+  )
+  {
+    aggregateId
+    entity
+    type
+    transactionDate
+    symbol
+    shares
+    price
+    commission
   }
 }
 ```
