@@ -1,36 +1,32 @@
 export type Position = {
-  id: string;
-  aggrgateId: string;
-  version: number;
   userId: string;
-  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  aggrgateId: string;
+  entity: string;
+  type: string;
   description: string;
+  symbol: string;
   exchange: string;
   currency: string;
-  country: string;
-  symbol: string;
   shares: number;
   acb: number;
   bookValue: number;
   marketValue: number;
   lastTransactionDate: Date;
-  accountId: string;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
 export type PositionReadModel = {
-  id: string;
-  aggregateId: string;
-  version: number;
   userId: string;
-  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  aggregateId: string;
+  entity: string;
+  type: string;
   description: string;
-  accountId: string;
   symbol: string;
   exchange: string;
   currency: string;
-  country: string;
   shares: number;
   bookValue: number;
   marketValue: number;

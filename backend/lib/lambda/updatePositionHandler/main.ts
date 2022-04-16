@@ -2,12 +2,14 @@ import { EventBridgeEvent } from 'aws-lambda';
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput, ScanCommand, ScanCommandInput } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
-const { v4: uuid } = require('uuid');
 const { getTimeSeries, getSymbol } = require('./yahooFinance');
 
 import { CreateTransactionInput, TransactionReadModel } from '../types/Transaction';
 import { PositionReadModel } from '../types/Position';
 import { TimeSeriesReadModel } from '../types/TimeSeries';
+import { QueryCommandInput } from '@aws-sdk/client-dynamodb';
+import dynamoDbCommand from './helpers/dynamoDbCommand';
+import { QueryCommand } from '@aws-sdk/client-dynamodb';
 
 exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>) => {
   const detail = parseEvent(event);
@@ -31,110 +33,91 @@ exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>
   const lastClose = await createTimeSeries(detail.symbol, timeSeries);
 
   // Save Position - create if not exists, update if exists
-  const savedPosition = await savePosition(position, detail, positions, acb, bookValue, lastTransactionDate, transactions, lastClose);
+  return await savePosition(position, detail, positions, acb, bookValue, lastTransactionDate, lastClose);
 };
 
-async function createTimeSeries(symbol: string, timeSeries: any): Promise<number> {
-  // Save timeseries to dynamodb
-  const client = new DynamoDBClient({});
-
-  var lastClose = 0;
-
-  await Promise.all(
-    timeSeries.map(async (t: TimeSeriesReadModel): Promise<any> => {
-      const params: PutItemCommandInput = {
-        TableName: process.env.TIME_SERIES_TABLE_NAME,
-        Item: marshall({
-          id: `${symbol}-${t.date}`,
-          symbol: symbol,
-          date: t.date,
-          open: t.open,
-          high: t.high,
-          low: t.low,
-          close: t.close,
-          adjusted_close: t.adjusted_close,
-          volume: t.volume,
-        }),
-      };
-
-      lastClose = t.close;
-
-      console.debug(`Creating TimeSeries: ${JSON.stringify(params.Item)}`);
-
-      try {
-        var res = await client.send(new PutItemCommand(params));
-
-        console.log(`🔔 Saved TimeSeries: ${JSON.stringify(res)}`);
-      } catch (e) {
-        console.error(`❌ Error saving TimeSeries: ${e}`);
-      }
-    })
-  );
-
-  console.log(`✅ Saved ${timeSeries.length} TimeSeries. Last close: ${lastClose}`);
-
-  return lastClose;
-}
-
-async function savePosition(
-  position: PositionReadModel,
-  detail: CreateTransactionInput,
-  positions: number,
-  acb: number,
-  bookValue: number,
-  lastTransactionDate: Date | null,
-  transactions: TransactionReadModel[],
-  lastClose: number
-) {
-  var result;
-
-  // Calculate market value
-  var marketValue = lastClose * positions;
-
-  // Get stock info
-  var symbol = await getSymbol(detail.symbol);
-  console.log(`Overview: ${JSON.stringify(symbol)}`);
-
-  var item = {
-    id: position ? position.id : uuid(),
-    aggregateId: detail.aggregateId,
-    version: position ? position.version + 1 : 1,
-    userId: detail.userId,
-    symbol: detail.symbol,
-    name: symbol.name,
-    description: symbol.description,
-    exchange: symbol.exchange,
-    currency: symbol.currency,
-    country: symbol.region,
-    shares: positions,
-    acb: acb,
-    bookValue: bookValue,
-    marketValue: marketValue,
-    lastTransactionDate: lastTransactionDate,
-    accountId: transactions[0].accountId,
+// Returns all transactions for the symbol sorted in ascending order
+async function getTransactions(detail: CreateTransactionInput): Promise<TransactionReadModel[]> {
+  const params: QueryCommandInput = {
+    TableName: process.env.DATA_TABLE_NAME,
+    IndexName: 'aggregateId-index',
+    KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
+    FilterExpression: 'entity = :v3 AND symbol = :v4',
+    ScanIndexForward: false,
+    ExpressionAttributeValues: {
+      ':v1': { S: detail.userId },
+      ':v2': { S: detail.aggregateId },
+      ':v3': { S: 'transaction' },
+      ':v4': { S: detail.symbol },
+    },
   };
+  var result = await dynamoDbCommand(new QueryCommand(params));
 
-  const putItemCommandInput = {
-    TableName: process.env.POSITION_TABLE_NAME,
-    Item: marshall(item),
-  };
-  const command = new PutItemCommand(putItemCommandInput);
+  if (result.$metadata.httpStatusCode === 200) {
+    const transactions = result.Items?.map((Item: any) => unmarshall(Item));
+    console.log(`🔔 Found ${transactions.length} Transactions: ${JSON.stringify(transactions)}`);
 
-  var result;
-  try {
-    var client = new DynamoDBClient({ region: process.env.REGION });
-
-    console.log('🔔 Saving item to DynamoDB');
-    console.debug(`DynamoDB item: ${JSON.stringify(putItemCommandInput)}`);
-
-    result = await client.send(command);
-  } catch (error) {
-    console.error(`❌ Error with saving DynamoDB item`, error);
+    return transactions;
   }
 
-  console.log(`✅ Saved item to DynamoDB: ${JSON.stringify(result)}`);
+  console.log(`🛑 Could not find transactions: ${result}`);
+  return [] as TransactionReadModel[];
+}
 
-  return item;
+async function getPosition(detail: CreateTransactionInput): Promise<PositionReadModel> {
+  const params: QueryCommandInput = {
+    TableName: process.env.DATA_TABLE_NAME,
+    IndexName: 'aggregateId-index',
+    KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
+    FilterExpression: 'entity = :v3 AND symbol = :v4',
+    ScanIndexForward: false,
+    ExpressionAttributeValues: {
+      ':v1': { S: detail.userId },
+      ':v2': { S: detail.aggregateId },
+      ':v3': { S: 'position' },
+      ':v4': { S: detail.symbol },
+    },
+  };
+  var result = await dynamoDbCommand(new QueryCommand(params));
+
+  if (result.$metadata.httpStatusCode === 200) {
+    const position = result.Items?.map((Item: any) => unmarshall(Item))[0];
+    console.log(`🔔 Found Position: ${JSON.stringify(position)}`);
+
+    return position;
+  }
+
+  console.log(`🛑 Could not find Position: ${result}`);
+  return {} as PositionReadModel;
+}
+
+// Returns the last transaction date, if null returns the date of the current transaction
+function getLastTransactionDate(position: PositionReadModel, detail: CreateTransactionInput) {
+  var prevLastTransactionDate = null;
+  var lastTransactionDate = null;
+  if (position) {
+    prevLastTransactionDate = position.lastTransactionDate;
+  }
+  console.debug(`🕧 Last transaction date: ${prevLastTransactionDate}`);
+  console.debug(`🕧 Current transaction date: ${detail.transactionDate}`);
+
+  if (prevLastTransactionDate === detail.transactionDate || prevLastTransactionDate !== detail.transactionDate) {
+    console.debug(`🔔 Found new last transaction date: ${detail.transactionDate}`);
+    lastTransactionDate = detail.transactionDate;
+  }
+
+  // Ensure prevLastTransactionDate is never null
+  if (
+    prevLastTransactionDate === null ||
+    (prevLastTransactionDate && lastTransactionDate && lastTransactionDate < prevLastTransactionDate)
+  ) {
+    prevLastTransactionDate = lastTransactionDate;
+  }
+
+  console.debug(`🔔 Previous last transaction date: ${prevLastTransactionDate}`);
+  console.debug(`🔔 Current last transaction date: ${lastTransactionDate}`);
+
+  return { prevLastTransactionDate, lastTransactionDate };
 }
 
 function calculateAdjustedCostBase(transactions: TransactionReadModel[]) {
@@ -143,7 +126,7 @@ function calculateAdjustedCostBase(transactions: TransactionReadModel[]) {
   var bookValue = 0;
 
   for (const t of transactions) {
-    const transactionType = t.transactionType.name.toUpperCase();
+    const transactionType = t.type.toUpperCase();
 
     console.debug(`START-${transactionType} acb: $${acb} positions: ${positions}`);
 
@@ -167,133 +150,99 @@ function calculateAdjustedCostBase(transactions: TransactionReadModel[]) {
   return { positions, acb, bookValue };
 }
 
-// Returns the last transaction date, if null returns the date of the current transaction
-function getLastTransactionDate(position: PositionReadModel, detail: CreateTransactionInput) {
-  var prevLastTransactionDate = null;
-  var lastTransactionDate = null;
-  if (position) {
-    prevLastTransactionDate = position.lastTransactionDate;
-  }
-  console.debug(`Last transaction date: ${prevLastTransactionDate}`);
-  console.debug(`Current transaction date: ${detail.transactionDate}`);
+async function createTimeSeries(symbol: string, timeSeries: any): Promise<number> {
+  // Save timeseries to dynamodb
+  const client = new DynamoDBClient({});
 
-  if (prevLastTransactionDate === detail.transactionDate || prevLastTransactionDate !== detail.transactionDate) {
-    console.debug(`🔔 Found new last transaction date: ${detail.transactionDate}`);
-    lastTransactionDate = detail.transactionDate;
-  }
+  var lastClose = 0;
 
-  // Ensure prevLastTransactionDate is never null
-  if (
-    prevLastTransactionDate === null ||
-    (prevLastTransactionDate && lastTransactionDate && lastTransactionDate < prevLastTransactionDate)
-  ) {
-    prevLastTransactionDate = lastTransactionDate;
-  }
+  await Promise.all(
+    timeSeries.map(async (t: TimeSeriesReadModel): Promise<any> => {
+      const params: PutItemCommandInput = {
+        TableName: process.env.TIME_SERIES_TABLE_NAME,
+        Item: marshall({
+          symbol: symbol,
+          date: t.date,
+          open: t.open,
+          high: t.high,
+          low: t.low,
+          close: t.close,
+          adjusted_close: t.adjusted_close,
+          volume: t.volume,
+        }),
+      };
 
-  console.debug(`✔ Previous last transaction date: ${prevLastTransactionDate}`);
-  console.debug(`✔ Current last transaction date: ${lastTransactionDate}`);
+      lastClose = t.close;
 
-  return { prevLastTransactionDate, lastTransactionDate };
+      console.debug(`Creating TimeSeries: ${JSON.stringify(params.Item)}`);
+
+      try {
+        var res = await client.send(new PutItemCommand(params));
+
+        console.log(`🔔 Saved TimeSeries: ${JSON.stringify(res)}`);
+      } catch (e) {
+        console.error(`🛑 Error saving TimeSeries: ${e}`);
+      }
+    })
+  );
+
+  console.log(`✅ Saved ${timeSeries.length} TimeSeries. Last close: ${lastClose}`);
+
+  return lastClose;
 }
 
-async function getPosition(detail: CreateTransactionInput): Promise<PositionReadModel> {
-  const params: ScanCommandInput = {
-    TableName: process.env.POSITION_TABLE_NAME,
-    ExpressionAttributeNames: {
-      '#a': 'aggregateId',
-      '#s': 'symbol',
-    },
-    ExpressionAttributeValues: {
-      ':aggregateId': { S: detail.aggregateId },
-      ':symbol': { S: detail.symbol },
-    },
-    FilterExpression: '#a = :aggregateId AND #s = :symbol',
+async function savePosition(
+  position: PositionReadModel,
+  detail: CreateTransactionInput,
+  positions: number,
+  acb: number,
+  bookValue: number,
+  lastTransactionDate: Date | null,
+  lastClose: number
+) {
+  // Calculate market value
+  var marketValue = lastClose * positions;
+
+  // Get stock info
+  var symbol = await getSymbol(detail.symbol);
+  console.log(`Overview: ${JSON.stringify(symbol)}`);
+
+  var item = {
+    userId: detail.userId,
+    createdAt: position ? position.createdAt : new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    aggregateId: detail.aggregateId,
+    entity: 'position',
+    symbol: detail.symbol,
+    description: symbol.description,
+    exchange: symbol.exchange,
+    currency: symbol.currency,
+    shares: positions,
+    acb: acb,
+    bookValue: bookValue,
+    marketValue: marketValue,
+    lastTransactionDate: lastTransactionDate,
   };
 
-  try {
-    console.debug('Searching for Position');
-
-    const client = new DynamoDBClient({});
-    const result = await client.send(new ScanCommand(params));
-    const positions = result.Items?.map((Item) => unmarshall(Item));
-
-    if (positions) {
-      console.log(`🔔 Found Position: ${JSON.stringify(positions[0])}`);
-
-      return positions[0] as PositionReadModel;
-    } else {
-      console.log(`🔔 No Position found`);
-
-      return {} as PositionReadModel;
-    }
-  } catch (e) {
-    console.log(`❌ Error looking for Position: ${e}`);
-
-    return {} as PositionReadModel;
-  }
-}
-
-// Returns all transactions for the symbol sorted in ascending order
-async function getTransactions(detail: CreateTransactionInput): Promise<TransactionReadModel[]> {
-  const params: ScanCommandInput = {
-    TableName: process.env.TRANSACTION_TABLE_NAME,
-    ExpressionAttributeNames: {
-      '#a': 'aggregateId',
-      '#s': 'symbol',
-    },
-    ExpressionAttributeValues: {
-      ':aggregateId': { S: detail.aggregateId },
-      ':symbol': { S: detail.symbol },
-    },
-    FilterExpression: '#a = :aggregateId AND #s = :symbol',
+  const putItemCommandInput = {
+    TableName: process.env.DATA_TABLE_NAME,
+    Item: marshall(item),
   };
+  let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
-  try {
-    console.debug('Searching for Transactions');
-
-    const client = new DynamoDBClient({});
-    const result = await client.send(new ScanCommand(params));
-
-    const transactions = result.Items?.map((Item) => unmarshall(Item));
-
-    if (transactions) {
-      const sortedTransactions = transactions.sort(orderByTransactionDate);
-      console.log(`🔔 Found ${transactions.length} Transactions: ${JSON.stringify(sortedTransactions)}`);
-
-      return sortedTransactions as TransactionReadModel[];
-    } else {
-      console.log(`🔔 No Transactions found`);
-
-      return [] as TransactionReadModel[];
-    }
-  } catch (e) {
-    console.log(`❌ Error looking for Transactions: ${e}`);
-
-    return [] as TransactionReadModel[];
+  if (result.$metadata.httpStatusCode === 200) {
+    console.log(`✅ Saved Position: ${JSON.stringify(result)}`);
+    return result.Items;
   }
+
+  console.log(`🛑 Could not save Position: `, result);
+  return {};
 }
 
 function parseEvent(event: EventBridgeEvent<string, CreateTransactionInput>): CreateTransactionInput {
   const eventString: string = JSON.stringify(event);
-  console.debug(`Received event: ${eventString}`);
+
+  console.debug(`🕧 Received event: ${eventString}`);
 
   return JSON.parse(eventString).detail;
-}
-
-// Order by transactionDate asc then transactionType asc
-function orderByTransactionDate(a: any, b: any): number {
-  var d1 = new Date(a.transactionDate).toISOString();
-  var d2 = new Date(b.transactionDate).toISOString();
-
-  if (d1 < d2) {
-    return -1;
-  }
-  if (d1 > d2) {
-    return 1;
-  }
-  if (a.transactionType.id <= b.transactionType.id) {
-    return -1;
-  }
-
-  return 1;
 }

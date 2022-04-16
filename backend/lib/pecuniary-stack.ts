@@ -431,7 +431,14 @@ export class PecuniaryStack extends Stack {
     updatePositionHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:GetItem', 'dynamodb:Scan'],
+        actions: ['dynamodb:Query'],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-index', dataTable.tableArn + '/index/entity-index'],
+      })
+    );
+    updatePositionHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem'],
         resources: [dataTable.tableArn],
       })
     );

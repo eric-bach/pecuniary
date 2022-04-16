@@ -24,6 +24,7 @@ type Data @model @aws_cognito_user_pools {
   acb: Float
   payee: String
   amount: Float
+  lastTransactionDate: AWSDate
 }
 
 type TimeSeries @model @aws_cognito_user_pools {
@@ -35,7 +36,7 @@ type TimeSeries @model @aws_cognito_user_pools {
   close: Float!
   adjusted_close: Float!
   volume: Int!
-  split_coefficient: Float!
+  split_coefficient: Float
 }
 
 input CreateAccountInput {
