@@ -58,7 +58,7 @@ export class PecuniaryStack extends Stack {
     // AWS Cognito post-confirmation lambda function
     const cognitoPostConfirmationTrigger = new Function(this, 'CognitoPostConfirmationTrigger', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-cognitoPostConfirmationTrigger-${props.envName}`,
+      functionName: `${props.appName}-${props.envName}-CognitoPostConfirmationTrigger`,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoPostConfirmation')),
       memorySize: 768,
@@ -291,7 +291,7 @@ export class PecuniaryStack extends Stack {
 
     // Resolver for Accounts
     const accountHandlerFunction = new Function(this, 'AccountHandler', {
-      functionName: `${props.appName}-AccountHandler-${props.envName}`,
+      functionName: `${props.appName}-${props.envName}-AccountHandler`,
       runtime: Runtime.NODEJS_14_X,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'accountHandler')),
@@ -341,7 +341,7 @@ export class PecuniaryStack extends Stack {
 
     // Resolver for Transactions
     const transactionHandlerFunction = new Function(this, 'TransactionHandler', {
-      functionName: `${props.appName}-TransactionHandler-${props.envName}`,
+      functionName: `${props.appName}-${props.envName}-TransactionHandler`,
       runtime: Runtime.NODEJS_14_X,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'transactionHandler')),
@@ -398,35 +398,6 @@ export class PecuniaryStack extends Stack {
       fieldName: 'deleteTransaction',
     });
 
-    // Resolver for Positions
-    const positionHandlerFunction = new Function(this, 'PositionHandler', {
-      functionName: `${props.appName}-PositionHandler-${props.envName}`,
-      runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'positionHandler')),
-      memorySize: 1024,
-      timeout: Duration.seconds(10),
-      environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
-      },
-      //deadLetterQueue: commandHandlerQueue,
-    });
-    // Add permissions to write to DynamoDB table
-    accountHandlerFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn],
-      })
-    );
-    // Set the new Lambda function as a data source for the AppSync API
-    const positionHandlerDataSource = api.addLambdaDataSource('positionDataSource', positionHandlerFunction);
-    // Resolvers
-    // positionHandlerDataSource.createResolver({
-    //   typeName: 'Query',
-    //   fieldName: 'getPositionsByAccountId',
-    // });
-
     /***
      *** AWS DynamoDB
      ***/
@@ -441,33 +412,11 @@ export class PecuniaryStack extends Stack {
      *** AWS Lambda - Event Handlers
      ***/
 
-    const updateAccountValuesFunction = new Function(this, 'UpdateAccountValues', {
+    const updatePositionHandlerFunction = new Function(this, 'UpdatePositionHandler', {
       runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-updateAccountValues-${props.envName}`,
+      functionName: `${props.appName}-${props.envName}-UpdatePositionHandler`,
       handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updateAccountValues')),
-      memorySize: 768,
-      timeout: Duration.seconds(10),
-      environment: {
-        DATA_NAME: dataTable.tableName,
-        REGION: REGION,
-      },
-      deadLetterQueue: eventHandlerQueue,
-    });
-    // Add permissions to read/write to DynamoDB table
-    updateAccountValuesFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Query', 'dynamodb:GetItem', 'dynamodb:UpdateItem'],
-        resources: [dataTable.tableArn],
-      })
-    );
-
-    const createUpdatePositiopnFunction = new Function(this, 'CreateUpdatePosition', {
-      runtime: Runtime.NODEJS_14_X,
-      functionName: `${props.appName}-CreateUpdatePosition-${props.envName}`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'createUpdatePosition')),
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updatePositionHandler')),
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
@@ -479,14 +428,14 @@ export class PecuniaryStack extends Stack {
       deadLetterQueue: eventHandlerQueue,
     });
     // Add permissions to call DynamoDB
-    createUpdatePositiopnFunction.addToRolePolicy(
+    updatePositionHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:GetItem', 'dynamodb:Scan'],
         resources: [dataTable.tableArn],
       })
     );
-    createUpdatePositiopnFunction.addToRolePolicy(
+    updatePositionHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:PutItem'],
@@ -494,7 +443,7 @@ export class PecuniaryStack extends Stack {
       })
     );
     // Add permission to send to EventBridge
-    createUpdatePositiopnFunction.addToRolePolicy(
+    updatePositionHandlerFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['events:PutEvents'],
@@ -517,25 +466,7 @@ export class PecuniaryStack extends Stack {
       },
     });
     transactionSavedEventRule.addTarget(
-      new LambdaFunction(createUpdatePositiopnFunction, {
-        //deadLetterQueue: SqsQueue,
-        maxEventAge: Duration.hours(2),
-        retryAttempts: 2,
-      })
-    );
-
-    // EventBus Rule - PositionUpdatedEventRule
-    const positionUpdatedEventRule = new Rule(this, 'PositionUpdatedEventRule', {
-      ruleName: `${props.appName}-PositionUpdatedEvent-${props.envName}`,
-      description: 'PositionUpdatedEvent',
-      eventBus: eventBus,
-      eventPattern: {
-        source: ['custom.pecuniary'],
-        detailType: ['PositionUpdatedEvent'],
-      },
-    });
-    positionUpdatedEventRule.addTarget(
-      new LambdaFunction(updateAccountValuesFunction, {
+      new LambdaFunction(updatePositionHandlerFunction, {
         //deadLetterQueue: SqsQueue,
         maxEventAge: Duration.hours(2),
         retryAttempts: 2,
@@ -665,20 +596,17 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'AppSyncAPIKey', { value: api.apiKey || '' });
 
     // DynamoDB tables
-    new CfnOutput(this, 'dataTableArn', { value: dataTable.tableArn });
-    new CfnOutput(this, 'timeSeriesTable', { value: timeSeriesTable.tableArn });
+    new CfnOutput(this, 'DataTableArn', { value: dataTable.tableArn });
+    new CfnOutput(this, 'TimeSeriesTableArn', { value: timeSeriesTable.tableArn });
 
     // EventBridge
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
     new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
-    new CfnOutput(this, 'PositionUpdatedEventRuleArn', { value: positionUpdatedEventRule.ruleArn });
 
     // Lambda functions
     new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
     new CfnOutput(this, 'AccountHandlerFunctionArn', { value: accountHandlerFunction.functionArn });
     new CfnOutput(this, 'TransactionHandlerFunctionArn', { value: transactionHandlerFunction.functionArn });
-    new CfnOutput(this, 'PositionHandlerFunctionArn', { value: positionHandlerFunction.functionArn });
-    new CfnOutput(this, 'CreateUpdatePositionFunctionArn', { value: createUpdatePositiopnFunction.functionArn });
-    new CfnOutput(this, 'AccountValuesUpdatedEventFunctionArn', { value: updateAccountValuesFunction.functionArn });
+    new CfnOutput(this, 'UpdatePositionHandlerFunctionArn', { value: updatePositionHandlerFunction.functionArn });
   }
 }

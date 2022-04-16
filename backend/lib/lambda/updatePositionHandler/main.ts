@@ -1,7 +1,6 @@
 import { EventBridgeEvent } from 'aws-lambda';
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput, ScanCommand, ScanCommandInput } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 
 const { v4: uuid } = require('uuid');
 const { getTimeSeries, getSymbol } = require('./yahooFinance');
@@ -33,42 +32,7 @@ exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>
 
   // Save Position - create if not exists, update if exists
   const savedPosition = await savePosition(position, detail, positions, acb, bookValue, lastTransactionDate, transactions, lastClose);
-
-  // Publish PositionUpdatedEvent to EventBridge for marketValue and bookValue to be updated
-  await publishEventAsync(savedPosition);
 };
-
-async function publishEventAsync(position: any) {
-  var params = {
-    Entries: [
-      {
-        Source: 'custom.pecuniary',
-        EventBusName: process.env.EVENTBUS_PECUNIARY_NAME,
-        DetailType: 'PositionUpdatedEvent',
-        Detail: JSON.stringify({
-          id: position.accountId,
-          version: position.version,
-          marketValue: position.marketValue,
-          bookValue: position.bookValue,
-        }),
-      },
-    ],
-  };
-  console.debug(`EventBridge event: ${JSON.stringify(params)}`);
-
-  const client = new EventBridgeClient();
-  var command = new PutEventsCommand(params);
-
-  var result;
-  try {
-    console.log(`🔔 Sending ${params.Entries.length} event(s) to EventBridge`);
-    result = await client.send(command);
-  } catch (error) {
-    console.error(`❌ Error with sending EventBridge event`, error);
-  } finally {
-    console.log(`✅ Successfully sent ${params.Entries.length} event(s) to EventBridge: ${JSON.stringify(result)}`);
-  }
-}
 
 async function createTimeSeries(symbol: string, timeSeries: any): Promise<number> {
   // Save timeseries to dynamodb
