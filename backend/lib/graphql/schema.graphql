@@ -4,11 +4,11 @@ schema {
 }
 
 type Data @model @aws_cognito_user_pools {
-  userId: ID!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-  aggregateId: ID!
-  entity: String!
+  userId: ID
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  aggregateId: ID
+  entity: String
   type: String
   name: String
   description: String

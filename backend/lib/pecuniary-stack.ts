@@ -299,6 +299,7 @@ export class PecuniaryStack extends Stack {
       timeout: Duration.seconds(10),
       environment: {
         DATA_TABLE_NAME: dataTable.tableName,
+        REGION: REGION,
       },
       //deadLetterQueue: commandHandlerQueue,
     });

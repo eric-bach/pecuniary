@@ -1,11 +1,13 @@
-const { DynamoDBClient, QueryCommand, DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
+const { QueryCommand, DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
 
+import dynamoDbCommand from './helpers/dynamoDbCommand';
 import { DeleteAccountInput } from '../types/Account';
 
 async function deleteAccount(input: DeleteAccountInput) {
-  console.log(`Deleting everything in Account: ${input.aggregateId}`);
+  console.debug(`🕧 Delete Account initialized`);
 
   // Get all aggregates
+  console.debug(`🕧 Getting all aggregates related to Account ${input.aggregateId}`);
   const queryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'aggregateId-index',
@@ -19,10 +21,10 @@ async function deleteAccount(input: DeleteAccountInput) {
   };
   var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
 
-  if (result && result.Items) {
-    console.log(`Found ${result.Count} aggregates(s) in Account`);
+  if (result.$metadata.httpStatusCode === 200 && result.Count > 0) {
+    console.log(`🔔 Found ${result.Count} aggregates(s) in Account`);
 
-    // Delete all aggregates
+    // Delete each aggregate
     for (const t of result.Items) {
       const deleteInput = {
         TableName: process.env.DATA_TABLE_NAME,
@@ -36,31 +38,18 @@ async function deleteAccount(input: DeleteAccountInput) {
         },
       };
 
-      await dynamoDbCommand(new DeleteItemCommand(deleteInput));
+      var aResult = await dynamoDbCommand(new DeleteItemCommand(deleteInput));
+      console.debug(`🕧 Deleted aggregate ${JSON.stringify(aResult)}`);
     }
 
-    console.log(`🔔 Deleted ${result.Count} aggregates(s) in account`);
+    console.log(`🔔 Deleted ${result.Count} aggregates(s) in Account`);
+
     console.log(`✅ Deleted Account: {aggregateId: ${input.aggregateId}}`);
     return { aggregateId: input.aggregateId };
-  } else {
-    console.log(`🔔 No aggregates found in account`);
-    return { aggregateId: '' };
   }
-}
 
-async function dynamoDbCommand(command: any) {
-  var result;
-
-  try {
-    var client = new DynamoDBClient({ region: process.env.REGION });
-    console.debug(`🔔 DynamoDB command:\n${JSON.stringify(command)}`);
-    result = await client.send(command);
-    console.log(`DynamoDB result:\n${JSON.stringify(result)}`);
-    return result;
-  } catch (error) {
-    console.error(`❌ Error with DynamoDB command:\n`, error);
-    return error;
-  }
+  console.log('🛑 Could not delete Account', result);
+  return {};
 }
 
 export default deleteAccount;

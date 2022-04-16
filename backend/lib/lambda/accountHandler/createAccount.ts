@@ -1,11 +1,14 @@
-const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
+const { PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
 const { v4: uuidv4 } = require('uuid');
 
 import { PutItemCommandInput } from '@aws-sdk/client-dynamodb';
+import dynamoDbCommand from './helpers/dynamoDbCommand';
 import { CreateAccountInput, AccountReadModel } from '../types/Account';
 
 async function createAccount(input: CreateAccountInput) {
+  console.debug(`🕧 Create Account initialized`);
+
   var item: AccountReadModel = {
     userId: input.userId,
     aggregateId: uuidv4(),
@@ -23,29 +26,14 @@ async function createAccount(input: CreateAccountInput) {
   };
   let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
-  if (result && result.$metadata.httpStatusCode === 200) {
-    console.log(`✅ Saved item to DynamoDB: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
+  if (result.$metadata.httpStatusCode === 200) {
+    console.log(`✅ Saved Account: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
 
     return unmarshall(putItemCommandInput.Item);
   }
 
-  console.error(`❌ Error saving item to DynamoDB:\n`, result);
+  console.error(`🛑 Error saving Account:\n`, result);
   return {};
-}
-
-async function dynamoDbCommand(command: any) {
-  var result;
-
-  try {
-    var client = new DynamoDBClient({ region: process.env.REGION });
-    console.debug(`DynamoDB command:\n${JSON.stringify(command)}`);
-    result = await client.send(command);
-    console.log(`🔔 DynamoDB result:\n${JSON.stringify(result)}`);
-    return result;
-  } catch (error) {
-    console.error(`❌ Error with DynamoDB command:\n`, error);
-    return error;
-  }
 }
 
 export default createAccount;
