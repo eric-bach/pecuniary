@@ -26,19 +26,17 @@
 </p>
 
 <p align="center">
-  <a href="ARCHITECTURE.md">Architecture</a> |
   <a href="#getting-started">Getting Started</a> |
+  <a href="ARCHITECTURE.md">CQRS Architecture</a> |
   <a href="#deployment">Development</a> |
   <a href="https://trello.com/b/7lA2gwTs/pecuniary">Trello</a> |
   <a href="#project-resources">Resources</a>
 </p>
 
-<h3 align="center">
-  Built with event sourcing and CQRS
-</h3>
-
 <p align="center">
-  An event-driven serverless microservices application built with <a href="https://nodejs.org">Node.js</a>
+  An <strong>event-driven serverless microservices</strong> application built with <a href="https://nodejs.org">Node.js</a>
+  <br />
+   ⚠️ <strong>NOTE</strong> ⚠️ The Event Sourcing and CQRS version is no longer maintained.  Please see <a href="()https://github.com/eric-bach/pecuniary/tree/cqrs-v1">branch</a> and <a href="()https://github.com/eric-bach/pecuniary/blob/cqrs-v1/ARCHITECTURE.md">CQRS Architecture</a> for the last release.
 </p>
 
 ![Top Level](diagrams/toplevel.jpg)

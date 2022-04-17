@@ -1,15 +1,14 @@
 export type PositionReadModel = {
-  id: string;
-  aggregateId: string;
-  version: number;
   userId: string;
-  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  aggregateId: string;
+  entity: string;
+  type: string;
   description: string;
-  accountId: string;
   symbol: string;
   exchange: string;
   currency: string;
-  country: string;
   shares: number;
   bookValue: number;
   marketValue: number;

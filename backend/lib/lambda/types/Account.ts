@@ -1,49 +1,49 @@
-export type AccountData = {
-  id: string;
-  name: string;
-  version: number;
-  description: string;
-  bookValue: number;
-  marketValue: number;
-  accountType: {
-    id: string;
-    name: string;
-    description: string;
-  };
-};
-
-export type CreateEvent = {
-  id: string;
-  aggregateId: string;
-  version: number;
+export type AccountReadModel = {
   userId: string;
+  aggregateId: string;
+  entity: string;
+  type: string;
   name: string;
   description: string;
-  bookValue: number;
-  marketValue: number;
-  accountType: {
-    id: string;
-    name: string;
-    description: string;
-  };
   createdAt: string;
   updatedAt: string;
 };
 
-export type AccountReadModel = {
-  id: string;
-  aggregateId: string;
-  version: number;
+export type CreateAccountInput = {
   userId: string;
+  type: string;
   name: string;
   description: string;
-  bookValue: number;
-  marketValue: number;
-  accountType: {
-    id: string;
-    name: string;
-    description: string;
+};
+
+export type UpdateAccountInput = {
+  userId: string;
+  aggregateId: string;
+  type: string;
+  name: string;
+  description: string;
+};
+
+export type DeleteAccountInput = {
+  userId: string;
+  aggregateId: string;
+};
+
+export type AccountAppSyncEvent = {
+  info: {
+    fieldName: string;
   };
-  createdAt: Date;
-  updatedAt: Date;
+  arguments: {
+    userId: string; //getAccounts
+
+    createAccountInput: CreateAccountInput;
+    updateAccountInput: UpdateAccountInput;
+    deleteAccountInput: DeleteAccountInput;
+  };
+  identity: {
+    username: string;
+    claims: {
+      [key: string]: string[];
+    };
+  };
 };

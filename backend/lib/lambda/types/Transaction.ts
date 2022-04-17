@@ -1,54 +1,63 @@
-export type TransactionData = {
-  id: string;
+export type TransactionReadModel = {
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  aggregateId: string;
+  entity: string;
+  type: string;
   transactionDate: Date;
   symbol: string;
   shares: number;
   price: number;
   commission: number;
-  accountId: number;
-  transactionType: {
-    id: string;
-    name: string;
-    description: string;
-  };
 };
 
-export type TransactionReadModel = {
-  id: string;
-  aggregateId: string;
-  version: string;
+export type CreateTransactionInput = {
   userId: string;
-  accountId: string;
+  aggregateId: string;
+  type: string;
+  transactionDate: Date;
+  symbol: string;
+  shares: number;
+  price: number;
+  commission: number;
+};
+
+export type UpdateTransactionInput = {
+  userId: string;
+  createdAt: string;
+  aggregateId: string;
+  type: string;
   transactionDate: string;
   symbol: string;
   shares: number;
   price: number;
   commission: number;
-  transactionType: {
-    id: string;
-    name: string;
-    description: string;
-  };
-  createdAt: Date;
-  updatedAt: Date;
 };
 
-export type CreateTransactionEvent = {
-  id: string;
-  aggregateId: string;
-  version: number;
+export type DeleteTransactionInput = {
   userId: string;
-  transactionDate: Date;
-  symbol: string;
-  shares: number;
-  price: number;
-  commission: number;
-  accountId: string;
-  transactionType: {
-    id: string;
-    name: string;
-    description: string;
-  };
   createdAt: string;
-  updatedAt: string;
+  aggregateId: string;
+  symbol: string;
+};
+
+export type TransactionAppSyncEvent = {
+  info: {
+    fieldName: string;
+  };
+  arguments: {
+    userId: string; //getTransactions
+    aggregateId: string; //getTransactions
+
+    createTransactionInput: CreateTransactionInput;
+    updateTransactionInput: UpdateTransactionInput;
+    deleteTransactionInput: DeleteTransactionInput;
+  };
+  identity: {
+    username: string;
+    claims: {
+      [key: string]: string[];
+    };
+  };
 };
