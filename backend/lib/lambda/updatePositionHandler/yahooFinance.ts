@@ -1,6 +1,37 @@
 const yahooFinance = require('yahoo-finance2').default;
 
-async function getTimeSeries(symbol: string, startDate: Date, endDate: Date) {
+// Return the quoteSummary
+async function getQuoteSummary(symbol: string) {
+  console.debug(`Getting quote for ${symbol}`);
+
+  // Get quotes from Yahoo Finance
+  const data = await yahooFinance.quoteSummary(symbol, {
+    modules: ['price'],
+  });
+
+  if (!data) {
+    return;
+  }
+
+  var result = {
+    symbol: symbol,
+    description: data.price.longName,
+    exchange: data.price.exchangeName,
+    currency: data.price.currency,
+    date: data.price.regularMarketTime.toISOString().substring(0, 10),
+    open: data.price.regularMarketOpen,
+    high: data.price.regularMarketDayHigh,
+    low: data.price.regularMarketDayLow,
+    close: data.price.regularMarketPrice,
+    volume: data.price.regularMarketVolume,
+  };
+
+  console.log(`✅ Retrieved quote summary: ${JSON.stringify(result)}`);
+  return result;
+}
+
+// Return historical quote for date range
+async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
   console.debug(`Getting quote for ${symbol} from ${startDate} to ${endDate}`);
 
   let start = new Date(startDate);
@@ -41,28 +72,4 @@ async function getTimeSeries(symbol: string, startDate: Date, endDate: Date) {
   return result;
 }
 
-async function getSymbol(symbol: string) {
-  console.debug(`Looking up symbol for ${symbol}`);
-
-  // Call Yahoo Finance
-  const data = await yahooFinance.quote(symbol);
-
-  if (!data) {
-    return;
-  }
-
-  var result = {
-    symbol: data.symbol,
-    name: data.displayName,
-    description: data.longName,
-    exchange: data.fullExchangeName,
-    region: data.region,
-    currency: data.currency,
-  };
-
-  console.debug(`✅ ${JSON.stringify(result)}`);
-
-  return result;
-}
-
-module.exports = { getTimeSeries, getSymbol };
+module.exports = { getQuoteSummary, getHistorical };

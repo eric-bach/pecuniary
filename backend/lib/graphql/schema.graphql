@@ -27,18 +27,6 @@ type Data @model @aws_cognito_user_pools {
   lastTransactionDate: AWSDate
 }
 
-type TimeSeries @model @aws_cognito_user_pools {
-  symbol: String!
-  date: AWSDate!
-  open: Float!
-  high: Float!
-  low: Float!
-  close: Float!
-  adjusted_close: Float!
-  volume: Int!
-  split_coefficient: Float
-}
-
 input CreateAccountInput {
   userId: ID!
   type: String
@@ -90,6 +78,7 @@ input DeleteTransactionInput {
   userId: ID!
   createdAt: AWSDateTime!
   aggregateId: ID!
+  symbol: String!
 }
 
 type DeleteResponse {

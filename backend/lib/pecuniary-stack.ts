@@ -1,7 +1,6 @@
-import { Stack, CfnOutput, Expiration, Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { Stack, CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-
-import { Function, Runtime, Code, StartingPosition } from 'aws-cdk-lib/aws-lambda';
+import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
 import {
   UserPool,
   CfnUserPoolGroup,
@@ -16,8 +15,7 @@ import { Topic } from 'aws-cdk-lib/aws-sns';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Alarm, Metric, ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
 import { GraphqlApi, FieldLogLevel, AuthorizationType, Schema } from '@aws-cdk/aws-appsync-alpha';
-import { Table, BillingMode, AttributeType, StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
-import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { Table, BillingMode, AttributeType } from 'aws-cdk-lib/aws-dynamodb';
 import { Rule, EventBus } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
@@ -231,7 +229,6 @@ export class PecuniaryStack extends Stack {
      *** AWS DynamoDB
      ***/
 
-    // DynamoDB table for Data
     const dataTable = new Table(this, 'Data', {
       tableName: `${props.appName}-Data-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
@@ -260,20 +257,12 @@ export class PecuniaryStack extends Stack {
         type: AttributeType.STRING,
       },
     });
-
-    // DynamoDB table for TimeSeries
-    const timeSeriesTable = new Table(this, 'TimeSeries', {
-      tableName: `${props.appName}-TimeSeries-${props.envName}`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'symbol',
-        type: AttributeType.STRING,
-      },
+    dataTable.addLocalSecondaryIndex({
+      indexName: 'transactionDate-index',
       sortKey: {
-        name: 'date',
+        name: 'transactionDate',
         type: AttributeType.STRING,
       },
-      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     /***
@@ -315,7 +304,12 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-index', dataTable.tableArn + '/index/entity-index'],
+        resources: [
+          dataTable.tableArn,
+          dataTable.tableArn + '/index/aggregateId-index',
+          dataTable.tableArn + '/index/entity-index',
+          dataTable.tableArn + '/index/transactionDate-index',
+        ],
       })
     );
 
@@ -421,7 +415,6 @@ export class PecuniaryStack extends Stack {
       timeout: Duration.seconds(10),
       environment: {
         DATA_TABLE_NAME: dataTable.tableName,
-        TIME_SERIES_TABLE_NAME: timeSeriesTable.tableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
       },
@@ -432,7 +425,12 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-index', dataTable.tableArn + '/index/entity-index'],
+        resources: [
+          dataTable.tableArn,
+          dataTable.tableArn + '/index/aggregateId-index',
+          dataTable.tableArn + '/index/entity-index',
+          dataTable.tableArn + '/index/transactionDate-index',
+        ],
       })
     );
     updatePositionHandlerFunction.addToRolePolicy(
@@ -440,13 +438,6 @@ export class PecuniaryStack extends Stack {
         effect: Effect.ALLOW,
         actions: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem'],
         resources: [dataTable.tableArn],
-      })
-    );
-    updatePositionHandlerFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:PutItem'],
-        resources: [timeSeriesTable.tableArn],
       })
     );
     // Add permission to send to EventBridge
@@ -604,7 +595,6 @@ export class PecuniaryStack extends Stack {
 
     // DynamoDB tables
     new CfnOutput(this, 'DataTableArn', { value: dataTable.tableArn });
-    new CfnOutput(this, 'TimeSeriesTableArn', { value: timeSeriesTable.tableArn });
 
     // EventBridge
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });

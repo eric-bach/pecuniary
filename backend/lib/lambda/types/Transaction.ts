@@ -45,6 +45,7 @@ export type DeleteTransactionInput = {
   userId: string;
   createdAt: string;
   aggregateId: string;
+  symbol: string;
 };
 
 export type TransactionAppSyncEvent = {
