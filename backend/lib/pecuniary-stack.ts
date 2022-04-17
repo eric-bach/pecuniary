@@ -210,7 +210,7 @@ export class PecuniaryStack extends Stack {
      ***/
 
     const api = new GraphqlApi(this, 'PecuniaryApi', {
-      name: `${props.appName}-api-${props.envName}`,
+      name: `${props.appName}-${props.envName}-api`,
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
       },
@@ -230,7 +230,7 @@ export class PecuniaryStack extends Stack {
      ***/
 
     const dataTable = new Table(this, 'Data', {
-      tableName: `${props.appName}-Data-${props.envName}`,
+      tableName: `${props.appName}-${props.envName}-Data`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'userId',
@@ -391,16 +391,6 @@ export class PecuniaryStack extends Stack {
       typeName: 'Mutation',
       fieldName: 'deleteTransaction',
     });
-
-    /***
-     *** AWS DynamoDB
-     ***/
-
-    // Allow DynamoDB streams from Event table to send event source mapping to EventBus lambda function
-    //eventTable.grantWriteData(eventBusFunction);
-    // Enable the Lambda function to access the DynamoDB table (using IAM)
-    // accountTypeTable.grantFullAccess(accountHandlerFunction);
-    // transactionTypeTable.grantReadData(accountHandlerFunction);
 
     /***
      *** AWS Lambda - Event Handlers
