@@ -26,6 +26,7 @@ async function getAccounts(userId: string) {
     result.Items.forEach((i: any) => {
       res.push(unmarshall(i));
     });
+
     console.log(`✅ Found Accounts: ${JSON.stringify(res)}`);
     return res;
   }

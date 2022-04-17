@@ -16,87 +16,92 @@ mutation CreateAccount {
     name
     description
     createdAt
-    updatedAt
-  }
-}
-
-mutation DeleteAccount {
-  deleteAccount(deleteAccountInput: {
-    userId: "eric"
-    aggregateId: "acc4fc07-46e9-4ae2-9bff-490c4f4742e5"
-  }) {
-    aggregateId
   }
 }
 
 mutation UpdateAccount {
   updateAccount(updateAccountInput: {
     userId: "eric"
-    aggregateId: "acc4fc07-46e9-4ae2-9bff-490c4f4742e5"
+    aggregateId: "d107bd4d-1ece-4ac6-a68b-6dd8de08be11"
     type: "RRSP"
     name: "Test"
     description:"My description"
   })
   {
+    userId
     aggregateId
+    entity
     type
     name
     description
+    createdAt
   }
 }
+
+mutation DeleteAccount {
+  deleteAccount(deleteAccountInput: {
+    userId: "eric"
+    aggregateId: "d107bd4d-1ece-4ac6-a68b-6dd8de08be11"
+  }) {
+    userId
+    aggregateId
+  }
+}
+
 
 mutation CreateTransaction {
 	createTransaction(createTransactionInput:{
     userId: "eric"
-    aggregateId:"a0c41702-0d14-4a96-895f-45c52da87dac"
+    aggregateId:"2d5d519b-8715-44d5-af9f-64f3b565c345"
 		type: "Buy"
     transactionDate: "2022-04-11"
     symbol: "AAPL"
-    shares: 100
-    price: 124.88
-    commission: 4.99
-    exchange: "NYSE"
-    currency: "USD"
+    shares: 10
+    price: 125
+    commission: 0
   })
   {
+    userId
     aggregateId
     entity
     symbol
     shares
     price
     commission
+    createdAt
   }
 }
 
 mutation UpdateTransaction {
 	updateTransaction(updateTransactionInput:{
     userId: "eric"
-    createdAt: "2022-04-15T21:49:58.143Z"
-    aggregateId:"a0c41702-0d14-4a96-895f-45c52da87dac"
+    createdAt: "2022-04-17T19:53:25.442Z"
+    aggregateId: "2d5d519b-8715-44d5-af9f-64f3b565c345"
 		type: "Buy"
     transactionDate: "2022-04-11"
     symbol: "AAPL"
-    shares: 100
-    price: 200.00
+    shares: 10
+    price: 125
     commission: 4.99
-    exchange: "NYSE"
-    currency: "USD"
   })
   {
+    userId
     aggregateId
     entity
     symbol
     shares
     price
     commission
+    createdAt
   }
 }
 
 mutation DeleteTransaction {
   deleteTransaction(deleteTransactionInput:{
     userId: "eric"
-    createdAt: "2022-04-15T21:49:58.143Z"
-    aggregateId:"a0c41702-0d14-4a96-895f-45c52da87dac"
+    symbol: "AAPL"
+    createdAt: "2022-04-17T19:56:31.967Z"
+    aggregateId: "2d5d519b-8715-44d5-af9f-64f3b565c345"
   })
   {
     aggregateId
@@ -107,6 +112,7 @@ query GetAccounts {
   getAccounts(userId:"eric")
   {
     aggregateId
+    createdAt
     name
     type
     description
@@ -115,12 +121,12 @@ query GetAccounts {
 
 query GetTransactions {
   getTransactions(
-    userId :"eric"
-    aggregateId:"36b20b9f-b28b-406c-9aa0-0300e8a9b55b"
+    userId: "eric"
+    aggregateId: "2d5d519b-8715-44d5-af9f-64f3b565c345"
   )
   {
     aggregateId
-    entity
+    createdAt
     type
     transactionDate
     symbol

@@ -10,8 +10,6 @@ export type TransactionReadModel = {
   shares: number;
   price: number;
   commission: number;
-  exchange: string;
-  currency: string;
 };
 
 export type CreateTransactionInput = {
@@ -23,8 +21,6 @@ export type CreateTransactionInput = {
   shares: number;
   price: number;
   commission: number;
-  exchange: string;
-  currency: string;
 };
 
 export type UpdateTransactionInput = {
@@ -37,8 +33,6 @@ export type UpdateTransactionInput = {
   shares: number;
   price: number;
   commission: number;
-  exchange: string;
-  currency: string;
 };
 
 export type DeleteTransactionInput = {

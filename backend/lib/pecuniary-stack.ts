@@ -284,7 +284,7 @@ export class PecuniaryStack extends Stack {
       runtime: Runtime.NODEJS_14_X,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'accountHandler')),
-      memorySize: 1024,
+      memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
         DATA_TABLE_NAME: dataTable.tableName,
@@ -339,7 +339,7 @@ export class PecuniaryStack extends Stack {
       runtime: Runtime.NODEJS_14_X,
       handler: 'main.handler',
       code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'transactionHandler')),
-      memorySize: 1024,
+      memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
         DATA_TABLE_NAME: dataTable.tableName,

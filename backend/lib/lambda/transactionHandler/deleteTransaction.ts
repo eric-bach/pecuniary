@@ -23,8 +23,8 @@ async function deleteTransaction(input: DeleteTransactionInput) {
     // Publish event to update positions
     await publishEventAsync('TransactionSavedEvent', input);
 
-    console.log('✅ Deleted Transaction: ', { aggregateId: input.aggregateId });
-    return { aggregateId: input.aggregateId };
+    console.log(`✅ Deleted Transaction: { result: ${result}, item: ${input} }`);
+    return input;
   }
 
   console.log('🛑 Could not delete Transaction', result);

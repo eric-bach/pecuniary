@@ -1,8 +1,7 @@
-const { PutItemCommand } = require('@aws-sdk/client-dynamodb');
-const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
+import { PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
+import { marshall } from '@aws-sdk/util-dynamodb';
 const { v4: uuidv4 } = require('uuid');
 
-import { PutItemCommandInput } from '@aws-sdk/client-dynamodb';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import { CreateAccountInput, AccountReadModel } from '../types/Account';
 
@@ -27,9 +26,9 @@ async function createAccount(input: CreateAccountInput) {
   let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
   if (result.$metadata.httpStatusCode === 200) {
-    console.log(`✅ Saved Account: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
+    console.log(`✅ Saved Account: ${JSON.stringify({ result: result, item: item })}`);
 
-    return unmarshall(putItemCommandInput.Item);
+    return item;
   }
 
   console.error(`🛑 Error saving Account:\n`, result);

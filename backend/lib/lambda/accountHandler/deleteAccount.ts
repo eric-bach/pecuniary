@@ -1,14 +1,15 @@
-const { QueryCommand, DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
+import { QueryCommand, QueryCommandInput, DeleteItemCommand, DeleteItemCommandInput } from '@aws-sdk/client-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import { DeleteAccountInput } from '../types/Account';
+import { marshall } from '@aws-sdk/util-dynamodb';
 
 async function deleteAccount(input: DeleteAccountInput) {
   console.debug(`🕧 Delete Account initialized`);
 
   // Get all aggregates
   console.debug(`🕧 Getting all aggregates related to Account ${input.aggregateId}`);
-  const queryCommandInput = {
+  const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'aggregateId-index',
     // TODO Handle if more than 100 items
@@ -19,14 +20,14 @@ async function deleteAccount(input: DeleteAccountInput) {
       ':v2': { S: input.aggregateId },
     },
   };
-  var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
+  let result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
 
   if (result.$metadata.httpStatusCode === 200 && result.Count > 0) {
-    console.log(`🔔 Found ${result.Count} aggregates(s) in Account`);
+    var error = false;
 
     // Delete each aggregate
     for (const t of result.Items) {
-      const deleteInput = {
+      const deleteItemCommandInput: DeleteItemCommandInput = {
         TableName: process.env.DATA_TABLE_NAME,
         Key: {
           userId: t.userId,
@@ -34,18 +35,22 @@ async function deleteAccount(input: DeleteAccountInput) {
         },
         ConditionExpression: 'aggregateId = :v1',
         ExpressionAttributeValues: {
-          ':v1': { S: input.aggregateId },
+          ':v1': t.aggregateId,
         },
       };
 
-      var aResult = await dynamoDbCommand(new DeleteItemCommand(deleteInput));
-      console.debug(`🕧 Deleted aggregate ${JSON.stringify(aResult)}`);
+      let deleteResult = await dynamoDbCommand(new DeleteItemCommand(deleteItemCommandInput));
+
+      if (!deleteResult || deleteResult.$metadata.httpStatusCode !== 200) {
+        error = true;
+        break;
+      }
     }
 
-    console.log(`🔔 Deleted ${result.Count} aggregates(s) in Account`);
-
-    console.log(`✅ Deleted Account: {aggregateId: ${input.aggregateId}}`);
-    return { aggregateId: input.aggregateId };
+    if (!error) {
+      console.log(`✅ Deleted Account: { result: ${result}, item: ${input} }`);
+      return input;
+    }
   }
 
   console.log('🛑 Could not delete Account', result);

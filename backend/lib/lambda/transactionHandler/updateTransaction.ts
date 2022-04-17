@@ -1,5 +1,5 @@
-const { UpdateItemCommand } = require('@aws-sdk/client-dynamodb');
-const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
+import { UpdateItemCommand, UpdateItemCommandInput } from '@aws-sdk/client-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
@@ -8,14 +8,14 @@ import { UpdateTransactionInput } from '../types/Transaction';
 async function updateTransaction(input: UpdateTransactionInput) {
   console.debug(`🕧 Update Transaction initialized`);
 
-  const updateItemCommandInput = {
+  const updateItemCommandInput: UpdateItemCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({
       userId: input.userId,
       createdAt: input.createdAt,
     }),
     UpdateExpression:
-      'SET #type=:type, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt, exchange=:exchange, currency=:currency',
+      'SET #type=:type, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt',
     ExpressionAttributeValues: marshall({
       ':type': input.type,
       ':transactionDate': input.transactionDate,
@@ -23,8 +23,6 @@ async function updateTransaction(input: UpdateTransactionInput) {
       ':shares': input.shares,
       ':price': input.price,
       ':commission': input.commission,
-      ':exchange': input.exchange,
-      ':currency': input.currency,
       ':updatedAt': new Date().toISOString(),
     }),
     ExpressionAttributeNames: {
@@ -35,12 +33,10 @@ async function updateTransaction(input: UpdateTransactionInput) {
   var updateResult = await dynamoDbCommand(new UpdateItemCommand(updateItemCommandInput));
 
   if (updateResult.$metadata.httpStatusCode === 200) {
-    console.log(`🔔 Updated item in DynamoDB: ${JSON.stringify(updateResult)}`);
-
     // Publish event to update positions
     await publishEventAsync('TransactionSavedEvent', input);
 
-    console.log(`✅ Updated item in DynamoDB: ${JSON.stringify(updateResult)}`);
+    console.log(`✅ Updated item in DynamoDB: {result: ${JSON.stringify(updateResult)}, item: ${unmarshall(updateResult.Attributes)}}`);
     return unmarshall(updateResult.Attributes);
   }
 

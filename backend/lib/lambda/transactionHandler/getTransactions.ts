@@ -28,6 +28,7 @@ async function getTransactions(userId: string, aggregateId: string) {
     result.Items.forEach((i: any) => {
       res.push(unmarshall(i));
     });
+
     console.log(`✅ Found Transactions: ${JSON.stringify(res)}`);
     return res;
   }

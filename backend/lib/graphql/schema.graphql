@@ -1,8 +1,3 @@
-schema {
-  query: Query
-  mutation: Mutation
-}
-
 type Data @model @aws_cognito_user_pools {
   userId: ID
   createdAt: AWSDateTime
@@ -29,17 +24,17 @@ type Data @model @aws_cognito_user_pools {
 
 input CreateAccountInput {
   userId: ID!
-  type: String
-  name: String
-  description: String
+  type: String!
+  name: String!
+  description: String!
 }
 
 input UpdateAccountInput {
   userId: ID!
   aggregateId: ID!
-  type: String
-  name: String
-  description: String
+  type: String!
+  name: String!
+  description: String!
 }
 
 input DeleteAccountInput {
@@ -50,28 +45,24 @@ input DeleteAccountInput {
 input CreateTransactionInput {
   userId: ID!
   aggregateId: ID!
-  type: String
-  transactionDate: AWSDate
-  symbol: String
-  shares: Float
-  price: Float
-  commission: Float
-  exchange: String
-  currency: String
+  type: String!
+  transactionDate: AWSDate!
+  symbol: String!
+  shares: Float!
+  price: Float!
+  commission: Float!
 }
 
 input UpdateTransactionInput {
   userId: ID!
   createdAt: AWSDateTime!
   aggregateId: ID!
-  type: String
-  transactionDate: AWSDate
+  type: String!
+  transactionDate: AWSDate!
   symbol: String!
-  shares: Float
-  price: Float
-  commission: Float
-  exchange: String
-  currency: String
+  shares: Float!
+  price: Float!
+  commission: Float!
 }
 
 input DeleteTransactionInput {
@@ -82,6 +73,7 @@ input DeleteTransactionInput {
 }
 
 type DeleteResponse {
+  userId: ID
   aggregateId: String
 }
 
@@ -98,4 +90,9 @@ type Mutation {
   createTransaction(createTransactionInput: CreateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateTransaction(updateTransactionInput: UpdateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
   deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+}
+
+schema {
+  query: Query
+  mutation: Mutation
 }

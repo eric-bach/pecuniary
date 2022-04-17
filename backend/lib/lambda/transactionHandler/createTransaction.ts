@@ -1,5 +1,5 @@
-const { PutItemCommand } = require('@aws-sdk/client-dynamodb');
-const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
+import { PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
+import { marshall } from '@aws-sdk/util-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
@@ -18,13 +18,11 @@ async function createTransaction(input: CreateTransactionInput) {
     shares: input.shares,
     price: input.price,
     commission: input.commission,
-    exchange: input.exchange,
-    currency: input.currency,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
-  const putItemCommandInput = {
+  const putItemCommandInput: PutItemCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     Item: marshall(item),
   };
@@ -34,8 +32,8 @@ async function createTransaction(input: CreateTransactionInput) {
     // Publish event to update positions
     await publishEventAsync('TransactionSavedEvent', input);
 
-    console.log(`✅ Saved Transaction: ${JSON.stringify({ result: result, item: unmarshall(putItemCommandInput.Item) })}`);
-    return unmarshall(putItemCommandInput.Item);
+    console.log(`✅ Saved Transaction: ${JSON.stringify({ result: result, item: item })}`);
+    return item;
   }
 
   console.error(`🛑 Error saving Transaction:\n`, result);
