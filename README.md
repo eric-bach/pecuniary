@@ -99,7 +99,7 @@ This quick start guide describes how to get the application running. An `AWS acc
 
 8. Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
 
-   - `REACT_APP_COGNITO_USER_POOL_ID` - AWS Cognito User Pool Id created in step 2
+   - `REACT_APP_COGNITO_USERPOOL_ID` - AWS Cognito User Pool Id created in step 2
    - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
 
 9. Start the client locally on http://localhost:3000/
@@ -173,7 +173,7 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
    REACT_APP_COGNITO_CLIENT_ID - Cognito User Pool Client Id
-   REACT_APP_COGNITO_USER_POOL_ID - Cognito User Pool Id
+   REACT_APP_COGNITO_USERPOOL_ID - Cognito User Pool Id
    AWS_APPSYNC_GRAPHQL_ENDPOINT - AWS AppSync GraphQL endpoint URL
    ```
 

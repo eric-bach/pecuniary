@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const poolData = {
-  UserPoolId: process.env.REACT_APP_COGNITO_USER_POOL_ID || 'REPLACE_ME',
+  UserPoolId: process.env.REACT_APP_COGNITO_USERPOOL_ID || 'REPLACE_ME',
   ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID || 'REPLACE_ME',
 };
 

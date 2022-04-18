@@ -1,4 +1,4 @@
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
 
 import { User } from './pages/Auth/User';
@@ -18,13 +18,18 @@ import 'semantic-ui-css/semantic.min.css';
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <div style={{ overflow: 'auto', paddingBottom: '80px' }}>
+        {/* Public site */}
         <Route exact path='/' component={Home} />
+
+        {/* Pecuniary app site */}
         <User>
           <NavBar />
           <Route exact path='/login' component={Login} />
           <Route exact path='/signup' component={Signup} />
+
+          {/* Authenticated sites */}
           <Container className='main' style={{ paddingTop: '30px' }}>
             <ProtectedRoute exact path='/home' component={HomePage} />
             <ProtectedRoute exact path='/accounts' component={AccountList} />
@@ -34,7 +39,7 @@ function App() {
           </Container>
         </User>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 }
 

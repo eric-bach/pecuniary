@@ -13,7 +13,7 @@ const auth = {
   jwtToken: getAccessToken(),
 };
 
-console.log('[AUTH] ', auth);
+console.log('[CLIENT] ', auth);
 
 const link = ApolloLink.from([
   createAuthLink({ url, region, auth }),
