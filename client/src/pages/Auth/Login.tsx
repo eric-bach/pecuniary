@@ -56,15 +56,7 @@ const Login = () => {
                 </Header>
                 <div>Manage your account</div>
                 <br />
-                <Input
-                  id='email'
-                  fluid
-                  icon='user'
-                  iconPosition='left'
-                  name='email'
-                  placeholder='Email address'
-                  errorPrompt
-                />
+                <Input id='email' fluid icon='user' iconPosition='left' name='email' placeholder='Email address' errorPrompt />
                 <Input
                   id='password'
                   name='password'

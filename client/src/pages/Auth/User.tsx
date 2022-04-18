@@ -10,6 +10,7 @@ const User = (props: any) => {
     return await new Promise((resolve, reject) => {
       const user = Pool.getCurrentUser();
 
+      /*
       if (user) {
         user.getSession((err: any, session: any) => {
           if (!err) {
@@ -17,8 +18,8 @@ const User = (props: any) => {
           }
         });
       }
+      */
 
-      /*
       if (user) {
         user.getSession((err: any, session: any) => {
           if (err) {
@@ -30,7 +31,6 @@ const User = (props: any) => {
       } else {
         reject();
       }
-      */
     });
   };
 
@@ -43,9 +43,6 @@ const User = (props: any) => {
       user.authenticateUser(authDetails, {
         onSuccess: (data) => {
           console.log('[USER] Authentication succeeded: ', data);
-
-          // TODO Change to check if user is authenticated from session instead of localStorage
-          localStorage.setItem('isAuthenticated', 'true');
 
           resolve(data);
         },
