@@ -45,7 +45,7 @@ Login uses the authenticateUser() hook from the `amazon-cognito-identity-js` pac
 
 Protecting unauthenticate users from accessing parts of the application is necessary to keep the application secure. This is managed by using a custom component alongside the [React Router configuration](https://github.com/eric-bach/pecuniary/blob/cqrs-v1/client/src/App.tsx#L28)
 
-The [ProtectedRoute](https://github.com/eric-bach/pecuniary/blob/cqrs-v1/client/src/components/ProtectedRoute.tsx) component checks the `localStorage` to determine if a user is authenticated before rendering the requested component. If the user is not authenticated, this component redirects to the `/login` page.
+The [ProtectedRoute](https://github.com/eric-bach/pecuniary/blob/cqrs-v1/client/src/components/ProtectedRoute.tsx) component checks the Cognito AccessToken in the `localStorage` to determine if a user is authenticated before rendering the requested component. If the user is not authenticated, this component redirects to the `/login` page.
 
 ## Database
 

@@ -27,7 +27,7 @@
 
 <p align="center">
   <a href="#getting-started">Getting Started</a> |
-  <a href="ARCHITECTURE.md">CQRS Architecture</a> |
+  <a href="ARCHITECTURE.md">Architecture</a> |
   <a href="#deployment">Development</a> |
   <a href="https://trello.com/b/7lA2gwTs/pecuniary">Trello</a> |
   <a href="#project-resources">Resources</a>
