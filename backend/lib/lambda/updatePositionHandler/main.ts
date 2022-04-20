@@ -25,7 +25,7 @@ exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>
 async function getTransactions(detail: CreateTransactionInput): Promise<TransactionReadModel[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'transactionDate-index',
+    IndexName: 'transactionDate-lsi',
     ScanIndexForward: true,
     KeyConditionExpression: 'userId = :v1',
     FilterExpression: 'aggregateId = :v2 AND entity = :v3 AND symbol = :v4',
@@ -53,7 +53,7 @@ async function getTransactions(detail: CreateTransactionInput): Promise<Transact
 async function getPosition(detail: CreateTransactionInput): Promise<PositionReadModel> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'aggregateId-index',
+    IndexName: 'aggregateId-lsi',
     KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
     FilterExpression: 'entity = :v3 AND symbol = :v4',
     ExpressionAttributeValues: {

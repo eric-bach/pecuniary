@@ -6,7 +6,7 @@ import { useQuery, useSubscription } from '@apollo/client';
 import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
 import AccountSummary from './AccountSummary';
-import { ACCOUNT_SUBSCRIPTION, GET_ACCOUNT_BY_USER } from './graphql/graphql';
+import { GET_ACCOUNTS } from './graphql/graphql';
 
 import { CognitoUserSession } from '../types/CognitoUserSession';
 import { AccountReadModel } from './types/Account';
@@ -19,37 +19,36 @@ const Accounts = () => {
     error,
     loading,
     refetch,
-  } = useQuery(GET_ACCOUNT_BY_USER, {
+  } = useQuery(GET_ACCOUNTS, {
     variables: { userId: userId },
     fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
   });
-  const { data: subscriptions } = useSubscription(ACCOUNT_SUBSCRIPTION);
+  //const { data: subscriptions } = useSubscription(ACCOUNT_SUBSCRIPTION);
   const { getSession } = useContext(UserContext);
 
   useEffect(() => {
-    // TEMP Force 1000ms delay in loading Account page to ensure backend updates
+    // Get the logged in user
     setTimeout(() => {
-      // Get the logged in username
       getSession().then((session: CognitoUserSession) => {
         setUserId(session.idToken.payload.email);
       });
 
-      console.log('[ACCOUNTS] Get username');
+      console.log('[ACCOUNTS] Get user:', userId);
       setLoading(false);
-    }, 500);
+    }, 0); // TEMP Force 500ms delay in loading Account page to ensure backend updates
   }, [getSession]);
 
-  useEffect(() => {
-    if (subscriptions) {
-      console.log('[ACCOUNTS] Event created: ', subscriptions);
+  // useEffect(() => {
+  //   if (subscriptions) {
+  //     console.log('[ACCOUNTS] Event created: ', subscriptions);
 
-      // TEMP Force 1000ms delay before re-loading Accounts to ensure backend updates
-      setTimeout(() => {
-        refetch();
-        console.log('[ACCOUNTS] Re-render components');
-      }, 2000);
-    }
-  }, [subscriptions, refetch]);
+  //     // TEMP Force 1000ms delay before re-loading Accounts to ensure backend updates
+  //     setTimeout(() => {
+  //       refetch();
+  //       console.log('[ACCOUNTS] Re-render components');
+  //     }, 2000);
+  //   }
+  // }, [subscriptions, refetch]);
 
   // TODO Improve the Error screen
   if (error) return <div>${JSON.stringify(error)}</div>; // You probably want to do more here!
@@ -59,15 +58,8 @@ const Accounts = () => {
     <Grid>
       <Grid.Column width={10}>
         <h2>
-          Accounts ({accounts.getAccountsByUser.length})
-          <Button
-            as={Link}
-            to='/accounts/new'
-            floated='right'
-            positive
-            content='Create Account'
-            data-test='create-account-button'
-          />
+          Accounts ({accounts.getAccounts.length})
+          <Button as={Link} to='/accounts/new' floated='right' positive content='Create Account' data-test='create-account-button' />
         </h2>
 
         <Button.Group>
@@ -76,8 +68,8 @@ const Accounts = () => {
         </Button.Group>
 
         {accounts &&
-          accounts.getAccountsByUser.map((d: AccountReadModel) => {
-            return <AccountSummary key={d.id} {...d} />;
+          accounts.getAccounts.map((d: AccountReadModel) => {
+            return <AccountSummary key={d.createdAt.toString()} {...d} />;
           })}
       </Grid.Column>
       <Grid.Column width={5}>

@@ -7,7 +7,7 @@ import NumberFormat from 'react-number-format';
 import Loading from '../../components/Loading';
 import Positions from '../Position/Positions';
 import TransactionList from '../Transaction/TransactionList';
-import { GET_POSITIONS_BY_ACCOUNT, GET_TRANSACTIONS_BY_ACCOUNT } from './graphql/graphql';
+import { GET_POSITIONS, GET_TRANSACTIONS } from './graphql/graphql';
 import { AccountProps } from './types/Account';
 
 const AccountDetail = (props: AccountProps) => {
@@ -16,30 +16,39 @@ const AccountDetail = (props: AccountProps) => {
     data: pos,
     error: posError,
     loading: posLoading,
-  } = useQuery(GET_POSITIONS_BY_ACCOUNT, {
-    variables: { accountId: account.id },
+  } = useQuery(GET_POSITIONS, {
+    variables: { userId: account.userId, aggregateId: account.aggregateId },
     fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
   });
   const {
     data: trans,
     error: transError,
     loading: transLoading,
-  } = useQuery(GET_TRANSACTIONS_BY_ACCOUNT, {
-    variables: { accountId: account.id },
+  } = useQuery(GET_TRANSACTIONS, {
+    variables: {
+      userId: account.userId,
+      aggregateId: account.aggregateId,
+    },
     fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
   });
 
   console.log('[ACCOUNT DETAIL] Account: ', account);
 
   // TODO Improve this Error page
-  if (posError || transError) return 'Error!'; // You probably want to do more here!
+  if (posError || transError)
+    return (
+      <>
+        <div>${posError}</div>
+        <div>${transError}</div>
+      </>
+    ); // You probably want to do more here!
   if (posLoading || transLoading) return <Loading />;
 
   console.log('[ACCOUNT DETAIL] Positions: ', pos);
   console.log('[ACCOUNT DETAIL] Transactions: ', trans);
 
   let netWorth = 0;
-  pos.getPositionsByAccountId.map((p: any) => {
+  pos.getPositions.map((p: any) => {
     netWorth += p.marketValue;
     return netWorth;
   });
@@ -50,8 +59,8 @@ const AccountDetail = (props: AccountProps) => {
       <h2>Account</h2>
       <Segment.Group>
         <Segment>
-          <Label as='span' color={`${account.accountType.name === 'RRSP' ? 'red' : 'blue'}`} ribbon>
-            {account.accountType.name}
+          <Label as='span' color={`${account.type === 'RRSP' ? 'red' : 'blue'}`} ribbon>
+            {account.type}
           </Label>
           <Item.Group>
             <Item>
@@ -59,28 +68,6 @@ const AccountDetail = (props: AccountProps) => {
                 <Item.Header>
                   <div>{account.name}</div>
                 </Item.Header>
-                <Item.Meta>
-                  Book Value:{' '}
-                  <NumberFormat
-                    value={account.bookValue}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'$'}
-                    decimalScale={2}
-                    fixedDecimalScale={true}
-                  />
-                </Item.Meta>
-                <Item.Meta>
-                  Market Value:{' '}
-                  <NumberFormat
-                    value={account.marketValue}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'$'}
-                    decimalScale={2}
-                    fixedDecimalScale={true}
-                  />
-                </Item.Meta>
                 <Item.Description>{account.description}</Item.Description>
               </Item.Content>
             </Item>
@@ -92,7 +79,7 @@ const AccountDetail = (props: AccountProps) => {
         {/* <h2>Summary</h2>
         <br /> */}
       </div>
-      <Positions positions={pos.getPositionsByAccountId} />
+      <Positions positions={pos.getPositions} />
       <br />
       <Button
         as={Link}
@@ -107,7 +94,7 @@ const AccountDetail = (props: AccountProps) => {
         content='Add Transaction'
         data-test='add-transaction-button'
       />
-      <TransactionList transactions={trans.getTransactionsByAccountId} />
+      <TransactionList transactions={trans.getTransactions} />
     </>
   );
 };

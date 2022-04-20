@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
-import { LIST_ACCOUNT_TYPES, CREATE_ACCOUNT, UPDATE_ACCOUNT } from './graphql/graphql';
+import { CREATE_ACCOUNT, UPDATE_ACCOUNT } from './graphql/graphql';
 
 import { CognitoUserSession } from '../types/CognitoUserSession';
 import { SelectList, SelectListItem } from '../types/SelectList';
@@ -17,7 +17,6 @@ import { AccountProps, CreateAccountInput, UpdateAccountInput } from './types/Ac
 const AccountForm = (props: AccountProps) => {
   const [account] = useState(props.location.state ? props.location.state.account : undefined);
   const [username, setUsername] = useState('');
-  const { data: accountTypes, error: accountTypesError, loading: accountTypesLoading } = useQuery(LIST_ACCOUNT_TYPES);
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
   const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
   const { getSession } = useContext(UserContext);
@@ -33,18 +32,13 @@ const AccountForm = (props: AccountProps) => {
     });
   }, [account, getSession]);
 
-  // TODO Improve this Error page
-  if (accountTypesError) return 'Error!';
-  if (accountTypesLoading) return <Loading />;
-
-  const accountTypesList: SelectList[] = [];
-  accountTypes.listAccountTypes.map((d: SelectListItem) => {
-    accountTypesList.push({ key: d.id, text: d.name, value: d.description });
-    return true;
-  });
+  const accountTypes: SelectList[] = [
+    { key: 'TFSA', text: 'TFSA', value: 'TFSA' },
+    { key: 'RRSP', text: 'RRSP', value: 'RRSP' },
+  ];
 
   const createUpdateAccount = (name: string, accountType: string, description: string) => {
-    const selectedAccountType: SelectList = accountTypesList.find((a) => a.value === accountType) ?? {
+    const selectedAccountType: SelectList = accountTypes.find((a) => a.value === accountType) ?? {
       key: '',
       text: '',
       value: '',
@@ -55,12 +49,10 @@ const AccountForm = (props: AccountProps) => {
 
       const params: CreateAccountInput = {
         createAccountInput: {
-          aggregateId: uuidv4(),
-          name: 'AccountCreatedEvent',
-          data: `{"name":"${name}","description":"${description}","bookValue":0,"marketValue":0,"accountType":{"id":"${selectedAccountType.key}","name":"${selectedAccountType.text}","description":"${selectedAccountType.value}"}}`,
-          version: 1,
           userId: `${username}`,
-          createdAt: new Date(),
+          type: `${selectedAccountType.value}`,
+          name: `${name}`,
+          description: `${description}`,
         },
       };
 
@@ -83,12 +75,11 @@ const AccountForm = (props: AccountProps) => {
 
       const params: UpdateAccountInput = {
         updateAccountInput: {
-          aggregateId: account.aggregateId,
-          name: 'AccountUpdatedEvent',
-          data: `{"id":"${account.id}","name":"${name}","description":"${description}","bookValue":${account.bookValue},"marketValue":${account.marketValue},"accountType":{"id":"${selectedAccountType.key}","name":"${selectedAccountType.text}","description":"${selectedAccountType.value}"}}`,
-          version: account.version + 1,
           userId: `${username}`,
-          createdAt: new Date(),
+          aggregateId: account.aggregateId,
+          type: `${selectedAccountType.value}`,
+          name: `${name}`,
+          description: `${description}`,
         },
       };
 
@@ -119,7 +110,7 @@ const AccountForm = (props: AccountProps) => {
             enableReinitialize
             initialValues={{
               name: account ? account.name : '',
-              accountType: account ? account.accountType.description : '',
+              accountType: account ? account.type : '',
               description: account ? account.description : '',
             }}
             onSubmit={(values, actions) => {
@@ -147,7 +138,7 @@ const AccountForm = (props: AccountProps) => {
                 id='accountType'
                 name='accountType'
                 label='Account Type'
-                options={accountTypesList}
+                options={accountTypes}
                 placeholder='Select an account type'
                 selection
                 errorPrompt

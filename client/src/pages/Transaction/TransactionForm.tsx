@@ -43,11 +43,7 @@ const FormDatePicker = () => {
 
 const TransactionForm = (props: AccountProps) => {
   const [username, setUsername] = useState('');
-  const {
-    data: transactionTypes,
-    error: transactionTypesError,
-    loading: transactionTypesLoading,
-  } = useQuery(LIST_TRANSACTION_TYPES);
+  const { data: transactionTypes, error: transactionTypesError, loading: transactionTypesLoading } = useQuery(LIST_TRANSACTION_TYPES);
   const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
   const { getSession } = useContext(UserContext);
 
@@ -72,9 +68,7 @@ const TransactionForm = (props: AccountProps) => {
     console.log('[TRANSACTION FORM] Creating Transaction...');
 
     const account = props.location.state.account;
-    const selectedTransactionType: SelectList = transactionTypesList.find(
-      (a) => a.value === values.transactionTypeName
-    ) ?? {
+    const selectedTransactionType: SelectList = transactionTypesList.find((a) => a.value === values.transactionTypeName) ?? {
       key: '',
       text: '',
       value: '',
@@ -91,7 +85,7 @@ const TransactionForm = (props: AccountProps) => {
       createTransactionInput: {
         aggregateId: account.aggregateId,
         name: 'TransactionCreatedEvent',
-        data: `{ "accountId": "${account.id}", "transactionDate": "${transactionDate}", "shares": ${shares}, "price": ${price}, "commission": ${commission}, "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
+        data: `{ "accountId": "${account.userId}", "transactionDate": "${transactionDate}", "shares": ${shares}, "price": ${price}, "commission": ${commission}, "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
         version: 1,
         userId: `${username}`,
         createdAt: new Date(),
@@ -146,9 +140,7 @@ const TransactionForm = (props: AccountProps) => {
                   symbol: Yup.string()
                     .required('Please enter a symbol')
                     .matches(/[A-Za-z]{2,4}[\S]*/, 'Stock symbol is invalid'),
-                  shares: Yup.number()
-                    .required('Please enter the number of shares')
-                    .min(1, 'Number of shares is invalid'),
+                  shares: Yup.number().required('Please enter the number of shares').min(1, 'Number of shares is invalid'),
                   price: Yup.number().required('Please enter the share price').min(0.01, 'Price is invalid'),
                   commission: Yup.string().required('Please enter the commission').min(0, 'Commission is invalid'),
                 })}
@@ -167,14 +159,7 @@ const TransactionForm = (props: AccountProps) => {
                   <Input id='symbol' fluid name='symbol' label='Symbol' placeholder='Security symbol' errorPrompt />
                   <Input id='shares' fluid name='shares' label='Shares' placeholder='Number of shares' errorPrompt />
                   <Input id='price' fluid name='price' label='Price' placeholder='Price per share' errorPrompt />
-                  <Input
-                    id='commision'
-                    fluid
-                    name='commission'
-                    label='Commission'
-                    placeholder='Commission of trade'
-                    errorPrompt
-                  />
+                  <Input id='commision' fluid name='commission' label='Commission' placeholder='Commission of trade' errorPrompt />
                   <SubmitButton fluid primary>
                     Submit
                   </SubmitButton>

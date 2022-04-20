@@ -116,7 +116,7 @@ const Dummy = () => {
     <div>
       <h1>Accounts: {listData.getAccountsByUser.length}</h1>
       {listData.getAccountsByUser.map((d: AccountReadModel) => {
-        return <div key={d.id}>{d.id}</div>;
+        //return <div key={d.id}>{d.id}</div>;
       })}
       <h3>New Account: {JSON.stringify(subData)}</h3>
       {subscribeToMore({

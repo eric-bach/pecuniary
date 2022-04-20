@@ -9,22 +9,15 @@ export type TransactionsProps = {
 };
 
 export type TransactionReadModel = {
-  id: string;
+  userId: string;
   aggregateId: string;
-  version: number;
+  type: string;
   transactionDate: string;
+  symbol: string;
   shares: number;
   price: number;
   commission: number;
-  symbol: string;
-  transactionType: {
-    id: string;
-    name: string;
-    description: string;
-  };
-  userId: string;
   createdAt: Date;
-  updatedAt: Date;
 };
 
 export type TransactionFormValues = {

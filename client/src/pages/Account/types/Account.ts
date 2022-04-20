@@ -1,15 +1,27 @@
-import { Event } from '../../types/Event';
-
 export type CreateAccountInput = {
-  createAccountInput: Event;
+  createAccountInput: {
+    userId: string;
+    type: string;
+    name: string;
+    description: string;
+  };
 };
 
 export type UpdateAccountInput = {
-  updateAccountInput: Event;
+  updateAccountInput: {
+    userId: string;
+    aggregateId: string;
+    type: string;
+    name: string;
+    description: string;
+  };
 };
 
 export type DeleteAccountInput = {
-  deleteAccountInput: Event;
+  deleteAccountInput: {
+    userId: string;
+    aggregateId: string;
+  };
 };
 
 export type AccountProps = {
@@ -21,19 +33,11 @@ export type AccountProps = {
 };
 
 export type AccountReadModel = {
-  id: string;
+  userId: string;
   aggregateId: string;
-  version: number;
+  type: string;
   name: string;
   description: string;
-  bookValue: number;
-  marketValue: number;
-  accountType: {
-    id: string;
-    name: string;
-    description: string;
-  };
-  userId: string;
   createdAt: Date;
   updatedAt: Date;
 };

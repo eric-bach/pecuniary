@@ -8,7 +8,7 @@ async function getTransactions(userId: string, aggregateId: string) {
 
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'aggregateId-index',
+    IndexName: 'aggregateId-lsi',
     //TODO How to handle more than 100?
     Limit: 100,
     KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',

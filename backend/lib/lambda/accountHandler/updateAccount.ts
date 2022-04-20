@@ -10,7 +10,7 @@ async function updateAccount(input: UpdateAccountInput) {
   // Get account
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'aggregateId-index',
+    IndexName: 'aggregateId-lsi',
     KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
     FilterExpression: 'entity = :v3',
     ExpressionAttributeValues: {

@@ -244,23 +244,35 @@ export class PecuniaryStack extends Stack {
     });
     // LSIs for Data table
     dataTable.addLocalSecondaryIndex({
-      indexName: 'aggregateId-index',
+      indexName: 'aggregateId-lsi',
       sortKey: {
         name: 'aggregateId',
         type: AttributeType.STRING,
       },
     });
     dataTable.addLocalSecondaryIndex({
-      indexName: 'entity-index',
+      indexName: 'entity-lsi',
       sortKey: {
         name: 'entity',
         type: AttributeType.STRING,
       },
     });
     dataTable.addLocalSecondaryIndex({
-      indexName: 'transactionDate-index',
+      indexName: 'transactionDate-lsi',
       sortKey: {
         name: 'transactionDate',
+        type: AttributeType.STRING,
+      },
+    });
+    // GSIs for Data Table
+    dataTable.addGlobalSecondaryIndex({
+      indexName: 'aggregateId-gsi',
+      partitionKey: {
+        name: 'aggregateId',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'createdAt',
         type: AttributeType.STRING,
       },
     });
@@ -306,13 +318,12 @@ export class PecuniaryStack extends Stack {
         actions: ['dynamodb:Query'],
         resources: [
           dataTable.tableArn,
-          dataTable.tableArn + '/index/aggregateId-index',
-          dataTable.tableArn + '/index/entity-index',
-          dataTable.tableArn + '/index/transactionDate-index',
+          dataTable.tableArn + '/index/aggregateId-lsi',
+          dataTable.tableArn + '/index/entity-lsi',
+          dataTable.tableArn + '/index/transactionDate-lsi',
         ],
       })
     );
-
     // Set the new Lambda function as a data source for the AppSync API
     const accountHandlerDataSource = api.addLambdaDataSource('accountDataSource', accountHandlerFunction);
     // Resolvers
@@ -360,7 +371,7 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-index', dataTable.tableArn + '/index/entity-index'],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/entity-lsi'],
       })
     );
     // Add permission to send to EventBridge
@@ -371,7 +382,6 @@ export class PecuniaryStack extends Stack {
         resources: [eventBus.eventBusArn],
       })
     );
-
     // Set the new Lambda function as a data source for the AppSync API
     const transactionHandlerDataSource = api.addLambdaDataSource('transactionDataSource', transactionHandlerFunction);
     // Resolvers
@@ -390,6 +400,36 @@ export class PecuniaryStack extends Stack {
     transactionHandlerDataSource.createResolver({
       typeName: 'Mutation',
       fieldName: 'deleteTransaction',
+    });
+
+    // Resolver for Positions
+    const positionHandlerFunction = new Function(this, 'PositionHandler', {
+      functionName: `${props.appName}-${props.envName}-PositionHandler`,
+      runtime: Runtime.NODEJS_14_X,
+      handler: 'main.handler',
+      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'positionHandler')),
+      memorySize: 512,
+      timeout: Duration.seconds(10),
+      environment: {
+        DATA_TABLE_NAME: dataTable.tableName,
+        REGION: REGION,
+      },
+      //deadLetterQueue: commandHandlerQueue,
+    });
+    // Add permissions to DynamoDB table
+    positionHandlerFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:Query'],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/entity-lsi'],
+      })
+    );
+    // Set the new Lambda function as a data source for the AppSync API
+    const positionHandlerDataSource = api.addLambdaDataSource('positionDataSource', positionHandlerFunction);
+    // Resolvers
+    positionHandlerDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getPositions',
     });
 
     /***
@@ -417,9 +457,9 @@ export class PecuniaryStack extends Stack {
         actions: ['dynamodb:Query'],
         resources: [
           dataTable.tableArn,
-          dataTable.tableArn + '/index/aggregateId-index',
-          dataTable.tableArn + '/index/entity-index',
-          dataTable.tableArn + '/index/transactionDate-index',
+          dataTable.tableArn + '/index/aggregateId-lsi',
+          dataTable.tableArn + '/index/entity-lsi',
+          dataTable.tableArn + '/index/transactionDate-lsi',
         ],
       })
     );
@@ -594,6 +634,7 @@ export class PecuniaryStack extends Stack {
     new CfnOutput(this, 'CognitoHandlerFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
     new CfnOutput(this, 'AccountHandlerFunctionArn', { value: accountHandlerFunction.functionArn });
     new CfnOutput(this, 'TransactionHandlerFunctionArn', { value: transactionHandlerFunction.functionArn });
+    new CfnOutput(this, 'PositionHandlerFunctionArn', { value: positionHandlerFunction.functionArn });
     new CfnOutput(this, 'UpdatePositionHandlerFunctionArn', { value: updatePositionHandlerFunction.functionArn });
   }
 }
