@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Button } from 'semantic-ui-react';
-import { useQuery, useSubscription } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
@@ -14,41 +14,27 @@ import { AccountReadModel } from './types/Account';
 const Accounts = () => {
   const [isLoading, setLoading] = useState(true);
   const [userId, setUserId] = useState('');
-  const {
+  var {
     data: accounts,
     error,
     loading,
-    refetch,
   } = useQuery(GET_ACCOUNTS, {
     variables: { userId: userId },
+    pollInterval: 3000, // Refresh accounts every 3 seconds
     fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
   });
-  //const { data: subscriptions } = useSubscription(ACCOUNT_SUBSCRIPTION);
+
   const { getSession } = useContext(UserContext);
 
   useEffect(() => {
     // Get the logged in user
-    setTimeout(() => {
-      getSession().then((session: CognitoUserSession) => {
-        setUserId(session.idToken.payload.email);
-      });
+    getSession().then((session: CognitoUserSession) => {
+      setUserId(session.idToken.payload.email);
+      console.log('[ACCOUNTS] Get user:', session.idToken.payload.email);
+    });
 
-      console.log('[ACCOUNTS] Get user:', userId);
-      setLoading(false);
-    }, 0); // TEMP Force 500ms delay in loading Account page to ensure backend updates
+    setLoading(false);
   }, [getSession]);
-
-  // useEffect(() => {
-  //   if (subscriptions) {
-  //     console.log('[ACCOUNTS] Event created: ', subscriptions);
-
-  //     // TEMP Force 1000ms delay before re-loading Accounts to ensure backend updates
-  //     setTimeout(() => {
-  //       refetch();
-  //       console.log('[ACCOUNTS] Re-render components');
-  //     }, 2000);
-  //   }
-  // }, [subscriptions, refetch]);
 
   // TODO Improve the Error screen
   if (error) return <div>${JSON.stringify(error)}</div>; // You probably want to do more here!

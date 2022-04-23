@@ -130,7 +130,7 @@ const TransactionForm = (props: AccountProps) => {
                   actions.setSubmitting(false);
                 }}
                 validationSchema={Yup.object().shape({
-                  transactionTypeName: Yup.string().required('Please select a transaction type'),
+                  type: Yup.string().required('Please select a transaction type'),
                   transactionDate: Yup.string().required('Please enter a transaction date'),
                   symbol: Yup.string()
                     .required('Please enter a symbol')
@@ -142,8 +142,8 @@ const TransactionForm = (props: AccountProps) => {
               >
                 <Form size='large'>
                   <Select
-                    id='transactionTypeName'
-                    name='transactionTypeName'
+                    id='type'
+                    name='type'
                     label='Transaction Type'
                     options={transactionTypes}
                     placeholder='Select a transaction type'
