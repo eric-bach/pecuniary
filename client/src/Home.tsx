@@ -24,7 +24,7 @@ const Home = () => {
           <Link to='/home'>
             <Button inverted className='site-btn'>
               Get started
-              <Icon />
+              <Icon name='angle double right' />
             </Button>
           </Link>
 
@@ -103,9 +103,7 @@ const Home = () => {
               <i className='ti-mobile'></i>
               <div className='feature-content'>
                 <h4>Technology</h4>
-                <p>
-                  Built on the latest technology stack. You can be assured you will always receive the latest updates.
-                </p>
+                <p>Built on the latest technology stack. You can be assured you will always receive the latest updates.</p>
               </div>
             </div>
             <div className='col-md-6 col-lg-4 feature'>
@@ -113,8 +111,8 @@ const Home = () => {
               <div className='feature-content'>
                 <h4>Safe & Secure</h4>
                 <p>
-                  Your security and trust are important to us. We're committed to protecting your account with the
-                  highest security standards.
+                  Your security and trust are important to us. We're committed to protecting your account with the highest security
+                  standards.
                 </p>
               </div>
             </div>
@@ -143,10 +141,7 @@ const Home = () => {
               <i className='ti-panel'></i>
               <div className='feature-content'>
                 <h4>Detailed Analytics</h4>
-                <p>
-                  Pecuniary is more than a tech platform. It provides you with detailed analytics of your portolio
-                  performance.
-                </p>
+                <p>Pecuniary is more than a tech platform. It provides you with detailed analytics of your portolio performance.</p>
               </div>
             </div>
           </div>
@@ -157,9 +152,7 @@ const Home = () => {
         <div id='getting-started' className='container'>
           <div className='section-title text-center'>
             <h2>Get Started With Pecuniary</h2>
-            <p>
-              Start learning about Pecuniary with interactive tutorials. It’s fun, easy, and takes only a few minutes!
-            </p>
+            <p>Start learning about Pecuniary with interactive tutorials. It’s fun, easy, and takes only a few minutes!</p>
           </div>
           <div className='row'>
             <div className='col-md-4 process'>

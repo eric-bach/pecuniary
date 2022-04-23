@@ -97,7 +97,7 @@ const TransactionForm = (props: AccountProps) => {
 
         setTimeout(() => {
           window.location.pathname = '/accounts';
-        }, 1000);
+        }, 0);
       })
       .catch((err) => {
         console.error('[TRANSACTION FORM] Error occurred creating transaction');
