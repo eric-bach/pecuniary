@@ -1,17 +1,15 @@
 import { useState, useContext, useEffect } from 'react';
 import { Grid, Segment, Header } from 'semantic-ui-react';
-import { useQuery, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Formik } from 'formik';
 import { Form, Input, SubmitButton, Select } from 'formik-semantic-ui-react';
 import * as Yup from 'yup';
-import { v4 as uuidv4 } from 'uuid';
 
 import { UserContext } from '../Auth/User';
-import Loading from '../../components/Loading';
 import { CREATE_ACCOUNT, UPDATE_ACCOUNT } from './graphql/graphql';
 
 import { CognitoUserSession } from '../types/CognitoUserSession';
-import { SelectList, SelectListItem } from '../types/SelectList';
+import { SelectList } from '../types/SelectList';
 import { AccountProps, CreateAccountInput, UpdateAccountInput } from './types/Account';
 
 const AccountForm = (props: AccountProps) => {

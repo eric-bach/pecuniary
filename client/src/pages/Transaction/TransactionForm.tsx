@@ -1,17 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
 import { Grid, Segment, Header } from 'semantic-ui-react';
-import { useQuery, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Formik, Field } from 'formik';
 import { Form, SubmitButton, Select, Input } from 'formik-semantic-ui-react';
 import DatePicker from 'react-datepicker';
 import * as Yup from 'yup';
 
 import { UserContext } from '../Auth/User';
-import Loading from '../../components/Loading';
-import { LIST_TRANSACTION_TYPES, CREATE_TRANSACTION } from './graphql/graphql';
+import { CREATE_TRANSACTION } from './graphql/graphql';
 
 import { CognitoUserSession } from '../types/CognitoUserSession';
-import { SelectList, SelectListItem } from '../types/SelectList';
+import { SelectList } from '../types/SelectList';
 import { AccountProps } from '../Account/types/Account';
 import { CreateTransactionInput, TransactionFormValues } from '../Transaction/types/Transaction';
 
@@ -43,7 +42,6 @@ const FormDatePicker = () => {
 
 const TransactionForm = (props: AccountProps) => {
   const [username, setUsername] = useState('');
-  const { data: transactionTypes, error: transactionTypesError, loading: transactionTypesLoading } = useQuery(LIST_TRANSACTION_TYPES);
   const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
   const { getSession } = useContext(UserContext);
 
@@ -54,21 +52,16 @@ const TransactionForm = (props: AccountProps) => {
     });
   }, [getSession]);
 
-  // TODO Improve this Error page
-  if (transactionTypesError) return 'Error!'; // You probably want to do more here!
-  if (transactionTypesLoading) return <Loading />;
-
-  const transactionTypesList: SelectList[] = [];
-  transactionTypes.listTransactionTypes.map((d: SelectListItem) => {
-    transactionTypesList.push({ key: d.id, text: d.name, value: d.description });
-    return true;
-  });
+  const transactionTypes: SelectList[] = [
+    { key: 'Buy', text: 'Buy', value: 'Buy' },
+    { key: 'Sell', text: 'Sell', value: 'Sell' },
+  ];
 
   const createTransaction = (values: TransactionFormValues) => {
     console.log('[TRANSACTION FORM] Creating Transaction...');
 
     const account = props.location.state.account;
-    const selectedTransactionType: SelectList = transactionTypesList.find((a) => a.value === values.transactionTypeName) ?? {
+    const selectedTransactionType: SelectList = transactionTypes.find((a) => a.value === values.transactionTypeName) ?? {
       key: '',
       text: '',
       value: '',
@@ -83,12 +76,14 @@ const TransactionForm = (props: AccountProps) => {
 
     const params: CreateTransactionInput = {
       createTransactionInput: {
-        aggregateId: account.aggregateId,
-        name: 'TransactionCreatedEvent',
-        data: `{ "accountId": "${account.userId}", "transactionDate": "${transactionDate}", "shares": ${shares}, "price": ${price}, "commission": ${commission}, "symbol": "${values.symbol}", "transactionType":{"id":"${selectedTransactionType.key}","name":"${selectedTransactionType.text}","description":"${selectedTransactionType.value}"} }`,
-        version: 1,
         userId: `${username}`,
-        createdAt: new Date(),
+        aggregateId: account.aggregateId,
+        type: selectedTransactionType.value,
+        transactionDate: transactionDate,
+        symbol: values.symbol,
+        shares: shares,
+        price: price,
+        commission: commission,
       },
     };
 
@@ -150,7 +145,7 @@ const TransactionForm = (props: AccountProps) => {
                     id='transactionTypeName'
                     name='transactionTypeName'
                     label='Transaction Type'
-                    options={transactionTypesList}
+                    options={transactionTypes}
                     placeholder='Select a transaction type'
                     selection
                     errorPrompt

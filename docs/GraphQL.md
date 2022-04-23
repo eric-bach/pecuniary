@@ -48,7 +48,6 @@ mutation DeleteAccount {
   }
 }
 
-
 mutation CreateTransaction {
 	createTransaction(createTransactionInput:{
     userId: "eric"

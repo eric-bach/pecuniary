@@ -1,7 +1,14 @@
-import { Event } from '../../types/Event';
-
 export type CreateTransactionInput = {
-  createTransactionInput: Event;
+  createTransactionInput: {
+    userId: string;
+    aggregateId: string;
+    type: string;
+    transactionDate: string;
+    symbol: string;
+    shares: number;
+    price: number;
+    commission: number;
+  };
 };
 
 export type TransactionsProps = {

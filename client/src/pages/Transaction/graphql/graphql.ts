@@ -1,24 +1,15 @@
 import { gql } from '@apollo/client';
 
-export const LIST_TRANSACTION_TYPES = gql`
-  query ListTransactionTypes {
-    listTransactionTypes {
-      id
-      name
-      description
-    }
-  }
-`;
-
 export const CREATE_TRANSACTION = gql`
-  mutation CreateTransaction($createTransactionInput: CreateEventInput!) {
-    createEvent(event: $createTransactionInput) {
-      id
-      aggregateId
-      name
-      version
-      data
+  mutation CreateTransaction($createTransactionInput: CreateTransactionInput!) {
+    createTransaction(createTransactionInput: $createTransactionInput) {
       userId
+      aggregateId
+      entity
+      symbol
+      shares
+      price
+      commission
       createdAt
     }
   }
