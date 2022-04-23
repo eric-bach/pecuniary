@@ -8,6 +8,8 @@ export const GET_ACCOUNTS = gql`
       type
       name
       description
+      bookValue
+      marketValue
       createdAt
     }
   }

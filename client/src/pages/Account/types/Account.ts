@@ -38,6 +38,8 @@ export type AccountReadModel = {
   type: string;
   name: string;
   description: string;
+  bookValue: number;
+  marketValue: number;
   createdAt: Date;
   updatedAt: Date;
 };

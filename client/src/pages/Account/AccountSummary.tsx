@@ -61,25 +61,25 @@ const AccountSummary = (account: AccountReadModel) => {
                 </Item.Header>
                 <Item.Meta>
                   Book Value:{' '}
-                  {/* <NumberFormat
+                  <NumberFormat
                     value={account.bookValue}
                     displayType={'text'}
                     thousandSeparator={true}
                     prefix={'$'}
                     decimalScale={2}
                     fixedDecimalScale={true}
-                  /> */}
+                  />
                 </Item.Meta>
                 <Item.Meta>
                   Market Value:{' '}
-                  {/* <NumberFormat
+                  <NumberFormat
                     value={account.marketValue}
                     displayType={'text'}
                     thousandSeparator={true}
                     prefix={'$'}
                     decimalScale={2}
                     fixedDecimalScale={true}
-                  /> */}
+                  />
                 </Item.Meta>
                 <Item.Description>{account.description}</Item.Description>
                 <Item.Extra style={{ position: relative, top: '-138px' }}>

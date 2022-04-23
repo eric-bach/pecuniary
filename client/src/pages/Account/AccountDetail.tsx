@@ -69,6 +69,28 @@ const AccountDetail = (props: AccountProps) => {
                   <div>{account.name}</div>
                 </Item.Header>
                 <Item.Description>{account.description}</Item.Description>
+                <Item.Meta>
+                  Book Value:{' '}
+                  <NumberFormat
+                    value={account.bookValue}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
+                </Item.Meta>
+                <Item.Meta>
+                  Market Value:{' '}
+                  <NumberFormat
+                    value={account.marketValue}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
+                </Item.Meta>
               </Item.Content>
             </Item>
           </Item.Group>
