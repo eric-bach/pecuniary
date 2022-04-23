@@ -33,5 +33,5 @@ export type TransactionFormValues = {
   shares: number;
   symbol: string;
   transactionDate: Date;
-  transactionTypeName: string;
+  type: string;
 };

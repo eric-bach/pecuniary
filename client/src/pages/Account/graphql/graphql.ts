@@ -19,11 +19,12 @@ export const GET_POSITIONS = gql`
   query GetPositions($userId: String!, $aggregateId: String!) {
     getPositions(userId: $userId, aggregateId: $aggregateId) {
       userId
+      createdAt
       aggregateId
       symbol
+      description
       exchange
       currency
-      symbol
       shares
       acb
       bookValue

@@ -61,7 +61,7 @@ const TransactionForm = (props: AccountProps) => {
     console.log('[TRANSACTION FORM] Creating Transaction...');
 
     const account = props.location.state.account;
-    const selectedTransactionType: SelectList = transactionTypes.find((a) => a.value === values.transactionTypeName) ?? {
+    const selectedTransactionType: SelectList = transactionTypes.find((a) => a.value === values.type) ?? {
       key: '',
       text: '',
       value: '',
@@ -116,7 +116,7 @@ const TransactionForm = (props: AccountProps) => {
               <Formik
                 enableReinitialize
                 initialValues={{
-                  transactionTypeName: '',
+                  type: '',
                   transactionDate: new Date(),
                   symbol: '',
                   shares: 0,
