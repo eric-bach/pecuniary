@@ -8,15 +8,15 @@ async function getTransactions(userId: string, aggregateId: string) {
 
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'aggregateId-lsi',
+    IndexName: 'aggregateId-gsi',
     //TODO How to handle more than 100?
     Limit: 100,
-    KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
-    FilterExpression: 'entity = :v3',
+    ScanIndexForward: false,
+    KeyConditionExpression: 'aggregateId = :v1',
+    FilterExpression: 'entity = :v2',
     ExpressionAttributeValues: {
-      ':v1': { S: userId },
-      ':v2': { S: aggregateId },
-      ':v3': { S: 'transaction' },
+      ':v1': { S: aggregateId },
+      ':v2': { S: 'transaction' },
     },
   };
   var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));

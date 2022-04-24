@@ -134,6 +134,20 @@ query GetTransactions {
     commission
   }
 }
+
+
+query GetAllPositions {
+  getAllPositions(userId: "ebach83@gmail.com") {
+  	userId
+    createdAt
+    aggregateId
+    symbol
+    currency
+    shares
+    marketValue
+    bookValue
+  }
+}
 ```
 
 # Queries and Mutations

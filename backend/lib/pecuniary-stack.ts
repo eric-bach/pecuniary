@@ -248,7 +248,7 @@ export class PecuniaryStack extends Stack {
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'createdAt',
+        name: 'transactionDate',
         type: AttributeType.STRING,
       },
     });
@@ -347,7 +347,12 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/entity-lsi'],
+        resources: [
+          dataTable.tableArn,
+          dataTable.tableArn + '/index/aggregateId-lsi',
+          dataTable.tableArn + '/index/entity-lsi',
+          dataTable.tableArn + '/index/aggregateId-gsi',
+        ],
       })
     );
     // Add permission to send to EventBridge
