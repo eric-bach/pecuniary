@@ -407,6 +407,10 @@ export class PecuniaryStack extends Stack {
       typeName: 'Query',
       fieldName: 'getPositions',
     });
+    positionsResolverDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getAllPositions',
+    });
 
     /***
      *** AWS Lambda - Event Handlers

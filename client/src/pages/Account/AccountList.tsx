@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Grid, Button } from 'semantic-ui-react';
+import { Grid, Button, Divider } from 'semantic-ui-react';
 import { useQuery } from '@apollo/client';
 
 import { UserContext } from '../Auth/User';
@@ -14,7 +14,7 @@ import { AccountReadModel } from './types/Account';
 const Accounts = () => {
   const [isLoading, setLoading] = useState(true);
   const [userId, setUserId] = useState('');
-  var {
+  const {
     data: accounts,
     error,
     loading,
@@ -48,10 +48,7 @@ const Accounts = () => {
           <Button as={Link} to='/accounts/new' floated='right' positive content='Create Account' data-test='create-account-button' />
         </h2>
 
-        <Button.Group>
-          <Button labelPosition='left' icon='left chevron' content='Previous' />
-          <Button labelPosition='right' icon='right chevron' content='Next' />
-        </Button.Group>
+        <Divider hidden />
 
         {accounts &&
           accounts.getAccounts.map((d: AccountReadModel) => {
