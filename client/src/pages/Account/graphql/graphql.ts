@@ -1,48 +1,30 @@
 import { gql } from '@apollo/client';
 
-export const LIST_ACCOUNT_TYPES = gql`
-  query ListAccountTypes {
-    listAccountTypes {
-      id
-      name
-      description
-    }
-  }
-`;
-
-export const GET_ACCOUNT_BY_USER = gql`
-  query getAccountsByUser($userId: String!) {
-    getAccountsByUser(userId: $userId) {
-      id
+export const GET_ACCOUNTS = gql`
+  query GetAccounts($userId: String!) {
+    getAccounts(userId: $userId) {
+      userId
       aggregateId
-      version
+      type
       name
       description
       bookValue
       marketValue
-      userId
       createdAt
-      updatedAt
-      accountType {
-        id
-        name
-        description
-      }
     }
   }
 `;
 
-export const GET_POSITIONS_BY_ACCOUNT = gql`
-  query getPositionsByAccountId($accountId: ID!) {
-    getPositionsByAccountId(accountId: $accountId) {
-      id
+export const GET_POSITIONS = gql`
+  query GetPositions($userId: String!, $aggregateId: String!) {
+    getPositions(userId: $userId, aggregateId: $aggregateId) {
+      userId
+      createdAt
       aggregateId
-      version
       symbol
-      exchange
-      country
-      name
       description
+      exchange
+      currency
       shares
       acb
       bookValue
@@ -51,80 +33,55 @@ export const GET_POSITIONS_BY_ACCOUNT = gql`
   }
 `;
 
-export const GET_TRANSACTIONS_BY_ACCOUNT = gql`
-  query getTransactionsByAccountId($accountId: ID!) {
-    getTransactionsByAccountId(accountId: $accountId) {
-      id
+export const GET_TRANSACTIONS = gql`
+  query GetTransactions($userId: String!, $aggregateId: String!) {
+    getTransactions(userId: $userId, aggregateId: $aggregateId) {
+      userId
       aggregateId
-      version
+      createdAt
+      type
       transactionDate
-      transactionType {
-        id
-        name
-        description
-      }
       symbol
       shares
       price
       commission
-      createdAt
-      updatedAt
     }
   }
 `;
 
 export const CREATE_ACCOUNT = gql`
-  mutation CreateAccount($createAccountInput: CreateEventInput!) {
-    createEvent(event: $createAccountInput) {
-      id
-      aggregateId
-      name
-      version
-      data
+  mutation CreateAccount($createAccountInput: CreateAccountInput!) {
+    createAccount(createAccountInput: $createAccountInput) {
       userId
+      aggregateId
+      entity
+      type
+      name
+      description
       createdAt
     }
   }
 `;
 
 export const UPDATE_ACCOUNT = gql`
-  mutation UpdateAccount($updateAccountInput: CreateEventInput!) {
-    createEvent(event: $updateAccountInput) {
-      aggregateId
-      name
-      version
-      data
+  mutation UpdateAccount($updateAccountInput: UpdateAccountInput!) {
+    updateAccount(updateAccountInput: $updateAccountInput) {
       userId
+      aggregateId
+      entity
+      type
+      name
+      description
       createdAt
     }
   }
 `;
 
 export const DELETE_ACCOUNT = gql`
-  mutation DeleteAccount($deleteAccountInput: CreateEventInput!) {
-    createEvent(event: $deleteAccountInput) {
-      id
-      aggregateId
-      name
-      version
-      data
+  mutation DeleteAccount($deleteAccountInput: DeleteAccountInput!) {
+    deleteAccount(deleteAccountInput: $deleteAccountInput) {
       userId
-      createdAt
-    }
-  }
-`;
-
-// TODO Update schema to include parameter to filter by name and userId
-export const ACCOUNT_SUBSCRIPTION = gql`
-  subscription OnCreateEvent {
-    onCreateEvent {
-      id
-      name
       aggregateId
-      version
-      data
-      userId
-      createdAt
     }
   }
 `;

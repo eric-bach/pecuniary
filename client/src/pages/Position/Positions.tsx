@@ -14,7 +14,8 @@ const Positions = (props: PositionsProps) => {
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Symbol</Table.HeaderCell>
-            <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell>Decription</Table.HeaderCell>
+            <Table.HeaderCell>Currency</Table.HeaderCell>
             <Table.HeaderCell>Shares</Table.HeaderCell>
             <Table.HeaderCell>ACB</Table.HeaderCell>
             <Table.HeaderCell>Book Value</Table.HeaderCell>
@@ -29,9 +30,10 @@ const Positions = (props: PositionsProps) => {
             const pl = p.marketValue - p.bookValue;
             const plPer = ((p.marketValue - p.bookValue) * 100) / p.bookValue;
             return (
-              <Table.Row key={p.id}>
+              <Table.Row key={p.createdAt.toString()}>
                 <Table.Cell>{p.symbol}</Table.Cell>
-                <Table.Cell>{p.name}</Table.Cell>
+                <Table.Cell>{p.description}</Table.Cell>
+                <Table.Cell>{p.currency}</Table.Cell>
                 <Table.Cell>{p.shares}</Table.Cell>
                 <Table.Cell>
                   <NumberFormat

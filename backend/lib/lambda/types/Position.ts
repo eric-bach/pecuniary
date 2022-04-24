@@ -15,3 +15,19 @@ export type PositionReadModel = {
   acb: number;
   lastTransactionDate: Date;
 };
+
+export type PositionAppSyncEvent = {
+  info: {
+    fieldName: string;
+  };
+  arguments: {
+    userId: string; //getPositions
+    aggregateId: string; //getPositions
+  };
+  identity: {
+    username: string;
+    claims: {
+      [key: string]: string[];
+    };
+  };
+};

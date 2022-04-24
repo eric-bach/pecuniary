@@ -48,7 +48,6 @@ mutation DeleteAccount {
   }
 }
 
-
 mutation CreateTransaction {
 	createTransaction(createTransactionInput:{
     userId: "eric"
@@ -133,6 +132,20 @@ query GetTransactions {
     shares
     price
     commission
+  }
+}
+
+
+query GetAllPositions {
+  getAllPositions(userId: "ebach83@gmail.com") {
+  	userId
+    createdAt
+    aggregateId
+    symbol
+    currency
+    shares
+    marketValue
+    bookValue
   }
 }
 ```

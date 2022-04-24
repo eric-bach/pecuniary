@@ -30,30 +30,10 @@ describe('Stack contains expected resources', () => {
   test('SQS Queues and SNS Topics', () => {
     template.hasResourceProperties(
       'AWS::SQS::Queue',
-      Match.objectLike({ QueueName: `pecuniary-eventBus-DeadLetterQueue-${props.envName}` })
-    );
-    template.hasResourceProperties(
-      'AWS::SQS::Queue',
       Match.objectLike({ QueueName: `pecuniary-eventHandler-DeadLetterQueue-${props.envName}` })
     );
-    template.hasResourceProperties('AWS::SNS::Topic', Match.objectLike({ TopicName: `pecuniary-eventBus-Topic-${props.envName}` }));
     template.hasResourceProperties('AWS::SNS::Topic', Match.objectLike({ TopicName: `pecuniary-eventHandler-Topic-${props.envName}` }));
     template.hasResourceProperties('AWS::SNS::Subscription', Match.objectLike({ Protocol: 'email' }));
-
-    template.hasResourceProperties(
-      'AWS::CloudWatch::Alarm',
-      Match.objectLike({
-        ComparisonOperator: 'GreaterThanOrEqualToThreshold',
-        EvaluationPeriods: 2,
-        AlarmName: `pecuniary-eventBus-Alarm-${props.envName}`,
-        DatapointsToAlarm: 1,
-        MetricName: 'NumberOfMessagesSent',
-        Namespace: 'AWS/SQS',
-        Period: 300,
-        Statistic: 'Average',
-        Threshold: 1,
-      })
-    );
 
     template.hasResourceProperties(
       'AWS::CloudWatch::Alarm',
@@ -119,29 +99,34 @@ describe('Stack contains expected resources', () => {
         Runtime: 'nodejs14.x',
       })
     );
-
     template.hasResourceProperties(
       'AWS::Lambda::Function',
       Match.objectLike({
-        FunctionName: `pecuniary-${props.envName}-AccountHandler`,
+        FunctionName: `pecuniary-${props.envName}-AccountsResolver`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-
     template.hasResourceProperties(
       'AWS::Lambda::Function',
       Match.objectLike({
-        FunctionName: `pecuniary-${props.envName}-TransactionHandler`,
+        FunctionName: `pecuniary-${props.envName}-TransactionsResolver`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })
     );
-
     template.hasResourceProperties(
       'AWS::Lambda::Function',
       Match.objectLike({
-        FunctionName: `pecuniary-${props.envName}-UpdatePositionHandler`,
+        FunctionName: `pecuniary-${props.envName}-PositionsResolver`,
+        Handler: 'main.handler',
+        Runtime: 'nodejs14.x',
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
+        FunctionName: `pecuniary-${props.envName}-UpdatePositions`,
         Handler: 'main.handler',
         Runtime: 'nodejs14.x',
       })

@@ -11,7 +11,7 @@ async function deleteAccount(input: DeleteAccountInput) {
   console.debug(`🕧 Getting all aggregates related to Account ${input.aggregateId}`);
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'aggregateId-index',
+    IndexName: 'aggregateId-lsi',
     // TODO Handle if more than 100 items
     //Limit: 100,
     KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',

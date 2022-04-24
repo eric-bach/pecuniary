@@ -19,7 +19,6 @@ type Data @model @aws_cognito_user_pools {
   acb: Float
   payee: String
   amount: Float
-  lastTransactionDate: AWSDate
 }
 
 input CreateAccountInput {
@@ -81,6 +80,8 @@ type DeleteResponse {
 type Query {
   getAccounts(userId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getTransactions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAllPositions(userId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {

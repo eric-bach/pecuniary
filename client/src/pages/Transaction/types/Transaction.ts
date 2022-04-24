@@ -1,7 +1,14 @@
-import { Event } from '../../types/Event';
-
 export type CreateTransactionInput = {
-  createTransactionInput: Event;
+  createTransactionInput: {
+    userId: string;
+    aggregateId: string;
+    type: string;
+    transactionDate: string;
+    symbol: string;
+    shares: number;
+    price: number;
+    commission: number;
+  };
 };
 
 export type TransactionsProps = {
@@ -9,22 +16,15 @@ export type TransactionsProps = {
 };
 
 export type TransactionReadModel = {
-  id: string;
+  userId: string;
   aggregateId: string;
-  version: number;
+  type: string;
   transactionDate: string;
+  symbol: string;
   shares: number;
   price: number;
   commission: number;
-  symbol: string;
-  transactionType: {
-    id: string;
-    name: string;
-    description: string;
-  };
-  userId: string;
   createdAt: Date;
-  updatedAt: Date;
 };
 
 export type TransactionFormValues = {
@@ -33,5 +33,5 @@ export type TransactionFormValues = {
   shares: number;
   symbol: string;
   transactionDate: Date;
-  transactionTypeName: string;
+  type: string;
 };

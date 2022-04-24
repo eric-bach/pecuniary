@@ -3,14 +3,13 @@ export type PositionsProps = {
 };
 
 export type PositionReadModel = {
-  id: string;
+  userId: string;
+  createdAt: Date;
   aggregateId: string;
-  version: number;
   symbol: string;
-  exchange: string;
-  country: string;
-  name: string;
   description: string;
+  exchange: string;
+  currency: string;
   shares: number;
   acb: number;
   bookValue: number;

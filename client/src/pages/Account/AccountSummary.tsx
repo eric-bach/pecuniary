@@ -21,12 +21,8 @@ const AccountSummary = (account: AccountReadModel) => {
 
     const params: DeleteAccountInput = {
       deleteAccountInput: {
-        aggregateId: account.aggregateId,
-        name: 'AccountDeletedEvent',
-        data: `{"id":"${account.id}"}`,
-        version: account.version + 1,
         userId: account.userId,
-        createdAt: new Date(),
+        aggregateId: account.aggregateId,
       },
     };
     deleteAccountMutation({
@@ -55,8 +51,8 @@ const AccountSummary = (account: AccountReadModel) => {
       <Segment.Group>
         <Segment>
           <Item.Group>
-            <Label as='span' color={`${account.accountType.name === 'RRSP' ? 'red' : 'blue'}`} ribbon>
-              {account.accountType.name}
+            <Label as='span' color={`${account.type === 'RRSP' ? 'red' : 'blue'}`} ribbon>
+              {account.type}
             </Label>
             <Item>
               <Item.Content>
