@@ -14,3 +14,26 @@ export const CREATE_TRANSACTION = gql`
     }
   }
 `;
+
+export const UPDATE_TRANSACTION = gql`
+  mutation UpdateTransaction($updateTransactionInput: UpdateTransactionInput!) {
+    updateTransaction(updateTransactionInput: $updateTransactionInput) {
+      userId
+      aggregateId
+      entity
+      symbol
+      shares
+      price
+      commission
+      createdAt
+    }
+  }
+`;
+
+export const DELETE_TRANSACTION = gql`
+  mutation DeleteTransaction($deleteTransactionInput: DeleteTransactionInput!) {
+    deleteTransaction(deleteTransactionInput: $deleteTransactionInput) {
+      aggregateId
+    }
+  }
+`;

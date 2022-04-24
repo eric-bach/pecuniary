@@ -140,7 +140,7 @@ async function savePosition(detail: CreateTransactionInput, shares: number, acb:
   let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
   if (result.$metadata.httpStatusCode === 200) {
-    console.log(`✅ Saved Position: { result: ${result}, items: ${item} }`);
+    console.log(`✅ Saved Position: { result: ${JSON.stringify(result)}, items: ${JSON.stringify(item)} }`);
     return result.Items;
   }
 
