@@ -21,13 +21,13 @@ function App() {
     <Router>
       <div style={{ overflow: 'auto', paddingBottom: '80px' }}>
         {/* Public site */}
-        <Route exact path='/' component={Home} />
+        <Route path='/' element={<Home />} />
 
         {/* Pecuniary app site */}
         <User>
           <NavBar />
-          <Route exact path='/login' component={Login} />
-          <Route exact path='/signup' component={Signup} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
 
           {/* Authenticated sites */}
           <Container className='main' style={{ paddingTop: '30px' }}>
