@@ -15,6 +15,7 @@ import AccountDetail from './pages/Account/AccountDetail';
 import TransactionForm from './pages/Transaction/TransactionForm';
 
 import 'semantic-ui-css/semantic.min.css';
+import TransactionDetail from './pages/Transaction/TransactionDetail';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <ProtectedRoute path={['/accounts/new', '/accounts/edit/:id']} component={AccountForm} />
             <ProtectedRoute path={['/accounts/view/:id']} component={AccountDetail} />
             <ProtectedRoute path='/transactions/new' component={TransactionForm} />
+            <ProtectedRoute path='/transactions/view/:id' component={TransactionDetail} />
           </Container>
         </User>
       </div>

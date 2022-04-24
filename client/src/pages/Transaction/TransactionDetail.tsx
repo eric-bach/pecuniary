@@ -1,20 +1,16 @@
-import { useContext, useEffect, useState } from 'react';
-import { Grid, Segment, Header } from 'semantic-ui-react';
-import { useMutation } from '@apollo/client';
-import { Formik, Field } from 'formik';
-import { Form, SubmitButton, Select, Input } from 'formik-semantic-ui-react';
+import { useState } from 'react';
+import { Grid, Header, Segment } from 'semantic-ui-react';
+import { Field, Formik } from 'formik';
+import { Form, SubmitButton, ResetButton, Select, Input } from 'formik-semantic-ui-react';
 import DatePicker from 'react-datepicker';
 import * as Yup from 'yup';
 
-import { UserContext } from '../Auth/User';
-import { CREATE_TRANSACTION } from './graphql/graphql';
-
-import { CognitoUserSession } from '../types/CognitoUserSession';
 import { SelectList } from '../types/SelectList';
-import { AccountProps } from '../Account/types/Account';
-import { CreateTransactionInput, TransactionFormValues } from '../Transaction/types/Transaction';
+import { UPDATE_TRANSACTION, DELETE_TRANSACTION } from './graphql/graphql';
+import { TransactionFormValues, TransactionProps, UpdateTransactionInput, DeleteTransactionInput } from './types/Transaction';
 
 import 'react-datepicker/dist/react-datepicker.css';
+import { useMutation } from '@apollo/client';
 
 const FormDatePicker = () => {
   return (
@@ -40,67 +36,78 @@ const FormDatePicker = () => {
   );
 };
 
-const TransactionForm = (props: AccountProps) => {
-  const [username, setUsername] = useState('');
-  const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
-  const { getSession } = useContext(UserContext);
+const TransactionDetail = (props: TransactionProps) => {
+  const [transaction] = useState(props.location.state.transaction);
+  const [updateTransactionMutation] = useMutation(UPDATE_TRANSACTION);
+  const [deleteTransactionMutation] = useMutation(DELETE_TRANSACTION);
 
-  useEffect(() => {
-    // Get the logged in username
-    getSession().then((session: CognitoUserSession) => {
-      setUsername(session.idToken.payload.email);
-    });
-  }, [getSession]);
+  console.log('Transaction', transaction);
 
   const transactionTypes: SelectList[] = [
     { key: 'Buy', text: 'Buy', value: 'Buy' },
     { key: 'Sell', text: 'Sell', value: 'Sell' },
   ];
 
-  const createTransaction = (values: TransactionFormValues) => {
-    console.log('[TRANSACTION FORM] Creating Transaction...');
+  const updateTransaction = (values: TransactionFormValues) => {
+    console.log('[TRANSACTION DETAIL] Updating Transaction...');
 
-    const account = props.location.state.account;
     const selectedTransactionType: SelectList = transactionTypes.find((a) => a.value === values.type) ?? {
       key: '',
       text: '',
       value: '',
     };
 
-    // Convert transactionDate to AWSDate format
-    const transactionDate = values.transactionDate.toISOString().substring(0, 10) + 'Z';
-    // Sanitize numbers
-    const shares = parseFloat(values.shares.toString());
-    const price = parseFloat(values.price.toString());
-    const commission = parseFloat(values.commission.toString());
-
-    const params: CreateTransactionInput = {
-      createTransactionInput: {
-        userId: `${username}`,
-        aggregateId: account.aggregateId,
-        type: selectedTransactionType.value,
-        transactionDate: transactionDate,
-        symbol: values.symbol,
-        shares: shares,
-        price: price,
-        commission: commission,
+    const params: UpdateTransactionInput = {
+      updateTransactionInput: {
+        userId: `${transaction.userId}`,
+        aggregateId: transaction.aggregateId,
+        createdAt: transaction.createdAt.toString(),
+        type: `${selectedTransactionType.value}`,
+        transactionDate: values.transactionDate.toISOString().substring(0, 10),
+        symbol: `${values.symbol}`,
+        shares: values.shares,
+        price: values.price,
+        commission: values.commission,
       },
     };
 
-    console.log('[TRANSACTION FORM]: Params', params);
+    console.log('[TRANSACTION DETAIL] Updating Transaction with values: ', params);
 
-    createTransactionMutation({
+    updateTransactionMutation({
       variables: params,
     })
       .then((res) => {
-        console.log('[TRANSACTION FORM] Transaction created successfully');
+        console.log('[TRANSACTION DETAIL] Transaction updated successfully');
 
-        setTimeout(() => {
-          window.location.pathname = '/accounts';
-        }, 0);
+        window.location.pathname = '/accounts';
       })
       .catch((err) => {
-        console.error('[TRANSACTION FORM] Error occurred creating transaction');
+        console.error('[TRANSACTION DETAIL] Error occurred updating transaction');
+        console.error(err);
+      });
+  };
+
+  const deleteTransaction = () => {
+    console.log('[TRANSACTION DETAIL] Deleting Transaction...');
+
+    const params: DeleteTransactionInput = {
+      deleteTransactionInput: {
+        userId: transaction.userId,
+        createdAt: transaction.createdAt.toString(),
+        aggregateId: transaction.aggregateId,
+        symbol: `${transaction.symbol}`,
+      },
+    };
+
+    deleteTransactionMutation({
+      variables: params,
+    })
+      .then((res) => {
+        console.log('[TRANSACTION DETAIL] Transaction deleted successfully');
+        window.location.pathname = '/accounts';
+      })
+      .catch((err) => {
+        console.error('[TRANSACTION DETAIL] Error occurred deleting transaction');
         console.error(err);
       });
   };
@@ -115,17 +122,20 @@ const TransactionForm = (props: AccountProps) => {
             <Formik
               enableReinitialize
               initialValues={{
-                type: '',
-                transactionDate: new Date(),
-                symbol: '',
-                shares: 0,
-                price: 0,
-                commission: 0,
+                type: transaction.type,
+                transactionDate: new Date(transaction.transactionDate),
+                symbol: transaction.symbol,
+                shares: transaction.shares,
+                price: transaction.price,
+                commission: transaction.commission,
               }}
               onSubmit={(values: TransactionFormValues, actions) => {
                 console.log(values);
-                createTransaction(values);
-
+                updateTransaction(values);
+                actions.setSubmitting(false);
+              }}
+              onReset={(values: TransactionFormValues, actions) => {
+                deleteTransaction();
                 actions.setSubmitting(false);
               }}
               validationSchema={Yup.object().shape({
@@ -147,16 +157,15 @@ const TransactionForm = (props: AccountProps) => {
                   options={transactionTypes}
                   placeholder='Select a transaction type'
                   selection
-                  errorPrompt
+                  //   errorPrompt
                 />
                 <FormDatePicker />
                 <Input id='symbol' fluid name='symbol' label='Symbol' placeholder='Security symbol' errorPrompt />
                 <Input id='shares' fluid name='shares' label='Shares' placeholder='Number of shares' errorPrompt />
                 <Input id='price' fluid name='price' label='Price' placeholder='Price per share' errorPrompt />
                 <Input id='commision' fluid name='commission' label='Commission' placeholder='Commission of trade' errorPrompt />
-                <SubmitButton fluid primary>
-                  Submit
-                </SubmitButton>
+                <SubmitButton primary>Update</SubmitButton>
+                <ResetButton>Delete</ResetButton>
               </Form>
             </Formik>
           </Segment>
@@ -166,4 +175,4 @@ const TransactionForm = (props: AccountProps) => {
   );
 };
 
-export default TransactionForm;
+export default TransactionDetail;
