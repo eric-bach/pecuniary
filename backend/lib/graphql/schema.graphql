@@ -76,9 +76,30 @@ type DeleteResponse {
   aggregateId: String
 }
 
+type AccountReadModel {
+  userId: ID
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  aggregateId: ID
+  entity: String
+  type: String
+  name: String
+  description: String
+  currencies: [Currency]
+  acb: Float
+  payee: String
+  amount: Float
+}
+
+type Currency {
+  currency: String
+  bookValue: Float
+  marketValue: Float
+}
+
 # GraphQL actions
 type Query {
-  getAccounts(userId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccounts(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getTransactions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAllPositions(userId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])

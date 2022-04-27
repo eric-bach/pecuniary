@@ -108,13 +108,18 @@ mutation DeleteTransaction {
 }
 
 query GetAccounts {
-  getAccounts(userId:"eric")
+  getAccounts(userId: "eric")
   {
+    userId
     aggregateId
-    createdAt
     name
-    type
     description
+    type
+    currencies {
+      currency
+      bookValue
+      marketValue
+    }
   }
 }
 

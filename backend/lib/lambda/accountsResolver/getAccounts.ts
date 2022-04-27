@@ -47,6 +47,38 @@ async function getAccounts(userId: string) {
       if (positionResult.$metadata.httpStatusCode === 200) {
         console.log(`🔔 Found Positions: ${JSON.stringify(positionResult)}`);
 
+        // Group positions by currency
+        var positions: any = [];
+        positionResult.Items.forEach(async (p: any) => {
+          positions.push(unmarshall(p));
+        });
+        var positionsGrouped = groupByCurrency(positions);
+        console.log('🔔🔔🔔 ', JSON.stringify(positionsGrouped));
+
+        // Sum book/marketValue for grouped positions
+        var currencies: any = [];
+        for (var [key, value] of Object.entries(positionsGrouped)) {
+          console.log('🔔🔔🔔 ', key);
+          console.log('🔔🔔🔔 ', JSON.stringify(value));
+
+          let bookValue = 0;
+          let marketValue = 0;
+          let values: any;
+          values = value;
+          values.forEach((v: any) => {
+            bookValue += v.bookValue;
+            marketValue += v.marketValue;
+          });
+
+          var currency: any = { currency: key, bookValue: bookValue, marketValue: marketValue };
+          console.log(currency);
+          currencies.push(currency);
+        }
+
+        account.currencies = currencies;
+
+        /* 
+        // OLD WAY OF AGGREGATING BOOK/MARKET VALUE
         let bookValue = 0;
         let marketValue = 0;
 
@@ -61,6 +93,7 @@ async function getAccounts(userId: string) {
         // Update Account Book Value
         account.bookValue = bookValue;
         account.marketValue = marketValue;
+        */
       }
 
       console.log(`🔔 Updated book/market values for Account: ${JSON.stringify(account)}`);
@@ -73,6 +106,16 @@ async function getAccounts(userId: string) {
 
   console.log(`🛑 Could not find any Account`);
   return [];
+}
+
+function groupByCurrency(items: any[]) {
+  var result = items.reduce(function (r: any[], a: any) {
+    r[a.currency] = r[a.currency] || [];
+    r[a.currency].push(a);
+    return r;
+  }, Object.create(null));
+
+  return result;
 }
 
 export default getAccounts;
