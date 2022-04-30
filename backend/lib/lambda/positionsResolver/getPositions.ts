@@ -8,14 +8,13 @@ async function getPositions(userId: string, aggregateId: string) {
 
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'entity-lsi',
     //TODO How to handle more than 100?
     Limit: 100,
-    KeyConditionExpression: 'userId = :v1 AND entity = :v2',
+    KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
     FilterExpression: 'aggregateId = :v3',
     ExpressionAttributeValues: {
       ':v1': { S: userId },
-      ':v2': { S: 'position' },
+      ':v2': { S: 'ACCPOS' },
       ':v3': { S: aggregateId },
     },
   };

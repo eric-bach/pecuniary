@@ -10,7 +10,7 @@ export type CreateAccountInput = {
 export type UpdateAccountInput = {
   updateAccountInput: {
     userId: string;
-    aggregateId: string;
+    sk: string;
     type: string;
     name: string;
     description: string;
@@ -34,6 +34,7 @@ export type AccountProps = {
 
 export type AccountReadModel = {
   userId: string;
+  sk: string;
   aggregateId: string;
   type: string;
   name: string;

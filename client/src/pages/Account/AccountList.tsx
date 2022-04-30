@@ -40,6 +40,8 @@ const Accounts = () => {
   if (error) return <div>${JSON.stringify(error)}</div>; // You probably want to do more here!
   if (loading || isLoading) return <Loading />;
 
+  console.log('[ACCOUNTS] Accounts:', accounts.getAccounts);
+
   return (
     <Grid>
       <Grid.Column width={10}>
@@ -52,7 +54,7 @@ const Accounts = () => {
 
         {accounts &&
           accounts.getAccounts.map((d: AccountReadModel) => {
-            return <AccountSummary key={d.createdAt.toString()} {...d} />;
+            return <AccountSummary key={d.sk.toString()} {...d} />;
           })}
       </Grid.Column>
       <Grid.Column width={5}>

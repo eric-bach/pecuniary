@@ -4,6 +4,7 @@ export const CREATE_TRANSACTION = gql`
   mutation CreateTransaction($createTransactionInput: CreateTransactionInput!) {
     createTransaction(createTransactionInput: $createTransactionInput) {
       userId
+      sk
       aggregateId
       entity
       symbol

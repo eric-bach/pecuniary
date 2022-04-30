@@ -1,16 +1,55 @@
 import { gql } from '@apollo/client';
 
+export const CREATE_ACCOUNT = gql`
+  mutation CreateAccount($createAccountInput: CreateAccountInput!) {
+    createAccount(createAccountInput: $createAccountInput) {
+      userId
+      aggregateId
+      entity
+      type
+      name
+      description
+      createdAt
+    }
+  }
+`;
+
+export const UPDATE_ACCOUNT = gql`
+  mutation UpdateAccount($updateAccountInput: UpdateAccountInput!) {
+    updateAccount(updateAccountInput: $updateAccountInput) {
+      userId
+      sk
+      type
+      name
+      description
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount($deleteAccountInput: DeleteAccountInput!) {
+    deleteAccount(deleteAccountInput: $deleteAccountInput) {
+      userId
+      aggregateId
+    }
+  }
+`;
+
 export const GET_ACCOUNTS = gql`
   query GetAccounts($userId: String!) {
     getAccounts(userId: $userId) {
       userId
+      sk
       aggregateId
       type
       name
       description
-      bookValue
-      marketValue
-      createdAt
+      currencies {
+        currency
+        bookValue
+        marketValue
+      }
     }
   }
 `;
@@ -45,43 +84,6 @@ export const GET_TRANSACTIONS = gql`
       shares
       price
       commission
-    }
-  }
-`;
-
-export const CREATE_ACCOUNT = gql`
-  mutation CreateAccount($createAccountInput: CreateAccountInput!) {
-    createAccount(createAccountInput: $createAccountInput) {
-      userId
-      aggregateId
-      entity
-      type
-      name
-      description
-      createdAt
-    }
-  }
-`;
-
-export const UPDATE_ACCOUNT = gql`
-  mutation UpdateAccount($updateAccountInput: UpdateAccountInput!) {
-    updateAccount(updateAccountInput: $updateAccountInput) {
-      userId
-      aggregateId
-      entity
-      type
-      name
-      description
-      createdAt
-    }
-  }
-`;
-
-export const DELETE_ACCOUNT = gql`
-  mutation DeleteAccount($deleteAccountInput: DeleteAccountInput!) {
-    deleteAccount(deleteAccountInput: $deleteAccountInput) {
-      userId
-      aggregateId
     }
   }
 `;

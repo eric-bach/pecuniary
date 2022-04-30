@@ -124,7 +124,6 @@ query GetAccounts {
   }
 }
 
-
 query GetTransactions {
   getTransactions(userId: "eric", aggregateId: "3ca4261f-dda7-4cbc-9dba-ce26281d6cc8")
   {
@@ -132,6 +131,21 @@ query GetTransactions {
     aggregateId
     symbol
     transactionDate
+  }
+}
+
+query GetPositions {
+  getPositions(userId: "eric", aggregateId: "3ca4261f-dda7-4cbc-9dba-ce26281d6cc8")
+  {
+    userId
+    symbol
+    description
+    shares
+    price
+		commission
+    marketValue
+    bookValue
+    acb
   }
 }
 ```

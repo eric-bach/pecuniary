@@ -74,7 +74,7 @@ const AccountForm = (props: AccountProps) => {
       const params: UpdateAccountInput = {
         updateAccountInput: {
           userId: `${username}`,
-          aggregateId: account.aggregateId,
+          sk: account.sk,
           type: `${selectedAccountType.value}`,
           name: `${name}`,
           description: `${description}`,

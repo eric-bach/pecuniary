@@ -226,20 +226,6 @@ export class PecuniaryStack extends Stack {
         type: AttributeType.STRING,
       },
     });
-    dataTable.addLocalSecondaryIndex({
-      indexName: 'entity-lsi',
-      sortKey: {
-        name: 'entity',
-        type: AttributeType.STRING,
-      },
-    });
-    dataTable.addLocalSecondaryIndex({
-      indexName: 'transactionDate-lsi',
-      sortKey: {
-        name: 'transactionDate',
-        type: AttributeType.STRING,
-      },
-    });
     // GSIs for Data Table
     dataTable.addGlobalSecondaryIndex({
       indexName: 'aggregateId-gsi',
@@ -292,12 +278,7 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [
-          dataTable.tableArn,
-          dataTable.tableArn + '/index/aggregateId-lsi',
-          dataTable.tableArn + '/index/entity-lsi',
-          dataTable.tableArn + '/index/transactionDate-lsi',
-        ],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi'],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
@@ -347,12 +328,7 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [
-          dataTable.tableArn,
-          dataTable.tableArn + '/index/aggregateId-lsi',
-          dataTable.tableArn + '/index/entity-lsi',
-          dataTable.tableArn + '/index/aggregateId-gsi',
-        ],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
       })
     );
     // Add permission to send to EventBridge
@@ -402,7 +378,7 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/entity-lsi'],
+        resources: [dataTable.tableArn],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
@@ -440,13 +416,7 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [
-          dataTable.tableArn,
-          dataTable.tableArn + '/index/aggregateId-lsi',
-          dataTable.tableArn + '/index/entity-lsi',
-          dataTable.tableArn + '/index/transactionDate-lsi',
-          dataTable.tableArn + '/index/aggregateId-gsi',
-        ],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
       })
     );
     updatePositionsFunction.addToRolePolicy(
