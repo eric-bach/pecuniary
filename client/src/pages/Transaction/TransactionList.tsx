@@ -33,7 +33,7 @@ const TransactionList = (props: TransactionsProps) => {
             let transactionDate = new Date(utcTransactionDate.getTime() - -timezoneOffset);
 
             return (
-              <Table.Row key={t.createdAt.toString()}>
+              <Table.Row key={t.sk}>
                 <Table.Cell className={`ui ${color} label`} style={{ margin: '8px' }}>
                   {t.type}
                 </Table.Cell>
@@ -66,7 +66,7 @@ const TransactionList = (props: TransactionsProps) => {
                     icon='file alternate outline'
                     as={Link}
                     to={{
-                      pathname: `/transactions/view/${t.createdAt}`,
+                      pathname: `/transactions/view/${t.sk}`,
                       state: {
                         transaction: t,
                       },

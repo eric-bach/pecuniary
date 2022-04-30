@@ -60,8 +60,8 @@ const TransactionDetail = (props: TransactionProps) => {
     const params: UpdateTransactionInput = {
       updateTransactionInput: {
         userId: `${transaction.userId}`,
+        sk: transaction.sk,
         aggregateId: transaction.aggregateId,
-        createdAt: transaction.createdAt.toString(),
         type: `${selectedTransactionType.value}`,
         transactionDate: values.transactionDate.toISOString().substring(0, 10),
         symbol: `${values.symbol}`,
@@ -93,7 +93,7 @@ const TransactionDetail = (props: TransactionProps) => {
     const params: DeleteTransactionInput = {
       deleteTransactionInput: {
         userId: transaction.userId,
-        createdAt: transaction.createdAt.toString(),
+        sk: transaction.sk,
         aggregateId: transaction.aggregateId,
         symbol: `${transaction.symbol}`,
       },
@@ -123,6 +123,7 @@ const TransactionDetail = (props: TransactionProps) => {
               enableReinitialize
               initialValues={{
                 type: transaction.type,
+                sk: transaction.sk,
                 transactionDate: new Date(transaction.transactionDate),
                 symbol: transaction.symbol,
                 shares: transaction.shares,
