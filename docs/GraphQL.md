@@ -22,10 +22,10 @@ mutation CreateAccount {
 mutation UpdateAccount {
   updateAccount(updateAccountInput: {
     userId: "eric"
-    aggregateId: "d107bd4d-1ece-4ac6-a68b-6dd8de08be11"
+    aggregateId: "dc4b0be9-66ef-4321-8383-1d8c4eef30b1"
     type: "RRSP"
     name: "Test"
-    description:"My description"
+    description: "My description"
   })
   {
     userId
@@ -41,8 +41,9 @@ mutation UpdateAccount {
 mutation DeleteAccount {
   deleteAccount(deleteAccountInput: {
     userId: "eric"
-    aggregateId: "d107bd4d-1ece-4ac6-a68b-6dd8de08be11"
-  }) {
+    aggregateId: "dc4b0be9-66ef-4321-8383-1d8c4eef30b1"
+  })
+  {
     userId
     aggregateId
   }
@@ -115,6 +116,11 @@ query GetAccounts {
     name
     type
     description
+    currencies {
+      currency
+      bookValue
+      marketValue
+    }
   }
 }
 
@@ -137,7 +143,7 @@ query GetTransactions {
 
 
 query GetAllPositions {
-  getAllPositions(userId: "ebach83@gmail.com") {
+  getAllPositions(userId: "eric") {
   	userId
     createdAt
     aggregateId
@@ -146,6 +152,16 @@ query GetAllPositions {
     shares
     marketValue
     bookValue
+  }
+}
+
+query GetPositions {
+  getPositions(userId: "eric", aggregateId: "c88d32d4-6b03-4b11-a2af-f60941f2714f")
+  {
+    userId
+    aggregateId
+    name
+    symbol
   }
 }
 ```
