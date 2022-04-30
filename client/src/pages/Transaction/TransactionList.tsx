@@ -1,6 +1,7 @@
-import { Table } from 'semantic-ui-react';
+import { Button, Table } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
 import { TransactionReadModel, TransactionsProps } from './types/Transaction';
+import { Link } from 'react-router-dom';
 
 const TransactionList = (props: TransactionsProps) => {
   const transactions = props.transactions;
@@ -18,6 +19,7 @@ const TransactionList = (props: TransactionsProps) => {
             <Table.HeaderCell>Shares</Table.HeaderCell>
             <Table.HeaderCell>Price</Table.HeaderCell>
             <Table.HeaderCell>Commission</Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
@@ -56,6 +58,19 @@ const TransactionList = (props: TransactionsProps) => {
                     prefix={'$'}
                     decimalScale={2}
                     fixedDecimalScale={true}
+                  />
+                </Table.Cell>
+                <Table.Cell>
+                  <Button
+                    floated='right'
+                    icon='file alternate outline'
+                    as={Link}
+                    to={{
+                      pathname: `/transactions/view/${t.createdAt}`,
+                      state: {
+                        transaction: t,
+                      },
+                    }}
                   />
                 </Table.Cell>
               </Table.Row>
