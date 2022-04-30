@@ -12,6 +12,7 @@ import { AccountProps } from './types/Account';
 
 const AccountDetail = (props: AccountProps) => {
   const [account] = useState(props.location.state.account);
+
   const {
     data: pos,
     error: posError,
@@ -69,28 +70,37 @@ const AccountDetail = (props: AccountProps) => {
                   <div>{account.name}</div>
                 </Item.Header>
                 <Item.Description>{account.description}</Item.Description>
-                <Item.Meta>
-                  Book Value:{' '}
-                  <NumberFormat
-                    value={account.bookValue}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'$'}
-                    decimalScale={2}
-                    fixedDecimalScale={true}
-                  />
-                </Item.Meta>
-                <Item.Meta>
-                  Market Value:{' '}
-                  <NumberFormat
-                    value={account.marketValue}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'$'}
-                    decimalScale={2}
-                    fixedDecimalScale={true}
-                  />
-                </Item.Meta>
+
+                {account.currencies.map((c) => {
+                  return (
+                    <div key={c.currency}>
+                      <Item.Meta>{c.currency} balances:</Item.Meta>
+                      <Item.Meta>
+                        Book Value:{' '}
+                        <NumberFormat
+                          value={c.bookValue}
+                          displayType={'text'}
+                          thousandSeparator={true}
+                          prefix={'$'}
+                          decimalScale={2}
+                          fixedDecimalScale={true}
+                        />
+                      </Item.Meta>
+                      <Item.Meta>
+                        Market Value:{' '}
+                        <NumberFormat
+                          value={c.marketValue}
+                          displayType={'text'}
+                          thousandSeparator={true}
+                          prefix={'$'}
+                          decimalScale={2}
+                          fixedDecimalScale={true}
+                        />
+                      </Item.Meta>
+                      <br />
+                    </div>
+                  );
+                })}
               </Item.Content>
             </Item>
           </Item.Group>

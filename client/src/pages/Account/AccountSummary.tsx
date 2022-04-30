@@ -59,28 +59,38 @@ const AccountSummary = (account: AccountReadModel) => {
                 <Item.Header>
                   <div>{account.name}</div>
                 </Item.Header>
-                <Item.Meta>
-                  Book Value:{' '}
-                  <NumberFormat
-                    value={account.bookValue}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'$'}
-                    decimalScale={2}
-                    fixedDecimalScale={true}
-                  />
-                </Item.Meta>
-                <Item.Meta>
-                  Market Value:{' '}
-                  <NumberFormat
-                    value={account.marketValue}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'$'}
-                    decimalScale={2}
-                    fixedDecimalScale={true}
-                  />
-                </Item.Meta>
+
+                {account.currencies.map((c) => {
+                  return (
+                    <div key={c.currency}>
+                      <Item.Meta>{c.currency} balances:</Item.Meta>
+                      <Item.Meta>
+                        Book Value:{' '}
+                        <NumberFormat
+                          value={c.bookValue}
+                          displayType={'text'}
+                          thousandSeparator={true}
+                          prefix={'$'}
+                          decimalScale={2}
+                          fixedDecimalScale={true}
+                        />
+                      </Item.Meta>
+                      <Item.Meta>
+                        Market Value:{' '}
+                        <NumberFormat
+                          value={c.marketValue}
+                          displayType={'text'}
+                          thousandSeparator={true}
+                          prefix={'$'}
+                          decimalScale={2}
+                          fixedDecimalScale={true}
+                        />
+                      </Item.Meta>
+                      <br />
+                    </div>
+                  );
+                })}
+
                 <Item.Description>{account.description}</Item.Description>
                 <Item.Extra style={{ position: relative, top: '-138px' }}>
                   <Button floated='right' icon='delete' onClick={() => handleDeleteAccount(account)} />
