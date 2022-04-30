@@ -14,7 +14,7 @@ async function deleteTransaction(input: DeleteTransactionInput) {
     TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({
       userId: input.userId,
-      createdAt: input.createdAt,
+      sk: input.sk,
     }),
   };
   let result = await dynamoDbCommand(new DeleteItemCommand(deleteItemCommandInput));

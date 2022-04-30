@@ -2,7 +2,6 @@ import { QueryCommand, QueryCommandInput, DeleteItemCommand, DeleteItemCommandIn
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import { DeleteAccountInput } from '../types/Account';
-import { marshall } from '@aws-sdk/util-dynamodb';
 
 async function deleteAccount(input: DeleteAccountInput) {
   console.debug(`🕧 Delete Account initialized`);
@@ -31,7 +30,7 @@ async function deleteAccount(input: DeleteAccountInput) {
         TableName: process.env.DATA_TABLE_NAME,
         Key: {
           userId: t.userId,
-          createdAt: t.createdAt,
+          sk: t.sk,
         },
         ConditionExpression: 'aggregateId = :v1',
         ExpressionAttributeValues: {

@@ -1,5 +1,6 @@
 export type AccountReadModel = {
   userId: string;
+  sk: string;
   aggregateId: string;
   entity: string;
   type: string;
@@ -18,7 +19,7 @@ export type CreateAccountInput = {
 
 export type UpdateAccountInput = {
   userId: string;
-  aggregateId: string;
+  sk: string;
   type: string;
   name: string;
   description: string;

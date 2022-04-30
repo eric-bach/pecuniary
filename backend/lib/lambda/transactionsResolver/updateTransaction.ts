@@ -12,7 +12,7 @@ async function updateTransaction(input: UpdateTransactionInput) {
     TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({
       userId: input.userId,
-      createdAt: input.createdAt,
+      sk: input.sk,
     }),
     UpdateExpression:
       'SET #type=:type, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt',
@@ -36,7 +36,7 @@ async function updateTransaction(input: UpdateTransactionInput) {
     // Publish event to update positions
     await publishEventAsync('TransactionSavedEvent', input);
 
-    console.log(`✅ Updated item in DynamoDB: {result: ${JSON.stringify(updateResult)}, item: ${unmarshall(updateResult.Attributes)}}`);
+    console.log(`✅ Updated Transaction: {result: ${JSON.stringify(updateResult)}, item: ${unmarshall(updateResult.Attributes)}}`);
     return unmarshall(updateResult.Attributes);
   }
 

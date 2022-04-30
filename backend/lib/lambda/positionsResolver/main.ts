@@ -14,7 +14,7 @@ exports.handler = async (event: PositionAppSyncEvent) => {
       console.debug(`🔔 GetPositions: ${JSON.stringify(event.arguments.userId)} ${JSON.stringify(event.arguments.aggregateId)}`);
       return await getPositions(event.arguments.userId, event.arguments.aggregateId);
     case 'getAllPositions':
-      console.debug(`🔔 GetPositions: ${JSON.stringify(event.arguments.userId)}`);
+      console.debug(`🔔 GetAllPositions: ${JSON.stringify(event.arguments.userId)}`);
       return await getAllPositions(event.arguments.userId);
 
     default:

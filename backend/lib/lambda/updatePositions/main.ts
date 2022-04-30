@@ -25,13 +25,13 @@ exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>
 async function getTransactions(detail: CreateTransactionInput): Promise<TransactionReadModel[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'transactionDate-lsi',
+    IndexName: 'aggregateId-gsi',
     ScanIndexForward: true,
-    KeyConditionExpression: 'userId = :v1',
-    FilterExpression: 'aggregateId = :v2 AND entity = :v3 AND symbol = :v4',
+    KeyConditionExpression: 'aggregateId = :v1',
+    FilterExpression: 'userId = :v2 AND entity = :v3 AND symbol = :v4',
     ExpressionAttributeValues: {
-      ':v1': { S: detail.userId },
-      ':v2': { S: detail.aggregateId },
+      ':v1': { S: detail.aggregateId },
+      ':v2': { S: detail.userId },
       ':v3': { S: 'transaction' },
       ':v4': { S: detail.symbol },
     },
@@ -119,6 +119,7 @@ async function savePosition(detail: CreateTransactionInput, shares: number, acb:
 
   var item = {
     userId: detail.userId,
+    sk: position ? position.sk : 'ACCPOS#' + new Date().toISOString(),
     createdAt: position ? position.createdAt : new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     aggregateId: detail.aggregateId,

@@ -1,5 +1,6 @@
 export type PositionReadModel = {
   userId: string;
+  sk: string;
   createdAt: Date;
   updatedAt: Date;
   aggregateId: string;
