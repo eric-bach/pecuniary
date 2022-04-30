@@ -13,10 +13,11 @@ async function getTransactions(userId: string, aggregateId: string) {
     Limit: 100,
     ScanIndexForward: false,
     KeyConditionExpression: 'aggregateId = :v1',
-    FilterExpression: 'entity = :v2',
+    FilterExpression: 'userId = :v2 AND entity = :v3',
     ExpressionAttributeValues: {
       ':v1': { S: aggregateId },
-      ':v2': { S: 'transaction' },
+      ':v2': { S: userId },
+      ':v3': { S: 'transaction' },
     },
   };
   var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
