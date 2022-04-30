@@ -1,6 +1,7 @@
 type Data @model @aws_cognito_user_pools {
   userId: ID
-  createdAt: AWSDateTime
+  createdAt: String
+  #createdAt: AWSDateTime
   updatedAt: AWSDateTime
   aggregateId: ID
   entity: String
@@ -54,7 +55,7 @@ input CreateTransactionInput {
 
 input UpdateTransactionInput {
   userId: ID!
-  createdAt: AWSDateTime!
+  createdAt: String!
   aggregateId: ID!
   type: String!
   transactionDate: AWSDate!
@@ -66,7 +67,7 @@ input UpdateTransactionInput {
 
 input DeleteTransactionInput {
   userId: ID!
-  createdAt: AWSDateTime!
+  createdAt: String!
   aggregateId: ID!
   symbol: String!
 }
@@ -76,9 +77,31 @@ type DeleteResponse {
   aggregateId: String
 }
 
+type AccountReadModel {
+  userId: ID
+  createdAt: String
+  #: String
+  updatedAt: AWSDateTime
+  aggregateId: ID
+  entity: String
+  type: String
+  name: String
+  description: String
+  currencies: [Currency]
+  acb: Float
+  payee: String
+  amount: Float
+}
+
+type Currency {
+  currency: String
+  bookValue: Float
+  marketValue: Float
+}
+
 # GraphQL actions
 type Query {
-  getAccounts(userId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccounts(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getTransactions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAllPositions(userId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])

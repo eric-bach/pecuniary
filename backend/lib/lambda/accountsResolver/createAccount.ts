@@ -15,7 +15,7 @@ async function createAccount(input: CreateAccountInput) {
     type: input.type,
     name: input.name,
     description: input.description,
-    createdAt: new Date().toISOString(),
+    createdAt: 'ACC#' + new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 

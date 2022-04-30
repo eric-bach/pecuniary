@@ -445,6 +445,7 @@ export class PecuniaryStack extends Stack {
           dataTable.tableArn + '/index/aggregateId-lsi',
           dataTable.tableArn + '/index/entity-lsi',
           dataTable.tableArn + '/index/transactionDate-lsi',
+          dataTable.tableArn + '/index/aggregateId-gsi',
         ],
       })
     );

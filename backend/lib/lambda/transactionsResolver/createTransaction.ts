@@ -18,7 +18,7 @@ async function createTransaction(input: CreateTransactionInput) {
     shares: input.shares,
     price: input.price,
     commission: input.commission,
-    createdAt: new Date().toISOString(),
+    createdAt: 'TRANS#' + new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
