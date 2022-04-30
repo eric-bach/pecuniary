@@ -10,7 +10,7 @@ async function getAccounts(userId: string) {
     TableName: process.env.DATA_TABLE_NAME,
     //TODO How to handle more than 100?
     Limit: 100,
-    KeyConditionExpression: 'userId = :v1 AND begins_with(createdAt, :v2)',
+    KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
     ExpressionAttributeValues: {
       ':v1': { S: userId },
       ':v2': { S: 'ACC' },

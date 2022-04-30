@@ -1,7 +1,7 @@
 type Data @model @aws_cognito_user_pools {
   userId: ID
-  createdAt: String
-  #createdAt: AWSDateTime
+  sk: String
+  createdAt: AWSDateTime
   updatedAt: AWSDateTime
   aggregateId: ID
   entity: String
@@ -31,7 +31,7 @@ input CreateAccountInput {
 
 input UpdateAccountInput {
   userId: ID!
-  aggregateId: ID!
+  sk: String!
   type: String!
   name: String!
   description: String!
@@ -55,8 +55,8 @@ input CreateTransactionInput {
 
 input UpdateTransactionInput {
   userId: ID!
-  createdAt: String!
-  aggregateId: ID!
+  sk: String!
+  aggregateId: String!
   type: String!
   transactionDate: AWSDate!
   symbol: String!
@@ -67,7 +67,7 @@ input UpdateTransactionInput {
 
 input DeleteTransactionInput {
   userId: ID!
-  createdAt: String!
+  sk: String!
   aggregateId: ID!
   symbol: String!
 }
@@ -79,8 +79,8 @@ type DeleteResponse {
 
 type AccountReadModel {
   userId: ID
-  createdAt: String
-  #: String
+  sk: String
+  createdAt: AWSDateTime
   updatedAt: AWSDateTime
   aggregateId: ID
   entity: String

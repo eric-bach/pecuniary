@@ -10,12 +10,13 @@ async function createAccount(input: CreateAccountInput) {
 
   var item: AccountReadModel = {
     userId: input.userId,
+    sk: 'ACC#' + new Date().toISOString(),
     aggregateId: uuidv4(),
     entity: 'account',
     type: input.type,
     name: input.name,
     description: input.description,
-    createdAt: 'ACC#' + new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 

@@ -213,7 +213,7 @@ export class PecuniaryStack extends Stack {
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'createdAt',
+        name: 'sk',
         type: AttributeType.STRING,
       },
       removalPolicy: RemovalPolicy.DESTROY,

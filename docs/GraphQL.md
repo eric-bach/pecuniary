@@ -10,6 +10,7 @@ mutation CreateAccount {
   })
   {
     userId
+    sk
     aggregateId
     entity
     type
@@ -22,26 +23,24 @@ mutation CreateAccount {
 mutation UpdateAccount {
   updateAccount(updateAccountInput: {
     userId: "eric"
-    aggregateId: "dc4b0be9-66ef-4321-8383-1d8c4eef30b1"
+    sk: "ACC#2022-04-30T19:30:26.499Z"
     type: "RRSP"
     name: "Test"
-    description: "My description"
+    description: "My new description"
   })
   {
     userId
-    aggregateId
-    entity
     type
     name
     description
-    createdAt
+    updatedAt
   }
 }
 
 mutation DeleteAccount {
   deleteAccount(deleteAccountInput: {
     userId: "eric"
-    aggregateId: "dc4b0be9-66ef-4321-8383-1d8c4eef30b1"
+    aggregateId: "902591f9-8cfc-447c-b44e-40f810f4a40a"
   })
   {
     userId
@@ -52,7 +51,7 @@ mutation DeleteAccount {
 mutation CreateTransaction {
 	createTransaction(createTransactionInput:{
     userId: "eric"
-    aggregateId:"2d5d519b-8715-44d5-af9f-64f3b565c345"
+    aggregateId: "3ca4261f-dda7-4cbc-9dba-ce26281d6cc8"
 		type: "Buy"
     transactionDate: "2022-04-11"
     symbol: "AAPL"
@@ -62,6 +61,7 @@ mutation CreateTransaction {
   })
   {
     userId
+    sk
     aggregateId
     entity
     symbol
@@ -75,14 +75,14 @@ mutation CreateTransaction {
 mutation UpdateTransaction {
 	updateTransaction(updateTransactionInput:{
     userId: "eric"
-    createdAt: "2022-04-17T19:53:25.442Z"
-    aggregateId: "2d5d519b-8715-44d5-af9f-64f3b565c345"
+    sk: "TRANS#2022-04-30T19:32:42.931Z"
+    aggregateId: "3ca4261f-dda7-4cbc-9dba-ce26281d6cc8"
 		type: "Buy"
     transactionDate: "2022-04-11"
     symbol: "AAPL"
-    shares: 10
+    shares: 1
     price: 125
-    commission: 4.99
+    commission: 5
   })
   {
     userId
@@ -99,9 +99,9 @@ mutation UpdateTransaction {
 mutation DeleteTransaction {
   deleteTransaction(deleteTransactionInput:{
     userId: "eric"
+    sk: "TRANS#2022-04-30T19:32:42.931Z"
     symbol: "AAPL"
-    createdAt: "2022-04-17T19:56:31.967Z"
-    aggregateId: "2d5d519b-8715-44d5-af9f-64f3b565c345"
+    aggregateId: "3ca4261f-dda7-4cbc-9dba-ce26281d6cc8"
   })
   {
     aggregateId
@@ -109,13 +109,13 @@ mutation DeleteTransaction {
 }
 
 query GetAccounts {
-  getAccounts(userId:"eric")
+  getAccounts(userId: "eric")
   {
+    userId
     aggregateId
-    createdAt
     name
-    type
     description
+    type
     currencies {
       currency
       bookValue
@@ -124,44 +124,14 @@ query GetAccounts {
   }
 }
 
+
 query GetTransactions {
-  getTransactions(
-    userId: "eric"
-    aggregateId: "2d5d519b-8715-44d5-af9f-64f3b565c345"
-  )
-  {
-    aggregateId
-    createdAt
-    type
-    transactionDate
-    symbol
-    shares
-    price
-    commission
-  }
-}
-
-
-query GetAllPositions {
-  getAllPositions(userId: "eric") {
-  	userId
-    createdAt
-    aggregateId
-    symbol
-    currency
-    shares
-    marketValue
-    bookValue
-  }
-}
-
-query GetPositions {
-  getPositions(userId: "eric", aggregateId: "c88d32d4-6b03-4b11-a2af-f60941f2714f")
+  getTransactions(userId: "eric", aggregateId: "3ca4261f-dda7-4cbc-9dba-ce26281d6cc8")
   {
     userId
     aggregateId
-    name
     symbol
+    transactionDate
   }
 }
 ```

@@ -119,7 +119,8 @@ async function savePosition(detail: CreateTransactionInput, shares: number, acb:
 
   var item = {
     userId: detail.userId,
-    createdAt: position ? position.createdAt : 'ACCPOS#' + new Date().toISOString(),
+    sk: position ? position.sk : 'ACCPOS#' + new Date().toISOString(),
+    createdAt: position ? position.createdAt : new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     aggregateId: detail.aggregateId,
     entity: 'position',

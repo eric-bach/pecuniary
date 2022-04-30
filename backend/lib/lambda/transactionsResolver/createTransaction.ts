@@ -10,6 +10,7 @@ async function createTransaction(input: CreateTransactionInput) {
 
   var item: TransactionReadModel = {
     userId: input.userId,
+    sk: 'TRANS#' + new Date().toISOString(),
     aggregateId: input.aggregateId,
     entity: 'transaction',
     type: input.type,
@@ -18,7 +19,7 @@ async function createTransaction(input: CreateTransactionInput) {
     shares: input.shares,
     price: input.price,
     commission: input.commission,
-    createdAt: 'TRANS#' + new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 

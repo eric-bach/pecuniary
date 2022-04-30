@@ -1,5 +1,6 @@
 export type TransactionReadModel = {
   userId: string;
+  sk: string;
   createdAt: string;
   updatedAt: string;
   aggregateId: string;
@@ -25,8 +26,7 @@ export type CreateTransactionInput = {
 
 export type UpdateTransactionInput = {
   userId: string;
-  createdAt: string;
-  aggregateId: string;
+  sk: string;
   type: string;
   transactionDate: string;
   symbol: string;
@@ -37,9 +37,7 @@ export type UpdateTransactionInput = {
 
 export type DeleteTransactionInput = {
   userId: string;
-  createdAt: string;
-  aggregateId: string;
-  symbol: string;
+  sk: string;
 };
 
 export type TransactionAppSyncEvent = {
