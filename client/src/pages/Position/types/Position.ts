@@ -4,7 +4,7 @@ export type PositionsProps = {
 
 export type PositionReadModel = {
   userId: string;
-  createdAt: Date;
+  sk: string;
   aggregateId: string;
   symbol: string;
   description: string;

@@ -14,7 +14,7 @@ export type CreateTransactionInput = {
 export type UpdateTransactionInput = {
   updateTransactionInput: {
     userId: string;
-    createdAt: string;
+    sk: string;
     aggregateId: string;
     type: string;
     transactionDate: string;
@@ -28,7 +28,7 @@ export type UpdateTransactionInput = {
 export type DeleteTransactionInput = {
   deleteTransactionInput: {
     userId: string;
-    createdAt: string;
+    sk: string;
     aggregateId: string;
     symbol: string;
   };
@@ -48,6 +48,7 @@ export type TransactionProps = {
 
 export type TransactionReadModel = {
   userId: string;
+  sk: string;
   aggregateId: string;
   type: string;
   transactionDate: string;
@@ -55,7 +56,6 @@ export type TransactionReadModel = {
   shares: number;
   price: number;
   commission: number;
-  createdAt: Date;
 };
 
 export type TransactionFormValues = {

@@ -58,7 +58,7 @@ export const GET_POSITIONS = gql`
   query GetPositions($userId: String!, $aggregateId: String!) {
     getPositions(userId: $userId, aggregateId: $aggregateId) {
       userId
-      createdAt
+      sk
       aggregateId
       symbol
       description
@@ -76,8 +76,8 @@ export const GET_TRANSACTIONS = gql`
   query GetTransactions($userId: String!, $aggregateId: String!) {
     getTransactions(userId: $userId, aggregateId: $aggregateId) {
       userId
+      sk
       aggregateId
-      createdAt
       type
       transactionDate
       symbol

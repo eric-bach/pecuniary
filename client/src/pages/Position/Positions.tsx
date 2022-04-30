@@ -30,7 +30,7 @@ const Positions = (props: PositionsProps) => {
             const pl = p.marketValue - p.bookValue;
             const plPer = ((p.marketValue - p.bookValue) * 100) / p.bookValue;
             return (
-              <Table.Row key={p.createdAt.toString()}>
+              <Table.Row key={p.sk}>
                 <Table.Cell>{p.symbol}</Table.Cell>
                 <Table.Cell>{p.description}</Table.Cell>
                 <Table.Cell>{p.currency}</Table.Cell>
