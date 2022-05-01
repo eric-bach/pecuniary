@@ -13,7 +13,7 @@ const auth = {
   jwtToken: getAccessToken(),
 };
 
-console.log('[CLIENT] ', auth);
+console.log('[CLIENT] Authorization token:', auth);
 
 const link = ApolloLink.from([
   createAuthLink({ url, region, auth }),
@@ -22,6 +22,6 @@ const link = ApolloLink.from([
 
 const client = new ApolloClient({ link, cache: new InMemoryCache() });
 
-console.log('[CLIENT] Apollo Client initialized: ', client);
+console.log('[CLIENT] Apollo Client initialized:', client);
 
 export default client;
