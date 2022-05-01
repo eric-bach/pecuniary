@@ -63,9 +63,8 @@ const AccountSummary = (account: AccountReadModel) => {
                 {account.currencies.map((c) => {
                   return (
                     <div key={c.currency}>
-                      <Item.Meta>{c.currency} balances:</Item.Meta>
                       <Item.Meta>
-                        Book Value:{' '}
+                        <span>{c.currency}:</span>
                         <NumberFormat
                           value={c.bookValue}
                           displayType={'text'}
@@ -74,9 +73,7 @@ const AccountSummary = (account: AccountReadModel) => {
                           decimalScale={2}
                           fixedDecimalScale={true}
                         />
-                      </Item.Meta>
-                      <Item.Meta>
-                        Market Value:{' '}
+                        {'(Book Value) '}
                         <NumberFormat
                           value={c.marketValue}
                           displayType={'text'}
@@ -85,8 +82,8 @@ const AccountSummary = (account: AccountReadModel) => {
                           decimalScale={2}
                           fixedDecimalScale={true}
                         />
+                        {' (Market Value)'}
                       </Item.Meta>
-                      <br />
                     </div>
                   );
                 })}

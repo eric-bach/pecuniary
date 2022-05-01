@@ -74,9 +74,8 @@ const AccountDetail = (props: AccountProps) => {
                 {account.currencies.map((c) => {
                   return (
                     <div key={c.currency}>
-                      <Item.Meta>{c.currency} balances:</Item.Meta>
                       <Item.Meta>
-                        Book Value:{' '}
+                        <span>{c.currency}:</span>
                         <NumberFormat
                           value={c.bookValue}
                           displayType={'text'}
@@ -85,9 +84,7 @@ const AccountDetail = (props: AccountProps) => {
                           decimalScale={2}
                           fixedDecimalScale={true}
                         />
-                      </Item.Meta>
-                      <Item.Meta>
-                        Market Value:{' '}
+                        {'(Book Value) '}
                         <NumberFormat
                           value={c.marketValue}
                           displayType={'text'}
@@ -96,8 +93,8 @@ const AccountDetail = (props: AccountProps) => {
                           decimalScale={2}
                           fixedDecimalScale={true}
                         />
+                        {' (Market Value)'}
                       </Item.Meta>
-                      <br />
                     </div>
                   );
                 })}
