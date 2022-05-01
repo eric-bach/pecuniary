@@ -38,20 +38,44 @@ async function getAccounts(userId: string) {
       console.debug('ℹ️ Positions: ', JSON.stringify(positions));
 
       if (positions.length > 0) {
-        let currency = '';
-        let bookValue = 0;
-        let marketValue = 0;
+        var positionsGrouped = groupByCurrency(positions);
+        console.log('🔔 Positions Grouped by Currency: ', JSON.stringify(positionsGrouped));
 
-        for (const position of positions) {
-          currency = position.currency;
-          bookValue += position.bookValue;
-          marketValue += position.marketValue;
+        // Sum book/marketValue for grouped positions
+        var currencies: any = [];
+        for (var [key, value] of Object.entries(positionsGrouped)) {
+          console.log('🔔 Currency Key: ', key);
+          console.log('🔔 Currency Values: ', JSON.stringify(value));
+
+          let bookValue = 0;
+          let marketValue = 0;
+          let values: any;
+          values = value;
+          values.forEach((v: any) => {
+            bookValue += v.bookValue;
+            marketValue += v.marketValue;
+          });
+
+          var currency: any = { currency: key, bookValue: bookValue, marketValue: marketValue };
+          console.log('ℹ️ Currency: ', JSON.stringify(currency));
+          currencies.push(currency);
         }
 
-        // Add Position to Account
-        var p = { currency, bookValue, marketValue };
-        console.log('ℹ️ Currency: ', JSON.stringify(p));
-        account.currencies.push(p);
+        account.currencies = currencies;
+        // let currency = '';
+        // let bookValue = 0;
+        // let marketValue = 0;
+
+        // for (const position of positions) {
+        //   currency = position.currency;
+        //   bookValue += position.bookValue;
+        //   marketValue += position.marketValue;
+        // }
+
+        // // Add Position to Account
+        // var p = { currency, bookValue, marketValue };
+        // console.log('ℹ️ Currency: ', JSON.stringify(p));
+        // account.currencies.push(p);
       }
     }
 
@@ -61,6 +85,16 @@ async function getAccounts(userId: string) {
 
   console.log(`🛑 Could not find any Account`);
   return [];
+}
+
+function groupByCurrency(items: any[]) {
+  var result = items.reduce(function (r: any[], a: any) {
+    r[a.currency] = r[a.currency] || [];
+    r[a.currency].push(a);
+    return r;
+  }, Object.create(null));
+
+  return result;
 }
 
 export default getAccounts;
