@@ -1,15 +1,19 @@
 import { gql } from '@apollo/client';
 
-export const GET_ALL_POSITIONS = gql`
-  query GetAllPositions($userId: String!) {
-    getAllPositions(userId: $userId) {
+export const GET_ACCOUNTS = gql`
+  query GetAccounts($userId: String!) {
+    getAccounts(userId: $userId) {
       userId
+      sk
       aggregateId
-      symbol
-      currency
-      shares
-      marketValue
-      bookValue
+      type
+      name
+      description
+      currencies {
+        currency
+        bookValue
+        marketValue
+      }
     }
   }
 `;

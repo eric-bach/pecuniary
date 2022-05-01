@@ -89,7 +89,7 @@ const AccountSummary = (account: AccountReadModel) => {
                 })}
 
                 <Item.Description>{account.description}</Item.Description>
-                <Item.Extra style={{ position: relative, top: '-138px' }}>
+                <Item.Extra style={{ position: relative, top: '-100%' }}>
                   <Button floated='right' icon='delete' onClick={() => handleDeleteAccount(account)} />
                   <Button
                     floated='right'
