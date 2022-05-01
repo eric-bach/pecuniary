@@ -43,39 +43,24 @@ async function getAccounts(userId: string) {
 
         // Sum book/marketValue for grouped positions
         var currencies: any = [];
-        for (var [key, value] of Object.entries(positionsGrouped)) {
-          console.log('🔔 Currency Key: ', key);
-          console.log('🔔 Currency Values: ', JSON.stringify(value));
+        var cur: any, pos: any;
+        for ([cur, pos] of Object.entries(positionsGrouped)) {
+          console.log('🔔 Currency: ', cur);
+          console.log('🔔 Positions: ', JSON.stringify(pos));
 
           let bookValue = 0;
           let marketValue = 0;
-          let values: any;
-          values = value;
-          values.forEach((v: any) => {
-            bookValue += v.bookValue;
-            marketValue += v.marketValue;
+          pos.forEach((p: any) => {
+            bookValue += p.bookValue;
+            marketValue += p.marketValue;
           });
 
-          var currency: any = { currency: key, bookValue: bookValue, marketValue: marketValue };
+          var currency: any = { currency: cur, bookValue, marketValue };
           console.log('ℹ️ Currency: ', JSON.stringify(currency));
           currencies.push(currency);
         }
 
         account.currencies = currencies;
-        // let currency = '';
-        // let bookValue = 0;
-        // let marketValue = 0;
-
-        // for (const position of positions) {
-        //   currency = position.currency;
-        //   bookValue += position.bookValue;
-        //   marketValue += position.marketValue;
-        // }
-
-        // // Add Position to Account
-        // var p = { currency, bookValue, marketValue };
-        // console.log('ℹ️ Currency: ', JSON.stringify(p));
-        // account.currencies.push(p);
       }
     }
 
