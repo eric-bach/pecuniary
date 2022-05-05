@@ -33,6 +33,8 @@ import {
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 
+import * as rds from 'aws-cdk-lib/aws-rds';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
 
@@ -237,6 +239,37 @@ export class PecuniaryStack extends Stack {
         name: 'transactionDate',
         type: AttributeType.STRING,
       },
+    });
+
+    /***
+     *** Aurora Serverless
+     ***/
+    const vpc = new ec2.Vpc(this, 'TheVPC', {
+      cidr: '10.0.0.0/16',
+      // maxAzs: 2,
+      subnetConfiguration: [
+        {
+          name: 'public-subnet-1',
+          subnetType: ec2.SubnetType.PUBLIC,
+          cidrMask: 24,
+        },
+        {
+          name: 'private-subnet-1',
+          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+          cidrMask: 24,
+        },
+      ],
+    });
+    const cluster = new rds.ServerlessCluster(this, 'AnotherCluster', {
+      engine: rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
+      parameterGroup: rds.ParameterGroup.fromParameterGroupName(this, 'ParameterGroup', 'default.aurora-postgresql10'),
+      vpc, // this parameter is optional for serverless Clusters
+      scaling: {
+        autoPause: Duration.minutes(10), // default is to pause after 5 minutes of idle time
+        minCapacity: rds.AuroraCapacityUnit.ACU_2, // default is 2 Aurora capacity units (ACUs)
+        maxCapacity: rds.AuroraCapacityUnit.ACU_8, // default is 16 Aurora capacity units (ACUs)
+      },
+      enableDataApi: true, // Optional - will be automatically set if you call grantDataApiAccess()
     });
 
     /***
