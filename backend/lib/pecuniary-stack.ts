@@ -32,6 +32,8 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import * as rds from 'aws-cdk-lib/aws-rds';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
@@ -44,6 +46,7 @@ import { PecuniaryStackProps } from './PecuniaryStackProps';
 import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
 
 dotenv.config();
+declare const vpc: ec2.Vpc;
 
 export class PecuniaryStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
