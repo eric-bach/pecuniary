@@ -1,10 +1,84 @@
 [
   {
     "userId": "eric",
-    "sk": "ACC#2022-05-03T20:46:57.379Z"
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "sk": "ACC#",
+    "description": "Test TFSA Account #1",
+    "entity": "account",
+    "name": "TFSA #1",
+    "type": "TFSA"
   },
   {
-    "userId": "nicole",
-    "sk": "ACC#2022-05-04T20:46:57.379Z"
+    "userId": "eric",
+    "sk": "TRANS#",
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "commission": 9.99,
+    "entity": "transaction",
+    "price": 125.23,
+    "shares": 100,
+    "symbol": "AAPL",
+    "transactionDate": "2022-04-11Z",
+    "type": "Buy"
+  },
+  {
+    "userId": "eric",
+    "sk": "TRANS#",
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "commission": 2.5,
+    "entity": "transaction",
+    "price": 135.23,
+    "shares": 25,
+    "symbol": "AAPL",
+    "transactionDate": "2022-05-03Z",
+    "type": "Buy"
+  },
+  {
+    "userId": "eric",
+    "sk": "ACCPOS#",
+    "acb": 15916.24,
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "bookValue": 15891.26,
+    "currency": "USD",
+    "description": "Apple Inc.",
+    "entity": "position",
+    "exchange": "NasdaqGS",
+    "marketValue": 19660,
+    "shares": 125,
+    "symbol": "AAPL"
+  },
+  {
+    "userId": "eric",
+    "sk": "ACC#",
+    "aggregateId": "d10b3f6f-5e8d-4863-bbf8-25b64d651206m",
+    "description": "Test RRSP Account #1",
+    "entity": "account",
+    "name": "RRSP #1",
+    "type": "RRSP"
+  },
+  {
+    "userId": "eric",
+    "sk": "TRANS#",
+    "aggregateId": "d10b3f6f-5e8d-4863-bbf8-25b64d651206m",
+    "commission": 4.95,
+    "entity": "transaction",
+    "price": 104.23,
+    "shares": 150,
+    "symbol": "BMO.TO",
+    "transactionDate": "2022-04-18Z",
+    "type": "Buy"
+  },
+  {
+    "userId": "eric",
+    "sk": "ACCPOS#",
+    "acb": 15639.45,
+    "aggregateId": "d10b3f6f-5e8d-4863-bbf8-25b64d651206m",
+    "bookValue": 15629.55,
+    "currency": "CAD",
+    "description": "Bank of Montreal",
+    "entity": "position",
+    "exchange": "Toronto",
+    "marketValue": 20221.5,
+    "shares": 150,
+    "symbol": "BMO.TO"
   }
 ]
