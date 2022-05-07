@@ -571,10 +571,10 @@ export class PecuniaryStack extends Stack {
 
     // AppSync API
     new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
-    new CfnOutput(this, 'AppSyncAPIKey', { value: api.apiKey || '' });
 
     // DynamoDB tables
     new CfnOutput(this, 'DataTableArn', { value: dataTable.tableArn });
+    new CfnOutput(this, 'DataTableName', { value: dataTable.tableName });
 
     // EventBridge
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
