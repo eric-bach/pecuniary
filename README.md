@@ -5,25 +5,11 @@
   </p>
 </h1>
 
-<p align="center">
-   <a href="https://github.com/eric-bach/pecuniary/actions/workflows/build.yml">
-      <img src="https://github.com/eric-bach/pecuniary/actions/workflows/build.yml/badge.svg" alt="Build"/>
-   </a>
-   <a href="https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml">
-      <img src="https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml/badge.svg" alt="Deploy"/>
-   </a>
-   <a href="https://www.codefactor.io/repository/github/eric-bach/pecuniary"><img src="https://www.codefactor.io/repository/github/eric-bach/pecuniary/badge" alt="CodeFactor" /></a>
-   <br />
-   <a href="https://cypress.io">
-   <img src="https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square" alt="cypress"/>
-   </a>
-   <a href="https://gitter.im/pecuniary/community">
-      <img src="https://img.shields.io/gitter/room/pecuniary/community" alt="Gitter"/>
-   </a>
-   <a href="https://github.com/eric-bach/pecuniary/blob/master/LICENSE">
-   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" />
-   </a>
-</p>
+[![Build](https://github.com/eric-bach/pecuniary/actions/workflows/build.yml/badge.svg)](https://github.com/eric-bach/pecuniary/actions/workflows/build.yml)
+[![Deploy](https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml/badge.svg)](https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml)
+[![CodeFactor](https://www.codefactor.io/repository/github/eric-bach/pecuniary/badge)](https://www.codefactor.io/repository/github/eric-bach/pecuniary)
+[![GitHub issues open](https://img.shields.io/github/issues/eric-bach/pecuniary.svg?maxAge=2592000)](https://github.com/eric-bach/pecuniary/issues?q=is%3Aopen+is%3Aissue) [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/eric-bach/pecuniary.svg?maxAge=2592000)](https://github.com/eric-bach/pecuniary/issues?q=is%3Aissue+is%3Aclosed)
+[![Chat](https://img.shields.io/gitter/room/pecuniary/community)](https://gitter.im/pecuniary/community) ![license](https://img.shields.io/badge/license-MIT-blue.svg)
 
 <p align="center">
   <a href="#getting-started">Getting Started</a> |
