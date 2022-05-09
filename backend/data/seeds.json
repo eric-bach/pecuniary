@@ -34,6 +34,18 @@
   },
   {
     "userId": "eric",
+    "sk": "TRANS#",
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "commission": 2,
+    "entity": "transaction",
+    "price": 105,
+    "shares": 25,
+    "symbol": "AAPL",
+    "transactionDate": "2022-04-20Z",
+    "type": "Buy"
+  },
+  {
+    "userId": "eric",
     "sk": "ACCPOS#",
     "acb": 15916.24,
     "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
@@ -45,6 +57,70 @@
     "marketValue": 19660,
     "shares": 125,
     "symbol": "AAPL"
+  },
+  {
+    "userId": "eric",
+    "sk": "TRANS#",
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "commission": 5,
+    "entity": "transaction",
+    "price": 110,
+    "shares": 100,
+    "symbol": "DDOG",
+    "transactionDate": "2022-03-03Z",
+    "type": "Buy"
+  },
+  {
+    "userId": "eric",
+    "sk": "TRANS#",
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "commission": 5,
+    "entity": "transaction",
+    "price": 125,
+    "shares": 50,
+    "symbol": "DDOG",
+    "transactionDate": "2022-04-14Z",
+    "type": "Sell"
+  },
+  {
+    "userId": "eric",
+    "sk": "ACCPOS#",
+    "acb": 11005,
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "bookValue": 10995,
+    "currency": "USD",
+    "description": "Datadog, Inc.",
+    "entity": "position",
+    "exchange": "NasdaqGS",
+    "marketValue": 11000,
+    "shares": 100,
+    "symbol": "DDOG"
+  },
+  {
+    "userId": "eric",
+    "sk": "TRANS#",
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "commission": 5,
+    "entity": "transaction",
+    "price": 76.23,
+    "shares": 100,
+    "symbol": "TD.TO",
+    "transactionDate": "2022-05-04Z",
+    "type": "Buy"
+  },
+  {
+    "userId": "eric",
+    "sk": "ACCPOS#",
+    "acb": 7628,
+    "aggregateId": "70d2626a-2d28-439f-802a-76be94af0b55",
+    "bookValue": 7618,
+    "currency": "CAD",
+    "description": "The Toronto-Dominion Bank",
+    "entity": "position",
+    "exchange": "Toronto",
+    "marketValue": 9297,
+    "shares": 100,
+    "symbol": "TD.TO"
   },
   {
     "userId": "eric",
@@ -80,5 +156,23 @@
     "marketValue": 20221.5,
     "shares": 150,
     "symbol": "BMO.TO"
+  },
+  {
+    "userId": "eric",
+    "sk": "ACC#",
+    "aggregateId": "8004d652-f461-4db4-9536-aa6cc0c338b1",
+    "description": "TFSA #2",
+    "entity": "account",
+    "name": "TFSA #2",
+    "type": "TFSA"
+  },
+  {
+    "userId": "eric",
+    "sk": "ACC#",
+    "aggregateId": "3fa14896-8ae7-4e59-845b-d6c09044cc58",
+    "description": "RRSP #2",
+    "entity": "account",
+    "name": "RRSP #2",
+    "type": "RRSP"
   }
 ]
