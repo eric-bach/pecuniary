@@ -68,9 +68,9 @@ const HomePage = () => {
 
   // Get book/market values by Account Type and Currency
   var currencies: any = [];
-  var type: any, positions: any;
-  for ([type, positions] of Object.entries(groupByAccountType(positions))) {
-    var positionsGrouped = groupByCurrency(positions);
+  var type: any, p: any;
+  for ([type, p] of Object.entries(groupByAccountType(positions))) {
+    var positionsGrouped = groupByCurrency(p);
 
     // Sum book/marketValue for grouped positions
     var key: any, value: any;
