@@ -19,7 +19,7 @@
     "@aws-cdk/aws-appsync-alpha": "^2.0.0-alpha.11",
     "@aws-sdk/client-cloudformation": "^3.85.0",
     "@aws-sdk/client-cloudwatch-events": "^3.28.0",
-    "@aws-sdk/client-dynamodb": "^3.36.1",
+    "@aws-sdk/client-dynamodb": "^3.85.0",
     "@aws-sdk/util-dynamodb": "^3.36.1",
     "@aws-solutions-constructs/aws-cloudfront-s3": "^2.0.0",
     "@types/aws-lambda": "^8.10.83",
