@@ -13,19 +13,19 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 100
-          ref: ${{ github.event.pull_request.head.sha }}
+        uses: actions/checkout@v3
+        # with:
+        #   fetch-depth: 100
+        #   ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Use Node.js 14.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: 14.x
 
       - name: Install NPM Dependencies (Backend)
         run: npm i
-        working-directory: ./backend
+        working-directory: backend
 
       - name: Build Backend
         run: npm run build
