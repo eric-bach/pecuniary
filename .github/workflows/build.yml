@@ -24,7 +24,7 @@ jobs:
           node-version: 14.x
 
       - name: Install NPM Dependencies (Backend)
-        run: npm i
+        run: npm ci
         working-directory: backend
 
       - name: Build Backend
