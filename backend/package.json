@@ -10,7 +10,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "npm run build && jest --watchAll=false --coverage",
-    "cdk": "cdk",
+    "cdk": "node node_modules/aws-cdk/bin/cdk.js",
     "deploy": "npm run build && npm run build --prefix ../client && node ./helpers/deploy.js",
     "deploy:dev": "npm run build && npm run build --prefix ../client && node ./helpers/deploy.js 524849261220_AdministratorAccess",
     "seed": "npm run build && node ./helpers/seed.js"
