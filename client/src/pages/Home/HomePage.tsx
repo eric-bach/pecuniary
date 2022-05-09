@@ -68,9 +68,9 @@ const HomePage = () => {
 
   // Get book/market values by Account Type and Currency
   var currencies: any = [];
-  var type: any, positions: any;
-  for ([type, positions] of Object.entries(groupByAccountType(positions))) {
-    var positionsGrouped = groupByCurrency(positions);
+  var type: any, p: any;
+  for ([type, p] of Object.entries(groupByAccountType(positions))) {
+    var positionsGrouped = groupByCurrency(p);
 
     // Sum book/marketValue for grouped positions
     var key: any, value: any;
@@ -116,19 +116,40 @@ const HomePage = () => {
             <Statistic.Group widths='three'>
               <Statistic>
                 <Statistic.Value>
-                  <NumberFormat value={c.netWorth} displayType={'text'} thousandSeparator={true} prefix={'$'} decimalScale={2} />
+                  <NumberFormat
+                    value={c.netWorth}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
                 </Statistic.Value>
                 <Statistic.Label>Net Worth</Statistic.Label>
               </Statistic>
               <Statistic color={c.profit >= 0 ? 'green' : 'red'}>
                 <Statistic.Value>
-                  <NumberFormat value={c.profit} displayType={'text'} thousandSeparator={true} prefix={'$'} decimalScale={2} />
+                  <NumberFormat
+                    value={c.profit}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'$'}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                  />
                 </Statistic.Value>
                 <Statistic.Label>Return ($)</Statistic.Label>
               </Statistic>
               <Statistic color={c.profit >= 0 ? 'green' : 'red'}>
                 <Statistic.Value>
-                  <NumberFormat value={c.profitP} displayType={'text'} thousandSeparator={true} suffix={'%'} decimalScale={1} />
+                  <NumberFormat
+                    value={c.profitP}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    suffix={'%'}
+                    decimalScale={1}
+                    fixedDecimalScale={true}
+                  />
                 </Statistic.Value>
                 <Statistic.Label>Return (%)</Statistic.Label>
               </Statistic>

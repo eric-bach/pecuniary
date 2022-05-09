@@ -67,14 +67,7 @@ This quick start guide describes how to get the application running. An `AWS acc
    $ npm install
    ```
 
-4. Copy the `./backend/deploy.sh.example` file to `./backend/deploy.sh` and replace `AWS_PROFILE` in the file with your AWS credentials profile name
-
-   ```
-   # Deploy CDK
-   $ cdk deploy --profile AWS_PROFILE pecuniary-dev --require-approval=never
-   ```
-
-5. Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values:
+4. Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values:
 
    - `CDK_DEV_ACCOUNT` - AWS account Id
    - `CDK_PROD_ACCOUNT` - AWS account Id
@@ -82,14 +75,13 @@ This quick start guide describes how to get the application running. An `AWS acc
    - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
 
-6. Deploy the backend
+5. Deploy the backend
 
    ```
-   $ cd backend
-   $ ./deploy.sh
+   $ npm run deploy
    ```
 
-7. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
+6. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
 
    - aws_project_region: AWS Region,
    - aws_cognito_region: AWS Cognito Region,
@@ -97,12 +89,12 @@ This quick start guide describes how to get the application running. An `AWS acc
    - aws_user_pools_web_client_id: AWS Cognito User Pool Web Client Id,
    - aws_appsync_graphqlEndpoint: AWS AppSync GraphQL Endpoint
 
-8. Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
+7. Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
 
    - `REACT_APP_COGNITO_USERPOOL_ID` - AWS Cognito User Pool Id created in step 2
    - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
 
-9. Start the client locally on http://localhost:3000/
+8. Start the client locally on http://localhost:3000/
 
    ```bash
    $ npm start
@@ -138,10 +130,10 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    $ cd backend
    ```
 
-4. Deploy CDK stack using the bootstrap PowerShell script. Alternatively you may run the individual commands within this script manually. This script includes the necessary scaffolding to initialize some lookup data in the DynamoDB database required for the application to run.
+4. Deploy CDK stack.
 
    ```bash
-   $ ./deploy-cdk.ps1
+   $ npm run deploy PROFILE_NAME
    ```
 
 ### Deploy frontend
