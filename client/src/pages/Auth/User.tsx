@@ -44,6 +44,8 @@ const User = (props: any) => {
         onSuccess: (data) => {
           console.log('[USER] Authentication succeeded: ', data);
 
+          sessionStorage.setItem('userId', Username);
+
           resolve(data);
         },
         onFailure: (err) => {
@@ -65,6 +67,7 @@ const User = (props: any) => {
   const logout = () => {
     // Clear localStorage
     localStorage.clear();
+    sessionStorage.clear();
 
     const user = Pool.getCurrentUser();
 
