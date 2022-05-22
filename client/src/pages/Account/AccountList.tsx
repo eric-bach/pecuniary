@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Button, Divider } from 'semantic-ui-react';
-import axios from 'axios';
-import client from '../../client';
-import { GET_ACCOUNTS } from './graphql/graphql';
-import Loading from '../../components/Loading';
-import { AccountReadModel } from './types/Account';
-import AccountSummary from './AccountSummary';
 import InfiniteScroll from 'react-infinite-scroll-component';
+
+import client from '../../client';
+import AccountSummary from './AccountSummary';
+import Loading from '../../components/Loading';
+
+import { GET_ACCOUNTS } from './graphql/graphql';
+import { AccountReadModel } from './types/Account';
 
 const AccountList = () => {
   const [userId, setUserId] = useState('');
@@ -15,16 +16,8 @@ const AccountList = () => {
   const [accountData, setAccountData]: [any, any] = useState([]);
 
   const [hasMore, setHasMore] = useState(false);
-  const [data, setData]: [any, any] = useState([]);
-  const [page, setPage]: [any, any] = useState(1);
-  // const [isFetching, setIsFetching]: any[] = useInfiniteScroll(moreData);
 
   const loadData = async () => {
-    let url = 'https://medrum.herokuapp.com/articles';
-    axios.get(url).then((res) => {
-      setData(res.data);
-    });
-
     const response = await client.query({
       query: GET_ACCOUNTS,
       variables: {
@@ -45,13 +38,6 @@ const AccountList = () => {
   };
 
   async function moreData() {
-    let url = `https://medrum.herokuapp.com/feeds/?source=5718e53e7a84fb1901e05971&page=${page}&sort=latest`;
-    axios.get(url).then((res) => {
-      setData([...data, ...res.data]);
-      setPage(page + 1);
-      // setIsFetching(false);
-    });
-
     if (lastEvaluatedKey === null) {
       setHasMore(false);
       return;
@@ -85,7 +71,7 @@ const AccountList = () => {
     loadData();
   }, []);
 
-  if (data.length == 0) {
+  if (accountData.length == 0) {
     return <Loading />;
   }
 
