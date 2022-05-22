@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Grid, Button, Divider } from 'semantic-ui-react';
 import axios from 'axios';
 import useInfiniteScroll from './useInfinite';
 import client from '../../client';
 import { GET_ACCOUNTS } from './graphql/graphql';
 import Loading from '../../components/Loading';
+import { AccountReadModel } from './types/Account';
+import AccountSummary from './AccountSummary';
 
 const AccountList = () => {
   const [userId, setUserId] = useState('');
@@ -24,7 +28,6 @@ const AccountList = () => {
       query: GET_ACCOUNTS,
       variables: {
         userId: sessionStorage.getItem('userId'),
-        //userId: userId,
         lastEvaluatedKey: lastEvaluatedKey,
       },
     });
@@ -80,6 +83,24 @@ const AccountList = () => {
 
   return (
     <>
+      <Grid>
+        <Grid.Column width={10}>
+          <h2>
+            Accounts ({accountData.length})
+            <Button as={Link} to='/accounts/new' floated='right' positive content='Create Account' data-test='create-account-button' />
+          </h2>
+          <Divider hidden />
+
+          {accountData &&
+            accountData.map((d: AccountReadModel) => {
+              return <AccountSummary key={d.sk.toString()} {...d} />;
+            })}
+        </Grid.Column>
+        <Grid.Column width={5}>
+          <h2>Summary - TBA</h2>
+        </Grid.Column>
+      </Grid>
+
       <ul className='list-group-ul'>
         {data.map((article: any, key: any) => (
           <li className='list-group-li' key={key}>
