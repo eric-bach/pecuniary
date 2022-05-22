@@ -13,7 +13,7 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
     KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
     ExpressionAttributeValues: {
       ':v1': { S: userId },
-      ':v2': { S: 'ACC' },
+      ':v2': { S: 'ACC#' },
     },
   };
   lastEvaluatedKey ? (queryCommandInput.ExclusiveStartKey = { userId: { S: userId }, sk: { S: lastEvaluatedKey } }) : lastEvaluatedKey;
@@ -23,17 +23,23 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
   if (result && result.$metadata.httpStatusCode === 200) {
     console.log(`🔔 Found Accounts and Positions: ${JSON.stringify(result)}`);
 
+    // Check for lastEvaluatedKey
+    var lastEvalKey;
+    if (result.LastEvaluatedKey) {
+      lastEvalKey = unmarshall(result.LastEvaluatedKey);
+    }
+
     // Unmarshall results
     var results: any = [];
-    var lastEvalKey = unmarshall(result.LastEvaluatedKey);
     for (const item of result.Items) {
       console.debug('ℹ️ Item: ', JSON.stringify(item));
 
       var uItem = unmarshall(item);
-      uItem.lastEvaluatedKey = lastEvalKey.sk;
+      uItem.lastEvaluatedKey = lastEvalKey ? lastEvalKey.sk : '';
 
       results.push(uItem);
     }
+
     // Get Accounts
     var accounts = results.filter((x: any) => x.entity === 'account');
     console.debug('ℹ️ Accounts: ', JSON.stringify(accounts));
@@ -41,7 +47,8 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
     for (const account of accounts) {
       account.currencies = [];
 
-      var positions = results.filter((x: any) => x.entity === 'position' && x.aggregateId === account.aggregateId);
+      // var positions = results.filter((x: any) => x.entity === 'position' && x.aggregateId === account.aggregateId);
+      var positions = await getPositions(userId, account.aggregateId);
       console.debug('ℹ️ Positions: ', JSON.stringify(positions));
 
       if (positions.length > 0) {
@@ -77,6 +84,36 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
 
   console.log(`🛑 Could not find any Account`);
   return [];
+}
+
+async function getPositions(userId: string, aggregateId: string) {
+  const queryCommandInput: QueryCommandInput = {
+    TableName: process.env.DATA_TABLE_NAME,
+    IndexName: 'aggregateId-lsi',
+    KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
+    FilterExpression: 'begins_with(sk, :v3)',
+    ExpressionAttributeValues: {
+      ':v1': { S: userId },
+      ':v2': { S: aggregateId },
+      ':v3': { S: 'ACCPOS#' },
+    },
+  };
+
+  var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
+
+  var results: any = [];
+  if (result && result.$metadata.httpStatusCode === 200) {
+    // Unmarshall results
+    for (const item of result.Items) {
+      console.debug('ℹ️ Item: ', JSON.stringify(item));
+
+      var uItem = unmarshall(item);
+
+      results.push(uItem);
+    }
+  }
+
+  return results;
 }
 
 function groupByCurrency(items: any[]) {
