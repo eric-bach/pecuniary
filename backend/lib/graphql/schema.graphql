@@ -91,6 +91,7 @@ type AccountReadModel {
   acb: Float
   payee: String
   amount: Float
+  lastEvaluatedKey: String
 }
 
 type Currency {
@@ -101,7 +102,7 @@ type Currency {
 
 # GraphQL actions
 type Query {
-  getAccounts(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccounts(userId: String!, lastEvaluatedKey: String): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getTransactions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }

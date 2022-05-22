@@ -37,8 +37,8 @@ export const DELETE_ACCOUNT = gql`
 `;
 
 export const GET_ACCOUNTS = gql`
-  query GetAccounts($userId: String!) {
-    getAccounts(userId: $userId) {
+  query GetAccounts($userId: String!, $lastEvaluatedKey: String) {
+    getAccounts(userId: $userId, lastEvaluatedKey: $lastEvaluatedKey) {
       userId
       sk
       aggregateId
@@ -50,6 +50,7 @@ export const GET_ACCOUNTS = gql`
         bookValue
         marketValue
       }
+      lastEvaluatedKey
     }
   }
 `;

@@ -3,19 +3,21 @@ import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
-async function getAccounts(userId: string) {
+async function getAccounts(userId: string, lastEvaluatedKey: string) {
   console.debug(`🕧 Get Accounts Initialized`);
 
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    //TODO How to handle more than 100?
-    Limit: 100,
+    //TODO TEMP Limit to 3
+    Limit: 3,
     KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
     ExpressionAttributeValues: {
       ':v1': { S: userId },
       ':v2': { S: 'ACC' },
     },
   };
+  lastEvaluatedKey ? (queryCommandInput.ExclusiveStartKey = { userId: { S: userId }, sk: { S: lastEvaluatedKey } }) : lastEvaluatedKey;
+
   var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
 
   if (result && result.$metadata.httpStatusCode === 200) {
@@ -23,9 +25,14 @@ async function getAccounts(userId: string) {
 
     // Unmarshall results
     var results: any = [];
+    var lastEvalKey = unmarshall(result.LastEvaluatedKey);
     for (const item of result.Items) {
       console.debug('ℹ️ Item: ', JSON.stringify(item));
-      results.push(unmarshall(item));
+
+      var uItem = unmarshall(item);
+      uItem.lastEvaluatedKey = lastEvalKey.sk;
+
+      results.push(uItem);
     }
     // Get Accounts
     var accounts = results.filter((x: any) => x.entity === 'account');
