@@ -2,21 +2,22 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Button, Divider } from 'semantic-ui-react';
 import axios from 'axios';
-import useInfiniteScroll from './useInfinite';
 import client from '../../client';
 import { GET_ACCOUNTS } from './graphql/graphql';
 import Loading from '../../components/Loading';
 import { AccountReadModel } from './types/Account';
 import AccountSummary from './AccountSummary';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const AccountList = () => {
   const [userId, setUserId] = useState('');
   const [lastEvaluatedKey, setLastEvaluatedKey] = useState();
   const [accountData, setAccountData]: [any, any] = useState([]);
 
+  const [hasMore, setHasMore] = useState(false);
   const [data, setData]: [any, any] = useState([]);
   const [page, setPage]: [any, any] = useState(1);
-  const [isFetching, setIsFetching]: any[] = useInfiniteScroll(moreData);
+  // const [isFetching, setIsFetching]: any[] = useInfiniteScroll(moreData);
 
   const loadData = async () => {
     let url = 'https://medrum.herokuapp.com/articles';
@@ -28,16 +29,18 @@ const AccountList = () => {
       query: GET_ACCOUNTS,
       variables: {
         userId: sessionStorage.getItem('userId'),
-        lastEvaluatedKey: lastEvaluatedKey,
       },
     });
     if (response.data) {
-      console.log('GOT ACCOUNTS: ', response.data.getAccounts);
-      setLastEvaluatedKey(response.data.getAccounts[0].lastEvaluatedKey);
-      console.log('LAST EVALUATED KEY: ', response.data.getAccounts[0].lastEvaluatedKey);
+      console.log('GOT ACCOUNTS: ', response.data.getAccounts.items);
+      setLastEvaluatedKey(response.data.getAccounts.lastEvaluatedKey);
+      console.log('LAST EVALUATED KEY: ', response.data.getAccounts.lastEvaluatedKey);
 
       // TEMP Set data here
-      setAccountData(response.data.getAccounts);
+      setAccountData(response.data.getAccounts.items);
+      if (response.data.getAccounts.lastEvaluatedKey) {
+        setHasMore(true);
+      }
     }
   };
 
@@ -46,11 +49,15 @@ const AccountList = () => {
     axios.get(url).then((res) => {
       setData([...data, ...res.data]);
       setPage(page + 1);
-      setIsFetching(false);
+      // setIsFetching(false);
     });
 
-    console.log('***GETTING MORE WITH: ', lastEvaluatedKey);
+    if (lastEvaluatedKey === null) {
+      setHasMore(false);
+      return;
+    }
 
+    console.log('***GETTING MORE WITH: ', lastEvaluatedKey);
     const response = await client.query({
       query: GET_ACCOUNTS,
       variables: {
@@ -58,13 +65,16 @@ const AccountList = () => {
         lastEvaluatedKey: lastEvaluatedKey,
       },
     });
-    if (response.data) {
-      console.log('GOT ACCOUNTS: ', response.data.getAccounts);
-      setLastEvaluatedKey(response.data.getAccounts[0].lastEvaluatedKey);
-      console.log('LAST EVALUATED KEY: ', response.data.getAccounts[0].lastEvaluatedKey);
+    if (response && response.data) {
+      console.log('GOT ACCOUNTS: ', response.data.getAccounts.items);
+      setLastEvaluatedKey(response.data.getAccounts.lastEvaluatedKey);
+      console.log('LAST EVALUATED KEY: ', response.data.getAccounts.lastEvaluatedKey);
 
       // TEMP Set data here
-      setAccountData([...accountData, ...response.data.getAccounts]);
+      setAccountData([...accountData, ...response.data.getAccounts.items]);
+      if (response.data.getAccounts.lastEvaluatedKey) {
+        setHasMore(true);
+      }
     }
   }
 
@@ -86,31 +96,21 @@ const AccountList = () => {
       <Grid>
         <Grid.Column width={10}>
           <h2>
-            Accounts ({accountData.length})
+            Accounts ({accountData.length} loaded)
             <Button as={Link} to='/accounts/new' floated='right' positive content='Create Account' data-test='create-account-button' />
           </h2>
           <Divider hidden />
 
-          {accountData &&
-            accountData.map((d: AccountReadModel) => {
+          <InfiniteScroll dataLength={accountData.length} next={moreData} hasMore={hasMore} loader={<Loading />}>
+            {accountData.map((d: AccountReadModel) => {
               return <AccountSummary key={d.sk.toString()} {...d} />;
             })}
+          </InfiniteScroll>
         </Grid.Column>
         <Grid.Column width={5}>
           <h2>Summary - TBA</h2>
         </Grid.Column>
       </Grid>
-
-      <ul className='list-group-ul'>
-        {data.map((article: any, key: any) => (
-          <li className='list-group-li' key={key}>
-            {key + 1}.{' '}
-            <a href={article.url} target='_blank'>
-              {article.title}
-            </a>
-          </li>
-        ))}
-      </ul>
     </>
   );
 };

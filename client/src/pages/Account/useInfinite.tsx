@@ -17,11 +17,10 @@ const useInfiniteScroll = (callback: any) => {
     // BUG: This is loading when scrolling back to top
     if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || isFetching) {
       console.log(
-        `window.innerHeight: ${window.innerHeight} windows.outerHeight: ${window.outerHeight} window.scrollY: ${
-          window.scrollY
-        }  document.body.offsetHeight: ${document.documentElement.offsetHeight} result: ${
-          window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || isFetching
-        }`
+        `window.innerHeight: ${window.innerHeight} 
+         windows.outerHeight: ${window.outerHeight}
+         window.scrollY: ${window.scrollY}  
+         document.body.offsetHeight: ${document.documentElement.offsetHeight}`
       );
 
       return;

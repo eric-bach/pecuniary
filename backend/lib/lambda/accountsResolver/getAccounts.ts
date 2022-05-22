@@ -23,10 +23,11 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
   if (result && result.$metadata.httpStatusCode === 200) {
     console.log(`🔔 Found Accounts and Positions: ${JSON.stringify(result)}`);
 
-    // Check for lastEvaluatedKey
+    // Check for LastEvaluatedKey
     var lastEvalKey;
     if (result.LastEvaluatedKey) {
-      lastEvalKey = unmarshall(result.LastEvaluatedKey);
+      let lek = unmarshall(result.LastEvaluatedKey);
+      lastEvalKey = lek ? lek.sk : '';
     }
 
     // Unmarshall results
@@ -35,8 +36,6 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
       console.debug('ℹ️ Item: ', JSON.stringify(item));
 
       var uItem = unmarshall(item);
-      uItem.lastEvaluatedKey = lastEvalKey ? lastEvalKey.sk : '';
-
       results.push(uItem);
     }
 
@@ -78,8 +77,9 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
       }
     }
 
-    console.log(`✅ Found Accounts: ${JSON.stringify(accounts)}`);
-    return accounts;
+    let resp = { items: accounts, lastEvaluatedKey: lastEvalKey };
+    console.log(`✅ Found Accounts: ${JSON.stringify(resp)}`);
+    return resp;
   }
 
   console.log(`🛑 Could not find any Account`);
