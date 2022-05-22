@@ -12,6 +12,7 @@ import { GET_ACCOUNTS } from './graphql/graphql';
 import { CognitoUserSession } from '../types/CognitoUserSession';
 import { AccountReadModel } from './types/Account';
 import client from '../../client';
+import { database } from 'faker';
 
 const style = {
   height: 30,
@@ -27,7 +28,7 @@ const Accounts = () => {
   // const [lastEvaluatedKey, setLastEvaluatedKey] = useState();
   const [addAccounts, setAddAccounts] = useState();
   const [temp, setTemp]: [any[], any] = useState([]);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(3);
 
   const {
     data: accounts,
@@ -60,6 +61,7 @@ const Accounts = () => {
   console.log('[ACCOUNTS] LastEvaluatedKey:', lastEvaluatedKey);
   console.log('[ACCOUNTS] Accounts:', accounts.getAccounts);
   console.log('[ACCOUNTS] Accounts 2:', temp);
+  console.log('[ACCOUNTS] Items:', items);
 
   const fetchMoreData = async () => {
     console.log('get more');
@@ -76,6 +78,7 @@ const Accounts = () => {
     if (response.data) {
       console.log('MORE ACCOUNTS: ', response.data.getAccounts);
       setTemp(...temp, response.data.getAccounts);
+      setItems(items + response.data.getAccounts.length);
       console.log('ADDITIONAL ACCOUNTS: ', temp);
     }
   };
@@ -85,20 +88,17 @@ const Accounts = () => {
       <Grid>
         <Grid.Column width={10}>
           <h2>
-            Accounts ({accounts.getAccounts.length})
+            Accounts ({accounts.getAccounts.length + temp?.length})
             <Button as={Link} to='/accounts/new' floated='right' positive content='Create Account' data-test='create-account-button' />
           </h2>
           <Divider hidden />
-
           <InfiniteScroll dataLength={accounts.getAccounts.length} next={fetchMoreData} hasMore={true} loader={<h4>Loading...</h4>}>
             {accounts.getAccounts.map((d: any) => {
               return <AccountSummary key={d.sk.toString()} {...d} />;
             })}
-            {temp &&
-              temp.map((e: any) => {
-                console.log('e:', e);
-                return <AccountSummary key={e.sk.toString()} {...e} />;
-              })}
+            {temp?.map((e: any) => {
+              return <AccountSummary key={e.sk.toString()} {...e} />;
+            })}
           </InfiniteScroll>
         </Grid.Column>
       </Grid>
