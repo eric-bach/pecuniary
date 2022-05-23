@@ -13,7 +13,7 @@ exports.handler = async (event: TransactionAppSyncEvent) => {
   switch (event.info.fieldName) {
     case 'getTransactions':
       console.debug(`🔔 GetTransactions: ${JSON.stringify({ userId: event.arguments.userId, aggregateId: event.arguments.aggregateId })}`);
-      return await getTransactions(event.arguments.userId, event.arguments.aggregateId);
+      return await getTransactions(event.arguments.userId, event.arguments.aggregateId, event.arguments.lastEvaluatedKey);
 
     // Mutations
     case 'createTransaction':

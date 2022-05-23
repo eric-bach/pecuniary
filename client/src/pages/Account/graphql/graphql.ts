@@ -78,15 +78,18 @@ export const GET_POSITIONS = gql`
 export const GET_TRANSACTIONS = gql`
   query GetTransactions($userId: String!, $aggregateId: String!) {
     getTransactions(userId: $userId, aggregateId: $aggregateId) {
-      userId
-      sk
-      aggregateId
-      type
-      transactionDate
-      symbol
-      shares
-      price
-      commission
+      items {
+        userId
+        sk
+        aggregateId
+        type
+        transactionDate
+        symbol
+        shares
+        price
+        commission
+      }
+      lastEvaluatedKey
     }
   }
 `;

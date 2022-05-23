@@ -47,6 +47,7 @@ export type TransactionAppSyncEvent = {
   arguments: {
     userId: string; //getTransactions
     aggregateId: string; //getTransactions
+    lastEvaluatedKey: string; //getTransactions
 
     createTransactionInput: CreateTransactionInput;
     updateTransactionInput: UpdateTransactionInput;

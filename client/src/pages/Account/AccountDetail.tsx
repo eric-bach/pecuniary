@@ -123,7 +123,7 @@ const AccountDetail = (props: AccountProps) => {
         content='Add Transaction'
         data-test='add-transaction-button'
       />
-      <TransactionList transactions={trans.getTransactions} />
+      <TransactionList transactions={trans.getTransactions.items} />
     </>
   );
 };

@@ -109,28 +109,42 @@ mutation DeleteTransaction {
 }
 
 query GetAccounts {
-  getAccounts(userId: "eric")
-  {
-    userId
-    aggregateId
-    name
-    description
-    type
-    currencies {
-      currency
-      bookValue
-      marketValue
+  getAccounts(userId: "eric") {
+    items {
+      userId
+      sk
+      createdAt
+      updatedAt
+      aggregateId
+      entity
+      type
+      name
+      description
+      acb
+      payee
+      amount
     }
+    lastEvaluatedKey
   }
 }
 
 query GetTransactions {
-  getTransactions(userId: "eric", aggregateId: "3ca4261f-dda7-4cbc-9dba-ce26281d6cc8")
-  {
-    userId
-    aggregateId
-    symbol
-    transactionDate
+  getTransactions(userId: "eric", aggregateId: "70d2626a-2d28-439f-802a-76be94af0b55") {
+    items {
+      userId
+      sk
+      createdAt
+      updatedAt
+      aggregateId
+      entity
+      type
+      transactionDate
+      symbol
+      shares
+      price
+      commission
+    }
+    lastEvaluatedKey
   }
 }
 

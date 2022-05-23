@@ -8,7 +8,7 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
 
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    //TODO TEMP Limit to 3
+    //TODO TEMP Limit to 10
     Limit: 10,
     KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
     ExpressionAttributeValues: {
@@ -77,9 +77,9 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
       }
     }
 
-    let resp = { items: accounts, lastEvaluatedKey: lastEvalKey };
-    console.log(`✅ Found Accounts: ${JSON.stringify(resp)}`);
-    return resp;
+    let res = { items: accounts, lastEvaluatedKey: lastEvalKey };
+    console.log(`✅ Found Accounts: ${JSON.stringify(res)}`);
+    return res;
   }
 
   console.log(`🛑 Could not find any Account`);
