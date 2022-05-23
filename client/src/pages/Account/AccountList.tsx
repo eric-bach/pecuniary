@@ -46,7 +46,8 @@ const AccountList = () => {
   }
 
   useEffect(() => {
-    getAccounts;
+    /* eslint-disable no-unused-expressions */
+    getAccounts();
   }, []);
 
   if (accounts.length === 0) {
