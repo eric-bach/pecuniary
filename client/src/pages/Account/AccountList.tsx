@@ -11,17 +11,16 @@ import { GET_ACCOUNTS } from './graphql/graphql';
 import { AccountReadModel } from './types/Account';
 
 const AccountList = () => {
-  const [userId, setUserId] = useState('');
   const [lastEvaluatedKey, setLastEvaluatedKey] = useState();
   const [accounts, setAccounts]: [any, any] = useState([]);
+  const [hasMoreData, setHasMoreData] = useState(false);
 
-  const [hasMore, setHasMore] = useState(false);
-
-  const getInitialData = async () => {
+  const getAccounts = async () => {
     const response = await client.query({
       query: GET_ACCOUNTS,
       variables: {
         userId: sessionStorage.getItem('userId'),
+        lastEvaluatedKey: lastEvaluatedKey,
       },
     });
 
@@ -30,44 +29,24 @@ const AccountList = () => {
       setLastEvaluatedKey(response.data.getAccounts.lastEvaluatedKey);
       console.log('[ACCOUNT LIST] Last Evaluated Key:', response.data.getAccounts.lastEvaluatedKey);
 
-      setAccounts(response.data.getAccounts.items);
+      setAccounts([...accounts, ...response.data.getAccounts.items]);
       if (response.data.getAccounts.lastEvaluatedKey) {
-        setHasMore(true);
+        setHasMoreData(true);
       }
     }
   };
 
-  async function getMoreData() {
+  async function getAdditionalAccounts() {
     if (lastEvaluatedKey === null) {
-      setHasMore(false);
+      setHasMoreData(false);
       return;
     }
 
-    const response = await client.query({
-      query: GET_ACCOUNTS,
-      variables: {
-        userId: userId,
-        lastEvaluatedKey: lastEvaluatedKey,
-      },
-    });
-
-    if (response && response.data) {
-      console.log('[ACCOUNT LIST] Get more Accounts:', response.data.getAccounts.items);
-      setLastEvaluatedKey(response.data.getAccounts.lastEvaluatedKey);
-      console.log('[ACCOUNT LIST] Last Evaluated Key:', response.data.getAccounts.lastEvaluatedKey);
-
-      setAccounts([...accounts, ...response.data.getAccounts.items]);
-      if (response.data.getAccounts.lastEvaluatedKey) {
-        setHasMore(true);
-      }
-    }
+    await getAccounts();
   }
 
   useEffect(() => {
-    const userId = sessionStorage.getItem('userId');
-    if (userId) setUserId(userId);
-
-    getInitialData();
+    getAccounts();
   }, []);
 
   if (accounts.length == 0) {
@@ -86,7 +65,7 @@ const AccountList = () => {
           </h2>
           <Divider hidden />
 
-          <InfiniteScroll dataLength={accounts.length} next={getMoreData} hasMore={hasMore} loader={<Loading />}>
+          <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
             {accounts.map((d: AccountReadModel) => {
               return <AccountSummary key={d.sk.toString()} {...d} />;
             })}
