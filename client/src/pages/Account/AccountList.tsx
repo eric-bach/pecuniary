@@ -46,8 +46,9 @@ const AccountList = () => {
   }
 
   useEffect(() => {
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     getAccounts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (accounts.length === 0) {
