@@ -34,7 +34,7 @@ const HomePage = () => {
   });
 
   useEffect(() => {
-    let u = sessionStorage.getItem('userId');
+    let u = localStorage.getItem('userId');
     if (u) {
       setUserId(u);
     }

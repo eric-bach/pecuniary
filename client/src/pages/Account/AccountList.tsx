@@ -19,7 +19,7 @@ const AccountList = () => {
     const response = await client.query({
       query: GET_ACCOUNTS,
       variables: {
-        userId: sessionStorage.getItem('userId'),
+        userId: localStorage.getItem('userId'),
         lastEvaluatedKey: lastEvaluatedKey,
       },
     });

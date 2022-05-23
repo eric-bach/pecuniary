@@ -1,4 +1,3 @@
-import { useContext, useEffect, useState } from 'react';
 import { Grid, Segment, Header } from 'semantic-ui-react';
 import { useMutation } from '@apollo/client';
 import { Formik, Field } from 'formik';
@@ -6,10 +5,8 @@ import { Form, SubmitButton, Select, Input } from 'formik-semantic-ui-react';
 import DatePicker from 'react-datepicker';
 import * as Yup from 'yup';
 
-import { UserContext } from '../Auth/User';
 import { CREATE_TRANSACTION } from './graphql/graphql';
 
-import { CognitoUserSession } from '../types/CognitoUserSession';
 import { SelectList } from '../types/SelectList';
 import { AccountProps } from '../Account/types/Account';
 import { CreateTransactionInput, TransactionFormValues } from '../Transaction/types/Transaction';
@@ -41,16 +38,7 @@ const FormDatePicker = () => {
 };
 
 const TransactionForm = (props: AccountProps) => {
-  const [username, setUsername] = useState('');
   const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
-  const { getSession } = useContext(UserContext);
-
-  useEffect(() => {
-    // Get the logged in username
-    getSession().then((session: CognitoUserSession) => {
-      setUsername(session.idToken.payload.email);
-    });
-  }, [getSession]);
 
   const transactionTypes: SelectList[] = [
     { key: 'Buy', text: 'Buy', value: 'Buy' },
@@ -76,7 +64,7 @@ const TransactionForm = (props: AccountProps) => {
 
     const params: CreateTransactionInput = {
       createTransactionInput: {
-        userId: `${username}`,
+        userId: `${localStorage.getItem('userId')}`,
         aggregateId: account.aggregateId,
         type: selectedTransactionType.value,
         transactionDate: transactionDate,
