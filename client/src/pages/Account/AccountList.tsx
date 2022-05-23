@@ -46,7 +46,7 @@ const AccountList = () => {
   }
 
   useEffect(() => {
-    getAccounts();
+    getAccounts;
   }, []);
 
   if (accounts.length === 0) {
