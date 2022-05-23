@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_ACCOUNTS = gql`
-  query GetAccounts($userId: String!) {
-    getAccounts(userId: $userId) {
+  query GetAccounts($userId: String!, $lastEvaluatedKey: String) {
+    getAccounts(userId: $userId, lastEvaluatedKey: $lastEvaluatedKey) {
       items {
         userId
         sk

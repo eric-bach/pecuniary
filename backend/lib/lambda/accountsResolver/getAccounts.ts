@@ -9,7 +9,7 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     //TODO TEMP Limit to 3
-    Limit: 3,
+    Limit: 10,
     KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
     ExpressionAttributeValues: {
       ':v1': { S: userId },
