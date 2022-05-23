@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import NumberFormat from 'react-number-format';
 import { useQuery } from '@apollo/client';
 import { Statistic, Divider, Header, Icon } from 'semantic-ui-react';
@@ -27,17 +26,9 @@ function groupByCurrency(items: any[]) {
 }
 
 const HomePage = () => {
-  const [userId, setUserId] = useState('');
   const { data, error, loading } = useQuery(GET_ACCOUNTS, {
-    variables: { userId: userId },
+    variables: { userId: localStorage.getItem('userId') },
     fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
-  });
-
-  useEffect(() => {
-    let u = localStorage.getItem('userId');
-    if (u) {
-      setUserId(u);
-    }
   });
 
   if (error) return <div>${JSON.stringify(error)}</div>; // You probably want to do more here!

@@ -49,7 +49,7 @@ const AccountList = () => {
     getAccounts();
   }, []);
 
-  if (accounts.length == 0) {
+  if (accounts.length === 0) {
     return <Loading />;
   }
 
