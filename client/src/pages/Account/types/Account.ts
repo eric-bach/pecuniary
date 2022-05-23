@@ -49,3 +49,10 @@ export type AccountReadModel = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type TransactionLastEvaluatedKey = {
+  userId: string;
+  sk: string;
+  aggregateId: string;
+  transactionDate: string;
+};

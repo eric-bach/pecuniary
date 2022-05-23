@@ -76,8 +76,8 @@ export const GET_POSITIONS = gql`
 `;
 
 export const GET_TRANSACTIONS = gql`
-  query GetTransactions($userId: String!, $aggregateId: String!) {
-    getTransactions(userId: $userId, aggregateId: $aggregateId) {
+  query GetTransactions($userId: String!, $aggregateId: String!, $lastEvaluatedKey: LastEvaluatedKey) {
+    getTransactions(userId: $userId, aggregateId: $aggregateId, lastEvaluatedKey: $lastEvaluatedKey) {
       items {
         userId
         sk
@@ -89,7 +89,12 @@ export const GET_TRANSACTIONS = gql`
         price
         commission
       }
-      lastEvaluatedKey
+      lastEvaluatedKey {
+        userId
+        sk
+        aggregateId
+        transactionDate
+      }
     }
   }
 `;

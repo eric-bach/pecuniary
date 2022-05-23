@@ -1,9 +1,10 @@
 import { QueryCommand, QueryCommandInput } from '@aws-sdk/client-dynamodb';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+import { LastEvaluatedKey } from '../types/Transaction';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
-async function getTransactions(userId: string, aggregateId: string, lastEvaluatedKey: string) {
+async function getTransactions(userId: string, aggregateId: string, lastEvaluatedKey: LastEvaluatedKey) {
   console.debug(`🕧 Get Transactions Initialized`);
 
   const queryCommandInput: QueryCommandInput = {
@@ -20,7 +21,7 @@ async function getTransactions(userId: string, aggregateId: string, lastEvaluate
       ':v3': { S: 'transaction' },
     },
   };
-  lastEvaluatedKey ? (queryCommandInput.ExclusiveStartKey = { userId: { S: userId }, sk: { S: lastEvaluatedKey } }) : lastEvaluatedKey;
+  lastEvaluatedKey ? (queryCommandInput.ExclusiveStartKey = marshall(lastEvaluatedKey)) : lastEvaluatedKey;
   var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
 
   if (result.$metadata.httpStatusCode === 200) {
@@ -30,7 +31,7 @@ async function getTransactions(userId: string, aggregateId: string, lastEvaluate
     var lastEvalKey;
     if (result.LastEvaluatedKey) {
       let lek = unmarshall(result.LastEvaluatedKey);
-      lastEvalKey = lek ? lek.sk : '';
+      lastEvalKey = lek ? lek : '';
     }
 
     var transactions: any = [];

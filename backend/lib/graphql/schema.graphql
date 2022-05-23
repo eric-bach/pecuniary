@@ -9,6 +9,10 @@ type Data @model @aws_cognito_user_pools {
   name: String
   description: String
   transactionDate: AWSDate
+  symbol: String
+  shares: Float
+  price: Float
+  commission: Float
   exchange: String
   currency: String
   bookValue: Float
@@ -96,7 +100,21 @@ type AccountReadModel {
 
 type GetTransactionsResponse {
   items: [TransactionReadModel]
-  lastEvaluatedKey: String
+  lastEvaluatedKey: TransactionLastEvaluatedKey
+}
+
+type TransactionLastEvaluatedKey {
+  userId: ID
+  sk: String
+  aggregateId: ID
+  transactionDate: AWSDate
+}
+
+input LastEvaluatedKey {
+  userId: ID
+  sk: String
+  aggregateId: ID
+  transactionDate: AWSDate
 }
 
 type TransactionReadModel {
@@ -123,7 +141,8 @@ type Currency {
 # GraphQL actions
 type Query {
   getAccounts(userId: String!, lastEvaluatedKey: String): GetAccountsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
-  getTransactions(userId: String!, aggregateId: String!): GetTransactionsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getTransactions(userId: String!, aggregateId: String!, lastEvaluatedKey: LastEvaluatedKey): GetTransactionsResponse
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
