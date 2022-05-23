@@ -13,37 +13,36 @@ import { AccountReadModel } from './types/Account';
 const AccountList = () => {
   const [userId, setUserId] = useState('');
   const [lastEvaluatedKey, setLastEvaluatedKey] = useState();
-  const [accountData, setAccountData]: [any, any] = useState([]);
+  const [accounts, setAccounts]: [any, any] = useState([]);
 
   const [hasMore, setHasMore] = useState(false);
 
-  const loadData = async () => {
+  const getInitialData = async () => {
     const response = await client.query({
       query: GET_ACCOUNTS,
       variables: {
         userId: sessionStorage.getItem('userId'),
       },
     });
-    if (response.data) {
-      console.log('GOT ACCOUNTS: ', response.data.getAccounts.items);
-      setLastEvaluatedKey(response.data.getAccounts.lastEvaluatedKey);
-      console.log('LAST EVALUATED KEY: ', response.data.getAccounts.lastEvaluatedKey);
 
-      // TEMP Set data here
-      setAccountData(response.data.getAccounts.items);
+    if (response && response.data) {
+      console.log('[ACCOUNT LIST] Get Accounts:', response.data.getAccounts.items);
+      setLastEvaluatedKey(response.data.getAccounts.lastEvaluatedKey);
+      console.log('[ACCOUNT LIST] Last Evaluated Key:', response.data.getAccounts.lastEvaluatedKey);
+
+      setAccounts(response.data.getAccounts.items);
       if (response.data.getAccounts.lastEvaluatedKey) {
         setHasMore(true);
       }
     }
   };
 
-  async function moreData() {
+  async function getMoreData() {
     if (lastEvaluatedKey === null) {
       setHasMore(false);
       return;
     }
 
-    console.log('***GETTING MORE WITH: ', lastEvaluatedKey);
     const response = await client.query({
       query: GET_ACCOUNTS,
       variables: {
@@ -51,13 +50,13 @@ const AccountList = () => {
         lastEvaluatedKey: lastEvaluatedKey,
       },
     });
-    if (response && response.data) {
-      console.log('GOT ACCOUNTS: ', response.data.getAccounts.items);
-      setLastEvaluatedKey(response.data.getAccounts.lastEvaluatedKey);
-      console.log('LAST EVALUATED KEY: ', response.data.getAccounts.lastEvaluatedKey);
 
-      // TEMP Set data here
-      setAccountData([...accountData, ...response.data.getAccounts.items]);
+    if (response && response.data) {
+      console.log('[ACCOUNT LIST] Get more Accounts:', response.data.getAccounts.items);
+      setLastEvaluatedKey(response.data.getAccounts.lastEvaluatedKey);
+      console.log('[ACCOUNT LIST] Last Evaluated Key:', response.data.getAccounts.lastEvaluatedKey);
+
+      setAccounts([...accounts, ...response.data.getAccounts.items]);
       if (response.data.getAccounts.lastEvaluatedKey) {
         setHasMore(true);
       }
@@ -68,27 +67,27 @@ const AccountList = () => {
     const userId = sessionStorage.getItem('userId');
     if (userId) setUserId(userId);
 
-    loadData();
+    getInitialData();
   }, []);
 
-  if (accountData.length == 0) {
+  if (accounts.length == 0) {
     return <Loading />;
   }
 
-  console.log('🚀 ALL THE ACCOUNTS:', accountData);
+  console.log('[ACCOUNT LIST] Accounts:', accounts);
 
   return (
     <>
       <Grid>
         <Grid.Column width={10}>
           <h2>
-            Accounts ({accountData.length} loaded)
+            Accounts ({accounts.length} loaded)
             <Button as={Link} to='/accounts/new' floated='right' positive content='Create Account' data-test='create-account-button' />
           </h2>
           <Divider hidden />
 
-          <InfiniteScroll dataLength={accountData.length} next={moreData} hasMore={hasMore} loader={<Loading />}>
-            {accountData.map((d: AccountReadModel) => {
+          <InfiniteScroll dataLength={accounts.length} next={getMoreData} hasMore={hasMore} loader={<Loading />}>
+            {accounts.map((d: AccountReadModel) => {
               return <AccountSummary key={d.sk.toString()} {...d} />;
             })}
           </InfiniteScroll>
