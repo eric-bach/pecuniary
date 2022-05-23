@@ -46,7 +46,7 @@ const AccountList = () => {
   }
 
   useEffect(() => {
-    /* eslint-disable no-unused-expressions */
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     getAccounts();
   }, []);
 
