@@ -10,8 +10,8 @@ async function getTransactions(userId: string, aggregateId: string, lastEvaluate
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'aggregateId-gsi',
-    //TODO TEMP Limit to 3
-    Limit: 3,
+    //TODO TEMP Limit to 10
+    Limit: 10,
     ScanIndexForward: false,
     KeyConditionExpression: 'aggregateId = :v1',
     FilterExpression: 'userId = :v2 AND entity = :v3',

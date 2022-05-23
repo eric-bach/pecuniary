@@ -77,9 +77,26 @@ type DeleteResponse {
   aggregateId: String
 }
 
+input LastEvaluatedKey {
+  userId: ID
+  sk: String
+}
+
+input TransactionLastEvaluatedKey {
+  userId: ID
+  sk: String
+  aggregateId: ID
+  transactionDate: AWSDate
+}
+
 type GetAccountsResponse {
   items: [AccountReadModel]
-  lastEvaluatedKey: String
+  lastEvaluatedKey: LastEvaluatedKeyResponse
+}
+
+type LastEvaluatedKeyResponse {
+  userId: ID
+  sk: String
 }
 
 type AccountReadModel {
@@ -100,17 +117,10 @@ type AccountReadModel {
 
 type GetTransactionsResponse {
   items: [TransactionReadModel]
-  lastEvaluatedKey: TransactionLastEvaluatedKey
+  lastEvaluatedKey: TransactionLastEvaluatedKeyResponse
 }
 
-type TransactionLastEvaluatedKey {
-  userId: ID
-  sk: String
-  aggregateId: ID
-  transactionDate: AWSDate
-}
-
-input LastEvaluatedKey {
+type TransactionLastEvaluatedKeyResponse {
   userId: ID
   sk: String
   aggregateId: ID
@@ -140,8 +150,8 @@ type Currency {
 
 # GraphQL actions
 type Query {
-  getAccounts(userId: String!, lastEvaluatedKey: String): GetAccountsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
-  getTransactions(userId: String!, aggregateId: String!, lastEvaluatedKey: LastEvaluatedKey): GetTransactionsResponse
+  getAccounts(userId: String!, lastEvaluatedKey: LastEvaluatedKey): GetAccountsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getTransactions(userId: String!, aggregateId: String!, lastEvaluatedKey: TransactionLastEvaluatedKey): GetTransactionsResponse
     @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }

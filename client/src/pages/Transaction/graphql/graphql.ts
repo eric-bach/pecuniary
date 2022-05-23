@@ -40,7 +40,7 @@ export const DELETE_TRANSACTION = gql`
 `;
 
 export const GET_TRANSACTIONS = gql`
-  query GetTransactions($userId: String!, $aggregateId: String!, $lastEvaluatedKey: LastEvaluatedKey) {
+  query GetTransactions($userId: String!, $aggregateId: String!, $lastEvaluatedKey: TransactionLastEvaluatedKey) {
     getTransactions(userId: $userId, aggregateId: $aggregateId, lastEvaluatedKey: $lastEvaluatedKey) {
       items {
         userId

@@ -40,7 +40,12 @@ const HomePage = () => {
           query: GET_ACCOUNTS,
           variables: {
             userId: localStorage.getItem('userId'),
-            lastEvaluatedKey: lastEvaluatedKey,
+            lastEvaluatedKey: lastEvaluatedKey
+              ? {
+                  userId: lastEvaluatedKey.userId,
+                  sk: lastEvaluatedKey.sk,
+                }
+              : lastEvaluatedKey,
           },
         });
 
