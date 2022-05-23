@@ -59,7 +59,7 @@ const HomePage = () => {
     };
 
     getAccounts();
-  }, []);
+  }, [accounts]);
 
   if (accounts.length === 0) {
     return <Loading />;
