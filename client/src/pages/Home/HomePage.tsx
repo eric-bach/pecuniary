@@ -59,7 +59,8 @@ const HomePage = () => {
     };
 
     getAccounts();
-  }, [accounts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (accounts.length === 0) {
     return <Loading />;
