@@ -44,6 +44,8 @@ const User = (props: any) => {
         onSuccess: (data) => {
           console.log('[USER] Authentication succeeded: ', data);
 
+          localStorage.setItem('userId', Username);
+
           resolve(data);
         },
         onFailure: (err) => {

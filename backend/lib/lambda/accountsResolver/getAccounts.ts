@@ -3,30 +3,42 @@ import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
-async function getAccounts(userId: string) {
+async function getAccounts(userId: string, lastEvaluatedKey: string) {
   console.debug(`🕧 Get Accounts Initialized`);
 
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    //TODO How to handle more than 100?
-    Limit: 100,
+    //TODO TEMP Limit to 3
+    Limit: 3,
     KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
     ExpressionAttributeValues: {
       ':v1': { S: userId },
-      ':v2': { S: 'ACC' },
+      ':v2': { S: 'ACC#' },
     },
   };
+  lastEvaluatedKey ? (queryCommandInput.ExclusiveStartKey = { userId: { S: userId }, sk: { S: lastEvaluatedKey } }) : lastEvaluatedKey;
+
   var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
 
   if (result && result.$metadata.httpStatusCode === 200) {
     console.log(`🔔 Found Accounts and Positions: ${JSON.stringify(result)}`);
 
+    // Check for LastEvaluatedKey
+    var lastEvalKey;
+    if (result.LastEvaluatedKey) {
+      let lek = unmarshall(result.LastEvaluatedKey);
+      lastEvalKey = lek ? lek.sk : '';
+    }
+
     // Unmarshall results
     var results: any = [];
     for (const item of result.Items) {
       console.debug('ℹ️ Item: ', JSON.stringify(item));
-      results.push(unmarshall(item));
+
+      var uItem = unmarshall(item);
+      results.push(uItem);
     }
+
     // Get Accounts
     var accounts = results.filter((x: any) => x.entity === 'account');
     console.debug('ℹ️ Accounts: ', JSON.stringify(accounts));
@@ -34,7 +46,8 @@ async function getAccounts(userId: string) {
     for (const account of accounts) {
       account.currencies = [];
 
-      var positions = results.filter((x: any) => x.entity === 'position' && x.aggregateId === account.aggregateId);
+      // var positions = results.filter((x: any) => x.entity === 'position' && x.aggregateId === account.aggregateId);
+      var positions = await getPositions(userId, account.aggregateId);
       console.debug('ℹ️ Positions: ', JSON.stringify(positions));
 
       if (positions.length > 0) {
@@ -64,12 +77,43 @@ async function getAccounts(userId: string) {
       }
     }
 
-    console.log(`✅ Found Accounts: ${JSON.stringify(accounts)}`);
-    return accounts;
+    let resp = { items: accounts, lastEvaluatedKey: lastEvalKey };
+    console.log(`✅ Found Accounts: ${JSON.stringify(resp)}`);
+    return resp;
   }
 
   console.log(`🛑 Could not find any Account`);
   return [];
+}
+
+async function getPositions(userId: string, aggregateId: string) {
+  const queryCommandInput: QueryCommandInput = {
+    TableName: process.env.DATA_TABLE_NAME,
+    IndexName: 'aggregateId-lsi',
+    KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
+    FilterExpression: 'begins_with(sk, :v3)',
+    ExpressionAttributeValues: {
+      ':v1': { S: userId },
+      ':v2': { S: aggregateId },
+      ':v3': { S: 'ACCPOS#' },
+    },
+  };
+
+  var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
+
+  var results: any = [];
+  if (result && result.$metadata.httpStatusCode === 200) {
+    // Unmarshall results
+    for (const item of result.Items) {
+      console.debug('ℹ️ Item: ', JSON.stringify(item));
+
+      var uItem = unmarshall(item);
+
+      results.push(uItem);
+    }
+  }
+
+  return results;
 }
 
 function groupByCurrency(items: any[]) {

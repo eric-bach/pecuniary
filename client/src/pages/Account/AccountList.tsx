@@ -1,68 +1,84 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Button, Divider } from 'semantic-ui-react';
-import { useQuery } from '@apollo/client';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
-import { UserContext } from '../Auth/User';
-import Loading from '../../components/Loading';
+import client from '../../client';
 import AccountSummary from './AccountSummary';
-import { GET_ACCOUNTS } from './graphql/graphql';
+import Loading from '../../components/Loading';
 
-import { CognitoUserSession } from '../types/CognitoUserSession';
+import { GET_ACCOUNTS } from './graphql/graphql';
 import { AccountReadModel } from './types/Account';
 
-const Accounts = () => {
-  const [isLoading, setLoading] = useState(true);
-  const [userId, setUserId] = useState('');
-  const {
-    data: accounts,
-    error,
-    loading,
-  } = useQuery(GET_ACCOUNTS, {
-    variables: { userId: userId },
-    pollInterval: 3000, // Refresh accounts every 3 seconds
-    fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
-  });
+const AccountList = () => {
+  const [lastEvaluatedKey, setLastEvaluatedKey] = useState();
+  const [accounts, setAccounts]: [any, any] = useState([]);
+  const [hasMoreData, setHasMoreData] = useState(false);
 
-  const { getSession } = useContext(UserContext);
-
-  useEffect(() => {
-    // Get the logged in user
-    getSession().then((session: CognitoUserSession) => {
-      setUserId(session.idToken.payload.email);
-      console.log('[ACCOUNTS] Get user:', session.idToken.payload.email);
+  const getAccounts = async () => {
+    const response = await client.query({
+      query: GET_ACCOUNTS,
+      variables: {
+        userId: localStorage.getItem('userId'),
+        lastEvaluatedKey: lastEvaluatedKey,
+      },
     });
 
-    setLoading(false);
-  }, [getSession]);
+    if (response && response.data) {
+      console.log('[ACCOUNT LIST] Get Accounts:', response.data.getAccounts.items);
+      setLastEvaluatedKey(response.data.getAccounts.lastEvaluatedKey);
+      console.log('[ACCOUNT LIST] Last Evaluated Key:', response.data.getAccounts.lastEvaluatedKey);
 
-  // TODO Improve the Error screen
-  if (error) return <div>${JSON.stringify(error)}</div>; // You probably want to do more here!
-  if (loading || isLoading) return <Loading />;
+      setAccounts([...accounts, ...response.data.getAccounts.items]);
+      if (response.data.getAccounts.lastEvaluatedKey) {
+        setHasMoreData(true);
+      }
+    }
+  };
 
-  console.log('[ACCOUNTS] Accounts:', accounts.getAccounts);
+  async function getAdditionalAccounts() {
+    if (lastEvaluatedKey === null) {
+      setHasMoreData(false);
+      return;
+    }
+
+    await getAccounts();
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    getAccounts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (accounts.length === 0) {
+    return <Loading />;
+  }
+
+  console.log('[ACCOUNT LIST] Accounts:', accounts);
 
   return (
-    <Grid>
-      <Grid.Column width={10}>
-        <h2>
-          Accounts ({accounts.getAccounts.length})
-          <Button as={Link} to='/accounts/new' floated='right' positive content='Create Account' data-test='create-account-button' />
-        </h2>
+    <>
+      <Grid>
+        <Grid.Column width={10}>
+          <h2>
+            Accounts ({accounts.length} loaded)
+            <Button as={Link} to='/accounts/new' floated='right' positive content='Create Account' data-test='create-account-button' />
+          </h2>
+          <Divider hidden />
 
-        <Divider hidden />
-
-        {accounts &&
-          accounts.getAccounts.map((d: AccountReadModel) => {
-            return <AccountSummary key={d.sk.toString()} {...d} />;
-          })}
-      </Grid.Column>
-      <Grid.Column width={5}>
-        <h2>Summary</h2>
-        {/* <Doughnut data={accounts} /> */}
-      </Grid.Column>
-    </Grid>
+          <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
+            {accounts.map((d: AccountReadModel) => {
+              return <AccountSummary key={d.sk.toString()} {...d} />;
+            })}
+          </InfiniteScroll>
+        </Grid.Column>
+        <Grid.Column width={5}>
+          <h2>Summary - TBA</h2>
+        </Grid.Column>
+      </Grid>
+    </>
   );
 };
 
-export default Accounts;
+export default AccountList;

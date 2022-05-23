@@ -77,6 +77,11 @@ type DeleteResponse {
   aggregateId: String
 }
 
+type GetAccountsResponse {
+  items: [AccountReadModel]
+  lastEvaluatedKey: String
+}
+
 type AccountReadModel {
   userId: ID
   sk: String
@@ -101,7 +106,7 @@ type Currency {
 
 # GraphQL actions
 type Query {
-  getAccounts(userId: String!): [AccountReadModel] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccounts(userId: String!, lastEvaluatedKey: String): GetAccountsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
   getTransactions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }

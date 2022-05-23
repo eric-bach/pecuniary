@@ -8,8 +8,8 @@ async function getPositions(userId: string, aggregateId: string) {
 
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    //TODO How to handle more than 100?
-    Limit: 100,
+    //TODO How to handle more than the dynamoDB limit?
+    //Limit: 100,
     KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
     FilterExpression: 'aggregateId = :v3',
     ExpressionAttributeValues: {

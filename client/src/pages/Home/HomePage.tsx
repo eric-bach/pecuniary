@@ -1,13 +1,9 @@
+import NumberFormat from 'react-number-format';
 import { useQuery } from '@apollo/client';
-import { useContext, useEffect, useState } from 'react';
 import { Statistic, Divider, Header, Icon } from 'semantic-ui-react';
 
-import { UserContext } from '../Auth/User';
 import Loading from '../../components/Loading';
-
-import { CognitoUserSession } from '../types/CognitoUserSession';
 import { GET_ACCOUNTS } from './graphql/graphql';
-import NumberFormat from 'react-number-format';
 
 function groupByAccountType(items: any[]) {
   var result = items.reduce(function (r: any[], a: any) {
@@ -30,41 +26,27 @@ function groupByCurrency(items: any[]) {
 }
 
 const HomePage = () => {
-  const [isLoading, setLoading] = useState(true);
-  const [userId, setUserId] = useState('');
-
   const { data, error, loading } = useQuery(GET_ACCOUNTS, {
-    variables: { userId: userId },
+    variables: { userId: localStorage.getItem('userId') },
     fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
   });
-  const { getSession } = useContext(UserContext);
-
-  useEffect(() => {
-    // Get the logged in user
-    getSession().then((session: CognitoUserSession) => {
-      setUserId(session.idToken.payload.email);
-      console.log('[ACCOUNTS] Get user:', session.idToken.payload.email);
-    });
-
-    setLoading(false);
-  }, [getSession]);
 
   if (error) return <div>${JSON.stringify(error)}</div>; // You probably want to do more here!
-  if (loading || isLoading) return <Loading />;
+  if (loading) return <Loading />;
 
   console.log('[HOME PAGE] Accounts:', data);
-  const accounts = data.getAccounts;
+  const accounts = data.getAccounts.items;
 
   // Get all Positions in Account along with their Account Type
   var positions: any = [];
   accounts.forEach((acc: any) => {
     acc.currencies.forEach((cur: any) => {
       var pos = { ...cur, type: acc.type };
-      console.log('Denormalized Position:', pos);
+      // console.log('[HOME PAGE] Denormalized Position:', pos);
       positions.push(pos);
     });
   });
-  console.log('All Positions: ', positions);
+  console.log('[HOME PAGE] Positions: ', positions);
 
   // Get book/market values by Account Type and Currency
   var currencies: any = [];
@@ -90,15 +72,14 @@ const HomePage = () => {
         profit: marketValue - bookValue,
         profitP: ((marketValue - bookValue) / bookValue) * 100,
       };
-      console.log('Currency:', currency);
+      // console.log('[HOME PAGE] Currency:', currency);
       currencies.push(currency);
     }
   }
-  console.log('Currencies:', currencies);
+  console.log('[HOME PAGE] Currencies:', currencies);
 
   return (
     <>
-      {/* <Message color='teal' header='Welcome back!' content='Here is your account overview.' /> */}
       <Header as='h2'>
         <Icon name='line graph' />
         <Header.Content>

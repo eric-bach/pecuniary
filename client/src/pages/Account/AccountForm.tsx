@@ -1,23 +1,20 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, Segment, Header } from 'semantic-ui-react';
 import { useMutation } from '@apollo/client';
 import { Formik } from 'formik';
 import { Form, Input, SubmitButton, Select } from 'formik-semantic-ui-react';
 import * as Yup from 'yup';
 
-import { UserContext } from '../Auth/User';
 import { CREATE_ACCOUNT, UPDATE_ACCOUNT } from './graphql/graphql';
 
-import { CognitoUserSession } from '../types/CognitoUserSession';
 import { SelectList } from '../types/SelectList';
 import { AccountProps, CreateAccountInput, UpdateAccountInput } from './types/Account';
 
 const AccountForm = (props: AccountProps) => {
   const [account] = useState(props.location.state ? props.location.state.account : undefined);
-  const [username, setUsername] = useState('');
+  const [userId, setUserId] = useState('');
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
   const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
-  const { getSession } = useContext(UserContext);
 
   useEffect(() => {
     account
@@ -25,10 +22,11 @@ const AccountForm = (props: AccountProps) => {
       : console.log('[ACCOUNT FORM] Aggregate Id does not exist.  Create Account mode enabled');
 
     // Get the logged in username
-    getSession().then((session: CognitoUserSession) => {
-      setUsername(session.idToken.payload.email);
-    });
-  }, [account, getSession]);
+    let u = localStorage.getItem('userId');
+    if (u) {
+      setUserId(u);
+    }
+  }, [account]);
 
   const accountTypes: SelectList[] = [
     { key: 'TFSA', text: 'TFSA', value: 'TFSA' },
@@ -47,12 +45,14 @@ const AccountForm = (props: AccountProps) => {
 
       const params: CreateAccountInput = {
         createAccountInput: {
-          userId: `${username}`,
+          userId: `${userId}`,
           type: `${selectedAccountType.value}`,
           name: `${name}`,
           description: `${description}`,
         },
       };
+
+      console.log(params);
 
       createAccountMutation({
         variables: params,
@@ -73,7 +73,7 @@ const AccountForm = (props: AccountProps) => {
 
       const params: UpdateAccountInput = {
         updateAccountInput: {
-          userId: `${username}`,
+          userId: `${userId}`,
           sk: account.sk,
           type: `${selectedAccountType.value}`,
           name: `${name}`,
