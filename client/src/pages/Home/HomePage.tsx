@@ -1,9 +1,10 @@
 import NumberFormat from 'react-number-format';
-import { useQuery } from '@apollo/client';
 import { Statistic, Divider, Header, Icon } from 'semantic-ui-react';
 
+import client from '../../client';
 import Loading from '../../components/Loading';
 import { GET_ACCOUNTS } from './graphql/graphql';
+import { useEffect, useState } from 'react';
 
 function groupByAccountType(items: any[]) {
   var result = items.reduce(function (r: any[], a: any) {
@@ -26,16 +27,45 @@ function groupByCurrency(items: any[]) {
 }
 
 const HomePage = () => {
-  const { data, error, loading } = useQuery(GET_ACCOUNTS, {
-    variables: { userId: localStorage.getItem('userId') },
-    fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
-  });
+  const [accounts, setAccounts]: [any, any] = useState([]);
 
-  if (error) return <div>${JSON.stringify(error)}</div>; // You probably want to do more here!
-  if (loading) return <Loading />;
+  useEffect(() => {
+    const getAccounts = async () => {
+      var accts: any[] = [];
+      var lastEvaluatedKey;
+      var counter: number = 0;
 
-  console.log('[HOME PAGE] Accounts:', data);
-  const accounts = data.getAccounts.items;
+      do {
+        const response: any = await client.query({
+          query: GET_ACCOUNTS,
+          variables: {
+            userId: localStorage.getItem('userId'),
+            lastEvaluatedKey: lastEvaluatedKey,
+          },
+        });
+
+        if (response && response.data) {
+          console.log('[HOME PAGE] Get Accounts:', response.data.getAccounts.items);
+          Array.prototype.push.apply(accts, response.data.getAccounts.items);
+
+          lastEvaluatedKey = response.data.getAccounts.lastEvaluatedKey;
+          console.log('[HOME PAGE] Last Evaluated Key:', lastEvaluatedKey);
+        }
+
+        ++counter;
+      } while (lastEvaluatedKey !== null || counter > 100); // Limit to 100 calls
+
+      setAccounts([...accounts, ...accts]);
+    };
+
+    getAccounts();
+  }, []);
+
+  if (accounts.length === 0) {
+    return <Loading />;
+  }
+
+  console.log('[HOME PAGE] Accounts:', accounts);
 
   // Get all Positions in Account along with their Account Type
   var positions: any = [];
