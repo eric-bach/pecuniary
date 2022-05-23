@@ -69,21 +69,21 @@ const TransactionList = (props: TransactionsProps) => {
   return (
     <>
       <h2>Transaction List</h2>
-      <Table selectable color='teal' key='teal'>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Type</Table.HeaderCell>
-            <Table.HeaderCell>Date</Table.HeaderCell>
-            <Table.HeaderCell>Symbol</Table.HeaderCell>
-            <Table.HeaderCell>Shares</Table.HeaderCell>
-            <Table.HeaderCell>Price</Table.HeaderCell>
-            <Table.HeaderCell>Commission</Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
+      <InfiniteScroll dataLength={transactions.length} next={getAdditionalTransactions} hasMore={hasMoreData} loader={<Loading />}>
+        <Table selectable color='teal' key='teal'>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Type</Table.HeaderCell>
+              <Table.HeaderCell>Date</Table.HeaderCell>
+              <Table.HeaderCell>Symbol</Table.HeaderCell>
+              <Table.HeaderCell>Shares</Table.HeaderCell>
+              <Table.HeaderCell>Price</Table.HeaderCell>
+              <Table.HeaderCell>Commission</Table.HeaderCell>
+              <Table.HeaderCell></Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
 
-        <Table.Body>
-          <InfiniteScroll dataLength={transactions.length} next={getAdditionalTransactions} hasMore={hasMoreData} loader={<Loading />}>
+          <Table.Body>
             {transactions.map((t: TransactionReadModel) => {
               let color = t.type === 'Buy' ? 'blue' : 'red';
 
@@ -136,9 +136,9 @@ const TransactionList = (props: TransactionsProps) => {
                 </Table.Row>
               );
             })}
-          </InfiniteScroll>
-        </Table.Body>
-      </Table>
+          </Table.Body>
+        </Table>
+      </InfiniteScroll>
     </>
   );
 };
