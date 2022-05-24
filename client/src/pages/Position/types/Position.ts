@@ -1,5 +1,5 @@
 export type PositionsProps = {
-  positions: [PositionReadModel];
+  aggregateId: string;
 };
 
 export type PositionReadModel = {

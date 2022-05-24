@@ -1,46 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Segment, Item, Label, Button } from 'semantic-ui-react';
-import { useQuery } from '@apollo/client';
 import NumberFormat from 'react-number-format';
 
-import Loading from '../../components/Loading';
 import Positions from '../Position/Positions';
 import TransactionList from '../Transaction/TransactionList';
-import { GET_POSITIONS } from './graphql/graphql';
 import { AccountProps } from './types/Account';
 
 const AccountDetail = (props: AccountProps) => {
   const [account] = useState(props.location.state.account);
 
-  const {
-    data: pos,
-    error: posError,
-    loading: posLoading,
-  } = useQuery(GET_POSITIONS, {
-    variables: { userId: account.userId, aggregateId: account.aggregateId },
-    fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
-  });
-
   console.log('[ACCOUNT DETAIL] Account: ', account);
-
-  // TODO Improve this Error page
-  if (posError)
-    return (
-      <>
-        <div>${posError}</div>
-      </>
-    ); // You probably want to do more here!
-  if (posLoading) return <Loading />;
-
-  console.log('[ACCOUNT DETAIL] Positions: ', pos);
-
-  let netWorth = 0;
-  pos.getPositions.map((p: any) => {
-    netWorth += p.marketValue;
-    return netWorth;
-  });
-  console.log('[ACCOUNT DETAIL] NetWorth: ', netWorth);
 
   return (
     <>
@@ -95,7 +65,7 @@ const AccountDetail = (props: AccountProps) => {
         {/* <h2>Summary</h2>
         <br /> */}
       </div>
-      <Positions positions={pos.getPositions} />
+      <Positions aggregateId={account.aggregateId} />
       <br />
       <Button
         as={Link}

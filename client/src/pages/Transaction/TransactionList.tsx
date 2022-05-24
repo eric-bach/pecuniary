@@ -68,7 +68,7 @@ const TransactionList = (props: TransactionsProps) => {
 
   return (
     <>
-      <h2>Transaction List</h2>
+      <h2>Transactions ({transactions.length})</h2>
       <InfiniteScroll dataLength={transactions.length} next={getAdditionalTransactions} hasMore={hasMoreData} loader={<Loading />}>
         <Table selectable color='teal' key='teal'>
           <Table.Header>
