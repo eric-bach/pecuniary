@@ -40,6 +40,13 @@ export type DeleteTransactionInput = {
   sk: string;
 };
 
+export type LastEvaluatedKey = {
+  userId: string;
+  sk: string;
+  aggregateId: string;
+  transactionDate: string;
+};
+
 export type TransactionAppSyncEvent = {
   info: {
     fieldName: string;
@@ -47,6 +54,7 @@ export type TransactionAppSyncEvent = {
   arguments: {
     userId: string; //getTransactions
     aggregateId: string; //getTransactions
+    lastEvaluatedKey: LastEvaluatedKey; //getTransactions
 
     createTransactionInput: CreateTransactionInput;
     updateTransactionInput: UpdateTransactionInput;

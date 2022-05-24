@@ -30,13 +30,18 @@ export type DeleteAccountInput = {
   aggregateId: string;
 };
 
+export type LastEvaluatedKey = {
+  userId: string;
+  sk: string;
+};
+
 export type AccountAppSyncEvent = {
   info: {
     fieldName: string;
   };
   arguments: {
     userId: string; //getAccounts
-    lastEvaluatedKey: string; //getAccounts
+    lastEvaluatedKey: LastEvaluatedKey; //getAccounts
 
     createAccountInput: CreateAccountInput;
     updateAccountInput: UpdateAccountInput;

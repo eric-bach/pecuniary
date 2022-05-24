@@ -37,7 +37,7 @@ export const DELETE_ACCOUNT = gql`
 `;
 
 export const GET_ACCOUNTS = gql`
-  query GetAccounts($userId: String!, $lastEvaluatedKey: String) {
+  query GetAccounts($userId: String!, $lastEvaluatedKey: LastEvaluatedKey) {
     getAccounts(userId: $userId, lastEvaluatedKey: $lastEvaluatedKey) {
       items {
         userId
@@ -52,41 +52,10 @@ export const GET_ACCOUNTS = gql`
           marketValue
         }
       }
-      lastEvaluatedKey
-    }
-  }
-`;
-
-export const GET_POSITIONS = gql`
-  query GetPositions($userId: String!, $aggregateId: String!) {
-    getPositions(userId: $userId, aggregateId: $aggregateId) {
-      userId
-      sk
-      aggregateId
-      symbol
-      description
-      exchange
-      currency
-      shares
-      acb
-      bookValue
-      marketValue
-    }
-  }
-`;
-
-export const GET_TRANSACTIONS = gql`
-  query GetTransactions($userId: String!, $aggregateId: String!) {
-    getTransactions(userId: $userId, aggregateId: $aggregateId) {
-      userId
-      sk
-      aggregateId
-      type
-      transactionDate
-      symbol
-      shares
-      price
-      commission
+      lastEvaluatedKey {
+        userId
+        sk
+      }
     }
   }
 `;

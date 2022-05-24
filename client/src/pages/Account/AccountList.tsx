@@ -11,7 +11,7 @@ import { GET_ACCOUNTS } from './graphql/graphql';
 import { AccountReadModel } from './types/Account';
 
 const AccountList = () => {
-  const [lastEvaluatedKey, setLastEvaluatedKey] = useState();
+  const [lastEvaluatedKey, setLastEvaluatedKey]: [any, any] = useState();
   const [accounts, setAccounts]: [any, any] = useState([]);
   const [hasMoreData, setHasMoreData] = useState(false);
 
@@ -20,7 +20,12 @@ const AccountList = () => {
       query: GET_ACCOUNTS,
       variables: {
         userId: localStorage.getItem('userId'),
-        lastEvaluatedKey: lastEvaluatedKey,
+        lastEvaluatedKey: lastEvaluatedKey
+          ? {
+              userId: lastEvaluatedKey.userId,
+              sk: lastEvaluatedKey.sk,
+            }
+          : lastEvaluatedKey,
       },
     });
 

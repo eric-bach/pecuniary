@@ -1,14 +1,15 @@
 import { QueryCommand, QueryCommandInput } from '@aws-sdk/client-dynamodb';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
+import { LastEvaluatedKey } from '../types/Account';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
-async function getAccounts(userId: string, lastEvaluatedKey: string) {
+async function getAccounts(userId: string, lastEvaluatedKey: LastEvaluatedKey) {
   console.debug(`🕧 Get Accounts Initialized`);
 
   const queryCommandInput: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    //TODO TEMP Limit to 3
+    //TODO TEMP Limit to 10
     Limit: 10,
     KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
     ExpressionAttributeValues: {
@@ -16,7 +17,7 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
       ':v2': { S: 'ACC#' },
     },
   };
-  lastEvaluatedKey ? (queryCommandInput.ExclusiveStartKey = { userId: { S: userId }, sk: { S: lastEvaluatedKey } }) : lastEvaluatedKey;
+  lastEvaluatedKey ? (queryCommandInput.ExclusiveStartKey = marshall(lastEvaluatedKey)) : lastEvaluatedKey;
 
   var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
 
@@ -27,7 +28,7 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
     var lastEvalKey;
     if (result.LastEvaluatedKey) {
       let lek = unmarshall(result.LastEvaluatedKey);
-      lastEvalKey = lek ? lek.sk : '';
+      lastEvalKey = lek ? lek : '';
     }
 
     // Unmarshall results
@@ -77,9 +78,9 @@ async function getAccounts(userId: string, lastEvaluatedKey: string) {
       }
     }
 
-    let resp = { items: accounts, lastEvaluatedKey: lastEvalKey };
-    console.log(`✅ Found Accounts: ${JSON.stringify(resp)}`);
-    return resp;
+    let res = { items: accounts, lastEvaluatedKey: lastEvalKey };
+    console.log(`✅ Found Accounts: ${JSON.stringify(res)}`);
+    return res;
   }
 
   console.log(`🛑 Could not find any Account`);

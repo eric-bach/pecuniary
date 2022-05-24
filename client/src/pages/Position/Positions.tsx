@@ -1,15 +1,44 @@
 import { Table } from 'semantic-ui-react';
 import NumberFormat from 'react-number-format';
+
+import { GET_POSITIONS } from './graphql/graphql';
 import { PositionReadModel, PositionsProps } from './types/Position';
+import { useQuery } from '@apollo/client';
+import Loading from '../../components/Loading';
 
 const Positions = (props: PositionsProps) => {
-  const { positions } = props;
+  const { aggregateId } = props;
 
-  console.log('[POSITIONS] Received positions: ', positions);
+  const {
+    data: positions,
+    error: posError,
+    loading: posLoading,
+  } = useQuery(GET_POSITIONS, {
+    variables: { userId: localStorage.getItem('userId'), aggregateId: aggregateId },
+    fetchPolicy: 'cache-and-network', // Check cache but also backend if there are new updates
+  });
+
+  // TODO Improve this Error page
+  if (posError)
+    return (
+      <>
+        <div>${posError}</div>
+      </>
+    ); // You probably want to do more here!
+  if (posLoading) return <Loading />;
+
+  console.log('[POSITIONS] Positions: ', positions);
+
+  let netWorth = 0;
+  positions.getPositions.map((p: any) => {
+    netWorth += p.marketValue;
+    return netWorth;
+  });
+  console.log('[POSITIONS] NetWorth: ', netWorth);
 
   return (
     <div>
-      <h2>Positions</h2>
+      <h2>Positions ({positions.getPositions.length})</h2>
       <Table selectable color='teal' key='teal'>
         <Table.Header>
           <Table.Row>
@@ -26,7 +55,7 @@ const Positions = (props: PositionsProps) => {
         </Table.Header>
 
         <Table.Body>
-          {positions.map((p: PositionReadModel) => {
+          {positions.getPositions.map((p: PositionReadModel) => {
             const pl = p.marketValue - p.bookValue;
             const plPer = ((p.marketValue - p.bookValue) * 100) / p.bookValue;
             return (

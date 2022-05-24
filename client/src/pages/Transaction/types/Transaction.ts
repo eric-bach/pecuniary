@@ -35,7 +35,7 @@ export type DeleteTransactionInput = {
 };
 
 export type TransactionsProps = {
-  transactions: [TransactionReadModel];
+  aggregateId: string;
 };
 
 export type TransactionProps = {
