@@ -18,6 +18,7 @@
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.10.4",
+    "@types/node": "^18.7.14",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",
     "autoprefixer": "^10.1.0",

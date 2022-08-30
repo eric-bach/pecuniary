@@ -21,4 +21,5 @@ const App = () => (
     </Router>
   </div>
 );
+
 ReactDOM.render(<App />, document.getElementById('root'));

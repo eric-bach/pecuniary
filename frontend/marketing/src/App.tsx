@@ -1,9 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import './index.css';
 
-const App = () => (
+export default () => (
   <div className='container'>
     <div>Name: marketing</div>
     <div>Framework: react</div>
@@ -11,4 +10,3 @@ const App = () => (
     <div>CSS: Empty CSS</div>
   </div>
 );
-ReactDOM.render(<App />, document.getElementById('marketing-dev'));
