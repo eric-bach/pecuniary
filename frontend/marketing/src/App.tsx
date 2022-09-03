@@ -4,12 +4,7 @@ import { Link } from 'react-router-dom';
 
 export default () => (
   <>
-    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' />
     <link rel='stylesheet' href='./css/bootstrap.min.css' />
-    <link rel='stylesheet' href='./css/font-awesome.min.css' />
-    <link rel='stylesheet' href='./css/themify-icons.css' />
-    <link rel='stylesheet' href='./css/animate.css' />
-    <link rel='stylesheet' href='./css/owl.carousel.css' />
     <link rel='stylesheet' href='./css/style.css' />
 
     <header className='header-section clearfix'>
@@ -298,9 +293,5 @@ export default () => (
         </div>
       </div>
     </footer>
-
-    <script src='js/jquery-3.2.1.min.js'></script>
-    <script src='js/owl.carousel.min.js'></script>
-    <script src='js/main.js'></script>
   </>
 );
