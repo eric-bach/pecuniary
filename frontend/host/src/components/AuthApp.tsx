@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { mount } from 'auth/AuthApp';
 
-export default () => {
+export default ({ onSignIn }: any) => {
   const ref = useRef(null);
   const history = useHistory();
 
@@ -19,9 +19,14 @@ export default () => {
           history.push(nextPathname);
         }
       },
+
+      // Callback for Auth SignIn button
+      onSignIn: () => {
+        onSignIn();
+      },
     });
 
-    // Update Auth app when Container app navigates
+    // Update Marketing app when Container app navigates
     history.listen(onParentNavigate);
   }, []);
 
