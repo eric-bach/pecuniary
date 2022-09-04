@@ -1,24 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Router, Switch, Route } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core';
+import { createBrowserHistory } from 'history';
 
 import Header from './components/Header';
-import 'finance/FinanceApp';
-import 'marketing/MarketingApp';
+import MarketingApp from './components/MarketingApp';
+import FinanceApp from './components/FinanceApp';
 
 const generateClassName = createGenerateClassName({
   productionPrefix: 'co',
 });
 
+const history = createBrowserHistory();
+
 const App = () => (
-  <Router>
+  <Router history={history}>
     <StylesProvider generateClassName={generateClassName}>
       <Header />
-      <Routes>
-        <Route path='/' element={<div id='marketing-dev'></div>} />
-        <Route path='/home' element={<div id='finance-dev'></div>} />
-      </Routes>
+      <Switch>
+        <Route path='/' exact component={MarketingApp} />
+        <Route path='/home' component={FinanceApp} />
+      </Switch>
     </StylesProvider>
   </Router>
 );

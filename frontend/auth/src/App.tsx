@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, BrowserRouter, Switch } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core';
 
 const generateClassName = createGenerateClassName({
@@ -11,11 +11,11 @@ import Signup from './components/Signup';
 
 export default ({ history }: any) => (
   <StylesProvider generateClassName={generateClassName}>
-    <BrowserRouter>
+    <Router history={history}>
       <Switch>
         <Route path='/auth/signin' component={Signin} />
         <Route path='/auth/signup' component={Signup} />
       </Switch>
-    </BrowserRouter>
+    </Router>
   </StylesProvider>
 );

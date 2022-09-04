@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'development') {
   // Assuming our container doesn't have an element with id 'dev-products'
   if (el) {
     // We are probably running in isolation (Scenario #1)
-    mount(el, { defualtHistory: createBrowserHistory() });
+    mount(el, { defaultHistory: createBrowserHistory() });
   }
 }
 
