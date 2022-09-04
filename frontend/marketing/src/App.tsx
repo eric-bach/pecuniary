@@ -14,7 +14,7 @@ export default ({ history }: any) => (
     <Router history={history}>
       <Switch>
         <Route exact path='/temp' component={OldHome} />
-        <Route path='/' component={OldHome} />
+        <Route path='/' component={Landing} />
       </Switch>
     </Router>
   </StylesProvider>

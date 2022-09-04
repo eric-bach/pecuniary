@@ -14,7 +14,7 @@ const generateClassName = createGenerateClassName({
 
 const history = createBrowserHistory();
 
-const App = () => (
+export default () => (
   <Router history={history}>
     <StylesProvider generateClassName={generateClassName}>
       <Header />
@@ -25,5 +25,3 @@ const App = () => (
     </StylesProvider>
   </Router>
 );
-
-ReactDOM.render(<App />, document.getElementById('root'));

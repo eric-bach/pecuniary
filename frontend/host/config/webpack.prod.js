@@ -16,9 +16,9 @@ const prodConfig = {
       name: 'host',
       filename: 'remoteEntry.js',
       remotes: {
-        finance: `finance@${domain}/finance/remoteEntry.js`,
-        marketing: `marketing@${domain}/marketing/remoteEntry.js`,
-        auth: `auth@${domain}/auth/remoteEntry.js`,
+        finance: `finance@${domain}/finance/latest/remoteEntry.js`,
+        marketing: `marketing@${domain}/marketing/latest/remoteEntry.js`,
+        auth: `auth@${domain}/auth/latest/remoteEntry.js`,
       },
       shared: {
         ...deps,
