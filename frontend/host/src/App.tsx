@@ -1,10 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Router, Switch, Route } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core';
 import { createBrowserHistory } from 'history';
 
 import Header from './components/Header';
+import AuthApp from './components/AuthApp';
 import MarketingApp from './components/MarketingApp';
 import FinanceApp from './components/FinanceApp';
 
@@ -19,8 +19,9 @@ export default () => (
     <StylesProvider generateClassName={generateClassName}>
       <Header />
       <Switch>
-        <Route path='/' exact component={MarketingApp} />
+        <Route path='/auth' component={AuthApp} />
         <Route path='/home' component={FinanceApp} />
+        <Route path='/' exact component={MarketingApp} />
       </Switch>
     </StylesProvider>
   </Router>
