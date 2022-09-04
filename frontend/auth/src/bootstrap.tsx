@@ -1,10 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createMemoryHistory, createBrowserHistory } from 'history';
 
 import App from './App';
 
-const mount = (el: any) => {
-  ReactDOM.render(<App />, el);
+const mount = (el: any, { defaultHistory }: any) => {
+  const history = defaultHistory;
+
+  ReactDOM.render(<App history={history} />, el);
 };
 
 // Scenario #1
@@ -18,7 +21,7 @@ if (process.env.NODE_ENV === 'development') {
   // Assuming our container doesn't have an element with id 'dev-products'
   if (el) {
     // We are probably running in isolation (Scenario #1)
-    mount(el);
+    mount(el, { defualtHistory: createBrowserHistory() });
   }
 }
 

@@ -1,17 +1,21 @@
 import React from 'react';
+import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core';
 
 const generateClassName = createGenerateClassName({
   productionPrefix: 'au',
 });
 
-export default () => (
+import Signin from './components/Signin';
+import Signup from './components/Signup';
+
+export default ({ history }: any) => (
   <StylesProvider generateClassName={generateClassName}>
-    <div>
-      <div>Name: auth</div>
-      <div>Framework: react</div>
-      <div>Language: TypeScript</div>
-      <div>CSS: Empty CSS</div>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route path='/auth/signin' component={Signin} />
+        <Route path='/auth/signup' component={Signup} />
+      </Switch>
+    </BrowserRouter>
   </StylesProvider>
 );
