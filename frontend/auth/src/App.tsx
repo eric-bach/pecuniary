@@ -1,12 +1,17 @@
 import React from 'react';
+import { StylesProvider, createGenerateClassName } from '@material-ui/core';
 
-import './index.css';
+const generateClassName = createGenerateClassName({
+  productionPrefix: 'au',
+});
 
 export default () => (
-  <div className='container'>
-    <div>Name: host</div>
-    <div>Framework: react</div>
-    <div>Language: TypeScript</div>
-    <div>CSS: Empty CSS</div>
-  </div>
+  <StylesProvider generateClassName={generateClassName}>
+    <div>
+      <div>Name: auth</div>
+      <div>Framework: react</div>
+      <div>Language: TypeScript</div>
+      <div>CSS: Empty CSS</div>
+    </div>
+  </StylesProvider>
 );
