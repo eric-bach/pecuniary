@@ -5,13 +5,13 @@ import { Button, Icon } from 'semantic-ui-react';
 export default function OldHome() {
   return (
     <>
-      <link rel='stylesheet' href='./css/bootstrap.min.css' />
-      <link rel='stylesheet' href='./css/style.css' />
+      <link rel='stylesheet' href='http://localhost:8081/css/bootstrap.min.css' />
+      <link rel='stylesheet' href='http://localhost:8081/css/style.css' />
 
-      <header className='header-section clearfix'>
+      <header className='header-section clearfix' style={{ paddingTop: 100 }}>
         <div className='container-fluid'>
           <a href='/' className='site-logo'>
-            <img src='img/logo.png' alt='' />
+            <img src='http://localhost:8081/img/logo.png' alt='' />
           </a>
           <div className='responsive-bar'>
             <i className='fa fa-bars'></i>
@@ -61,7 +61,7 @@ export default function OldHome() {
             </Link> */}
             </div>
             <div className='col-md-6'>
-              <img src='img/laptop.png' className='laptop-image' alt='' />
+              <img src='http://localhost:8081/img/laptop.png' className='laptop-image' alt='' />
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function OldHome() {
             </div>
           </div>
           <div className='about-img'>
-            <img src='img/about-img.png' alt='' />
+            <img src='http://localhost:8081/img/about-img.png' alt='' />
           </div>
         </div>
       </section>
@@ -153,7 +153,7 @@ export default function OldHome() {
             <div className='col-md-4 process'>
               <div className='process-step'>
                 <figure className='process-icon'>
-                  <img src='img/process-icons/1.png' alt='#' />
+                  <img src='http://localhost:8081/img/process-icons/1.png' alt='#' />
                 </figure>
                 <h4>Create Your Account</h4>
                 <p>Sign up for you Pecuniary account today.</p>
@@ -162,7 +162,7 @@ export default function OldHome() {
             <div className='col-md-4 process'>
               <div className='process-step'>
                 <figure className='process-icon'>
-                  <img src='img/process-icons/2.png' alt='#' />
+                  <img src='http://localhost:8081/img/process-icons/2.png' alt='#' />
                 </figure>
                 <h4>Link Your Investments</h4>
                 <p>Setup your investment accounts to manage with Pecuniary.</p>
@@ -171,7 +171,7 @@ export default function OldHome() {
             <div className='col-md-4 process'>
               <div className='process-step'>
                 <figure className='process-icon'>
-                  <img src='img/process-icons/3.png' alt='#' />
+                  <img src='http://localhost:8081/img/process-icons/3.png' alt='#' />
                 </figure>
                 <h4>Track Your Progress</h4>
                 <p>Watch Pecuniary manage your portfolio and investment returns.</p>
@@ -228,7 +228,7 @@ export default function OldHome() {
         <div id='contact' className='container'>
           <div className='row spad'>
             <div className='col-md-6 col-lg-3 footer-widget'>
-              <img src='img/logo.png' className='mb-4' alt='' />
+              <img src='http://localhost:8081/img/logo.png' className='mb-4' alt='' />
               <p>
                 <br />
               </p>
