@@ -14,7 +14,7 @@ const prodConfig = {
     new ModuleFederationPlugin({
       name: 'finance',
       filename: 'remoteEntry.js',
-      exposes: { './FinanceIndex': './src/bootstrap' },
+      exposes: { './FinanceApp': './src/bootstrap' },
       shared: {
         ...deps,
         react: {

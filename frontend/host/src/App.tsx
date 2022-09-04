@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core';
 
 import Header from './components/Header';
-import 'finance/FinanceIndex';
-import 'marketing/MarketingIndex';
+import 'finance/FinanceApp';
+import 'marketing/MarketingApp';
 
 const generateClassName = createGenerateClassName({
   productionPrefix: 'co',

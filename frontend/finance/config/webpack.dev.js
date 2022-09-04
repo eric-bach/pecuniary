@@ -21,7 +21,7 @@ const devConfig = {
       name: 'finance',
       filename: 'remoteEntry.js',
       exposes: {
-        './FinanceIndex': './src/index',
+        './FinanceApp': './src/index',
       },
       shared: {
         ...deps,

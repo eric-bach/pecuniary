@@ -21,7 +21,7 @@ const devConfig = {
       name: 'auth',
       filename: 'remoteEntry.js',
       exposes: {
-        './AuthIndex': './src/index',
+        './AuthApp': './src/index',
       },
       shared: {
         ...deps,
