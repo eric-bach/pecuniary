@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Switch, Route } from 'react-router-dom';
+import { Router, Switch, Route, BrowserRouter } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core';
 import { createBrowserHistory } from 'history';
 
@@ -15,7 +15,7 @@ const generateClassName = createGenerateClassName({
 const history = createBrowserHistory();
 
 export default () => (
-  <Router history={history}>
+  <BrowserRouter>
     <StylesProvider generateClassName={generateClassName}>
       <Header />
       <Switch>
@@ -24,5 +24,5 @@ export default () => (
         <Route path='/' exact component={MarketingApp} />
       </Switch>
     </StylesProvider>
-  </Router>
+  </BrowserRouter>
 );

@@ -51,18 +51,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Header() {
+export default function Header({ signedIn, onSignOut }: any) {
   const classes = useStyles();
+
+  const onClick = () => {
+    if (signedIn && onSignOut) {
+      onSignOut();
+    }
+  };
 
   return (
     <React.Fragment>
       <AppBar position='static' color='default' elevation={0} className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Typography variant='h6' color='inherit' noWrap component={RouterLink} to='/'>
-            Pecuniary
+            App
           </Typography>
-          <Button color='primary' variant='outlined' className={classes.link} component={RouterLink} to={'/'}>
-            Login
+          <Button
+            color='primary'
+            variant='outlined'
+            className={classes.link}
+            component={RouterLink}
+            to={signedIn ? '/' : '/auth/signin'}
+            onClick={onClick}
+          >
+            {signedIn ? 'Logout' : 'Login'}
           </Button>
         </Toolbar>
       </AppBar>

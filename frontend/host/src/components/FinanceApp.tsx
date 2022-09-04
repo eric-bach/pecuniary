@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { mount } from '../../../finance/src/bootstrap';
+import { mount } from 'finance/FinanceApp';
 
 export default function FinanceApp() {
   const ref = useRef(null);

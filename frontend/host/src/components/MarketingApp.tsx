@@ -1,9 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-// TODO Replace with this import
-//import { mount } from 'marketing/MarketingApp';
-import { mount } from '../../../marketing/src/bootstrap';
+import { mount } from 'marketing/MarketingApp';
+//import { mount } from '../../../marketing/src/bootstrap'; // BUG This approach results in the host loading all from 8080
 
 export default function MarketingApp() {
   const ref = useRef(null);
