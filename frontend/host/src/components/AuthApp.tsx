@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { mount } from 'auth/AuthApp';
 
-export default function AuthApp() {
+export default () => {
   const ref = useRef(null);
   const history = useHistory();
 
@@ -26,4 +26,4 @@ export default function AuthApp() {
   }, []);
 
   return <div ref={ref} />;
-}
+};

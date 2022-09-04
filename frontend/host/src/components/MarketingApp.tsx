@@ -2,9 +2,12 @@ import React, { useRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { mount } from 'marketing/MarketingApp';
-//import { mount } from '../../../marketing/src/bootstrap'; // BUG This approach results in the host loading all from 8080
 
-export default function MarketingApp() {
+// BUG This approach results in the host loading all from 8080
+//import { mount } from '../../../marketing/src/bootstrap';
+//export default function MarketingApp() {
+
+export default () => {
   const ref = useRef(null);
   const history = useHistory();
 
@@ -27,4 +30,4 @@ export default function MarketingApp() {
   }, []);
 
   return <div ref={ref} />;
-}
+};

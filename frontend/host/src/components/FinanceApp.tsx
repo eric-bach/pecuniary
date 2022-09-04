@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { mount } from 'finance/FinanceApp';
 
-export default function FinanceApp() {
+export default () => {
   const ref = useRef(null);
   const history = useHistory();
 
@@ -26,4 +26,4 @@ export default function FinanceApp() {
   }, []);
 
   return <div ref={ref} />;
-}
+};
