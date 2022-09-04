@@ -65,24 +65,6 @@ export default function Landing() {
             <Typography variant='h5' align='center' color='textSecondary' paragraph>
               Modern financial tools to help you grow and manage your money
             </Typography>
-            <div className={classes.heroButtons}>
-              <Grid container spacing={2} justifyContent='center'>
-                <Grid item>
-                  <Link to='/pricing'>
-                    <Button variant='contained' color='primary'>
-                      Pricing
-                    </Button>
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link to='/pricing'>
-                    <Button variant='outlined' color='primary'>
-                      Pricing
-                    </Button>
-                  </Link>
-                </Grid>
-              </Grid>
-            </div>
           </Container>
         </div>
         <Container className={classes.cardGrid} maxWidth='md'>

@@ -13,7 +13,7 @@ export default () => (
   <StylesProvider generateClassName={generateClassName}>
     <BrowserRouter>
       <Switch>
-        <Route exact path='/old' component={OldHome} />
+        <Route exact path='/temp' component={OldHome} />
         <Route path='/' component={Landing} />
       </Switch>
     </BrowserRouter>
