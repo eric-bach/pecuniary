@@ -47,7 +47,7 @@ jobs:
         working-directory: backend
 
       - name: Install NPM Dependencies (Client)
-        run: npm ci --force
+        run: npm ci
         working-directory: client
 
       - name: Create client/.env file
