@@ -2,6 +2,7 @@
 !webpack.*.js
 !jest.config.js
 *.d.ts
+!remoteTypes.d.ts
 node_modules
 /client/build
 
@@ -17,5 +18,3 @@ cdk.out
 .env*
 backend/deploy.sh
 aws-exports.js
-
-!mfe/*.js
