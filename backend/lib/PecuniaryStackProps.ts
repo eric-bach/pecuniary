@@ -7,5 +7,10 @@ export interface PecuniaryStackProps extends StackProps {
     certificateArn: string;
     dlqNotifications?: string;
     userPoolId: string;
+    dataTableArn: string;
+    dataTableName: string;
+    eventHandlerQueueArn: string;
+    eventBusArn: string;
+    eventBusName: string;
   };
 }

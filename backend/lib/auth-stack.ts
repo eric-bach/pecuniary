@@ -115,7 +115,7 @@ export class AuthStack extends Stack {
      *** Outputs
      ***/
 
-    new CfnOutput(this, 'UserPoolId', { value: userPool.userPoolId });
+    new CfnOutput(this, 'UserPoolId', { value: userPool.userPoolId, exportName: `${props.appName}-${props.envName}-userPoolId` });
     new CfnOutput(this, 'UserPoolClientId', { value: userPoolClient.userPoolClientId });
     new CfnOutput(this, 'CognitoPostConfirmationFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
 

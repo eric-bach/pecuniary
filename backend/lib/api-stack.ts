@@ -1,93 +1,26 @@
-import { Stack, CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { Stack, CfnOutput, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
-import { PolicyStatement, Effect, CanonicalUserPrincipal } from 'aws-cdk-lib/aws-iam';
-import { Queue } from 'aws-cdk-lib/aws-sqs';
-import { Topic } from 'aws-cdk-lib/aws-sns';
-import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
-import { Alarm, Metric, ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
+import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { GraphqlApi, FieldLogLevel, AuthorizationType, Schema } from '@aws-cdk/aws-appsync-alpha';
-import { Table, BillingMode, AttributeType } from 'aws-cdk-lib/aws-dynamodb';
-import { Rule, EventBus } from 'aws-cdk-lib/aws-events';
+import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
-import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
-import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { BlockPublicAccess, Bucket, HttpMethods } from 'aws-cdk-lib/aws-s3';
-import {
-  CloudFrontAllowedMethods,
-  CloudFrontWebDistribution,
-  OriginAccessIdentity,
-  PriceClass,
-  SecurityPolicyProtocol,
-  SSLMethod,
-  ViewerCertificate,
-} from 'aws-cdk-lib/aws-cloudfront';
-import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
-import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
-
-import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
-import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
 
 const dotenv = require('dotenv');
 import * as path from 'path';
 import { PecuniaryStackProps } from './PecuniaryStackProps';
+import { Queue } from 'aws-cdk-lib/aws-sqs';
 
 dotenv.config();
 
-export class PecuniaryStack extends Stack {
+export class ApiStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
     super(scope, id, props);
 
     const REGION = Stack.of(this).region;
     const userPool = UserPool.fromUserPoolId(this, 'userPool', props.params.userPoolId);
-
-    /***
-     *** AWS SQS - Dead letter Queues
-     ***/
-
-    // Event handler DLQ
-    const eventHandlerQueue = new Queue(this, 'EventHandlerQueue', {
-      queueName: `${props.appName}-eventHandler-DeadLetterQueue-${props.envName}`,
-    });
-
-    /***
-     *** AWS SNS - Topics
-     ***/
-
-    const eventHandlerTopic = new Topic(this, 'EventHandlerTopic', {
-      topicName: `${props.appName}-eventHandler-Topic-${props.envName}`,
-      displayName: 'Event Handler Topic',
-    });
-    if (props.params.dlqNotifications) {
-      eventHandlerTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
-    }
-
-    /***
-     *** AWS CloudWatch - Alarms
-     ***/
-
-    // Generic metric
-    const metric = new Metric({
-      namespace: 'AWS/SQS',
-      metricName: 'NumberOfMessagesSent',
-    });
-    // TODO Doesn't seem to work
-    metric.with({
-      statistic: 'Sum',
-      period: Duration.seconds(300),
-    });
-
-    const eventHandlerAlarm = new Alarm(this, 'EventHandlerAlarm', {
-      alarmName: `${props.appName}-eventHandler-Alarm-${props.envName}`,
-      alarmDescription: 'One or more failed EventHandler messages',
-      metric: metric,
-      datapointsToAlarm: 1,
-      evaluationPeriods: 2,
-      threshold: 1,
-      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-    });
-    eventHandlerAlarm.addAlarmAction(new SnsAction(eventHandlerTopic));
+    const eventBus = EventBus.fromEventBusArn(this, 'eventBus', props.params.eventBusArn);
 
     /***
      *** AWS AppSync
@@ -110,53 +43,6 @@ export class PecuniaryStack extends Stack {
     });
 
     /***
-     *** AWS DynamoDB
-     ***/
-
-    const dataTable = new Table(this, 'Data', {
-      tableName: `${props.appName}-${props.envName}-Data`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'userId',
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'sk',
-        type: AttributeType.STRING,
-      },
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-    // LSIs for Data table
-    dataTable.addLocalSecondaryIndex({
-      indexName: 'aggregateId-lsi',
-      sortKey: {
-        name: 'aggregateId',
-        type: AttributeType.STRING,
-      },
-    });
-    // GSIs for Data Table
-    dataTable.addGlobalSecondaryIndex({
-      indexName: 'aggregateId-gsi',
-      partitionKey: {
-        name: 'aggregateId',
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'transactionDate',
-        type: AttributeType.STRING,
-      },
-    });
-
-    /***
-     *** AWS EventBridge - Event Bus
-     ***/
-
-    // EventBus
-    const eventBus = new EventBus(this, 'PecuniaryEventBus', {
-      eventBusName: `${props.appName}-bus-${props.envName}`,
-    });
-
-    /***
      *** AWS AppSync resolvers - AWS Lambda
      ***/
 
@@ -169,7 +55,7 @@ export class PecuniaryStack extends Stack {
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
+        DATA_TABLE_NAME: props.params.dataTableName,
         REGION: REGION,
       },
       //deadLetterQueue: commandHandlerQueue,
@@ -179,14 +65,14 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
-        resources: [dataTable.tableArn],
+        resources: [props.params.dataTableArn],
       })
     );
     accountsResolverFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi'],
+        resources: [props.params.dataTableArn, props.params.dataTableArn + '/index/aggregateId-lsi'],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
@@ -218,7 +104,7 @@ export class PecuniaryStack extends Stack {
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
+        DATA_TABLE_NAME: props.params.dataTableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
       },
@@ -229,14 +115,18 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
-        resources: [dataTable.tableArn],
+        resources: [props.params.dataTableArn],
       })
     );
     transactionsReolverFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
+        resources: [
+          props.params.dataTableArn,
+          props.params.dataTableArn + '/index/aggregateId-lsi',
+          props.params.dataTableArn + '/index/aggregateId-gsi',
+        ],
       })
     );
     // Add permission to send to EventBridge
@@ -276,7 +166,7 @@ export class PecuniaryStack extends Stack {
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
+        DATA_TABLE_NAME: props.params.dataTableName,
         REGION: REGION,
       },
       //deadLetterQueue: commandHandlerQueue,
@@ -286,7 +176,7 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn],
+        resources: [props.params.dataTableArn],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
@@ -301,6 +191,8 @@ export class PecuniaryStack extends Stack {
      *** AWS Lambda - Event Handlers
      ***/
 
+    const eventHandlerQueue = Queue.fromQueueArn(this, 'eventHandlerQueue', props.params.eventHandlerQueueArn);
+
     const updatePositionsFunction = new Function(this, 'UpdatePositions', {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-${props.envName}-UpdatePositions`,
@@ -309,7 +201,7 @@ export class PecuniaryStack extends Stack {
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
+        DATA_TABLE_NAME: props.params.dataTableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
       },
@@ -320,14 +212,18 @@ export class PecuniaryStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
+        resources: [
+          props.params.dataTableArn,
+          props.params.dataTableArn + '/index/aggregateId-lsi',
+          props.params.dataTableArn + '/index/aggregateId-gsi',
+        ],
       })
     );
     updatePositionsFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem'],
-        resources: [dataTable.tableArn],
+        resources: [props.params.dataTableArn],
       })
     );
     // Add permission to send to EventBridge
@@ -336,6 +232,14 @@ export class PecuniaryStack extends Stack {
         effect: Effect.ALLOW,
         actions: ['events:PutEvents'],
         resources: [eventBus.eventBusArn],
+      })
+    );
+    // Add permission send message to SQS
+    updatePositionsFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['SQS:SendMessage'],
+        resources: [eventHandlerQueue.queueArn],
       })
     );
 
@@ -362,123 +266,11 @@ export class PecuniaryStack extends Stack {
     );
 
     /***
-     *** Deploy web hosting to prod account only
-     ***/
-
-    // CloudFront OAI
-    const cloudfrontOAI = new OriginAccessIdentity(this, 'cloudfront-OAI', {
-      comment: `OAI for ${id}`,
-    });
-
-    // S3 bucket for client app
-    const hostingBucket = new Bucket(this, 'PecuniaryHostingBucket', {
-      bucketName: `${props.appName}-hosting-bucket-${props.envName}`,
-      websiteIndexDocument: 'index.html',
-      publicReadAccess: false,
-      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-      cors: [
-        {
-          allowedHeaders: ['Authorization', 'Content-Length'],
-          allowedMethods: [HttpMethods.GET],
-          allowedOrigins: ['*'],
-          maxAge: 3000,
-        },
-      ],
-      removalPolicy: RemovalPolicy.DESTROY,
-      autoDeleteObjects: true,
-    });
-    // Grant access to CloudFront
-    hostingBucket.addToResourcePolicy(
-      new PolicyStatement({
-        actions: ['s3:GetObject'],
-        resources: [hostingBucket.arnForObjects('*')],
-        principals: [new CanonicalUserPrincipal(cloudfrontOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)],
-      })
-    );
-
-    // Existing ACM certificate
-    const certificate = Certificate.fromCertificateArn(this, 'Certificate', process.env.CERTIFICATE_ARN || '');
-
-    // CloudFront distribution
-    const distribution = new CloudFrontWebDistribution(this, 'PecuniaryWebsiteCloudFront', {
-      priceClass: PriceClass.PRICE_CLASS_100,
-      originConfigs: [
-        {
-          s3OriginSource: {
-            s3BucketSource: hostingBucket,
-            originAccessIdentity: cloudfrontOAI,
-          },
-          behaviors: [
-            {
-              isDefaultBehavior: true,
-              defaultTtl: Duration.hours(1),
-              minTtl: Duration.seconds(0),
-              maxTtl: Duration.days(1),
-              compress: true,
-              allowedMethods: CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
-            },
-          ],
-        },
-      ],
-      errorConfigurations: [
-        {
-          errorCode: 403,
-          errorCachingMinTtl: 60,
-          responseCode: 200,
-          responsePagePath: '/index.html',
-        },
-      ],
-      viewerCertificate:
-        props.envName === 'prod'
-          ? ViewerCertificate.fromAcmCertificate(certificate, {
-              aliases: [`${props.appName}.ericbach.dev`],
-              securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
-              sslMethod: SSLMethod.SNI,
-            })
-          : undefined,
-    });
-
-    // S3 bucket deployment
-    const bucketDeployment = new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
-      sources: [Source.asset('../client/build')],
-      destinationBucket: hostingBucket,
-      retainOnDelete: false,
-      contentLanguage: 'en',
-      //storageClass: StorageClass.INTELLIGENT_TIERING,
-      serverSideEncryption: ServerSideEncryption.AES_256,
-      cacheControl: [CacheControl.setPublic(), CacheControl.maxAge(Duration.minutes(1))],
-      distribution,
-      distributionPaths: ['/static/css/*'],
-    });
-
-    if (props.env === 'prod') {
-      // Route53 HostedZone A record
-      var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
-        domainName: 'ericbach.dev',
-      });
-      const aliasRecord = new ARecord(this, 'AliasRecord', {
-        zone: existingHostedZone,
-        recordName: `${props.appName}.ericbach.dev`,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-      });
-    }
-
-    /***
      *** Outputs
      ***/
 
-    // Dead Letter Queues
-    new CfnOutput(this, 'EventHandlerQueueArn', { value: eventHandlerQueue.queueArn });
-
-    // SNS Topics
-    new CfnOutput(this, 'EventHandlerTopicArn', { value: eventHandlerTopic.topicArn });
-
     // AppSync API
     new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
-
-    // DynamoDB tables
-    new CfnOutput(this, 'DataTableArn', { value: dataTable.tableArn });
-    new CfnOutput(this, 'DataTableName', { value: dataTable.tableName });
 
     // EventBridge
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });

@@ -12,13 +12,12 @@ const cdkDeploy = () => {
     });
   program.parse();
   const options = program.opts();
-  console.log(`Options: ${JSON.stringify(options)}`);
 
   try {
-    const env = program.args[0].toLowerCase();
+    const env = program.args[0].toLowerCase() ?? 'dev';
     const profile = program.args.length === 2 ? program.args[1] : 'default';
 
-    console.log('Profile: ', profile);
+    console.log(`Env: ${env}, Profile: ${profile}`);
 
     if (options.stage) {
       // Deploy a specific stage
@@ -32,11 +31,10 @@ const cdkDeploy = () => {
         '🚀 Deploying Auth...'
       );
 
-      // TODO Uncomment
-      // runCommand(
-      //   `npm run cdk -- deploy --all -c deployStage=frontend -c env=${env} --profile ${profile} --require-approval=never`,
-      //   '🚀 Deploying Pecuniary...'
-      // );
+      runCommand(
+        `npm run cdk -- deploy --all -c deployStage=frontend -c env=${env} --profile ${profile} --require-approval=never`,
+        '🚀 Deploying Pecuniary...'
+      );
     }
   } catch (error) {
     console.error('🛑 Error deploying CDK app\n', error);
