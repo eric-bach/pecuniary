@@ -61,10 +61,24 @@ This quick start guide describes how to get the application running. An `AWS acc
    - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
 
-5. Deploy the backend
+5. Deploy the backend stack
+
+   a. To the default profile (also deploys frontend)
 
    ```
    $ npm run deploy
+   ```
+
+   b. To a specific profile
+
+   ```
+   $ npm run deploy dev AWS_PROFILE_NAME
+   ```
+
+   c. To deploy the backend only to a specific profile
+
+   ```
+   $ npm run deploy -- -s backend dev AWS_PROFILE_NAME
    ```
 
 6. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
