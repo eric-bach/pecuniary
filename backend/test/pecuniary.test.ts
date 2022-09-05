@@ -16,6 +16,7 @@ describe('Stack contains expected resources', () => {
     params: {
       certificateArn: 'arn',
       dlqNotifications: 'test@test.com',
+      userPoolId: 'test',
     },
   };
   const stack = new Pecuniary.PecuniaryStack(app, 'PecuniaryTestStack', props);

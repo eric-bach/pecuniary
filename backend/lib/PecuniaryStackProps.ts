@@ -6,5 +6,6 @@ export interface PecuniaryStackProps extends StackProps {
   params: {
     certificateArn: string;
     dlqNotifications?: string;
+    userPoolId: string;
   };
 }
