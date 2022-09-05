@@ -8,6 +8,9 @@ export default ({ onSignIn }: any) => {
   const history = useHistory();
 
   useEffect(() => {
+    console.log('AUTH APP: useEffect()');
+    console.log(ref);
+
     const { onParentNavigate } = mount(ref.current, {
       initialPath: history.location.pathname,
 
@@ -30,5 +33,6 @@ export default ({ onSignIn }: any) => {
     history.listen(onParentNavigate);
   }, []);
 
-  return <div ref={ref} />;
+  return <div id='auth-dev' />;
+  // return <div ref={ref} />;
 };

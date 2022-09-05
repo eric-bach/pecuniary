@@ -17,3 +17,5 @@ cdk.out
 .env*
 backend/deploy.sh
 aws-exports.js
+
+!mfe/*.js

@@ -4,6 +4,7 @@ import { createMemoryHistory, createBrowserHistory } from 'history';
 
 import App from './App';
 
+// Mount function to start up the app
 const mount = (el: any, { onNavigate, defaultHistory, initialPath }: any) => {
   const history = defaultHistory || createMemoryHistory({ initialEntries: [initialPath] });
 
@@ -25,27 +26,14 @@ const mount = (el: any, { onNavigate, defaultHistory, initialPath }: any) => {
   };
 };
 
-// Scenario #1
-// We are running this file in development in isolation
-// We are using our local index.html file
-// Which DEFINITELY has an element with an ide of 'dev-products'
-// We want to immediately render our app into that element
+// If we are in development and in isolation, call mount immediately
 if (process.env.NODE_ENV === 'development') {
-  const el = document.querySelector('#auth-dev');
+  const devRoot = document.querySelector('#_marketing-dev-root');
 
-  console.log(process.env.NODE_ENV);
-  console.log('element: ', el);
-
-  // Assuming our container doesn't have an element with id 'dev-products'
-  if (el) {
-    // We are probably running in isolation (Scenario #1)
-    mount(el, { defaultHistory: createBrowserHistory() });
+  if (devRoot) {
+    mount(devRoot, { defaultHistory: createBrowserHistory() });
   }
 }
 
-// Scenario #2
-// We are running this file in development or production through the CONTAINER app
-// NO GUARANTEE that an element with an id of 'dev-products' exists
-// WE DO NOT WANT to try to immediately render the app
-
+// Assume, we are running through the container and we should export the mount function
 export { mount };
