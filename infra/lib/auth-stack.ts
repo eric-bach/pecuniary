@@ -35,7 +35,7 @@ export class AuthStack extends Stack {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-${props.envName}-CognitoPostConfirmationTrigger`,
       handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'cognitoPostConfirmation')),
+      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'cognitoPostConfirmation')),
       memorySize: 768,
       timeout: Duration.seconds(5),
       environment: {

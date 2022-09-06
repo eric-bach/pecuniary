@@ -37,31 +37,33 @@ This quick start guide describes how to get the application running. An `AWS acc
    $ git clone https://github.com/eric-bach/pecuniary.git
    ```
 
-2. Install backend dependencies for CDK and lambda
+2. Install dependencies for CDK `infra`
 
    ```bash
-   $ cd ./backend
+   $ cd ./infra
    $ npm install
-   # For each lambda in the lib/lambda folder
-   $ cd lib/lambda/cognitoPostConfirmation && npm install
    ```
 
-3. Install client dependencies
+3. Install dependencies **for each** Lambda function in the `backend` folder
+
+   ```bash
+   $ cd ./backend/cognitoPostConfirmation
+   $ npm install
+   ```
+
+4. Install dependencies for the `frontend`
 
    ```bash
    $ cd ./client
    $ npm install
    ```
 
-4. Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values:
+5. Copy the `./infra/.env.example` file to `./infra/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
 
-   - `CDK_DEV_ACCOUNT` - AWS account Id
-   - `CDK_PROD_ACCOUNT` - AWS account Id
-   - `CDK_DEFAULT_REGION` - AWS region
    - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
 
-5. Deploy the backend stack
+6. Deploy the backend stack
 
    a. To the default profile (also deploys frontend)
 
@@ -75,7 +77,7 @@ This quick start guide describes how to get the application running. An `AWS acc
    $ npm run deploy dev AWS_PROFILE_NAME
    ```
 
-6. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
+7. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
 
    - aws_project_region: AWS Region,
    - aws_cognito_region: AWS Cognito Region,
@@ -83,12 +85,12 @@ This quick start guide describes how to get the application running. An `AWS acc
    - aws_user_pools_web_client_id: AWS Cognito User Pool Web Client Id,
    - aws_appsync_graphqlEndpoint: AWS AppSync GraphQL Endpoint
 
-7. Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
+8. Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
 
    - `REACT_APP_COGNITO_USERPOOL_ID` - AWS Cognito User Pool Id created in step 2
    - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
 
-8. Start the client locally on http://localhost:3000/
+9. Start the client locally on http://localhost:3000/
 
    ```bash
    $ npm start
