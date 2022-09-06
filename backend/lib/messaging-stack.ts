@@ -8,16 +8,15 @@ import { EventBus } from 'aws-cdk-lib/aws-events';
 import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 
 const dotenv = require('dotenv');
-import { PecuniaryStackProps } from './PecuniaryStackProps';
+import { PecuniaryMessagingStackProps } from './types/PecuniaryStackProps';
 
 dotenv.config();
 
 export class MessagingStack extends Stack {
   public eventHandlerQueueArn: string;
   public eventBusArn: string;
-  public eventBusName: string;
 
-  constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
+  constructor(scope: Construct, id: string, props: PecuniaryMessagingStackProps) {
     super(scope, id, props);
 
     /***
@@ -94,11 +93,10 @@ export class MessagingStack extends Stack {
     new CfnOutput(this, 'EventBusName', { value: eventBus.eventBusName, exportName: `${props.appName}-${props.envName}-eventBusName` });
 
     /***
-     *** Exports
+     *** Properties
      ***/
 
     this.eventHandlerQueueArn = eventHandlerTopic.topicArn;
     this.eventBusArn = eventBus.eventBusArn;
-    this.eventBusName = eventBus.eventBusName;
   }
 }

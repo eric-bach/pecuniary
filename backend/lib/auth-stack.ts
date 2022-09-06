@@ -13,7 +13,7 @@ import { PolicyStatement, Policy } from 'aws-cdk-lib/aws-iam';
 
 const dotenv = require('dotenv');
 import * as path from 'path';
-import { PecuniaryStackProps } from './PecuniaryStackProps';
+import { PecuniaryBaseStackProps } from './types/PecuniaryStackProps';
 import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
 
 dotenv.config();
@@ -21,7 +21,7 @@ dotenv.config();
 export class AuthStack extends Stack {
   public userPoolId: string;
 
-  constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
+  constructor(scope: Construct, id: string, props: PecuniaryBaseStackProps) {
     super(scope, id, props);
 
     const REGION = Stack.of(this).region;
@@ -77,14 +77,14 @@ export class AuthStack extends Stack {
     });
 
     // Cognito user pool group
-    const usersGroup = new CfnUserPoolGroup(this, 'PecuniaryUserGroup', {
+    new CfnUserPoolGroup(this, 'PecuniaryUserGroup', {
       userPoolId: userPool.userPoolId,
       groupName: 'Users',
       description: 'Pecuniary Users',
     });
 
     // Cognito user pool domain
-    const userPoolDomain = new UserPoolDomain(this, 'PecuniaryUserPoolDomain', {
+    new UserPoolDomain(this, 'PecuniaryUserPoolDomain', {
       userPool: userPool,
       cognitoDomain: {
         domainPrefix: `${props.appName}-${props.envName}`,

@@ -3,15 +3,14 @@ import { Construct } from 'constructs';
 import { Table, BillingMode, AttributeType } from 'aws-cdk-lib/aws-dynamodb';
 
 const dotenv = require('dotenv');
-import { PecuniaryStackProps } from './PecuniaryStackProps';
+import { PecuniaryBaseStackProps } from './types/PecuniaryStackProps';
 
 dotenv.config();
 
 export class DatabaseStack extends Stack {
   public dataTableArn: string;
-  public dataTableName: string;
 
-  constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
+  constructor(scope: Construct, id: string, props: PecuniaryBaseStackProps) {
     super(scope, id, props);
 
     /***
@@ -56,15 +55,13 @@ export class DatabaseStack extends Stack {
      *** Outputs
      ***/
 
-    // DynamoDB tables
     new CfnOutput(this, 'DataTableArn', { value: dataTable.tableArn, exportName: `${props.appName}-${props.envName}-dataTableArn` });
     new CfnOutput(this, 'DataTableName', { value: dataTable.tableName, exportName: `${props.appName}-${props.envName}-dataTableName` });
 
     /***
-     *** Exports
+     *** Properties
      ***/
 
     this.dataTableArn = dataTable.tableArn;
-    this.dataTableName = dataTable.tableName;
   }
 }
