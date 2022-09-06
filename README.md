@@ -66,19 +66,13 @@ This quick start guide describes how to get the application running. An `AWS acc
    a. To the default profile (also deploys frontend)
 
    ```
-   $ npm run deploy
+   $ npm run deploy dev
    ```
 
    b. To a specific profile
 
    ```
    $ npm run deploy dev AWS_PROFILE_NAME
-   ```
-
-   c. To deploy the backend only to a specific profile
-
-   ```
-   $ npm run deploy -- -s backend dev AWS_PROFILE_NAME
    ```
 
 6. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
