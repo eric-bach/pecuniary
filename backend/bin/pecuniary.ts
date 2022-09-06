@@ -6,108 +6,54 @@ import { ApiStack } from '../lib/api-stack';
 import { DatabaseStack } from '../lib/database-stack';
 import { MessagingStack } from '../lib/messaging-stack';
 import { FrontendStack } from '../lib/frontend-stack';
+import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
 
 const app = new App();
 
 const envName = app.node.tryGetContext('env');
-const deployStage = app.node.tryGetContext('deployStage');
+const stage = app.node.tryGetContext('stage');
 
-switch (deployStage) {
+const baseProps: PecuniaryBaseStackProps = {
+  appName: 'pecuniary',
+  envName: envName,
+  tags: {
+    environment: envName,
+    application: 'pecuniary',
+  },
+};
+
+switch (stage) {
   case 'backend': {
-    const auth = new AuthStack(app, `pecuniary-auth-${envName}`, {
-      appName: 'pecuniary',
-      envName: envName,
-      tags: {
-        env: envName,
-        application: 'pecuniary',
-      },
-      params: {
-        certificateArn: process.env.CERTIFICATE_ARN ?? '',
-        dlqNotifications: process.env.DLQ_NOTIFICATIONS,
-        userPoolId: '',
-        dataTableArn: '',
-        dataTableName: '',
-        eventHandlerQueueArn: '',
-        eventBusArn: '',
-        eventBusName: '',
-      },
-    });
+    const auth = new AuthStack(app, `pecuniary-auth-${envName}`, baseProps);
 
-    const database = new DatabaseStack(app, `pecuniary-database-${envName}`, {
-      appName: 'pecuniary',
-      envName: envName,
-      tags: {
-        env: envName,
-        application: 'pecuniary',
-      },
-      params: {
-        certificateArn: process.env.CERTIFICATE_ARN ?? '',
-        dlqNotifications: process.env.DLQ_NOTIFICATIONS,
-        userPoolId: '',
-        dataTableArn: '',
-        dataTableName: '',
-        eventHandlerQueueArn: '',
-        eventBusArn: '',
-        eventBusName: '',
-      },
-    });
+    const database = new DatabaseStack(app, `pecuniary-database-${envName}`, baseProps);
 
     const messaging = new MessagingStack(app, `pecuniary-messaging-${envName}`, {
-      appName: 'pecuniary',
-      envName: envName,
-      tags: {
-        env: envName,
-        application: 'pecuniary',
-      },
+      ...baseProps,
       params: {
-        certificateArn: process.env.CERTIFICATE_ARN ?? '',
-        dlqNotifications: process.env.DLQ_NOTIFICATIONS,
-        userPoolId: '',
-        dataTableArn: '',
-        dataTableName: '',
-        eventHandlerQueueArn: '',
-        eventBusArn: '',
-        eventBusName: '',
+        dlqNotifications: process.env.DLQ_NOTIFICATIONS ?? 'test@test.com',
       },
     });
 
     new ApiStack(app, `pecuniary-api-${envName}`, {
-      appName: 'pecuniary',
-      envName: envName,
-      tags: {
-        env: envName,
-        application: 'pecuniary',
-      },
+      ...baseProps,
       params: {
-        certificateArn: process.env.CERTIFICATE_ARN ?? '',
-        dlqNotifications: process.env.DLQ_NOTIFICATIONS,
         userPoolId: auth.userPoolId,
         dataTableArn: database.dataTableArn,
-        dataTableName: database.dataTableName,
         eventHandlerQueueArn: messaging.eventHandlerQueueArn,
         eventBusArn: messaging.eventBusArn,
-        eventBusName: messaging.eventBusName,
       },
     });
+    break;
   }
+
   case 'frontend': {
     new FrontendStack(app, `pecuniary-frontend-${envName}`, {
-      appName: 'pecuniary',
-      envName: envName,
-      tags: {
-        env: envName,
-        application: 'pecuniary',
-      },
+      ...baseProps,
       params: {
-        certificateArn: process.env.CERTIFICATE_ARN ?? '',
-        dlqNotifications: process.env.DLQ_NOTIFICATIONS,
-        userPoolId: '',
-        dataTableArn: '',
-        dataTableName: '',
-        eventHandlerQueueArn: '',
-        eventBusArn: '',
-        eventBusName: '',
+        certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
       },
     });
+    break;
   }
 }

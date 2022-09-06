@@ -1,7 +1,6 @@
 import { Stack, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { PolicyStatement, CanonicalUserPrincipal } from 'aws-cdk-lib/aws-iam';
-import { EventBus } from 'aws-cdk-lib/aws-events';
 import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { BlockPublicAccess, Bucket, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import {
@@ -16,16 +15,15 @@ import {
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 
-import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
-import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
 const dotenv = require('dotenv');
-import { PecuniaryStackProps } from './PecuniaryStackProps';
+import { PecuniaryFrontendStackProps } from './types/PecuniaryStackProps';
 
 dotenv.config();
 
 export class FrontendStack extends Stack {
-  constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
+  constructor(scope: Construct, id: string, props: PecuniaryFrontendStackProps) {
     super(scope, id, props);
 
     /***
@@ -106,7 +104,7 @@ export class FrontendStack extends Stack {
     });
 
     // S3 bucket deployment
-    const bucketDeployment = new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
+    new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
       sources: [Source.asset('../client/build')],
       destinationBucket: hostingBucket,
       retainOnDelete: false,
@@ -123,7 +121,7 @@ export class FrontendStack extends Stack {
       var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
         domainName: 'ericbach.dev',
       });
-      const aliasRecord = new ARecord(this, 'AliasRecord', {
+      new ARecord(this, 'AliasRecord', {
         zone: existingHostedZone,
         recordName: `${props.appName}.ericbach.dev`,
         target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),

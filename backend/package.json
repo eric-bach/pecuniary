@@ -11,9 +11,8 @@
     "watch": "tsc -w",
     "test": "npm run build && jest --watchAll=false --coverage",
     "cdk": "cdk",
-    "deploy": "npm run build && npm run build --prefix ../client && node ./helpers/deploy.js",
-    "deploy:dev": "npm run build && npm run build --prefix ../client && node ./helpers/deploy.js 524849261220_AdministratorAccess",
-    "seed": "npm run build && node ./helpers/seed.js"
+    "deploy": "npm run build && npm run build --prefix ../client && ts-node ./helpers/deploy.ts",
+    "seed": "npm run build && ts-node ./helpers/seed.ts"
   },
   "devDependencies": {
     "@aws-cdk/aws-appsync-alpha": "^2.0.0-alpha.11",

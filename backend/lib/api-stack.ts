@@ -9,17 +9,20 @@ import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 
 const dotenv = require('dotenv');
 import * as path from 'path';
-import { PecuniaryStackProps } from './PecuniaryStackProps';
+import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
+import { Table } from 'aws-cdk-lib/aws-dynamodb';
 
 dotenv.config();
 
 export class ApiStack extends Stack {
-  constructor(scope: Construct, id: string, props: PecuniaryStackProps) {
+  constructor(scope: Construct, id: string, props: PecuniaryApiStackProps) {
     super(scope, id, props);
 
     const REGION = Stack.of(this).region;
     const userPool = UserPool.fromUserPoolId(this, 'userPool', props.params.userPoolId);
+    const dataTable = Table.fromTableArn(this, 'table', props.params.dataTableArn);
+    const eventHandlerQueue = Queue.fromQueueArn(this, 'eventHandlerQueue', props.params.eventHandlerQueueArn);
     const eventBus = EventBus.fromEventBusArn(this, 'eventBus', props.params.eventBusArn);
 
     /***
@@ -55,7 +58,7 @@ export class ApiStack extends Stack {
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
-        DATA_TABLE_NAME: props.params.dataTableName,
+        DATA_TABLE_NAME: dataTable.tableName,
         REGION: REGION,
       },
       //deadLetterQueue: commandHandlerQueue,
@@ -65,14 +68,14 @@ export class ApiStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
-        resources: [props.params.dataTableArn],
+        resources: [dataTable.tableArn],
       })
     );
     accountsResolverFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [props.params.dataTableArn, props.params.dataTableArn + '/index/aggregateId-lsi'],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi'],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
@@ -104,7 +107,7 @@ export class ApiStack extends Stack {
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
-        DATA_TABLE_NAME: props.params.dataTableName,
+        DATA_TABLE_NAME: dataTable.tableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
       },
@@ -115,18 +118,14 @@ export class ApiStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
-        resources: [props.params.dataTableArn],
+        resources: [dataTable.tableArn],
       })
     );
     transactionsReolverFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [
-          props.params.dataTableArn,
-          props.params.dataTableArn + '/index/aggregateId-lsi',
-          props.params.dataTableArn + '/index/aggregateId-gsi',
-        ],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
       })
     );
     // Add permission to send to EventBridge
@@ -166,7 +165,7 @@ export class ApiStack extends Stack {
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
-        DATA_TABLE_NAME: props.params.dataTableName,
+        DATA_TABLE_NAME: dataTable.tableName,
         REGION: REGION,
       },
       //deadLetterQueue: commandHandlerQueue,
@@ -176,7 +175,7 @@ export class ApiStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [props.params.dataTableArn],
+        resources: [dataTable.tableArn],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
@@ -191,8 +190,6 @@ export class ApiStack extends Stack {
      *** AWS Lambda - Event Handlers
      ***/
 
-    const eventHandlerQueue = Queue.fromQueueArn(this, 'eventHandlerQueue', props.params.eventHandlerQueueArn);
-
     const updatePositionsFunction = new Function(this, 'UpdatePositions', {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-${props.envName}-UpdatePositions`,
@@ -201,7 +198,7 @@ export class ApiStack extends Stack {
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
-        DATA_TABLE_NAME: props.params.dataTableName,
+        DATA_TABLE_NAME: dataTable.tableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         REGION: REGION,
       },
@@ -212,18 +209,14 @@ export class ApiStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [
-          props.params.dataTableArn,
-          props.params.dataTableArn + '/index/aggregateId-lsi',
-          props.params.dataTableArn + '/index/aggregateId-gsi',
-        ],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
       })
     );
     updatePositionsFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem'],
-        resources: [props.params.dataTableArn],
+        resources: [dataTable.tableArn],
       })
     );
     // Add permission to send to EventBridge
@@ -238,7 +231,7 @@ export class ApiStack extends Stack {
     updatePositionsFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['SQS:SendMessage'],
+        actions: ['SQS:SendMessage', 'SNS:Publish'],
         resources: [eventHandlerQueue.queueArn],
       })
     );
