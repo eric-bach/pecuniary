@@ -54,7 +54,7 @@ export class ApiStack extends Stack {
       functionName: `${props.appName}-${props.envName}-AccountsResolver`,
       runtime: Runtime.NODEJS_14_X,
       handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'accountsResolver')),
+      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'accountsResolver')),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -103,7 +103,7 @@ export class ApiStack extends Stack {
       functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
       runtime: Runtime.NODEJS_14_X,
       handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'transactionsResolver')),
+      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'transactionsResolver')),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -161,7 +161,7 @@ export class ApiStack extends Stack {
       functionName: `${props.appName}-${props.envName}-PositionsResolver`,
       runtime: Runtime.NODEJS_14_X,
       handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'positionsResolver')),
+      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'positionsResolver')),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -194,7 +194,7 @@ export class ApiStack extends Stack {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-${props.envName}-UpdatePositions`,
       handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, 'lambda', 'updatePositions')),
+      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'updatePositions')),
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {

@@ -62,7 +62,7 @@ export class FrontendStack extends Stack {
     );
 
     // Existing ACM certificate
-    const certificate = Certificate.fromCertificateArn(this, 'Certificate', process.env.CERTIFICATE_ARN || '');
+    const certificate = Certificate.fromCertificateArn(this, 'Certificate', props.params.certificateArn || '');
 
     // CloudFront distribution
     const distribution = new CloudFrontWebDistribution(this, 'PecuniaryWebsiteCloudFront', {
