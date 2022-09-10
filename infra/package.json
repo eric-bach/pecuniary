@@ -11,7 +11,7 @@
     "watch": "tsc -w",
     "test": "npm run build && jest --watchAll=false --coverage",
     "cdk": "cdk",
-    "deploy": "npm run build && npm run build --prefix ../client && ts-node ./helpers/deploy.ts",
+    "deploy": "npm run build && ts-node ./helpers/deploy.ts",
     "seed": "npm run build && ts-node ./helpers/seed.ts"
   },
   "devDependencies": {
