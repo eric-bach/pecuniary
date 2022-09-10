@@ -31,9 +31,25 @@ jobs:
         run: npm run build
         working-directory: infra
 
-      - name: Install NPM Dependencies (Client)
+      # - name: Install NPM Dependencies (Client)
+      #   run: npm ci
+      #   working-directory: client
+
+      - name: Install NPM Dependencies (Marketing)
         run: npm ci
-        working-directory: client
+        working-directory: frontend/marketing
+
+      - name: Install NPM Dependencies (Auth)
+        run: npm ci
+        working-directory: frontend/auth
+
+      - name: Install NPM Dependencies (Dashboard)
+        run: npm ci
+        working-directory: frontend/dashboard
+
+      - name: Install NPM Dependencies (Container)
+        run: npm ci
+        working-directory: frontend/container
 
       # - name: Create client/.env file
       #   run: |
