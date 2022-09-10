@@ -100,25 +100,9 @@ jobs:
         run: npm run build
         working-directory: frontend/container
 
-      # - name: CDK Synth
-      #   run: cdk synth
-      #   working-directory: backend
-
-      - name: CDK Synth Marketing
+      - name: CDK Synth
         run: cdk synth
-        working-directory: frontend/marketing
-
-      - name: CDK Synth Auth
-        run: cdk synth
-        working-directory: frontend/auth
-
-      - name: CDK Synth Dashboard
-        run: cdk synth
-        working-directory: frontend/dashboard
-
-      - name: CDK Synth Container
-        run: cdk synth
-        working-directory: frontend/container
+        working-directory: infra
 
       # - name: CDK Deploy
       #   run: cdk deploy pecuniary-prod --require-approval=never
