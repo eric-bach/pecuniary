@@ -69,19 +69,19 @@ jobs:
       #   working-directory: client
 
       - name: Build Frontend Marketing
-        run: npm run build:prod
+        run: npm run build
         working-directory: frontend/marketing
 
       - name: Build Frontend Auth
-        run: npm run build:prod
+        run: npm run build
         working-directory: frontend/auth
 
       - name: Build Frontend Dashboard
-        run: npm run build:prod
+        run: npm run build
         working-directory: frontend/dashboard
 
       - name: Build Frontend Container
-        run: npm run build:prod
+        run: npm run build
         working-directory: frontend/container
 
       # - name: CDK Synth
