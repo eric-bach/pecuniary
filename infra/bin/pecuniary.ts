@@ -7,6 +7,7 @@ import { DatabaseStack } from '../lib/database-stack';
 import { MessagingStack } from '../lib/messaging-stack';
 import { FrontendStack } from '../lib/frontend-stack';
 import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
+import { MfeStack } from '../lib/mfe-stack';
 
 const app = new App();
 
@@ -44,6 +45,7 @@ switch (stage) {
         eventBusArn: messaging.eventBusArn,
       },
     });
+
     break;
   }
 
@@ -54,6 +56,14 @@ switch (stage) {
         certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
       },
     });
+
+    new MfeStack(app, `pecuniary-mfe-container-${envName}`, {
+      ...baseProps,
+      params: {
+        certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
+      },
+    });
+
     break;
   }
 }
