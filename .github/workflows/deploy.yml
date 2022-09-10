@@ -112,7 +112,8 @@ jobs:
       #   working-directory: backend
 
       - name: CDK Deploy
-        run: cdk deploy --all --require-approval=never
+        run: npm run deploy prod
+        #run: cdk deploy --all --require-approval=never
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
