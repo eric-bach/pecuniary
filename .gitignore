@@ -5,6 +5,7 @@
 !remoteTypes.d.ts
 node_modules
 /client/build
+dist/
 
 # CDK asset staging directory
 .cdk.staging
