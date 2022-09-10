@@ -1,7 +1,12 @@
 const { merge } = require('webpack-merge');
+const webpack = require('webpack');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const commonConfig = require('./webpack.common');
 const packageJson = require('../package.json');
+
+require('dotenv').config({ path: './.env' });
+
+const domain = process.env.PRODUCTION_DOMAIN;
 
 const prodConfig = {
   mode: 'production',
@@ -10,12 +15,15 @@ const prodConfig = {
     publicPath: '/container/latest/',
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env),
+    }),
     new ModuleFederationPlugin({
       name: 'container',
       remotes: {
-        marketing: `marketing@${process.env.PRODUCTION_DOMAIN}/marketing/latest/remoteEntry.js`,
-        auth: `auth@${process.env.PRODUCTION_DOMAIN}/auth/latest/remoteEntry.js`,
-        dashboard: `dashboard@${process.env.PRODUCTION_DOMAIN}/dashboard/latest/remoteEntry.js`,
+        marketing: `marketing@${domain}/marketing/latest/remoteEntry.js`,
+        auth: `auth@${domain}/auth/latest/remoteEntry.js`,
+        dashboard: `dashboard@${domain}/dashboard/latest/remoteEntry.js`,
       },
       shared: packageJson.dependencies,
     }),
