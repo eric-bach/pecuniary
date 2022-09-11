@@ -5,7 +5,7 @@
   </p>
 </h1>
 
-[![Build](https://github.com/eric-bach/pecuniary/actions/workflows/build.yml/badge.svg)](https://github.com/eric-bach/pecuniary/actions/workflows/test.yml)
+[![Build](https://github.com/eric-bach/pecuniary/actions/workflows/test.yml/badge.svg)](https://github.com/eric-bach/pecuniary/actions/workflows/test.yml)
 [![Deploy](https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml/badge.svg)](https://github.com/eric-bach/pecuniary/actions/workflows/deploy.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/eric-bach/pecuniary/badge)](https://www.codefactor.io/repository/github/eric-bach/pecuniary)
 [![GitHub issues open](https://img.shields.io/github/issues/eric-bach/pecuniary.svg?maxAge=2592000)](https://github.com/eric-bach/pecuniary/issues?q=is%3Aopen+is%3Aissue) [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/eric-bach/pecuniary.svg?maxAge=2592000)](https://github.com/eric-bach/pecuniary/issues?q=is%3Aissue+is%3Aclosed)
