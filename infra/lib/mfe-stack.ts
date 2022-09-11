@@ -88,7 +88,7 @@ export class MfeStack extends Stack {
           errorCode: 403,
           errorCachingMinTtl: 60,
           responseCode: 200,
-          responsePagePath: 'index.html',
+          responsePagePath: '/index.html',
         },
       ],
       viewerCertificate:
