@@ -31,70 +31,79 @@
 
 This quick start guide describes how to get the application running. An `AWS account` is required to deploy the infrastructure required for this project.
 
-1. Clone the project
+1.  Clone the project
 
-   ```bash
-   $ git clone https://github.com/eric-bach/pecuniary.git
-   ```
+    ```bash
+    $ git clone https://github.com/eric-bach/pecuniary.git
+    ```
 
-2. Install dependencies for CDK `infra`
+2.  Install dependencies for CDK `infra`
 
-   ```bash
-   $ cd ./infra
-   $ npm install
-   ```
+    ```bash
+    $ cd ./infra
+    $ npm install
+    ```
 
-3. Install dependencies **for each** Lambda function in the `backend` folder
+3.  Install dependencies **for each** Lambda function in the `backend` folder
 
-   ```bash
-   $ cd ./backend/cognitoPostConfirmation
-   $ npm install
-   ```
+    ```bash
+    $ cd ./backend/cognitoPostConfirmation
+    $ npm install
+    ```
 
-4. Install dependencies for the `frontend`
+4.  Install dependencies for the `frontend`
 
-   ```bash
-   $ cd ./client
-   $ npm install
-   ```
+    ```bash
+    $ cd ./client
+    $ npm install
+    ```
 
-5. Copy the `./infra/.env.example` file to `./infra/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
+5.  Copy the `./infra/.env.example` file to `./infra/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
 
-   - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
-   - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
+    - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
+    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
 
-6. Deploy the backend stack
+6.  Deploy the Stacks
 
-   a. To the default profile (also deploys frontend)
+    a. To deploy all stacks (backend + frontend)
 
-   ```
-   $ npm run deploy dev
-   ```
+    ```
+    // Get AWS credentials
+    $ aws sso login --profile PROFILE_NAME
 
-   b. To a specific profile
+    // Deploy a 'dev' environment to the PROFILE_NAME
+    $ npm run deploy dev PROFILE_NAME
+    ```
 
-   ```
-   $ npm run deploy dev AWS_PROFILE_NAME
-   ```
+    b. To deploy a specific stage
 
-7. Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
+    ```
+    // Get AWS credentials
+    $ aws sso login --profile PROFILE_NAME
 
-   - aws_project_region: AWS Region,
-   - aws_cognito_region: AWS Cognito Region,
-   - aws_user_pools_id: AWS Cognito User Pool Id
-   - aws_user_pools_web_client_id: AWS Cognito User Pool Web Client Id,
-   - aws_appsync_graphqlEndpoint: AWS AppSync GraphQL Endpoint
+    // Deploy a specific stage for the 'dev' environment to the PROFILE_NAME
+    $ npm run deploy-backend dev PROFILE_NAME
+    $ npm run deploy-frontend dev PROFILE_NAME
+    ```
 
-8. Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
+7.  Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
 
-   - `REACT_APP_COGNITO_USERPOOL_ID` - AWS Cognito User Pool Id created in step 2
-   - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
+    - aws_project_region: AWS Region,
+    - aws_cognito_region: AWS Cognito Region,
+    - aws_user_pools_id: AWS Cognito User Pool Id
+    - aws_user_pools_web_client_id: AWS Cognito User Pool Web Client Id,
+    - aws_appsync_graphqlEndpoint: AWS AppSync GraphQL Endpoint
 
-9. Start the client locally on http://localhost:3000/
+8.  Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
 
-   ```bash
-   $ npm start
-   ```
+    - `REACT_APP_COGNITO_USERPOOL_ID` - AWS Cognito User Pool Id created in step 2
+    - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
+
+9.  Start the client locally on http://localhost:3000/
+
+    ```bash
+    $ npm start
+    ```
 
 # Event Sourcing and CQRS Architecture
 
@@ -117,47 +126,38 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
 2. Ensure AWS credentials are up to date. If using AWS SSO, authorize a set of temporary credentials
 
    ```bash
-   aws sso login
+   aws sso login --profile PROFILE_NAME
    ```
 
-3. Navigate to the `backend` folder
+3. Deploy the Stacks
 
-   ```bash
-   $ cd backend
+   a. To deploy all stacks (backend + frontend)
+
+   ```
+   $ npm run deploy dev PROFILE_NAME
    ```
 
-4. Deploy CDK stack.
+   b. To deploy a specific stage
 
-   ```bash
-   $ npm run deploy PROFILE_NAME
    ```
-
-### Deploy frontend
-
-1. Navigate to `client` folder
-
-   ```bash
-   $ cd client
-   ```
-
-2. Deploy CDK stack
-
-   ```bash
-   TBA - To be added
+   // Deploy a specific stage for the 'dev' environment to the PROFILE_NAME
+   $ npm run deploy-backend dev PROFILE_NAME
+   $ npm run deploy-frontend dev PROFILE_NAME
    ```
 
 ## Deployment via GitHub Actions
 
-1. Create an AWS user with access id/secret to deploy the CDK stack from GitHub Actions. The user should have Administrative rights.
+1. Create an AWS role that can be assumed by GitHub Actions
+
+   ```
+   $ npm run deploy-cicd prod PROFILE_NAME
+   ```
 
 2. Add the following GitHub Secrets to the repository
 
    ```
-   AWS_ACCESS_KEY_ID - AWS access key id (to prod account for backend resources)
-   AWS_ACCESS_KEY_SECRET = AWS access key secret (to prod account for backend resources)
+   AWS_ACCESS_ARN - AWS ARN of the GitHub Actions Role to Assume (from step 1)
    CDK_DEFAULT_REGION - AWS default region for all resources to be created
-   CDK_DEV_ACCOUNT - AWS Account Id of development account
-   CDK_PROD_ACCOUNT - AWS Account Id of production account
    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
    REACT_APP_COGNITO_CLIENT_ID - Cognito User Pool Client Id

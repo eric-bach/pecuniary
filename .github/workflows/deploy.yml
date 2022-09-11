@@ -5,8 +5,8 @@ on:
     branches: [main]
 
 jobs:
-  aws_cdk:
-    name: Deploy CDK
+  deploy-backend:
+    name: Deploy Backend
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -45,6 +45,37 @@ jobs:
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
           cat .env
         working-directory: infra
+
+      - name: CDK Deploy Backend
+        run: npm run deploy-backend prod
+        env:
+          CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
+          DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
+        working-directory: infra
+
+  deploy-frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
+          aws-region: us-east-1
+
+      - name: Install NPM
+        run: 'sudo apt update -y && sudo apt install nodejs npm -y'
+
+      - name: Install AWS CDK
+        run: 'sudo npm install -g aws-cdk'
 
       - name: Install NPM Dependencies (Marketing)
         run: npm ci
@@ -79,10 +110,6 @@ jobs:
       #     cat aws-exports.js
       #   working-directory: client/src
 
-      # - name: Build Client
-      #   run: npm run build:prod
-      #   working-directory: client
-
       - name: Build Frontend Marketing
         run: npm run build
         working-directory: frontend/marketing
@@ -99,8 +126,8 @@ jobs:
         run: npm run build
         working-directory: frontend/container
 
-      - name: CDK Deploy
-        run: npm run deploy prod
+      - name: CDK Deploy Frontend
+        run: npm run deploy-frontend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
