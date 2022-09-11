@@ -12,12 +12,6 @@ jobs:
       actions: write
       contents: read
       id-token: write
-    defaults:
-      run:
-        working-directory: ${{ github.workspace }}/client
-    env:
-      GITHUB_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -61,7 +55,7 @@ jobs:
       actions: write
       contents: read
       id-token: write
-
+    steps:
       - name: Checkout Code
         uses: actions/checkout@v2
 
