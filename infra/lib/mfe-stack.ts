@@ -88,7 +88,7 @@ export class MfeStack extends Stack {
           errorCode: 403,
           errorCachingMinTtl: 60,
           responseCode: 200,
-          responsePagePath: '/index.html',
+          responsePagePath: 'container/latest/index.html',
         },
       ],
       viewerCertificate:
@@ -101,7 +101,20 @@ export class MfeStack extends Stack {
           : undefined,
     });
 
-    // S3 bucket deployment
+    if (props.envName === 'prod') {
+      // Route53 HostedZone A record
+      var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
+        domainName: 'ericbach.dev',
+      });
+      new ARecord(this, 'AliasRecord', {
+        zone: existingHostedZone,
+        recordName: `${props.appName}.ericbach.dev`,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+      });
+    }
+
+    // S3 bucket deployments
+
     new BucketDeployment(this, 'PecuniaryContainerWebsiteDeployment', {
       sources: [Source.asset('../frontend/container/dist')],
       destinationBucket: hostingBucket,
@@ -150,17 +163,5 @@ export class MfeStack extends Stack {
       distribution,
       distributionPaths: ['/static/css/*'],
     });
-
-    if (props.env === 'prod') {
-      // Route53 HostedZone A record
-      var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
-        domainName: 'ericbach.dev',
-      });
-      new ARecord(this, 'AliasRecord', {
-        zone: existingHostedZone,
-        recordName: `${props.appName}.ericbach.dev`,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-      });
-    }
   }
 }

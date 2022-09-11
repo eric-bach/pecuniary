@@ -12,9 +12,15 @@ jobs:
       actions: write
       contents: read
       id-token: write
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Configure Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -22,13 +28,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
           aws-region: us-east-1
 
-      - name: Install NPM
-        run: 'sudo apt update -y && sudo apt install nodejs npm -y'
-
-      - name: Install AWS CDK
-        run: 'sudo npm install -g aws-cdk'
-
-      - name: Install NPM Dependencies (Backend)
+      - name: Install NPM Dependencies (Infra)
         run: npm ci
         working-directory: infra
 
@@ -47,29 +47,33 @@ jobs:
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
         working-directory: infra
 
-      # deploy-frontend:
-      #   name: Deploy Frontend
-      #   runs-on: ubuntu-latest
-      #   needs: deploy-backend
-      #   permissions:
-      #     actions: write
-      #     contents: read
-      #     id-token: write
-      #   steps:
-      #     - name: Checkout Code
-      #       uses: actions/checkout@v3
+  deploy-frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
 
-      #     - name: Configure AWS credentials
-      #       uses: aws-actions/configure-aws-credentials@v1
-      #       with:
-      #         role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
-      #         aws-region: us-east-1
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      #     - name: Install NPM
-      #       run: 'sudo apt update -y && sudo apt install nodejs npm -y'
+      - name: Configure Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
 
-      #     - name: Install AWS CDK
-      #       run: 'sudo npm install -g aws-cdk'
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
+          aws-region: us-east-1
+
+      - name: Install NPM Dependencies (Infra)
+        run: npm ci
+        working-directory: infra
 
       - name: Install NPM Dependencies (Marketing)
         run: npm ci
@@ -102,6 +106,13 @@ jobs:
       - name: Build Frontend Dashboard
         run: npm run build
         working-directory: frontend/dashboard
+
+      - name: Create frontend/container/.env file
+        run: |
+          touch .env
+          echo PRODUCTION_DOMAIN=${{ secrets.PRODUCTION_DOMAIN }} >> .env
+          cat .env
+        working-directory: frontend/container
 
       - name: Build Frontend Container
         run: npm run build
