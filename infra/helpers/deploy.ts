@@ -8,10 +8,15 @@ const cdkDeploy = () => {
     program.parse();
     const options = program.opts();
 
-    const env = program.args[0].toLowerCase() ?? 'dev';
-    const profileArg = program.args.length === 2 ? `--profile ${program.args[1]}` : '';
+    const env = program.args[0].toLowerCase() ?? '';
+    const profile = program.args.length === 2 ? program.args[1] : '';
 
-    console.log(`env: ${env}, profile: ${profileArg}, stage: ${options.stage}`);
+    console.log(`env: ${env}, profile: ${profile}, stage: ${options.stage}`);
+
+    let profileArg = '';
+    if (profile !== '') {
+      profileArg = `--profile ${profile}`;
+    }
 
     if (options.stage) {
       runCommand(
