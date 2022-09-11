@@ -47,33 +47,33 @@ jobs:
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
         working-directory: infra
 
-  deploy-frontend:
-    name: Deploy Frontend
-    runs-on: ubuntu-latest
-    needs: deploy-backend
-    permissions:
-      actions: write
-      contents: read
-      id-token: write
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-      - name: Configure Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 14.x
+      # deploy-frontend:
+      #   name: Deploy Frontend
+      #   runs-on: ubuntu-latest
+      #   needs: deploy-backend
+      #   permissions:
+      #     actions: write
+      #     contents: read
+      #     id-token: write
+      #   steps:
+      #     - name: Checkout Code
+      #       uses: actions/checkout@v3
+      #     - name: Configure Node
+      #       uses: actions/setup-node@v3
+      #       with:
+      #         node-version: 14.x
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
-          aws-region: us-east-1
+      #     - name: Configure AWS credentials
+      #       uses: aws-actions/configure-aws-credentials@v1
+      #       with:
+      #         role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
+      #         aws-region: us-east-1
 
-      - name: Install NPM
-        run: 'sudo apt update -y && sudo apt install nodejs npm -y'
+      #     - name: Install NPM
+      #       run: 'sudo apt update -y && sudo apt install nodejs npm -y'
 
-      - name: Install AWS CDK
-        run: 'sudo npm install -g aws-cdk'
+      #     - name: Install AWS CDK
+      #       run: 'sudo npm install -g aws-cdk'
 
       - name: Install NPM Dependencies (Marketing)
         run: npm ci
