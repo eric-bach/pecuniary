@@ -14,9 +14,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        # with:
-        #   fetch-depth: 100
-        #   ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Use Node.js 14.x
         uses: actions/setup-node@v3
@@ -75,6 +72,13 @@ jobs:
       - name: Build Frontend Dashboard
         run: npm run build
         working-directory: frontend/dashboard
+
+      - name: Create frontend/container/.env file
+        run: |
+          touch .env
+          echo PRODUCTION_DOMAIN=${{ secrets.PRODUCTION_DOMAIN }} >> .env
+          cat .env
+        working-directory: frontend/container
 
       - name: Build Frontend Container
         run: npm run build
