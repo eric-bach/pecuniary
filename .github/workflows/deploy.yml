@@ -2,8 +2,7 @@ name: deploy
 
 on:
   push:
-    #branches: [main]
-    branches: [gha]
+    branches: [main]
 
 jobs:
   deploy-backend:
@@ -13,6 +12,7 @@ jobs:
       actions: write
       contents: read
       id-token: write
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -55,6 +55,7 @@ jobs:
       actions: write
       contents: read
       id-token: write
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
