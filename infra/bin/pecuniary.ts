@@ -69,12 +69,12 @@ switch (stage) {
   }
 
   case 'frontend': {
-    new FrontendStack(app, `pecuniary-frontend-${envName}`, {
-      ...baseProps,
-      params: {
-        certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
-      },
-    });
+    // new FrontendStack(app, `pecuniary-frontend-${envName}`, {
+    //   ...baseProps,
+    //   params: {
+    //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
+    //   },
+    // });
 
     new MfeStack(app, `pecuniary-mfe-container-${envName}`, {
       ...baseProps,
