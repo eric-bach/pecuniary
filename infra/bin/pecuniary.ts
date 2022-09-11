@@ -16,6 +16,10 @@ const envName = app.node.tryGetContext('env');
 const stage = app.node.tryGetContext('stage');
 
 const baseProps: PecuniaryBaseStackProps = {
+  env: {
+    region: process.env.CDK_DEFAULT_REGION ?? '',
+    account: process.env.CDK_DEFAULT_ACCOUNT ?? '',
+  },
   appName: 'pecuniary',
   envName: envName,
   tags: {
