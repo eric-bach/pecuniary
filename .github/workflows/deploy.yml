@@ -8,6 +8,10 @@ jobs:
   aws_cdk:
     name: Deploy CDK
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
     defaults:
       run:
         working-directory: ${{ github.workspace }}/client
@@ -18,11 +22,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Configure AWS Credentials for prod account
+      # - name: Configure AWS Credentials for prod account
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+      #     aws-secret-access-key: ${{secrets.AWS_ACCESS_KEY_SECRET}}
+      #     aws-region: us-east-1
+
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{secrets.AWS_ACCESS_KEY_SECRET}}
+          role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
           aws-region: us-east-1
 
       - name: Install NPM
@@ -42,10 +52,6 @@ jobs:
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
           cat .env
         working-directory: infra
-
-      # - name: Install NPM Dependencies (Client)
-      #   run: npm ci
-      #   working-directory: client
 
       - name: Install NPM Dependencies (Marketing)
         run: npm ci
@@ -100,20 +106,8 @@ jobs:
         run: npm run build
         working-directory: frontend/container
 
-      # - name: CDK Synth
-      #   run: cdk synth
-      #   working-directory: infra
-
-      # - name: CDK Deploy
-      #   run: cdk deploy pecuniary-prod --require-approval=never
-      #   env:
-      #     CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
-      #     DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-      #   working-directory: backend
-
       - name: CDK Deploy
         run: npm run deploy prod
-        #run: cdk deploy --all --require-approval=never
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}

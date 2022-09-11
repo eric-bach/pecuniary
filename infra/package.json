@@ -12,6 +12,10 @@
     "test": "npm run build && jest --watchAll=false --coverage",
     "cdk": "cdk",
     "deploy": "npm run build && ts-node ./helpers/deploy.ts",
+    "deploy-cicd": "npm run quick-deploy -- -s cicd",
+    "deploy-backend": "npm run quick-deploy -- -s backend",
+    "deploy-frontend": "npm run quick-deploy -- -s frontend",
+    "quick-deploy": "ts-node ./helpers/deploy.ts",
     "seed": "npm run build && ts-node ./helpers/seed.ts"
   },
   "devDependencies": {

@@ -31,10 +31,6 @@ jobs:
         run: npm run build
         working-directory: infra
 
-      # - name: Install NPM Dependencies (Client)
-      #   run: npm ci
-      #   working-directory: client
-
       - name: Install NPM Dependencies (Marketing)
         run: npm ci
         working-directory: frontend/marketing
@@ -68,10 +64,6 @@ jobs:
       #     cat aws-exports.js
       #   working-directory: client/src
 
-      # - name: Build Client
-      #   run: npm run build:prod
-      #   working-directory: client
-
       - name: Build Frontend Marketing
         run: npm run build
         working-directory: frontend/marketing
@@ -87,10 +79,6 @@ jobs:
       - name: Build Frontend Container
         run: npm run build
         working-directory: frontend/container
-
-      # - name: Run CDK Unit Tests
-      #   run: npm run test
-      #   working-directory: backend
 
       - name: Run CDK Unit Tests
         run: npm run test

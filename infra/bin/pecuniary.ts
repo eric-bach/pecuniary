@@ -6,8 +6,9 @@ import { ApiStack } from '../lib/api-stack';
 import { DatabaseStack } from '../lib/database-stack';
 import { MessagingStack } from '../lib/messaging-stack';
 import { FrontendStack } from '../lib/frontend-stack';
-import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
+import { GitHubStackProps, PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
 import { MfeStack } from '../lib/mfe-stack';
+import { CiCdStack } from '../lib/ci-cd-stack';
 
 const app = new App();
 
@@ -24,6 +25,20 @@ const baseProps: PecuniaryBaseStackProps = {
 };
 
 switch (stage) {
+  case 'cicd': {
+    const gitHubProps: GitHubStackProps = {
+      repositoryConfig: [
+        {
+          owner: 'eric-bach',
+          repo: 'pecuniary',
+        },
+      ],
+    };
+    new CiCdStack(app, `pecuniary-cicd-${envName}`, { ...baseProps, ...gitHubProps });
+
+    break;
+  }
+
   case 'backend': {
     const auth = new AuthStack(app, `pecuniary-auth-${envName}`, baseProps);
 
