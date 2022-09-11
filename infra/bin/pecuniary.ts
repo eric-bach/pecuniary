@@ -9,6 +9,7 @@ import { FrontendStack } from '../lib/frontend-stack';
 import { GitHubStackProps, PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
 import { MfeStack } from '../lib/mfe-stack';
 import { CiCdStack } from '../lib/ci-cd-stack';
+import { APP_NAME, DEFAULT_VALUES } from '../lib/constants';
 
 const app = new App();
 
@@ -20,11 +21,11 @@ const baseProps: PecuniaryBaseStackProps = {
     region: process.env.CDK_DEFAULT_REGION,
     account: process.env.CDK_DEFAULT_ACCOUNT,
   },
-  appName: 'pecuniary',
+  appName: APP_NAME,
   envName: envName,
   tags: {
     environment: envName,
-    application: 'pecuniary',
+    application: APP_NAME,
   },
 };
 
@@ -33,29 +34,29 @@ switch (stage) {
     const gitHubProps: GitHubStackProps = {
       repositoryConfig: [
         {
-          owner: 'eric-bach',
-          repo: 'pecuniary',
+          owner: DEFAULT_VALUES.GITHUB_OWNER,
+          repo: APP_NAME,
         },
       ],
     };
-    new CiCdStack(app, `pecuniary-cicd-${envName}`, { ...baseProps, ...gitHubProps });
+    new CiCdStack(app, `${APP_NAME}-cicd-${envName}`, { ...baseProps, ...gitHubProps });
 
     break;
   }
 
   case 'backend': {
-    const auth = new AuthStack(app, `pecuniary-auth-${envName}`, baseProps);
+    const auth = new AuthStack(app, `${APP_NAME}-auth-${envName}`, baseProps);
 
-    const database = new DatabaseStack(app, `pecuniary-database-${envName}`, baseProps);
+    const database = new DatabaseStack(app, `${APP_NAME}-database-${envName}`, baseProps);
 
-    const messaging = new MessagingStack(app, `pecuniary-messaging-${envName}`, {
+    const messaging = new MessagingStack(app, `${APP_NAME}-messaging-${envName}`, {
       ...baseProps,
       params: {
-        dlqNotifications: process.env.DLQ_NOTIFICATIONS ?? 'test@test.com',
+        dlqNotifications: process.env.DLQ_NOTIFICATIONS ?? DEFAULT_VALUES.EMAIL,
       },
     });
 
-    new ApiStack(app, `pecuniary-api-${envName}`, {
+    new ApiStack(app, `${APP_NAME}-api-${envName}`, {
       ...baseProps,
       params: {
         userPoolId: auth.userPoolId,
@@ -69,14 +70,14 @@ switch (stage) {
   }
 
   case 'frontend': {
-    // new FrontendStack(app, `pecuniary-frontend-${envName}`, {
+    // new FrontendStack(app, `${APP_NAME}-frontend-${envName}`, {
     //   ...baseProps,
     //   params: {
     //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
     //   },
     // });
 
-    new MfeStack(app, `pecuniary-mfe-container-${envName}`, {
+    new MfeStack(app, `${APP_NAME}-mfe-container-${envName}`, {
       ...baseProps,
       params: {
         certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
