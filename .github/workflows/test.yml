@@ -1,14 +1,11 @@
-name: build
+name: test
 
 on: [pull_request]
 
 jobs:
-  build:
-    name: Build and Test
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ github.workspace }}/client
 
     steps:
       - name: Checkout Code
