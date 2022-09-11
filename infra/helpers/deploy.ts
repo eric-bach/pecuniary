@@ -20,12 +20,12 @@ const cdkDeploy = () => {
       );
     } else {
       runCommand(
-        `npm run cdk -- deploy --all -c stage=backend -c env=${env} --profile ${profileArg} --require-approval=never`,
+        `npm run cdk -- deploy --all -c stage=backend -c env=${env} ${profileArg} --require-approval=never`,
         '🚀 Deploying backend...'
       );
 
       runCommand(
-        `npm run cdk -- deploy --all -c stage=frontend -c env=${env} --profile ${profileArg} --require-approval=never`,
+        `npm run cdk -- deploy --all -c stage=frontend -c env=${env} ${profileArg} --require-approval=never`,
         '🚀 Deploying frontend...'
       );
     }
