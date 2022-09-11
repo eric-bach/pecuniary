@@ -11,11 +11,13 @@
     "watch": "tsc -w",
     "test": "npm run build && jest --watchAll=false --coverage",
     "cdk": "cdk",
+    "cdk-clear-context": "npm run cdk -- context --clear",
     "deploy": "npm run build && ts-node ./helpers/deploy.ts",
-    "deploy-cicd": "npm run quick-deploy -- -s cicd",
-    "deploy-backend": "npm run quick-deploy -- -s backend",
-    "deploy-frontend": "npm run quick-deploy -- -s frontend",
-    "quick-deploy": "ts-node ./helpers/deploy.ts",
+    "deploy-cicd": "ts-node ./helpers/deploy.ts -- -s cicd",
+    "deploy-backend": "ts-node ./helpers/deploy.ts -- -s backend",
+    "deploy-frontend": "ts-node ./helpers/deploy.ts -- -s frontend",
+    "recursive-clean": "npm run cdk-clear-context && ts-node ./helpers/recursiveClean.ts",
+    "recursive-install": "npm run cdk-clear-context && ts-node ./helpers/recursiveInstall.ts",
     "seed": "npm run build && ts-node ./helpers/seed.ts"
   },
   "devDependencies": {
