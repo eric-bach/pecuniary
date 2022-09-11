@@ -58,10 +58,6 @@ jobs:
       #   steps:
       #     - name: Checkout Code
       #       uses: actions/checkout@v3
-      #     - name: Configure Node
-      #       uses: actions/setup-node@v3
-      #       with:
-      #         node-version: 14.x
 
       #     - name: Configure AWS credentials
       #       uses: aws-actions/configure-aws-credentials@v1
@@ -95,23 +91,6 @@ jobs:
         run: npm ci
         working-directory: client
 
-      # - name: Create client/.env file
-      #   run: |
-      #     touch .env
-      #     echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.REACT_APP_COGNITO_USERPOOL_ID }} >> .env
-      #     echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
-      #     cp .env .env.prod
-      #     cat .env.prod
-      #   working-directory: client
-
-      # - name: Create client/src/aws-exports.js file
-      #   run: |
-      #     touch aws-exports.js
-      #     echo const awsmobile = { aws_project_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_cognito_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_user_pools_id: '${{secrets.REACT_APP_COGNITO_USERPOOL_ID}}', aws_user_pools_web_client_id: '${{ secrets.REACT_APP_COGNITO_CLIENT_ID }}', aws_appsync_graphqlEndpoint: '${{ secrets.AWS_APPSYNC_GRAPHQL_ENDPOINT }}', aws_appsync_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS', }; >> aws-exports.js
-      #     echo export default awsmobile; >> aws-exports.js
-      #     cat aws-exports.js
-      #   working-directory: client/src
-
       - name: Build Frontend Marketing
         run: npm run build
         working-directory: frontend/marketing
@@ -127,6 +106,23 @@ jobs:
       - name: Build Frontend Container
         run: npm run build
         working-directory: frontend/container
+
+      - name: Create client/.env file - TEMP
+        run: |
+          touch .env
+          echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.REACT_APP_COGNITO_USERPOOL_ID }} >> .env
+          echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
+          cp .env .env.prod
+          cat .env.prod
+        working-directory: client
+
+      - name: Create client/src/aws-exports.js file - TEMP
+        run: |
+          touch aws-exports.js
+          echo const awsmobile = { aws_project_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_cognito_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_user_pools_id: '${{secrets.REACT_APP_COGNITO_USERPOOL_ID}}', aws_user_pools_web_client_id: '${{ secrets.REACT_APP_COGNITO_CLIENT_ID }}', aws_appsync_graphqlEndpoint: '${{ secrets.AWS_APPSYNC_GRAPHQL_ENDPOINT }}', aws_appsync_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS', }; >> aws-exports.js
+          echo export default awsmobile; >> aws-exports.js
+          cat aws-exports.js
+        working-directory: client/src
 
       - name: Build Client - TEMP
         run: npm run build
