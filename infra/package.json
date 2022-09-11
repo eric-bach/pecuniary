@@ -16,7 +16,7 @@
     "deploy-cicd": "npm run quick-deploy -- -s cicd",
     "deploy-backend": "npm run quick-deploy -- -s backend",
     "deploy-frontend": "npm run quick-deploy -- -s frontend",
-    "quick-deploy": "ts-node ./helpers/cdkDeploy.ts",
+    "quick-deploy": "ts-node ./helpers/deploy.ts",
     "recursive-clean": "npm run cdk-clear-context && ts-node ./helpers/recursiveClean.ts",
     "recursive-install": "npm run cdk-clear-context && ts-node ./helpers/recursiveInstall.ts",
     "seed": "npm run build && ts-node ./helpers/seed.ts"
