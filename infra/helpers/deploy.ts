@@ -9,23 +9,23 @@ const cdkDeploy = () => {
     const options = program.opts();
 
     const env = program.args[0].toLowerCase() ?? 'dev';
-    const profile = program.args.length === 2 ? program.args[1] : 'default';
+    const profileArg = program.args.length === 2 ? `--profile ${program.args[1]}` : '';
 
-    console.log(`env: ${env}, profile: ${profile}, stage: ${options.stage}`);
+    console.log(`env: ${env}, profile: ${profileArg}, stage: ${options.stage}`);
 
     if (options.stage) {
       runCommand(
-        `npm run cdk -- deploy --all -c stage=${options.stage} -c env=${env} --profile ${profile} --require-approval=never`,
+        `npm run cdk -- deploy --all -c stage=${options.stage} -c env=${env} ${profileArg} --require-approval=never`,
         `🚀 Deploying ${options.stage}...`
       );
     } else {
       runCommand(
-        `npm run cdk -- deploy --all -c stage=backend -c env=${env} --profile ${profile} --require-approval=never`,
+        `npm run cdk -- deploy --all -c stage=backend -c env=${env} --profile ${profileArg} --require-approval=never`,
         '🚀 Deploying backend...'
       );
 
       runCommand(
-        `npm run cdk -- deploy --all -c stage=frontend -c env=${env} --profile ${profile} --require-approval=never`,
+        `npm run cdk -- deploy --all -c stage=frontend -c env=${env} --profile ${profileArg} --require-approval=never`,
         '🚀 Deploying frontend...'
       );
     }
