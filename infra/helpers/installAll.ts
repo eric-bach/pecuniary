@@ -12,7 +12,7 @@ const subdirs = (dir: any) => {
     .map((subdir) => path.join(dir, subdir));
 };
 
-const install = (dir: any) => {
+const installAll = (dir: any) => {
   const installable = existsSync(path.join(dir, 'package.json'));
 
   if (installable && dir !== root) {
@@ -23,8 +23,8 @@ const install = (dir: any) => {
   }
 
   for (let subdir of subdirs(dir)) {
-    install(subdir);
+    installAll(subdir);
   }
 };
 
-install(root);
+installAll(root);

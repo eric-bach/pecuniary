@@ -8,18 +8,19 @@
   },
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w",
-    "test": "npm run build && jest --watchAll=false --coverage",
+    "build-all": "npm run cdk-clear-context && ts-node ./helpers/buildAll.ts",
+    "clean-all": "npm run cdk-clear-context && ts-node ./helpers/cleanAll.ts",
+    "install-all": "npm i && npm run cdk-clear-context && ts-node ./helpers/installAll.ts",
     "cdk": "cdk",
     "cdk-clear-context": "npm run cdk -- context --clear",
-    "deploy": "npm run build && ts-node ./helpers/deploy.ts",
+    "deploy": "npm run build && npm run build-all && ts-node ./helpers/deploy.ts",
     "deploy-cicd": "npm run quick-deploy -- -s cicd",
     "deploy-backend": "npm run quick-deploy -- -s backend",
     "deploy-frontend": "npm run quick-deploy -- -s frontend",
     "quick-deploy": "ts-node ./helpers/deploy.ts",
-    "recursive-clean": "npm run cdk-clear-context && ts-node ./helpers/recursiveClean.ts",
-    "recursive-install": "npm run cdk-clear-context && ts-node ./helpers/recursiveInstall.ts",
-    "seed": "npm run build && ts-node ./helpers/seed.ts"
+    "seed": "npm run build && ts-node ./helpers/seed.ts",
+    "test": "npm run build && jest --watchAll=false --coverage",
+    "watch": "tsc -w"
   },
   "devDependencies": {
     "@aws-cdk/aws-appsync-alpha": "^2.0.0-alpha.11",

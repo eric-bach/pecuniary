@@ -12,7 +12,7 @@ const subdirs = (dir: any) => {
     .map((subdir) => path.join(dir, subdir));
 };
 
-const clean = (dir: any) => {
+const cleanAll = (dir: any) => {
   const installable = existsSync(path.join(dir, 'package.json'));
 
   if (installable && dir !== root) {
@@ -22,8 +22,8 @@ const clean = (dir: any) => {
   }
 
   for (let subdir of subdirs(dir)) {
-    clean(subdir);
+    cleanAll(subdir);
   }
 };
 
-clean(root);
+cleanAll(root);
