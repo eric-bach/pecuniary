@@ -20,8 +20,8 @@ export default ({ onSignIn }: any) => {
       },
 
       // Callback for Auth SignIn button
-      onSignIn: (user: string) => {
-        onSignIn(user);
+      onSignIn: (user: string, password: string) => {
+        onSignIn(user, password);
       },
     });
 

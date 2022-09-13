@@ -34,8 +34,8 @@ export default () => {
             <Switch>
               <Route path='/auth'>
                 <AuthLazy
-                  onSignIn={(user: string) => {
-                    console.log('Signing in with: ', user);
+                  onSignIn={(user: string, password: string) => {
+                    console.log('Signing in with: ', user, password);
                     setIsSignedIn(true);
                   }}
                 />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -53,6 +53,17 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn({ onSignIn }: any) {
   const classes = useStyles();
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  function handleEmailChange(event: any) {
+    setEmail(event.target.value);
+  }
+
+  function handlePasswordChange(event: any) {
+    setPassword(event.target.value);
+  }
+
   return (
     <Container component='main' maxWidth='xs'>
       <div className={classes.paper}>
@@ -73,6 +84,7 @@ export default function SignIn({ onSignIn }: any) {
             name='email'
             autoComplete='email'
             autoFocus
+            onChange={(e) => handleEmailChange(e)}
           />
           <TextField
             variant='outlined'
@@ -84,6 +96,7 @@ export default function SignIn({ onSignIn }: any) {
             type='password'
             id='password'
             autoComplete='current-password'
+            onChange={(e) => handlePasswordChange(e)}
           />
           <FormControlLabel control={<Checkbox value='remember' color='primary' />} label='Remember me' />
           <Button
@@ -92,7 +105,7 @@ export default function SignIn({ onSignIn }: any) {
             variant='contained'
             color='primary'
             className={classes.submit}
-            onClick={() => onSignIn('ASDF VALUE')}
+            onClick={() => onSignIn(email, password)}
           >
             Sign In
           </Button>
