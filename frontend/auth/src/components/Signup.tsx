@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -47,8 +47,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignUp({ onSignIn }: any) {
+export default function SignUp({ onSignUp }: any) {
   const classes = useStyles();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  function handleEmailChange(event: any) {
+    setEmail(event.target.value);
+  }
+
+  function handlePasswordChange(event: any) {
+    setPassword(event.target.value);
+  }
 
   return (
     <Container component='main' maxWidth='xs'>
@@ -77,7 +88,16 @@ export default function SignUp({ onSignIn }: any) {
               <TextField variant='outlined' required fullWidth id='lastName' label='Last Name' name='lastName' autoComplete='lname' />
             </Grid>
             <Grid item xs={12}>
-              <TextField variant='outlined' required fullWidth id='email' label='Email Address' name='email' autoComplete='email' />
+              <TextField
+                variant='outlined'
+                required
+                fullWidth
+                id='email'
+                label='Email Address'
+                name='email'
+                autoComplete='email'
+                onChange={(e) => handleEmailChange(e)}
+              />
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -89,6 +109,7 @@ export default function SignUp({ onSignIn }: any) {
                 type='password'
                 id='password'
                 autoComplete='current-password'
+                onChange={(e) => handlePasswordChange(e)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -98,7 +119,14 @@ export default function SignUp({ onSignIn }: any) {
               />
             </Grid>
           </Grid>
-          <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit} onClick={onSignIn}>
+          <Button
+            type='submit'
+            fullWidth
+            variant='contained'
+            color='primary'
+            className={classes.submit}
+            onClick={() => onSignUp(email, password)}
+          >
             Sign Up
           </Button>
           <Grid container justifyContent='flex-end'>

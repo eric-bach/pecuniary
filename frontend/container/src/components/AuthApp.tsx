@@ -1,10 +1,36 @@
 import { mount } from 'auth/AuthApp';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
-export default ({ onSignIn }: any) => {
+import { AuthContext } from '../contexts/authContext';
+
+export enum SignedInStatus {
+  SignedIn,
+  VerificationRequired,
+  SignedOut,
+}
+
+export default ({ onSignIn, onSignUp }: any) => {
   const ref = useRef(null);
   const history = useHistory();
+
+  const authContext = useContext(AuthContext);
+
+  const signInWithEmail = async (user: string, password: string): Promise<SignedInStatus> => {
+    try {
+      console.log('ATTEMPTING TO SIGN IN: ', user, password, authContext);
+      await authContext.signInWithEmail(user, password);
+      return SignedInStatus.SignedIn;
+    } catch (err: any) {
+      if (err.code === 'UserNotConfirmedException') {
+        return SignedInStatus.VerificationRequired;
+        //history.push('verify');
+      } else {
+        console.error(err);
+        return SignedInStatus.SignedOut;
+      }
+    }
+  };
 
   useEffect(() => {
     const { onParentNavigate } = mount(ref.current, {
@@ -20,8 +46,14 @@ export default ({ onSignIn }: any) => {
       },
 
       // Callback for Auth SignIn button
-      onSignIn: (user: string, password: string) => {
-        onSignIn(user, password);
+      onSignIn: async (user: string, password: string) => {
+        const signedIn = await signInWithEmail(user, password);
+
+        onSignIn(signedIn);
+      },
+
+      onSignUp: (user: string, password: string) => {
+        onSignUp(user, password);
       },
     });
 
