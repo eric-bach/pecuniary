@@ -1,6 +1,8 @@
 import React, { lazy, Suspense, useState, useEffect, useContext } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
+import MuiAlert from '@material-ui/lab/Alert';
+import { makeStyles } from '@material-ui/core/styles';
 import { createBrowserHistory } from 'history';
 
 import Progress from './components/Progress';
@@ -19,8 +21,13 @@ const generateClassName = createGenerateClassName({
 
 const history = createBrowserHistory();
 
+function Alert(props: any) {
+  return <MuiAlert elevation={6} variant='filled' {...props} />;
+}
+
 const App = () => {
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+  const [displayError, setDisplayError] = useState<boolean>(false);
 
   useEffect(() => {
     if (isSignedIn) {
@@ -33,19 +40,30 @@ const App = () => {
       <StylesProvider generateClassName={generateClassName}>
         <div>
           <AuthProvider>
-            <Header onSignOut={() => setIsSignedIn(false)} isSignedIn={isSignedIn} />
+            <Header onSignOut={() => setIsSignedIn(false)} />
             <Suspense fallback={<Progress />}>
               <Switch>
                 <Route path='/auth'>
+                  {displayError && (
+                    <Alert
+                      severity='error'
+                      onClose={() => {
+                        setDisplayError(false);
+                      }}
+                    >
+                      Sign in Failed! Email and/or password is incorrect.
+                    </Alert>
+                  )}
                   <AuthLazy
                     onSignIn={(signedIn: SignedInStatus) => {
-                      console.log('SIGNED IN: ', signedIn);
+                      setDisplayError(signedIn === SignedInStatus.SignedOut);
                       setIsSignedIn(signedIn === SignedInStatus.SignedIn);
                     }}
                     onSignUp={(user: string, password: string) => {
                       console.log('SIGNING UP: ', user, password);
                       //authContext.signUpWithEmail(user, user, password);
                     }}
+                    isSignedIn={isSignedIn}
                   />
                 </Route>
                 <Route path='/home'>
