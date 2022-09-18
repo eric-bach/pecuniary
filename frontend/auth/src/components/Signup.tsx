@@ -124,12 +124,6 @@ export default function SignUp({ onSignUp }: any) {
                 autoComplete='confirm-password'
               />
             </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value='allowExtraEmails' color='primary' />}
-                label='I want to receive inspiration, marketing promotions and updates via email.'
-              />
-            </Grid>
           </Grid>
           <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit}>
             Sign Up
