@@ -40,18 +40,18 @@ This quick start guide describes how to get the application running. An `AWS acc
 2.  Install dependencies for CDK
 
     ```bash
-    $ cd ./infra
+    $ cd ./backend
     $ npm install
     ```
 
 3.  Install dependencies for the rest of the application using the recursive-install script
 
     ```bash
-    $ cd ./infra
+    $ cd ./backend
     $ npm recursive-install
     ```
 
-4.  Copy the `./infra/.env.example` file to `./infra/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
+4.  Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
 
     - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
     - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to

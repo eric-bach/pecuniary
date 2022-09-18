@@ -41,17 +41,16 @@ const App = () => {
 
   const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.SignedOut);
   const [displayError, setDisplayError] = useState<boolean>(false);
-  const [isCreated, setCreated] = useState<boolean>(false);
 
   useEffect(() => {
     if (authStatus === AuthStatus.SignedIn) {
       history.push('/home');
     }
 
-    if (isCreated) {
+    if (authStatus === AuthStatus.AccountCreated) {
       history.push('/auth/signin');
     }
-  }, [authStatus, isCreated]);
+  }, [authStatus]);
 
   return (
     <Router history={history}>
@@ -86,7 +85,7 @@ const App = () => {
                       setAuthStatus(status);
                     }}
                     onSignUp={(status: AuthStatus) => {
-                      setCreated(status === AuthStatus.VerificationRequired);
+                      setAuthStatus(status);
                     }}
                   />
                 </Route>

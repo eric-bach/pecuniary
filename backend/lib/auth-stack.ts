@@ -28,15 +28,15 @@ export class AuthStack extends Stack {
     const REGION = Stack.of(this).region;
 
     /***
-     *** AWS Lambda - Cognito post-confirmation trigger
+    //  *** AWS Lambda - Cognito post-confirmation trigger
      ***/
 
     // AWS Cognito post-confirmation lambda function
-    const cognitoPostConfirmationTrigger = new Function(this, 'CognitoPostConfirmationTrigger', {
+    const cognitoPostConfirmationTrigger = new NodejsFunction(this, 'CognitoPostConfirmationTrigger', {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-${props.envName}-CognitoPostConfirmationTrigger`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'cognitoPostConfirmation')),
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/cognitoPostConfirmation/main.ts'),
       memorySize: 768,
       timeout: Duration.seconds(5),
       environment: {

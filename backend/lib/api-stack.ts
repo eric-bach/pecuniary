@@ -12,6 +12,7 @@ import * as path from 'path';
 import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 dotenv.config();
 
@@ -50,11 +51,11 @@ export class ApiStack extends Stack {
      ***/
 
     // Resolver for Accounts
-    const accountsResolverFunction = new Function(this, 'AccountsResolver', {
+    const accountsResolverFunction = new NodejsFunction(this, 'AccountsResolver', {
       functionName: `${props.appName}-${props.envName}-AccountsResolver`,
       runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'accountsResolver')),
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/accountsResolver/main.ts'),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -99,11 +100,11 @@ export class ApiStack extends Stack {
     });
 
     // Resolver for Transactions
-    const transactionsReolverFunction = new Function(this, 'TransactionsResolver', {
+    const transactionsReolverFunction = new NodejsFunction(this, 'TransactionsResolver', {
       functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
       runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'transactionsResolver')),
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/transactionsResolver/main.ts'),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -157,11 +158,11 @@ export class ApiStack extends Stack {
     });
 
     // Resolver for Positions
-    const positionsResolverFunction = new Function(this, 'PositionsResolver', {
+    const positionsResolverFunction = new NodejsFunction(this, 'PositionsResolver', {
       functionName: `${props.appName}-${props.envName}-PositionsResolver`,
       runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'positionsResolver')),
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/positionsResolver/main.ts'),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -190,11 +191,11 @@ export class ApiStack extends Stack {
      *** AWS Lambda - Event Handlers
      ***/
 
-    const updatePositionsFunction = new Function(this, 'UpdatePositions', {
+    const updatePositionsFunction = new NodejsFunction(this, 'UpdatePositions', {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-${props.envName}-UpdatePositions`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'updatePositions')),
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/updatePositions/main.ts'),
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {

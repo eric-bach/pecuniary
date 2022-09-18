@@ -7,6 +7,7 @@ import { AuthContext } from '../contexts/authContext';
 export enum AuthStatus {
   SignedIn,
   VerificationRequired,
+  AccountCreated,
   SignedOut,
 }
 
@@ -36,7 +37,7 @@ export default ({ onSignIn, onSignUp }: any) => {
     try {
       console.log('ATTEMPTING TO SIGN UP: ', user, password, authContext);
       await authContext.signUpWithEmail(user, user, password);
-      return AuthStatus.VerificationRequired;
+      return AuthStatus.AccountCreated;
     } catch (err: any) {
       return AuthStatus.SignedOut;
     }
