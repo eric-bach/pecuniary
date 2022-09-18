@@ -1,6 +1,6 @@
-import React, { lazy, Suspense, useState, useEffect, useContext } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
-import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
+import { makeStyles, StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
 import { createBrowserHistory } from 'history';
 
@@ -20,48 +20,70 @@ const generateClassName = createGenerateClassName({
 
 const history = createBrowserHistory();
 
+const useStyles = makeStyles((theme) => ({
+  '@global': {
+    a: {
+      textDecoration: 'none',
+    },
+  },
+  error: {
+    color: 'white',
+    backgroundColor: 'red',
+  },
+}));
+
 function Alert(props: any) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
 const App = () => {
-  const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+  const classes = useStyles();
+
+  const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.SignedOut);
   const [displayError, setDisplayError] = useState<boolean>(false);
   const [isCreated, setCreated] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isSignedIn) {
+    if (authStatus === AuthStatus.SignedIn) {
       history.push('/home');
     }
 
     if (isCreated) {
-      history.push('/auth/verify');
+      history.push('/auth/signin');
     }
-  }, [isSignedIn, isCreated]);
+  }, [authStatus, isCreated]);
 
   return (
     <Router history={history}>
       <StylesProvider generateClassName={generateClassName}>
         <div>
           <AuthProvider>
-            <Header onSignOut={() => setIsSignedIn(false)} />
+            <Header
+              onSignOut={() => {
+                setAuthStatus(AuthStatus.SignedOut);
+              }}
+              isSignedIn={authStatus === AuthStatus.SignedIn}
+            />
             <Suspense fallback={<Progress />}>
               <Switch>
                 <Route path='/auth'>
                   {displayError && (
                     <Alert
+                      className={classes.error}
                       severity='error'
                       onClose={() => {
                         setDisplayError(false);
                       }}
                     >
-                      Sign in Failed! Email and/or password is incorrect.
+                      {authStatus === AuthStatus.SignedOut
+                        ? 'Sign in Failed! Email and/or password is incorrect.'
+                        : 'Please verify account before signing in.'}
                     </Alert>
                   )}
                   <AuthLazy
                     onSignIn={(status: AuthStatus) => {
-                      setDisplayError(status === AuthStatus.SignedOut);
-                      setIsSignedIn(status === AuthStatus.SignedIn);
+                      setDisplayError(status !== AuthStatus.SignedIn);
+                      setAuthStatus(status);
                     }}
                     onSignUp={(status: AuthStatus) => {
                       setCreated(status === AuthStatus.VerificationRequired);
@@ -69,7 +91,7 @@ const App = () => {
                   />
                 </Route>
                 <Route path='/home'>
-                  {!isSignedIn && <Redirect to='/' />}
+                  {authStatus !== AuthStatus.SignedIn && <Redirect to='/' />}
                   <DashboardLazy />
                 </Route>
                 <Route path='/' component={MarketingLazy} />
