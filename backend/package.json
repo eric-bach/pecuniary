@@ -9,6 +9,7 @@
   "scripts": {
     "build": "tsc",
     "build-all": "npm run cdk-clear-context && ts-node ./helpers/buildAll.ts",
+    "cinstall-all": "npm i && npm run cdk-clear-context && ts-node ./helpers/cinstallAll.ts",
     "clean-all": "npm run cdk-clear-context && ts-node ./helpers/cleanAll.ts",
     "install-all": "npm i && npm run cdk-clear-context && ts-node ./helpers/installAll.ts",
     "cdk": "cdk",
