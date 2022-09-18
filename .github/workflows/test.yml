@@ -16,29 +16,13 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: Install NPM Dependencies (Infra)
+      - name: Install NPM Dependencies (CDK)
         run: npm ci
-        working-directory: infra
+        working-directory: backend
 
-      - name: Build Infra
-        run: npm run build
-        working-directory: infra
-
-      - name: Install NPM Dependencies (Marketing)
-        run: npm ci
-        working-directory: frontend/marketing
-
-      - name: Install NPM Dependencies (Auth)
-        run: npm ci
-        working-directory: frontend/auth
-
-      - name: Install NPM Dependencies (Dashboard)
-        run: npm ci
-        working-directory: frontend/dashboard
-
-      - name: Install NPM Dependencies (Container)
-        run: npm ci
-        working-directory: frontend/container
+      - name: Install NPM Dependencies
+        run: npm run cinstall-all
+        working-directory: backend
 
       # - name: Create client/.env file
       #   run: |
@@ -57,18 +41,6 @@ jobs:
       #     cat aws-exports.js
       #   working-directory: client/src
 
-      - name: Build Frontend Marketing
-        run: npm run build
-        working-directory: frontend/marketing
-
-      - name: Build Frontend Auth
-        run: npm run build
-        working-directory: frontend/auth
-
-      - name: Build Frontend Dashboard
-        run: npm run build
-        working-directory: frontend/dashboard
-
       - name: Create frontend/container/.env file
         run: |
           touch .env
@@ -76,10 +48,10 @@ jobs:
           cat .env
         working-directory: frontend/container
 
-      - name: Build Frontend Container
-        run: npm run build
-        working-directory: frontend/container
+      - name: Build Backend
+        run: npm run build-all
+        working-directory: backend
 
       - name: Run CDK Unit Tests
         run: npm run test
-        working-directory: infra
+        working-directory: backend

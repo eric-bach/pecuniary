@@ -28,24 +28,28 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
           aws-region: us-east-1
 
-      - name: Install NPM Dependencies (Infra)
+      - name: Install NPM Dependencies (Backend)
         run: npm ci
-        working-directory: infra
+        working-directory: backend
 
-      - name: Create infra/.env file
+      - name: Create backend/.env file
         run: |
           touch .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
           cat .env
-        working-directory: infra
+        working-directory: backend
+
+      - name: Install NPM Dependencies
+        run: npm run cinstall-all
+        working-directory: backend
 
       - name: CDK Deploy Backend
         run: npm run deploy-backend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-        working-directory: infra
+        working-directory: backend
 
   deploy-frontend:
     name: Deploy Frontend
@@ -71,52 +75,13 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
           aws-region: us-east-1
 
-      - name: Install NPM Dependencies (Infra)
+      - name: Install NPM Dependencies (Backend)
         run: npm ci
-        working-directory: infra
+        working-directory: backend
 
-      - name: Install NPM Dependencies (Marketing)
-        run: npm ci
-        working-directory: frontend/marketing
-
-      - name: Install NPM Dependencies (Auth)
-        run: npm ci
-        working-directory: frontend/auth
-
-      - name: Install NPM Dependencies (Dashboard)
-        run: npm ci
-        working-directory: frontend/dashboard
-
-      - name: Install NPM Dependencies (Container)
-        run: npm ci
-        working-directory: frontend/container
-
-      # - name: Install NPM Dependencies (Client) - TEMP
-      #   run: npm ci
-      #   working-directory: client
-
-      - name: Build Frontend Marketing
-        run: npm run build
-        working-directory: frontend/marketing
-
-      - name: Build Frontend Auth
-        run: npm run build
-        working-directory: frontend/auth
-
-      - name: Build Frontend Dashboard
-        run: npm run build
-        working-directory: frontend/dashboard
-
-      - name: Create frontend/container/.env file
-        run: |
-          touch .env
-          echo PRODUCTION_DOMAIN=${{ secrets.PRODUCTION_DOMAIN }} >> .env
-          cat .env
-        working-directory: frontend/container
-
-      - name: Build Frontend Container
-        run: npm run build
-        working-directory: frontend/container
+      - name: Install NPM Dependencies
+        run: npm run cinstall-all
+        working-directory: backend
 
       # - name: Create client/.env file - TEMP
       #   run: |
@@ -135,13 +100,20 @@ jobs:
       #     cat aws-exports.js
       #   working-directory: client/src
 
-      # - name: Build Client - TEMP
-      #   run: npm run build
-      #   working-directory: client
+      - name: Create frontend/container/.env file
+        run: |
+          touch .env
+          echo PRODUCTION_DOMAIN=${{ secrets.PRODUCTION_DOMAIN }} >> .env
+          cat .env
+        working-directory: frontend/container
+
+      - name: Build All
+        run: npm run build-all
+        working-directory: backend
 
       - name: CDK Deploy Frontend
         run: npm run deploy-frontend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-        working-directory: infra
+        working-directory: backend

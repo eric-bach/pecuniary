@@ -4,22 +4,26 @@ import { StylesProvider, createGenerateClassName } from '@material-ui/core/style
 
 import SignIn from './components/Signin';
 import SignUp from './components/Signup';
+import Verify from './components/Verify';
 
 const generateClassName = createGenerateClassName({
   productionPrefix: 'au',
 });
 
-export default ({ onSignIn, history }: any) => {
+export default ({ onSignIn, onSignUp, onVerify, history }: any) => {
   return (
     <div>
       <StylesProvider generateClassName={generateClassName}>
         <Router history={history}>
           <Switch>
             <Route path='/auth/signin'>
-              <SignIn onSignIn={onSignIn} />
+              <SignIn onSignIn={(user: string, password: string) => onSignIn(user, password)} />
             </Route>
             <Route path='/auth/signup'>
-              <SignUp onSignIn={onSignIn} />
+              <SignUp onSignUp={(user: string, password: string) => onSignUp(user, password)} />
+            </Route>
+            <Route path='/auth/verify'>
+              <Verify onVerify={() => onVerify()} />
             </Route>
           </Switch>
         </Router>
