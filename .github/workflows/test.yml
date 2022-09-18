@@ -16,8 +16,12 @@ jobs:
         with:
           node-version: 14.x
 
+      - name: Install NPM Dependencies (CDK)
+        run: npm ci
+        working-directory: backend
+
       - name: Install NPM Dependencies (Backend)
-        run: npm install-all
+        run: npm run install-all
         working-directory: backend
 
       - name: Create frontend/container/.env file
