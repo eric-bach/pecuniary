@@ -2,14 +2,13 @@ import React, { lazy, Suspense, useState, useEffect, useContext } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/core/styles';
 import { createBrowserHistory } from 'history';
 
 import Progress from './components/Progress';
 import Header from './components/Header';
 
 import AuthProvider from './contexts/authContext';
-import { SignedInStatus } from './components/AuthApp';
+import { AuthStatus } from './components/AuthApp';
 
 const MarketingLazy = lazy(() => import('./components/MarketingApp'));
 const AuthLazy = lazy(() => import('./components/AuthApp'));
@@ -28,12 +27,17 @@ function Alert(props: any) {
 const App = () => {
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [displayError, setDisplayError] = useState<boolean>(false);
+  const [isCreated, setCreated] = useState<boolean>(false);
 
   useEffect(() => {
     if (isSignedIn) {
       history.push('/home');
     }
-  }, [isSignedIn]);
+
+    if (isCreated) {
+      history.push('/auth/verify');
+    }
+  }, [isSignedIn, isCreated]);
 
   return (
     <Router history={history}>
@@ -55,15 +59,13 @@ const App = () => {
                     </Alert>
                   )}
                   <AuthLazy
-                    onSignIn={(signedIn: SignedInStatus) => {
-                      setDisplayError(signedIn === SignedInStatus.SignedOut);
-                      setIsSignedIn(signedIn === SignedInStatus.SignedIn);
+                    onSignIn={(status: AuthStatus) => {
+                      setDisplayError(status === AuthStatus.SignedOut);
+                      setIsSignedIn(status === AuthStatus.SignedIn);
                     }}
-                    onSignUp={(user: string, password: string) => {
-                      console.log('SIGNING UP: ', user, password);
-                      //authContext.signUpWithEmail(user, user, password);
+                    onSignUp={(status: AuthStatus) => {
+                      setCreated(status === AuthStatus.VerificationRequired);
                     }}
-                    isSignedIn={isSignedIn}
                   />
                 </Route>
                 <Route path='/home'>

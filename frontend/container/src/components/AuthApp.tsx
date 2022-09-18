@@ -1,10 +1,10 @@
 import { mount } from 'auth/AuthApp';
-import React, { useRef, useEffect, useContext } from 'react';
+import React, { useRef, useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { AuthContext } from '../contexts/authContext';
 
-export enum SignedInStatus {
+export enum AuthStatus {
   SignedIn,
   VerificationRequired,
   SignedOut,
@@ -16,19 +16,29 @@ export default ({ onSignIn, onSignUp }: any) => {
 
   const authContext = useContext(AuthContext);
 
-  const signInWithEmail = async (user: string, password: string): Promise<SignedInStatus> => {
+  const signInWithEmail = async (user: string, password: string): Promise<AuthStatus> => {
     try {
       console.log('ATTEMPTING TO SIGN IN: ', user, password, authContext);
       await authContext.signInWithEmail(user, password);
-      return SignedInStatus.SignedIn;
+      return AuthStatus.SignedIn;
     } catch (err: any) {
       if (err.code === 'UserNotConfirmedException') {
-        return SignedInStatus.VerificationRequired;
+        return AuthStatus.VerificationRequired;
         //history.push('verify');
       } else {
         console.error(err);
-        return SignedInStatus.SignedOut;
+        return AuthStatus.SignedOut;
       }
+    }
+  };
+
+  const signUpWithEmail = async (user: string, password: string) => {
+    try {
+      console.log('ATTEMPTING TO SIGN UP: ', user, password, authContext);
+      await authContext.signUpWithEmail(user, user, password);
+      return AuthStatus.VerificationRequired;
+    } catch (err: any) {
+      return AuthStatus.SignedOut;
     }
   };
 
@@ -47,13 +57,15 @@ export default ({ onSignIn, onSignUp }: any) => {
 
       // Callback for Auth SignIn button
       onSignIn: async (user: string, password: string) => {
-        const signedIn = await signInWithEmail(user, password);
+        const signedInStatus = await signInWithEmail(user, password);
 
-        onSignIn(signedIn);
+        onSignIn(signedInStatus);
       },
 
-      onSignUp: (user: string, password: string) => {
-        onSignUp(user, password);
+      onSignUp: async (user: string, password: string) => {
+        const signUpStatus = await signUpWithEmail(user, password);
+
+        onSignUp(signUpStatus);
       },
     });
 
