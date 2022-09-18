@@ -28,24 +28,24 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
           aws-region: us-east-1
 
-      - name: Install NPM Dependencies (Infra)
+      - name: Install NPM Dependencies (Backend)
         run: npm ci
-        working-directory: infra
+        working-directory: backend
 
-      - name: Create infra/.env file
+      - name: Create backend/.env file
         run: |
           touch .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
           cat .env
-        working-directory: infra
+        working-directory: backend
 
       - name: CDK Deploy Backend
         run: npm run deploy-backend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-        working-directory: infra
+        working-directory: backend
 
   deploy-frontend:
     name: Deploy Frontend
@@ -71,9 +71,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
           aws-region: us-east-1
 
-      - name: Install NPM Dependencies (Infra)
+      - name: Install NPM Dependencies (Backend)
         run: npm ci
-        working-directory: infra
+        working-directory: backend
 
       - name: Install NPM Dependencies (Marketing)
         run: npm ci
@@ -144,4 +144,4 @@ jobs:
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-        working-directory: infra
+        working-directory: backend

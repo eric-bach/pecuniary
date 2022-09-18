@@ -16,13 +16,13 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: Install NPM Dependencies (Infra)
+      - name: Install NPM Dependencies (Backend)
         run: npm ci
-        working-directory: infra
+        working-directory: backend
 
-      - name: Build Infra
+      - name: Build Backend
         run: npm run build
-        working-directory: infra
+        working-directory: backend
 
       - name: Install NPM Dependencies (Marketing)
         run: npm ci
@@ -82,4 +82,4 @@ jobs:
 
       - name: Run CDK Unit Tests
         run: npm run test
-        working-directory: infra
+        working-directory: backend
