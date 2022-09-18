@@ -1,6 +1,6 @@
 import { Stack, CfnOutput, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import {
   UserPool,
   CfnUserPoolGroup,
