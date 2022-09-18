@@ -48,6 +48,10 @@ const App = () => {
     }
 
     if (authStatus === AuthStatus.AccountCreated) {
+      history.push('/auth/verify');
+    }
+
+    if (authStatus === AuthStatus.Verfied) {
       history.push('/auth/signin');
     }
   }, [authStatus]);
@@ -86,6 +90,9 @@ const App = () => {
                     }}
                     onSignUp={(status: AuthStatus) => {
                       setAuthStatus(status);
+                    }}
+                    onVerify={() => {
+                      setAuthStatus(AuthStatus.Verfied);
                     }}
                   />
                 </Route>

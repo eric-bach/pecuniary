@@ -8,10 +8,11 @@ export enum AuthStatus {
   SignedIn,
   VerificationRequired,
   AccountCreated,
+  Verfied,
   SignedOut,
 }
 
-export default ({ onSignIn, onSignUp }: any) => {
+export default ({ onSignIn, onSignUp, onVerify }: any) => {
   const ref = useRef(null);
   const history = useHistory();
 
@@ -25,7 +26,6 @@ export default ({ onSignIn, onSignUp }: any) => {
     } catch (err: any) {
       if (err.code === 'UserNotConfirmedException') {
         return AuthStatus.VerificationRequired;
-        //history.push('verify');
       } else {
         console.error(err);
         return AuthStatus.SignedOut;
@@ -67,6 +67,10 @@ export default ({ onSignIn, onSignUp }: any) => {
         const signUpStatus = await signUpWithEmail(user, password);
 
         onSignUp(signUpStatus);
+      },
+
+      onVerify: async () => {
+        onVerify();
       },
     });
 
