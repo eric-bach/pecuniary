@@ -15,6 +15,7 @@ const dotenv = require('dotenv');
 import * as path from 'path';
 import { PecuniaryBaseStackProps } from './types/PecuniaryStackProps';
 import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 dotenv.config();
 

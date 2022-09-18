@@ -2,8 +2,8 @@ import { execSync } from 'child_process';
 import { existsSync, readdirSync, statSync } from 'fs';
 import * as path from 'path';
 
-const root = path.resolve(process.cwd() + '/../frontend');
-const excludedDirs = ['node_modules', 'cdk.out', 'build'];
+const root = path.resolve(process.cwd() + '/..');
+const excludedDirs = ['node_modules', 'cdk.out', 'build', 'client', 'infra'];
 
 const subdirs = (dir: any) => {
   return readdirSync(dir)
