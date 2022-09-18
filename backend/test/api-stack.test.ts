@@ -67,7 +67,7 @@ describe('Api Stack contains expected resources', () => {
       'AWS::Lambda::Function',
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-AccountsResolver`,
-        Handler: 'main.handler',
+        Handler: 'index.handler',
         Runtime: 'nodejs14.x',
       })
     );
@@ -75,7 +75,7 @@ describe('Api Stack contains expected resources', () => {
       'AWS::Lambda::Function',
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-TransactionsResolver`,
-        Handler: 'main.handler',
+        Handler: 'index.handler',
         Runtime: 'nodejs14.x',
       })
     );
@@ -83,7 +83,7 @@ describe('Api Stack contains expected resources', () => {
       'AWS::Lambda::Function',
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-PositionsResolver`,
-        Handler: 'main.handler',
+        Handler: 'index.handler',
         Runtime: 'nodejs14.x',
       })
     );
@@ -91,7 +91,7 @@ describe('Api Stack contains expected resources', () => {
       'AWS::Lambda::Function',
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-UpdatePositions`,
-        Handler: 'main.handler',
+        Handler: 'index.handler',
         Runtime: 'nodejs14.x',
       })
     );

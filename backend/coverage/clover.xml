@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1662922616744" clover="3.2.0">
-  <project timestamp="1662922616744" name="All files">
-    <metrics statements="150" coveredstatements="148" conditionals="8" coveredconditionals="5" methods="7" coveredmethods="7" elements="165" coveredelements="160" complexity="0" loc="150" ncloc="150" packages="2" files="7" classes="7"/>
+<coverage generated="1663523998590" clover="3.2.0">
+  <project timestamp="1663523998590" name="All files">
+    <metrics statements="152" coveredstatements="150" conditionals="8" coveredconditionals="5" methods="7" coveredmethods="7" elements="167" coveredelements="162" complexity="0" loc="152" ncloc="152" packages="2" files="7" classes="7"/>
     <package name="lib">
-      <metrics statements="148" coveredstatements="146" conditionals="8" coveredconditionals="5" methods="7" coveredmethods="7"/>
-      <file name="api-stack.ts" path="D:\Projects\pecuniary\infra\lib\api-stack.ts">
-        <metrics statements="55" coveredstatements="55" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <metrics statements="150" coveredstatements="148" conditionals="8" coveredconditionals="5" methods="7" coveredmethods="7"/>
+      <file name="api-stack.ts" path="D:\Projects\pecuniary\backend\lib\api-stack.ts">
+        <metrics statements="56" coveredstatements="56" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
@@ -17,53 +17,54 @@
         <line num="11" count="1" type="stmt"/>
         <line num="13" count="1" type="stmt"/>
         <line num="14" count="1" type="stmt"/>
-        <line num="16" count="1" type="stmt"/>
-        <line num="18" count="1" type="stmt"/>
-        <line num="20" count="1" type="stmt"/>
-        <line num="22" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
         <line num="23" count="1" type="stmt"/>
         <line num="24" count="1" type="stmt"/>
         <line num="25" count="1" type="stmt"/>
         <line num="26" count="1" type="stmt"/>
-        <line num="32" count="1" type="stmt"/>
-        <line num="53" count="1" type="stmt"/>
-        <line num="67" count="1" type="stmt"/>
-        <line num="74" count="1" type="stmt"/>
-        <line num="82" count="1" type="stmt"/>
-        <line num="84" count="1" type="stmt"/>
-        <line num="88" count="1" type="stmt"/>
-        <line num="92" count="1" type="stmt"/>
-        <line num="96" count="1" type="stmt"/>
-        <line num="102" count="1" type="stmt"/>
-        <line num="117" count="1" type="stmt"/>
-        <line num="124" count="1" type="stmt"/>
-        <line num="132" count="1" type="stmt"/>
-        <line num="140" count="1" type="stmt"/>
-        <line num="142" count="1" type="stmt"/>
-        <line num="146" count="1" type="stmt"/>
-        <line num="150" count="1" type="stmt"/>
-        <line num="154" count="1" type="stmt"/>
-        <line num="160" count="1" type="stmt"/>
-        <line num="174" count="1" type="stmt"/>
-        <line num="182" count="1" type="stmt"/>
-        <line num="184" count="1" type="stmt"/>
-        <line num="193" count="1" type="stmt"/>
-        <line num="208" count="1" type="stmt"/>
-        <line num="215" count="1" type="stmt"/>
-        <line num="223" count="1" type="stmt"/>
-        <line num="231" count="1" type="stmt"/>
-        <line num="244" count="1" type="stmt"/>
-        <line num="253" count="1" type="stmt"/>
-        <line num="266" count="1" type="stmt"/>
-        <line num="269" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="75" count="1" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="93" count="1" type="stmt"/>
+        <line num="97" count="1" type="stmt"/>
+        <line num="103" count="1" type="stmt"/>
+        <line num="118" count="1" type="stmt"/>
+        <line num="125" count="1" type="stmt"/>
+        <line num="133" count="1" type="stmt"/>
+        <line num="141" count="1" type="stmt"/>
+        <line num="143" count="1" type="stmt"/>
+        <line num="147" count="1" type="stmt"/>
+        <line num="151" count="1" type="stmt"/>
+        <line num="155" count="1" type="stmt"/>
+        <line num="161" count="1" type="stmt"/>
+        <line num="175" count="1" type="stmt"/>
+        <line num="183" count="1" type="stmt"/>
+        <line num="185" count="1" type="stmt"/>
+        <line num="194" count="1" type="stmt"/>
+        <line num="209" count="1" type="stmt"/>
+        <line num="216" count="1" type="stmt"/>
+        <line num="224" count="1" type="stmt"/>
+        <line num="232" count="1" type="stmt"/>
+        <line num="245" count="1" type="stmt"/>
+        <line num="254" count="1" type="stmt"/>
+        <line num="267" count="1" type="stmt"/>
         <line num="270" count="1" type="stmt"/>
-        <line num="273" count="1" type="stmt"/>
+        <line num="271" count="1" type="stmt"/>
         <line num="274" count="1" type="stmt"/>
         <line num="275" count="1" type="stmt"/>
         <line num="276" count="1" type="stmt"/>
+        <line num="277" count="1" type="stmt"/>
       </file>
-      <file name="auth-stack.ts" path="D:\Projects\pecuniary\infra\lib\auth-stack.ts">
-        <metrics statements="21" coveredstatements="21" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="auth-stack.ts" path="D:\Projects\pecuniary\backend\lib\auth-stack.ts">
+        <metrics statements="22" coveredstatements="22" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
@@ -71,22 +72,23 @@
         <line num="14" count="1" type="stmt"/>
         <line num="15" count="1" type="stmt"/>
         <line num="17" count="1" type="stmt"/>
-        <line num="19" count="1" type="stmt"/>
-        <line num="21" count="1" type="stmt"/>
-        <line num="25" count="1" type="stmt"/>
-        <line num="27" count="1" type="stmt"/>
-        <line num="34" count="1" type="stmt"/>
-        <line num="51" count="1" type="stmt"/>
-        <line num="80" count="1" type="stmt"/>
-        <line num="87" count="1" type="stmt"/>
-        <line num="95" count="1" type="stmt"/>
-        <line num="103" count="1" type="stmt"/>
-        <line num="118" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="96" count="1" type="stmt"/>
+        <line num="104" count="1" type="stmt"/>
         <line num="119" count="1" type="stmt"/>
         <line num="120" count="1" type="stmt"/>
-        <line num="126" count="1" type="stmt"/>
+        <line num="121" count="1" type="stmt"/>
+        <line num="127" count="1" type="stmt"/>
       </file>
-      <file name="ci-cd-stack.ts" path="D:\Projects\pecuniary\infra\lib\ci-cd-stack.ts">
+      <file name="ci-cd-stack.ts" path="D:\Projects\pecuniary\backend\lib\ci-cd-stack.ts">
         <metrics statements="10" coveredstatements="10" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -99,7 +101,7 @@
         <line num="25" count="1" type="stmt"/>
         <line num="33" count="1" type="stmt"/>
       </file>
-      <file name="database-stack.ts" path="D:\Projects\pecuniary\infra\lib\database-stack.ts">
+      <file name="database-stack.ts" path="D:\Projects\pecuniary\backend\lib\database-stack.ts">
         <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -114,7 +116,7 @@
         <line num="59" count="1" type="stmt"/>
         <line num="65" count="1" type="stmt"/>
       </file>
-      <file name="messaging-stack.ts" path="D:\Projects\pecuniary\infra\lib\messaging-stack.ts">
+      <file name="messaging-stack.ts" path="D:\Projects\pecuniary\backend\lib\messaging-stack.ts">
         <metrics statements="26" coveredstatements="26" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -143,7 +145,7 @@
         <line num="99" count="1" type="stmt"/>
         <line num="100" count="1" type="stmt"/>
       </file>
-      <file name="mfe-stack.ts" path="D:\Projects\pecuniary\infra\lib\mfe-stack.ts">
+      <file name="mfe-stack.ts" path="D:\Projects\pecuniary\backend\lib\mfe-stack.ts">
         <metrics statements="24" coveredstatements="22" conditionals="5" coveredconditionals="2" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -173,7 +175,7 @@
     </package>
     <package name="lib.emails">
       <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="verificationEmail.ts" path="D:\Projects\pecuniary\infra\lib\emails\verificationEmail.ts">
+      <file name="verificationEmail.ts" path="D:\Projects\pecuniary\backend\lib\emails\verificationEmail.ts">
         <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="209" count="1" type="stmt"/>

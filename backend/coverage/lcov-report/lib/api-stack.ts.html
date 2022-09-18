@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>55/55</span>
+                <span class='fraction'>56/56</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>55/55</span>
+                <span class='fraction'>56/56</span>
             </div>
         
             
@@ -341,7 +341,8 @@
 <a name='L276'></a><a href='#L276'>276</a>
 <a name='L277'></a><a href='#L277'>277</a>
 <a name='L278'></a><a href='#L278'>278</a>
-<a name='L279'></a><a href='#L279'>279</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -353,6 +354,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -622,7 +624,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Stack, CfnOutput, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
-import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { GraphqlApi, FieldLogLevel, AuthorizationType, Schema } from '@aws-cdk/aws-appsync-alpha';
 import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
@@ -633,6 +635,7 @@ import * as path from 'path';
 import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 &nbsp;
 dotenv.config();
 &nbsp;
@@ -671,11 +674,11 @@ export class ApiStack extends Stack {
      ***/
 &nbsp;
     // Resolver for Accounts
-    const accountsResolverFunction = new Function(this, 'AccountsResolver', {
+    const accountsResolverFunction = new NodejsFunction(this, 'AccountsResolver', {
       functionName: `${props.appName}-${props.envName}-AccountsResolver`,
       runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'accountsResolver')),
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/accountsResolver/main.ts'),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -720,11 +723,11 @@ export class ApiStack extends Stack {
     });
 &nbsp;
     // Resolver for Transactions
-    const transactionsReolverFunction = new Function(this, 'TransactionsResolver', {
+    const transactionsReolverFunction = new NodejsFunction(this, 'TransactionsResolver', {
       functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
       runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'transactionsResolver')),
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/transactionsResolver/main.ts'),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -778,11 +781,11 @@ export class ApiStack extends Stack {
     });
 &nbsp;
     // Resolver for Positions
-    const positionsResolverFunction = new Function(this, 'PositionsResolver', {
+    const positionsResolverFunction = new NodejsFunction(this, 'PositionsResolver', {
       functionName: `${props.appName}-${props.envName}-PositionsResolver`,
       runtime: Runtime.NODEJS_14_X,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'positionsResolver')),
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/positionsResolver/main.ts'),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -811,11 +814,11 @@ export class ApiStack extends Stack {
      *** AWS Lambda - Event Handlers
      ***/
 &nbsp;
-    const updatePositionsFunction = new Function(this, 'UpdatePositions', {
+    const updatePositionsFunction = new NodejsFunction(this, 'UpdatePositions', {
       runtime: Runtime.NODEJS_14_X,
       functionName: `${props.appName}-${props.envName}-UpdatePositions`,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.resolve(__dirname, '..', '..', 'backend', 'updatePositions')),
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/updatePositions/main.ts'),
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
@@ -904,7 +907,7 @@ export class ApiStack extends Stack {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Sun Sep 11 2022 12:56:56 GMT-0600 (Mountain Daylight Time)
+                at Sun Sep 18 2022 11:59:58 GMT-0600 (Mountain Daylight Time)
             </div>
         <script src="../prettify.js"></script>
         <script>

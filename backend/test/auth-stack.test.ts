@@ -29,7 +29,7 @@ describe('Auth Stack contains expected resources', () => {
       'AWS::Lambda::Function',
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-CognitoPostConfirmationTrigger`,
-        Handler: 'main.handler',
+        Handler: 'index.handler',
         Runtime: 'nodejs14.x',
       })
     );
