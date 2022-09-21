@@ -45,7 +45,6 @@ const App = () => {
 
   useEffect(() => {
     if (authStatus === AuthStatus.SignedIn) {
-      console.log('[CONTAINER] AuthContext:', auth);
       history.push('/home');
     }
 
