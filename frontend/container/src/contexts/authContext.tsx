@@ -80,7 +80,7 @@ const AuthProvider = ({ children }: Props) => {
         setAttrInfo(attr);
         setAuthStatus(AuthStatus.SignedIn);
       } catch (err) {
-        if (authStatus !== AuthStatus.VerificationRequired) {
+        if (authStatus === AuthStatus.Loading) {
           setAuthStatus(AuthStatus.SignedOut);
         }
       }
