@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom';
 
 import App from './App';
 
-const mount = (el: any) => {
+const mount = (el: any, { session }: any) => {
+  console.log('[DASGHBOARD] Session', session);
+
   ReactDOM.render(<App />, el);
 };
 
@@ -18,7 +20,7 @@ if (process.env.NODE_ENV === 'development') {
   // Assuming our container doesn't have an element with id 'dev-products'
   if (el) {
     // We are probably running in isolation (Scenario #1)
-    mount(el);
+    mount(el, {});
   }
 }
 

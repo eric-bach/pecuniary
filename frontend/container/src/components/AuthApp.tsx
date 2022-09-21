@@ -2,7 +2,7 @@ import { mount } from 'auth/AuthApp';
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AuthContext } from '../contexts/authContext';
+import { AuthContext, IAuth } from '../contexts/authContext';
 
 export enum AuthStatus {
   SignedIn,
@@ -18,28 +18,30 @@ export default ({ onSignIn, onSignUp, onVerify }: any) => {
 
   const authContext = useContext(AuthContext);
 
-  const signInWithEmail = async (user: string, password: string): Promise<AuthStatus> => {
+  const signInWithEmail = async (user: string, password: string): Promise<IAuth> => {
     try {
-      console.log('ATTEMPTING TO SIGN IN: ', user, password, authContext);
+      console.log('[AUTH APP] Signing in with: ', user, password);
       await authContext.signInWithEmail(user, password);
-      return AuthStatus.SignedIn;
+      console.log('[AUTH APP] Signed in context: ', authContext);
+      return authContext;
     } catch (err: any) {
       if (err.code === 'UserNotConfirmedException') {
-        return AuthStatus.VerificationRequired;
+        return authContext;
       } else {
         console.error(err);
-        return AuthStatus.SignedOut;
+        return authContext;
       }
     }
   };
 
   const signUpWithEmail = async (user: string, password: string) => {
     try {
-      console.log('ATTEMPTING TO SIGN UP: ', user, password, authContext);
+      console.log('[AUTH APP] Signing up with: ', user, password);
       await authContext.signUpWithEmail(user, user, password);
-      return AuthStatus.AccountCreated;
+      console.log('[AUTH APP] Signed up context: ', authContext);
+      return authContext;
     } catch (err: any) {
-      return AuthStatus.SignedOut;
+      return authContext;
     }
   };
 

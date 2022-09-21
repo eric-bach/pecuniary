@@ -6,10 +6,20 @@ export enum AuthStatus {
   Loading,
   SignedIn,
   SignedOut,
+  VerificationRequired,
+  Verified,
+}
+
+export interface ISession {
+  username?: string;
+  email?: string;
+  sub?: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export interface IAuth {
-  sessionInfo?: { username?: string; email?: string; sub?: string; accessToken?: string; refreshToken?: string };
+  sessionInfo?: ISession;
   attrInfo?: any;
   authStatus?: AuthStatus;
   signInWithEmail?: any;
@@ -56,6 +66,9 @@ const AuthProvider = ({ children }: Props) => {
     async function getSessionInfo() {
       try {
         const session: any = await getSession();
+
+        console.debug('[AUTH CONTEXT] Session Info:', sessionInfo);
+
         setSessionInfo({
           accessToken: session.accessToken.jwtToken,
           refreshToken: session.refreshToken.token,
@@ -67,7 +80,9 @@ const AuthProvider = ({ children }: Props) => {
         setAttrInfo(attr);
         setAuthStatus(AuthStatus.SignedIn);
       } catch (err) {
-        setAuthStatus(AuthStatus.SignedOut);
+        if (authStatus !== AuthStatus.VerificationRequired) {
+          setAuthStatus(AuthStatus.SignedOut);
+        }
       }
     }
     getSessionInfo();
@@ -90,6 +105,8 @@ const AuthProvider = ({ children }: Props) => {
   async function signUpWithEmail(username: string, email: string, password: string) {
     try {
       await cognito.signUpWithEmail(username, email, password);
+      console.log('[AUTH CONTEXT] Signed up');
+      setAuthStatus(AuthStatus.VerificationRequired);
     } catch (err) {
       throw err;
     }

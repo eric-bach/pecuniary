@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState, useEffect } from 'react';
+import React, { lazy, Suspense, useState, useEffect, useContext } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { makeStyles, StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -7,8 +7,8 @@ import { createBrowserHistory } from 'history';
 import Progress from './components/Progress';
 import Header from './components/Header';
 
-import AuthProvider from './contexts/authContext';
-import { AuthStatus } from './components/AuthApp';
+import AuthProvider, { IAuth } from './contexts/authContext';
+import { AuthStatus } from './contexts/authContext';
 
 const MarketingLazy = lazy(() => import('./components/MarketingApp'));
 const AuthLazy = lazy(() => import('./components/AuthApp'));
@@ -39,19 +39,21 @@ function Alert(props: any) {
 const App = () => {
   const classes = useStyles();
 
+  const [auth, setAuth] = useState<IAuth>();
   const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.SignedOut);
   const [displayError, setDisplayError] = useState<boolean>(false);
 
   useEffect(() => {
     if (authStatus === AuthStatus.SignedIn) {
+      console.log('[CONTAINER] AuthContext:', auth);
       history.push('/home');
     }
 
-    if (authStatus === AuthStatus.AccountCreated) {
+    if (authStatus === AuthStatus.VerificationRequired) {
       history.push('/auth/verify');
     }
 
-    if (authStatus === AuthStatus.Verfied) {
+    if (authStatus === AuthStatus.Verified) {
       history.push('/auth/signin');
     }
   }, [authStatus]);
@@ -84,21 +86,27 @@ const App = () => {
                     </Alert>
                   )}
                   <AuthLazy
-                    onSignIn={(status: AuthStatus) => {
-                      setDisplayError(status !== AuthStatus.SignedIn);
-                      setAuthStatus(status);
+                    onSignIn={(authContext: IAuth) => {
+                      console.log('[CONTAINER] onSignIn AuthContext: ', authContext);
+                      setAuth(authContext);
+
+                      setDisplayError(authContext.authStatus !== AuthStatus.SignedIn);
+                      setAuthStatus(authContext.authStatus || AuthStatus.SignedOut);
                     }}
-                    onSignUp={(status: AuthStatus) => {
-                      setAuthStatus(status);
+                    onSignUp={(authContext: IAuth) => {
+                      console.log('[CONTAINER] onSignUp AuthContext: ', authContext);
+                      setAuth(authContext);
+
+                      setAuthStatus(AuthStatus.VerificationRequired);
                     }}
                     onVerify={() => {
-                      setAuthStatus(AuthStatus.Verfied);
+                      setAuthStatus(AuthStatus.Verified);
                     }}
                   />
                 </Route>
                 <Route path='/home'>
                   {authStatus !== AuthStatus.SignedIn && <Redirect to='/' />}
-                  <DashboardLazy />
+                  <DashboardLazy session={auth?.sessionInfo} />
                 </Route>
                 <Route path='/' component={MarketingLazy} />
               </Switch>
