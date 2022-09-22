@@ -9,6 +9,8 @@ import Header from './components/Header';
 
 import AuthProvider from './contexts/authContext';
 import { AuthStatus } from './components/AuthApp';
+import { ApolloProvider } from '@apollo/client';
+import client from './client';
 
 const MarketingLazy = lazy(() => import('./components/MarketingApp'));
 const AuthLazy = lazy(() => import('./components/AuthApp'));
@@ -98,7 +100,9 @@ const App = () => {
                 </Route>
                 <Route path='/home'>
                   {authStatus !== AuthStatus.SignedIn && <Redirect to='/' />}
-                  <DashboardLazy />
+                  <ApolloProvider client={client}>
+                    <DashboardLazy />
+                  </ApolloProvider>
                 </Route>
                 <Route path='/' component={MarketingLazy} />
               </Switch>
