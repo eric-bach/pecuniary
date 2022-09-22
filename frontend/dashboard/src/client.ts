@@ -5,9 +5,9 @@ import { createSubscriptionHandshakeLink } from 'aws-appsync-subscription-link';
 import { ApolloLink, HttpLink, ApolloClient, InMemoryCache } from '@apollo/client';
 
 //import { AuthContext } from './contexts/authContext';
-import { getCurrentUser, getSession } from './contexts/Session';
+//import { getCurrentUser, getSession } from './contexts/Session';
 import AppSyncConfig from './aws-exports';
-import { CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
+//import { CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
 
 const url = AppSyncConfig.aws_appsync_graphqlEndpoint;
 const region = AppSyncConfig.aws_project_region;
@@ -19,7 +19,7 @@ const region = AppSyncConfig.aws_project_region;
 // console.log('[CLIENT] currentUser:', currentUser);
 // const session: CognitoUserSession = getSession();
 const token = localStorage.getItem('accessToken') || '';
-console.log('[CLIENT] token:', token);
+console.log('[DASHBOARD CLIENT] token:', token);
 
 const auth: AuthOptions = {
   type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS, // AppSyncConfig.aws_appsync_authenticationType,
@@ -27,7 +27,7 @@ const auth: AuthOptions = {
   //jwtToken: authContext.sessionInfo?.accessToken || '',
 };
 
-console.log('[CLIENT] Authorization token:', auth);
+console.log('[DASHBOARD CLIENT] Authorization token:', auth);
 
 const httpLink = new HttpLink({ uri: url });
 

@@ -1,12 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { ApolloProvider } from '@apollo/client';
+import client from './client';
 import App from './App';
 
 const mount = (el: any, { session }: any) => {
   console.log('[DASGHBOARD] Session', session);
+  console.log('[DASGHBOARD] Apollo Client', client);
 
-  ReactDOM.render(<App />, el);
+  ReactDOM.render(
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>,
+    el
+  );
 };
 
 // Scenario #1

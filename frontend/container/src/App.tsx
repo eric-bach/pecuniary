@@ -3,12 +3,14 @@ import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { makeStyles, StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
 import { createBrowserHistory } from 'history';
+import { ApolloProvider } from '@apollo/client';
 
 import Progress from './components/Progress';
 import Header from './components/Header';
 
 import AuthProvider, { IAuth } from './contexts/authContext';
 import { AuthStatus } from './contexts/authContext';
+import client from './client';
 
 const MarketingLazy = lazy(() => import('./components/MarketingApp'));
 const AuthLazy = lazy(() => import('./components/AuthApp'));
@@ -105,7 +107,10 @@ const App = () => {
                 </Route>
                 <Route path='/home'>
                   {authStatus !== AuthStatus.SignedIn && <Redirect to='/' />}
+                  {/* // TODO Once this is added webpack fails
+                  <ApolloProvider client={client}> */}
                   <DashboardLazy session={auth?.sessionInfo} />
+                  {/* </ApolloProvider> */}
                 </Route>
                 <Route path='/' component={MarketingLazy} />
               </Switch>

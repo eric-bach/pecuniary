@@ -80,9 +80,7 @@ const AuthProvider = ({ children }: Props) => {
         setAttrInfo(attr);
         setAuthStatus(AuthStatus.SignedIn);
       } catch (err) {
-        if (authStatus === AuthStatus.Loading) {
-          setAuthStatus(AuthStatus.SignedOut);
-        }
+        setAuthStatus(AuthStatus.SignedOut);
       }
     }
     getSessionInfo();
@@ -94,8 +92,12 @@ const AuthProvider = ({ children }: Props) => {
 
   async function signInWithEmail(username: string, password: string) {
     try {
+      console.debug('[AUTH CONTEXT] signInWithEmail() START');
       await cognito.signInWithEmail(username, password);
+      console.debug('[AUTH CONTEXT] signInWithEmail() DONE');
+
       setAuthStatus(AuthStatus.SignedIn);
+      console.debug('[AUTH CONTEXT] signInWithEmail() RETURN');
     } catch (err) {
       setAuthStatus(AuthStatus.SignedOut);
       throw err;
