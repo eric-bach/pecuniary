@@ -6,10 +6,20 @@ export enum AuthStatus {
   Loading,
   SignedIn,
   SignedOut,
+  VerificationRequired,
+  Verified,
+}
+
+export interface ISession {
+  username?: string;
+  email?: string;
+  sub?: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export interface IAuth {
-  sessionInfo?: { username?: string; email?: string; sub?: string; accessToken?: string; refreshToken?: string };
+  sessionInfo?: ISession;
   attrInfo?: any;
   authStatus?: AuthStatus;
   signInWithEmail?: any;
@@ -55,7 +65,10 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     async function getSessionInfo() {
       try {
+        console.debug('[AUTH CONTEXT] getSessionInfo() START');
         const session: any = await getSession();
+        console.debug('[AUTH CONTEXT] Session Info:', sessionInfo);
+
         setSessionInfo({
           accessToken: session.accessToken.jwtToken,
           refreshToken: session.refreshToken.token,
