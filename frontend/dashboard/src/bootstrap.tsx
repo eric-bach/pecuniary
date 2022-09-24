@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 
 import App from './App';
 
-const mount = (el: any) => {
-  ReactDOM.render(<App />, el);
+const mount = (el: any, client: any) => {
+  console.log(client);
+
+  ReactDOM.render(<App client={client} />, el);
 };
 
 // Scenario #1
@@ -18,7 +20,7 @@ if (process.env.NODE_ENV === 'development') {
   // Assuming our container doesn't have an element with id 'dev-products'
   if (el) {
     // We are probably running in isolation (Scenario #1)
-    mount(el);
+    mount(el, {});
   }
 }
 

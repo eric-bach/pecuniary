@@ -101,7 +101,7 @@ const App = () => {
                 <Route path='/home'>
                   {authStatus !== AuthStatus.SignedIn && <Redirect to='/' />}
                   <ApolloProvider client={client}>
-                    <DashboardLazy />
+                    <DashboardLazy client={client} />
                   </ApolloProvider>
                 </Route>
                 <Route path='/' component={MarketingLazy} />

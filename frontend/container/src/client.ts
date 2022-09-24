@@ -3,7 +3,7 @@ import { createAuthLink, AUTH_TYPE, AuthOptions } from 'aws-appsync-auth-link';
 import { createSubscriptionHandshakeLink } from 'aws-appsync-subscription-link';
 import { ApolloLink, HttpLink, ApolloClient, InMemoryCache } from '@apollo/client';
 
-import { getAccessToken } from './contexts/Session';
+import { getAccessToken } from './contexts/authContext';
 
 const url = process.env.REACT_APPSYNC_ENDPOINT || '';
 const region = process.env.REACT_APPSYNC_REGION || '';

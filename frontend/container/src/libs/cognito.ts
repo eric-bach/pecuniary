@@ -13,7 +13,7 @@ export function getCurrentUser() {
   return currentUser;
 }
 
-function getCognitoUser(username: string) {
+function getCognitoUser(username: string): CognitoUser {
   const userData = {
     Username: username,
     Pool: userPool,
