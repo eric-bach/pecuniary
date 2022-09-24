@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, StylesProvider, createGenerateClassName } from '@material-ui/core';
+import { StylesProvider, createGenerateClassName } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 import { gql } from '@apollo/client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -47,13 +46,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default ({ auth, client }: any) => {
+export default ({ client }: any) => {
   const classes = useStyles();
 
   const [lastEvaluatedKey, setLastEvaluatedKey]: [any, any] = useState();
   const [accounts, setAccounts]: [any, any] = useState([]);
-  const [loading, setLoading]: [boolean, any] = useState(true);
   const [hasMoreData, setHasMoreData] = useState(false);
+  const [loading, setLoading]: [boolean, any] = useState(true);
 
   const getAccounts = async () => {
     const response = await client.query({
@@ -90,6 +89,8 @@ export default ({ auth, client }: any) => {
     }
 
     await getAccounts();
+
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -97,12 +98,12 @@ export default ({ auth, client }: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (loading) {
-    //accounts.length === 0) {
-    return 'Loading...';
+  if (!accounts) {
+    return <Loading />;
   }
 
-  console.log('[DASHBOARD] ', auth);
+  console.log('[DASHBOARD] Apollo Client', client);
+  console.log('[ACCOUNT LIST] Accounts:', accounts);
 
   return (
     <StylesProvider generateClassName={generateClassName}>
@@ -114,15 +115,6 @@ export default ({ auth, client }: any) => {
               return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
             })}
           </InfiniteScroll>
-
-          <Box m={2}>
-            <Typography variant='h5'>Session Info</Typography>
-            <pre className={classes.session}>{JSON.stringify(auth.sessionInfo, null, 2)}</pre>
-          </Box>
-          <Box m={2}>
-            <Typography variant='h5'>User Attributes</Typography>
-            <pre className={classes.session}>{JSON.stringify(auth.attrInfo, null, 2)}</pre>
-          </Box>
         </Grid>
       </Grid>
     </StylesProvider>

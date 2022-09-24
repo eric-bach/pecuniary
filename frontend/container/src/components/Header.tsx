@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link as RouterLink } from 'react-router-dom';
+
+import { AuthContext, AuthIsNotSignedIn, AuthIsSignedIn } from '../contexts/authContext';
 
 const useStyles = makeStyles((theme) => ({
   '@global': {
@@ -51,11 +53,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Header({ isSignedIn, onSignOut }: any) {
+export default function Header({ onSignOut }: any) {
   const classes = useStyles();
 
+  const authContext = useContext(AuthContext);
+
   const onClick = () => {
-    if (isSignedIn && onSignOut) {
+    if (onSignOut) {
+      authContext.signOut();
+      localStorage.clear();
+
       onSignOut();
     }
   };
@@ -67,16 +74,16 @@ export default function Header({ isSignedIn, onSignOut }: any) {
           <Typography variant='h6' color='inherit' noWrap component={RouterLink} to='/'>
             App
           </Typography>
-          <Button
-            color='primary'
-            variant='outlined'
-            className={classes.link}
-            component={RouterLink}
-            to={isSignedIn ? '/' : '/auth/signin'}
-            onClick={onClick}
-          >
-            {isSignedIn ? 'Logout' : 'Login'}
-          </Button>
+          <AuthIsSignedIn>
+            <Button color='primary' variant='outlined' className={classes.link} component={RouterLink} to='/' onClick={onClick}>
+              Logout
+            </Button>
+          </AuthIsSignedIn>
+          <AuthIsNotSignedIn>
+            <Button color='primary' variant='outlined' className={classes.link} component={RouterLink} to='/auth/signin' onClick={onClick}>
+              Login
+            </Button>
+          </AuthIsNotSignedIn>
         </Toolbar>
       </AppBar>
     </React.Fragment>

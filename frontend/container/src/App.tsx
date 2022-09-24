@@ -7,7 +7,7 @@ import { createBrowserHistory } from 'history';
 import Progress from './components/Progress';
 import Header from './components/Header';
 
-import AuthProvider, { AuthStatus, IAuth } from './contexts/authContext';
+import AuthProvider, { AuthIsSignedIn, AuthIsNotSignedIn, AuthStatus, IAuth } from './contexts/authContext';
 import { ApolloProvider } from '@apollo/client';
 import client from './client';
 
@@ -40,6 +40,7 @@ function Alert(props: any) {
 const App = () => {
   const classes = useStyles();
 
+  // TODO Remove authContext?
   const [auth, setAuth] = useState<IAuth>();
   const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.Loading);
   const [displayError, setDisplayError] = useState<boolean>(false);
@@ -67,7 +68,6 @@ const App = () => {
               onSignOut={() => {
                 setAuthStatus(AuthStatus.SignedOut);
               }}
-              isSignedIn={authStatus === AuthStatus.SignedIn}
             />
             <Suspense fallback={<Progress />}>
               <Switch>
@@ -102,10 +102,14 @@ const App = () => {
                   />
                 </Route>
                 <Route path='/home'>
-                  {authStatus !== AuthStatus.SignedIn && <Redirect to='/auth/signin' />}
-                  <ApolloProvider client={client}>
-                    <DashboardLazy auth={auth} client={client} />
-                  </ApolloProvider>
+                  <AuthIsSignedIn>
+                    <ApolloProvider client={client}>
+                      <DashboardLazy client={client} />
+                    </ApolloProvider>
+                  </AuthIsSignedIn>
+                  <AuthIsNotSignedIn>
+                    <Redirect to='auth/signin' />
+                  </AuthIsNotSignedIn>
                 </Route>
                 <Route path='/' component={MarketingLazy} />
               </Switch>
