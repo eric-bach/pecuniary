@@ -79,20 +79,15 @@ This quick start guide describes how to get the application running. An `AWS acc
     $ npm run deploy-frontend dev PROFILE_NAME
     ```
 
-6.  Copy the `./client/src/aws-exports.js.example` file to `./client/src/aws-exports.js` and fill in the parameter values (use dummy values until the backend is first deployed):
+6.  Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
 
-    - aws_project_region: AWS Region,
-    - aws_cognito_region: AWS Cognito Region,
-    - aws_user_pools_id: AWS Cognito User Pool Id
-    - aws_user_pools_web_client_id: AWS Cognito User Pool Web Client Id,
-    - aws_appsync_graphqlEndpoint: AWS AppSync GraphQL Endpoint
-
-7.  Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
-
+    - `PRODUCTION_DOMAIN` - AWS CloudFront Distribution domain name created in step 2
     - `REACT_APP_COGNITO_USERPOOL_ID` - AWS Cognito User Pool Id created in step 2
     - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
+    - `REACT_APP_APPSYNC_ENDPOINT` - AWS AppSync GraphQL endpoint URL created in step 2
+    - `REACT_APP_APPSYNC_REGION` - AWS AppSync region
 
-8.  Start the client locally on http://localhost:3000/
+7.  Start the client locally on http://localhost:3000/
 
     ```bash
     $ npm start
@@ -153,9 +148,11 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    CDK_DEFAULT_REGION - AWS default region for all resources to be created
    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
-   REACT_APP_COGNITO_CLIENT_ID - Cognito User Pool Client Id
+   PRODUCTION_DOMAIN - AWS CloudFront Distribution domain name
    REACT_APP_COGNITO_USERPOOL_ID - Cognito User Pool Id
-   AWS_APPSYNC_GRAPHQL_ENDPOINT - AWS AppSync GraphQL endpoint URL
+   REACT_APP_COGNITO_CLIENT_ID - Cognito User Pool Client Id
+   REACT_APP_APPSYNC_ENDPOINT - AWS AppSync GraphQL endpoint URL
+   REACT_APP_APPSYNC_REGION - AWS AppSync region
    ```
 
 # Projects References

@@ -5,8 +5,8 @@ import { ApolloLink, HttpLink, ApolloClient, InMemoryCache } from '@apollo/clien
 
 import { getAccessToken } from './contexts/authContext';
 
-const url = process.env.REACT_APPSYNC_ENDPOINT || '';
-const region = process.env.REACT_APPSYNC_REGION || '';
+const url = process.env.REACT_APP_APPSYNC_ENDPOINT || '';
+const region = process.env.REACT_APP_APPSYNC_REGION || '';
 
 const sessionToken: any = getAccessToken();
 console.log('[CLIENT] Access Token:', sessionToken);
