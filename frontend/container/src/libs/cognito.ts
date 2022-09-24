@@ -1,8 +1,8 @@
 import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPool } from 'amazon-cognito-identity-js';
 
 const poolData = {
-  UserPoolId: process.env.REACT_APP_USERPOOL_ID || '',
-  ClientId: process.env.REACT_APP_CLIENT_ID || '',
+  UserPoolId: process.env.REACT_APP_COGNITO_USERPOOL_ID || '',
+  ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID || '',
 };
 
 const userPool: CognitoUserPool = new CognitoUserPool(poolData);
@@ -13,7 +13,7 @@ export function getCurrentUser() {
   return currentUser;
 }
 
-function getCognitoUser(username: string) {
+function getCognitoUser(username: string): CognitoUser {
   const userData = {
     Username: username,
     Pool: userPool,

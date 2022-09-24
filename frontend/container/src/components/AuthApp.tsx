@@ -1,16 +1,8 @@
 import { mount } from 'auth/AuthApp';
-import React, { useRef, useState, useEffect, useContext } from 'react';
+import React, { useRef, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { AuthContext } from '../contexts/authContext';
-
-export enum AuthStatus {
-  SignedIn,
-  VerificationRequired,
-  AccountCreated,
-  Verfied,
-  SignedOut,
-}
+import { AuthContext, AuthStatus } from '../contexts/authContext';
 
 export default ({ onSignIn, onSignUp, onVerify }: any) => {
   const ref = useRef(null);
@@ -37,7 +29,7 @@ export default ({ onSignIn, onSignUp, onVerify }: any) => {
     try {
       console.log('ATTEMPTING TO SIGN UP: ', user, password, authContext);
       await authContext.signUpWithEmail(user, user, password);
-      return AuthStatus.AccountCreated;
+      return AuthStatus.VerificationRequired;
     } catch (err: any) {
       return AuthStatus.SignedOut;
     }
@@ -59,18 +51,16 @@ export default ({ onSignIn, onSignUp, onVerify }: any) => {
       // Callback for Auth SignIn button
       onSignIn: async (user: string, password: string) => {
         const signedInStatus = await signInWithEmail(user, password);
-
-        onSignIn(signedInStatus);
+        onSignIn(signedInStatus, authContext);
       },
 
       onSignUp: async (user: string, password: string) => {
         const signUpStatus = await signUpWithEmail(user, password);
-
-        onSignUp(signUpStatus);
+        onSignUp(signUpStatus, authContext);
       },
 
       onVerify: async () => {
-        onVerify();
+        onVerify(authContext);
       },
     });
 

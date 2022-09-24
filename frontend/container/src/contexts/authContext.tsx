@@ -1,3 +1,4 @@
+import { CognitoUser } from 'amazon-cognito-identity-js';
 import React, { useState, useEffect, useContext } from 'react';
 
 import * as cognito from '../libs/cognito';
@@ -6,10 +7,20 @@ export enum AuthStatus {
   Loading,
   SignedIn,
   SignedOut,
+  VerificationRequired,
+  Verified,
+}
+
+export interface ISession {
+  username?: string;
+  email?: string;
+  sub?: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export interface IAuth {
-  sessionInfo?: { username?: string; email?: string; sub?: string; accessToken?: string; refreshToken?: string };
+  sessionInfo?: ISession;
   attrInfo?: any;
   authStatus?: AuthStatus;
   signInWithEmail?: any;
@@ -47,6 +58,24 @@ export const AuthIsNotSignedIn = ({ children }: Props) => {
   return <>{authStatus === AuthStatus.SignedOut ? children : null}</>;
 };
 
+export const getAccessToken = async (): Promise<string> => {
+  var session: any = await new Promise((resolve, reject) => {
+    const user: CognitoUser = cognito.getCurrentUser();
+
+    if (user) {
+      user.getSession((err: any, session: any) => {
+        if (!err) {
+          resolve(session);
+        } else {
+          reject();
+        }
+      });
+    }
+  });
+
+  return session.accessToken.jwtToken;
+};
+
 const AuthProvider = ({ children }: Props) => {
   const [authStatus, setAuthStatus] = useState(AuthStatus.Loading);
   const [sessionInfo, setSessionInfo] = useState({});
@@ -55,14 +84,18 @@ const AuthProvider = ({ children }: Props) => {
   useEffect(() => {
     async function getSessionInfo() {
       try {
+        console.debug('[AUTH CONTEXT] getSessionInfo() START');
         const session: any = await getSession();
+        console.debug('[AUTH CONTEXT] Session Info:', sessionInfo);
+
         setSessionInfo({
           accessToken: session.accessToken.jwtToken,
           refreshToken: session.refreshToken.token,
         });
+        window.localStorage.setItem('userId', session.idToken.payload.email);
         window.localStorage.setItem('accessToken', `${session.accessToken.jwtToken}`);
         window.localStorage.setItem('refreshToken', `${session.refreshToken.token}`);
-        await setAttribute({ Name: 'website', Value: 'https://github.com/dbroadhurst/aws-cognito-react' });
+        await setAttribute({ Name: 'website', Value: 'https://pecuniary.ericbach.dev' });
         const attr: any = await getAttributes();
         setAttrInfo(attr);
         setAuthStatus(AuthStatus.SignedIn);
