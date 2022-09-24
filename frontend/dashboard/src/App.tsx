@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StylesProvider, createGenerateClassName } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { Button, StylesProvider, createGenerateClassName } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 import { gql } from '@apollo/client';
+import InfiniteScroll from 'react-infinite-scroll-component';
+
+import Loading from './components/Loading';
 
 export const GET_ACCOUNTS = gql`
   query GetAccounts($userId: String!, $lastEvaluatedKey: LastEvaluatedKey) {
@@ -30,7 +37,19 @@ const generateClassName = createGenerateClassName({
   productionPrefix: 'fi',
 });
 
-export default ({ client }: any) => {
+const useStyles = makeStyles(() => ({
+  root: {},
+  session: {
+    width: '80vw',
+    overflow: 'auto',
+    overflowWrap: 'break-word',
+    fontSize: '16px',
+  },
+}));
+
+export default ({ auth, client }: any) => {
+  const classes = useStyles();
+
   const [lastEvaluatedKey, setLastEvaluatedKey]: [any, any] = useState();
   const [accounts, setAccounts]: [any, any] = useState([]);
   const [loading, setLoading]: [boolean, any] = useState(true);
@@ -64,6 +83,15 @@ export default ({ client }: any) => {
     setLoading(false);
   };
 
+  async function getAdditionalAccounts() {
+    if (lastEvaluatedKey === null) {
+      setHasMoreData(false);
+      return;
+    }
+
+    await getAccounts();
+  }
+
   useEffect(() => {
     getAccounts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,14 +102,29 @@ export default ({ client }: any) => {
     return 'Loading...';
   }
 
+  console.log('[DASHBOARD] ', auth);
+
   return (
     <StylesProvider generateClassName={generateClassName}>
-      <div>
-        <div>Name: finance</div>
-        <div>Framework: react</div>
-        <div>Language: TypeScript</div>
-        <div>CSS: Empty CSS</div>
-      </div>
+      <Grid container>
+        <Grid className={classes.root} container direction='column' justifyContent='flex-start' alignItems='flex-start'>
+          <Typography variant='h5'>Accounts ({accounts.length} loaded) </Typography>
+          <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
+            {accounts.map((d: any) => {
+              return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
+            })}
+          </InfiniteScroll>
+
+          <Box m={2}>
+            <Typography variant='h5'>Session Info</Typography>
+            <pre className={classes.session}>{JSON.stringify(auth.sessionInfo, null, 2)}</pre>
+          </Box>
+          <Box m={2}>
+            <Typography variant='h5'>User Attributes</Typography>
+            <pre className={classes.session}>{JSON.stringify(auth.attrInfo, null, 2)}</pre>
+          </Box>
+        </Grid>
+      </Grid>
     </StylesProvider>
   );
 };

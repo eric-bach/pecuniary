@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 
 import App from './App';
 
-const mount = (el: any, client: any) => {
-  console.log(client);
+const mount = (el: any, { auth, client }: any) => {
+  console.log('BOOTSTRAP AUTH ', auth);
+  console.log('BOOTSTRAP CLIENT ', client);
 
-  ReactDOM.render(<App client={client} />, el);
+  ReactDOM.render(<App auth={auth} client={client} />, el);
 };
 
 // Scenario #1

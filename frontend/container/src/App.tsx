@@ -7,8 +7,7 @@ import { createBrowserHistory } from 'history';
 import Progress from './components/Progress';
 import Header from './components/Header';
 
-import AuthProvider from './contexts/authContext';
-import { AuthStatus } from './components/AuthApp';
+import AuthProvider, { AuthStatus, IAuth } from './contexts/authContext';
 import { ApolloProvider } from '@apollo/client';
 import client from './client';
 
@@ -41,7 +40,8 @@ function Alert(props: any) {
 const App = () => {
   const classes = useStyles();
 
-  const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.SignedOut);
+  const [auth, setAuth] = useState<IAuth>();
+  const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.Loading);
   const [displayError, setDisplayError] = useState<boolean>(false);
 
   useEffect(() => {
@@ -49,11 +49,11 @@ const App = () => {
       history.push('/home');
     }
 
-    if (authStatus === AuthStatus.AccountCreated) {
+    if (authStatus === AuthStatus.VerificationRequired) {
       history.push('/auth/verify');
     }
 
-    if (authStatus === AuthStatus.Verfied) {
+    if (authStatus === AuthStatus.Verified) {
       history.push('/auth/signin');
     }
   }, [authStatus]);
@@ -86,22 +86,25 @@ const App = () => {
                     </Alert>
                   )}
                   <AuthLazy
-                    onSignIn={(status: AuthStatus) => {
+                    onSignIn={(status: AuthStatus, authContext: IAuth) => {
+                      setAuth(authContext);
                       setDisplayError(status !== AuthStatus.SignedIn);
                       setAuthStatus(status);
                     }}
-                    onSignUp={(status: AuthStatus) => {
+                    onSignUp={(status: AuthStatus, authContext: IAuth) => {
+                      setAuth(authContext);
                       setAuthStatus(status);
                     }}
-                    onVerify={() => {
-                      setAuthStatus(AuthStatus.Verfied);
+                    onVerify={(authContext: IAuth) => {
+                      setAuth(authContext);
+                      setAuthStatus(AuthStatus.Verified);
                     }}
                   />
                 </Route>
                 <Route path='/home'>
-                  {authStatus !== AuthStatus.SignedIn && <Redirect to='/' />}
+                  {authStatus !== AuthStatus.SignedIn && <Redirect to='/auth/signin' />}
                   <ApolloProvider client={client}>
-                    <DashboardLazy client={client} />
+                    <DashboardLazy auth={auth} client={client} />
                   </ApolloProvider>
                 </Route>
                 <Route path='/' component={MarketingLazy} />
