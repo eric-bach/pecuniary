@@ -1,5 +1,4 @@
 import React from 'react';
-import { Route, Router, Switch } from 'react-router-dom';
 import { StylesProvider, createGenerateClassName } from '@material-ui/core';
 
 const generateClassName = createGenerateClassName({

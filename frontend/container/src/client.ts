@@ -1,28 +1,16 @@
 // https://github.com/awslabs/aws-mobile-appsync-sdk-js#using-authorization-and-subscription-links-with-apollo-client-v3-no-offline-support
 import { createAuthLink, AUTH_TYPE, AuthOptions } from 'aws-appsync-auth-link';
-import { useContext } from 'react';
 import { createSubscriptionHandshakeLink } from 'aws-appsync-subscription-link';
 import { ApolloLink, HttpLink, ApolloClient, InMemoryCache } from '@apollo/client';
 
-//import { AuthContext } from './contexts/authContext';
-import { getCurrentUser, getSession, getAccessToken } from './contexts/Session';
-import AppSyncConfig from './aws-exports';
-import { CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
+import { getAccessToken } from './contexts/Session';
 
-const url = AppSyncConfig.aws_appsync_graphqlEndpoint;
-const region = AppSyncConfig.aws_project_region;
-
-// let session: any;
-// const getSessionPromise = getSession();
-// console.log(getSessionPromise);
-// getSessionPromise.then((res: any) => {
-//   session = res;
-//   console.log('[CLIENT] Received Session response: ', res);
-// });
-// console.log('[CLIENT] Started request Session…');
+const url = process.env.REACT_APPSYNC_ENDPOINT || '';
+const region = process.env.REACT_APPSYNC_REGION || '';
 
 const sessionToken: any = getAccessToken();
-console.log('[CLIENT] accessToken:', sessionToken);
+console.log('[CLIENT] Access Token:', sessionToken);
+
 const auth: AuthOptions = {
   type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
   jwtToken: sessionToken,
@@ -37,8 +25,5 @@ const link = ApolloLink.from([createAuthLink({ url, region, auth }), createSubsc
 const client = new ApolloClient({ link, cache: new InMemoryCache() });
 
 console.log('[CLIENT] Apollo Client initialized:', client);
-
-//console.log('[CLIENT] Session:', session);
-console.log('[CLIENT] Client:', client);
 
 export default client;
