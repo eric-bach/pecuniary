@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -8,9 +9,10 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { makeStyles } from '@mui/styles';
-import { Theme } from '@mui/material';
 import Container from '@mui/material/Container';
-import { Link } from 'react-router-dom';
+import { Theme } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
@@ -21,21 +23,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: useTheme().spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
   },
   avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    margin: useTheme().spacing(1),
   },
   form: {
     width: '100%',
-    marginTop: theme.spacing(1),
+    marginTop: useTheme().spacing(1),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    margin: useTheme().spacing(3, 0, 2),
   },
 }));
 

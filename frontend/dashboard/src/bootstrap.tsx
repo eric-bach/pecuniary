@@ -1,12 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
 
+import './MuiClassNameSetup';
 import App from './App';
+import theme from './theme';
 
 const mount = (el: any, { client }: any) => {
   console.log('BOOTSTRAP CLIENT ', client);
 
-  ReactDOM.render(<App client={client} />, el);
+  ReactDOM.render(
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <App client={client} />
+    </ThemeProvider>,
+    el
+  );
 };
 
 // Scenario #1

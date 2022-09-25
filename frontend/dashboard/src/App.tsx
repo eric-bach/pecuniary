@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { StylesProvider, createGenerateClassName } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import { makeStyles } from '@mui/styles';
 import { gql } from '@apollo/client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -31,10 +30,6 @@ export const GET_ACCOUNTS = gql`
     }
   }
 `;
-
-const generateClassName = createGenerateClassName({
-  productionPrefix: 'fi',
-});
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -106,17 +101,15 @@ export default ({ client }: any) => {
   console.log('[ACCOUNT LIST] Accounts:', accounts);
 
   return (
-    <StylesProvider generateClassName={generateClassName}>
-      <Grid container>
-        <Grid className={classes.root} container direction='column' justifyContent='flex-start' alignItems='flex-start'>
-          <Typography variant='h5'>Accounts ({accounts.length} loaded) </Typography>
-          <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
-            {accounts.map((d: any) => {
-              return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
-            })}
-          </InfiniteScroll>
-        </Grid>
+    <Grid container>
+      <Grid className={classes.root} container direction='column' justifyContent='flex-start' alignItems='flex-start'>
+        <Typography variant='h5'>Accounts ({accounts.length} loaded) </Typography>
+        <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
+          {accounts.map((d: any) => {
+            return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
+          })}
+        </InfiniteScroll>
       </Grid>
-    </StylesProvider>
+    </Grid>
   );
 };
