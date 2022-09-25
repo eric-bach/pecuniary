@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { makeStyles } from '@mui/styles';
+import { Theme } from '@mui/material';
+import Container from '@mui/material/Container';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   '@global': {
     a: {
       textDecoration: 'none',
