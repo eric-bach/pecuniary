@@ -1,8 +1,9 @@
 import React from 'react';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import { makeStyles, createStyles } from '@mui/styles';
+import LinearProgress from '@mui/material/LinearProgress';
+import { Theme } from '@mui/system';
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles((theme: Theme) => {
   return createStyles({
     bar: {
       width: '100%',
@@ -14,10 +15,10 @@ const useStyles = makeStyles((theme) => {
 });
 
 export default () => {
-  const classes = useStyles();
+  //const classes = useStyles();
 
   return (
-    <div className={classes.bar}>
+    <div>
       <LinearProgress />
     </div>
   );

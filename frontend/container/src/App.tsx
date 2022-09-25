@@ -1,7 +1,8 @@
 import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
-import { makeStyles, StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
-import MuiAlert from '@material-ui/lab/Alert';
+import MuiAlert from '@mui/material/Alert';
+import { Theme } from '@mui/system';
+import { makeStyles } from '@mui/styles';
 import { createBrowserHistory } from 'history';
 
 import Progress from './components/Progress';
@@ -15,13 +16,9 @@ const MarketingLazy = lazy(() => import('./components/MarketingApp'));
 const AuthLazy = lazy(() => import('./components/AuthApp'));
 const DashboardLazy = lazy(() => import('./components/DashboardApp'));
 
-const generateClassName = createGenerateClassName({
-  productionPrefix: 'co',
-});
-
 const history = createBrowserHistory();
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   '@global': {
     a: {
       textDecoration: 'none',
@@ -61,62 +58,60 @@ const App = () => {
 
   return (
     <Router history={history}>
-      <StylesProvider generateClassName={generateClassName}>
-        <div>
-          <AuthProvider>
-            <Header
-              onSignOut={() => {
-                setAuthStatus(AuthStatus.SignedOut);
-              }}
-            />
-            <Suspense fallback={<Progress />}>
-              <Switch>
-                <Route path='/auth'>
-                  {displayError && (
-                    <Alert
-                      className={classes.error}
-                      severity='error'
-                      onClose={() => {
-                        setDisplayError(false);
-                      }}
-                    >
-                      {authStatus === AuthStatus.SignedOut
-                        ? 'Sign in Failed! Email and/or password is incorrect.'
-                        : 'Please verify account before signing in.'}
-                    </Alert>
-                  )}
-                  <AuthLazy
-                    onSignIn={(status: AuthStatus, authContext: IAuth) => {
-                      setAuth(authContext);
-                      setDisplayError(status !== AuthStatus.SignedIn);
-                      setAuthStatus(status);
+      <div>
+        <AuthProvider>
+          <Header
+            onSignOut={() => {
+              setAuthStatus(AuthStatus.SignedOut);
+            }}
+          />
+          <Suspense fallback={<Progress />}>
+            <Switch>
+              <Route path='/auth'>
+                {displayError && (
+                  <Alert
+                    className={classes.error}
+                    severity='error'
+                    onClose={() => {
+                      setDisplayError(false);
                     }}
-                    onSignUp={(status: AuthStatus, authContext: IAuth) => {
-                      setAuth(authContext);
-                      setAuthStatus(status);
-                    }}
-                    onVerify={(authContext: IAuth) => {
-                      setAuth(authContext);
-                      setAuthStatus(AuthStatus.Verified);
-                    }}
-                  />
-                </Route>
-                <Route path='/home'>
-                  <AuthIsSignedIn>
-                    <ApolloProvider client={client}>
-                      <DashboardLazy client={client} />
-                    </ApolloProvider>
-                  </AuthIsSignedIn>
-                  <AuthIsNotSignedIn>
-                    <Redirect to='auth/signin' />
-                  </AuthIsNotSignedIn>
-                </Route>
-                <Route path='/' component={MarketingLazy} />
-              </Switch>
-            </Suspense>
-          </AuthProvider>
-        </div>
-      </StylesProvider>
+                  >
+                    {authStatus === AuthStatus.SignedOut
+                      ? 'Sign in Failed! Email and/or password is incorrect.'
+                      : 'Please verify account before signing in.'}
+                  </Alert>
+                )}
+                <AuthLazy
+                  onSignIn={(status: AuthStatus, authContext: IAuth) => {
+                    setAuth(authContext);
+                    setDisplayError(status !== AuthStatus.SignedIn);
+                    setAuthStatus(status);
+                  }}
+                  onSignUp={(status: AuthStatus, authContext: IAuth) => {
+                    setAuth(authContext);
+                    setAuthStatus(status);
+                  }}
+                  onVerify={(authContext: IAuth) => {
+                    setAuth(authContext);
+                    setAuthStatus(AuthStatus.Verified);
+                  }}
+                />
+              </Route>
+              <Route path='/home'>
+                <AuthIsSignedIn>
+                  <ApolloProvider client={client}>
+                    <DashboardLazy client={client} />
+                  </ApolloProvider>
+                </AuthIsSignedIn>
+                <AuthIsNotSignedIn>
+                  <Redirect to='auth/signin' />
+                </AuthIsNotSignedIn>
+              </Route>
+              <Route path='/' component={MarketingLazy} />
+            </Switch>
+          </Suspense>
+        </AuthProvider>
+      </div>
     </Router>
   );
 };
