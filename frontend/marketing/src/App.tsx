@@ -7,14 +7,12 @@ import OldHome from './components/OldHome';
 
 export default ({ history }: any) => {
   return (
-    <div>
-      <Router history={history}>
-        <Switch>
-          <Route exact path='/oldhome' component={OldHome} />
-          <Route exact path='/pricing' component={Pricing} />
-          <Route path='/' component={Landing} />
-        </Switch>
-      </Router>
-    </div>
+    <Router history={history}>
+      <Switch>
+        <Route exact path='/oldhome' component={OldHome} />
+        <Route exact path='/pricing' component={Pricing} />
+        <Route path='/' component={Landing} />
+      </Switch>
+    </Router>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { makeStyles } from '@mui/styles';
 import { gql } from '@apollo/client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -31,19 +30,7 @@ export const GET_ACCOUNTS = gql`
   }
 `;
 
-const useStyles = makeStyles(() => ({
-  root: {},
-  session: {
-    width: '80vw',
-    overflow: 'auto',
-    overflowWrap: 'break-word',
-    fontSize: '16px',
-  },
-}));
-
 export default ({ client }: any) => {
-  const classes = useStyles();
-
   const [lastEvaluatedKey, setLastEvaluatedKey]: [any, any] = useState();
   const [accounts, setAccounts]: [any, any] = useState([]);
   const [hasMoreData, setHasMoreData] = useState(false);
@@ -102,7 +89,7 @@ export default ({ client }: any) => {
 
   return (
     <Grid container>
-      <Grid className={classes.root} container direction='column' justifyContent='flex-start' alignItems='flex-start'>
+      <Grid container direction='column' justifyContent='flex-start' alignItems='flex-start'>
         <Typography variant='h5'>Accounts ({accounts.length} loaded) </Typography>
         <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
           {accounts.map((d: any) => {
