@@ -14,9 +14,9 @@ const theme = createTheme({
           padding: 0,
           listStyle: 'none',
         },
-        a: {
-          textDecoration: 'none',
-        },
+        a:-webkit-any-link {
+          text-decoration: none;
+        }
       `,
     },
   },
