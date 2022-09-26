@@ -1,8 +1,6 @@
 import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import MuiAlert from '@mui/material/Alert';
-import { Theme } from '@mui/system';
-import { makeStyles } from '@mui/styles';
 import { createBrowserHistory } from 'history';
 
 import Progress from './components/Progress';
@@ -18,25 +16,11 @@ const DashboardLazy = lazy(() => import('./components/DashboardApp'));
 
 const history = createBrowserHistory();
 
-const useStyles = makeStyles((theme: Theme) => ({
-  '@global': {
-    a: {
-      textDecoration: 'none',
-    },
-  },
-  error: {
-    color: 'white',
-    backgroundColor: 'red',
-  },
-}));
-
 function Alert(props: any) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
 const App = () => {
-  const classes = useStyles();
-
   // TODO Remove authContext?
   const [auth, setAuth] = useState<IAuth>();
   const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.Loading);
@@ -70,7 +54,10 @@ const App = () => {
               <Route path='/auth'>
                 {displayError && (
                   <Alert
-                    className={classes.error}
+                    sx={{
+                      color: 'white',
+                      backgroundColor: 'red',
+                    }}
                     severity='error'
                     onClose={() => {
                       setDisplayError(false);

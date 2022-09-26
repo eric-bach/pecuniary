@@ -8,10 +8,8 @@ import Grid from '@mui/material/Grid';
 import StarIcon from '@mui/icons-material/StarBorder';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import { makeStyles } from '@mui/styles';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import { Theme } from '@mui/system';
 import { Link as RouterLink } from 'react-router-dom';
 
 function Copyright() {
@@ -26,47 +24,6 @@ function Copyright() {
     </Typography>
   );
 }
-
-const useStyles = makeStyles((theme: Theme) => ({
-  '@global': {
-    ul: {
-      margin: 0,
-      padding: 0,
-      listStyle: 'none',
-    },
-  },
-  toolbar: {
-    flexWrap: 'wrap',
-  },
-  toolbarTitle: {
-    flexGrow: 1,
-  },
-  link: {
-    margin: theme.spacing(1, 1.5),
-  },
-  heroContent: {
-    padding: theme.spacing(8, 0, 6),
-  },
-  cardHeader: {
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[700],
-  },
-  cardPricing: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'baseline',
-    marginBottom: theme.spacing(2),
-  },
-  footer: {
-    borderTop: `1px solid ${theme.palette.divider}`,
-    marginTop: theme.spacing(8),
-    paddingTop: theme.spacing(3),
-    paddingBottom: theme.spacing(3),
-    [theme.breakpoints.up('sm')]: {
-      paddingTop: theme.spacing(6),
-      paddingBottom: theme.spacing(6),
-    },
-  },
-}));
 
 const tiers = [
   {
@@ -112,12 +69,16 @@ const footers = [
 ];
 
 export default function Pricing() {
-  const classes = useStyles();
-
   return (
     <React.Fragment>
-      {/* Hero unit */}
-      <Container maxWidth='sm' component='main' className={classes.heroContent}>
+      <Container
+        maxWidth='sm'
+        component='main'
+        sx={{
+          pt: 8,
+          pb: 6,
+        }}
+      >
         <Typography component='h1' variant='h2' align='center' color='textPrimary' gutterBottom>
           Pricing
         </Typography>
@@ -139,17 +100,26 @@ export default function Pricing() {
                   titleTypographyProps={{ align: 'center' }}
                   subheaderTypographyProps={{ align: 'center' }}
                   action={tier.title === 'Pro' ? <StarIcon /> : null}
-                  className={classes.cardHeader}
+                  sx={{
+                    backgroundColor: 'grey[200]',
+                  }}
                 />
                 <CardContent>
-                  <div className={classes.cardPricing}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'baseline',
+                      marginBottom: 2,
+                    }}
+                  >
                     <Typography component='h2' variant='h3' color='textPrimary'>
                       ${tier.price}
                     </Typography>
                     <Typography variant='h6' color='textSecondary'>
                       /mo
                     </Typography>
-                  </div>
+                  </Box>
                   <ul>
                     {tier.description.map((line) => (
                       <Typography component='li' variant='subtitle1' align='center' key={line}>
@@ -169,7 +139,16 @@ export default function Pricing() {
         </Grid>
       </Container>
       {/* Footer */}
-      <Container maxWidth='md' component='footer' className={classes.footer}>
+      <Container
+        maxWidth='md'
+        component='footer'
+        sx={{
+          borderTop: '1px solid',
+          marginTop: 8,
+          paddingTop: 3,
+          paddingBottom: 3,
+        }}
+      >
         <Grid container spacing={4} justifyContent='space-evenly'>
           {footers.map((footer) => (
             <Grid item xs={6} sm={3} key={footer.title}>

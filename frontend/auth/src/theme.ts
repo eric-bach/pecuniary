@@ -6,8 +6,19 @@ declare module '@mui/material/styles' {
 }
 
 const theme = createTheme({
-  palette: {
-    mode: 'light',
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        ul: {
+          margin: 0,
+          padding: 0,
+          listStyle: 'none',
+        },
+        a: {
+          textDecoration: 'none',
+        },
+      `,
+    },
   },
 });
 
