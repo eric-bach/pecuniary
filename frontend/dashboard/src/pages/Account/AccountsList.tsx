@@ -96,7 +96,7 @@ const AccountsList = ({ client }: any) => {
     <Container>
       <Grid container>
         <Grid container direction='column' justifyContent='flex-start' alignItems='flex-start'>
-          <Typography variant='h5'>Accounts ({accounts.length} loaded) </Typography>
+          <Typography variant='h4'>Accounts ({accounts.length} loaded) </Typography>
           <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
             {accounts.map((d: any) => {
               return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
