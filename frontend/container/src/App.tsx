@@ -28,7 +28,7 @@ const App = () => {
 
   useEffect(() => {
     if (authStatus === AuthStatus.SignedIn) {
-      history.push('/home');
+      history.push('/app');
     }
 
     if (authStatus === AuthStatus.VerificationRequired) {
@@ -84,7 +84,7 @@ const App = () => {
                   }}
                 />
               </Route>
-              <Route path='/home'>
+              <Route path='/app'>
                 <AuthIsSignedIn>
                   <ApolloProvider client={client}>
                     <DashboardLazy client={client} />

@@ -1,11 +1,29 @@
 import { mount } from 'dashboard/DashboardApp';
 import React, { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
 export default ({ client }: any) => {
   const ref = useRef(null);
+  const history = useHistory();
 
   useEffect(() => {
-    mount(ref.current, { client });
+    const { onParentNavigate } = mount(ref.current, {
+      client,
+
+      initialPath: history.location.pathname,
+
+      // Callback to update BrowserHistory when Marketing app navigates
+      onNavigate: ({ pathname: nextPathname }: { pathname: string }) => {
+        const { pathname } = history.location;
+
+        if (pathname !== nextPathname) {
+          history.push(nextPathname);
+        }
+      },
+    });
+
+    // Update Marketing app when Container app navigates
+    history.listen(onParentNavigate);
   }, []);
 
   return <div ref={ref} />;

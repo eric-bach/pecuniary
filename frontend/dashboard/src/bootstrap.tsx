@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createMemoryHistory, createBrowserHistory } from 'history';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 
@@ -7,16 +8,34 @@ import './MuiClassNameSetup';
 import App from './App';
 import theme from './theme';
 
-const mount = (el: any, { client }: any) => {
+const mount = (el: any, { client, onNavigate, defaultHistory, initialPath }: any) => {
+  const history = defaultHistory || createMemoryHistory({ initialEntries: [initialPath] });
+
   console.log('[DASHBOARD BOOTSTRAP] Apollo Client: ', client);
+  console.log('[DASHBOARD BOOTSTRAP] History: ', history);
+
+  // When navigation occurs, use the listen handler to call onNavigate()
+  if (onNavigate) {
+    history.listen(onNavigate);
+  }
 
   ReactDOM.render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <App client={client} />
+      <App history={history} client={client} />
     </ThemeProvider>,
     el
   );
+
+  return {
+    onParentNavigate({ pathname: nextPathname }: { pathname: string }) {
+      const { pathname } = history.location;
+
+      if (pathname !== nextPathname) {
+        history.push(nextPathname);
+      }
+    },
+  };
 };
 
 // Scenario #1
@@ -30,7 +49,7 @@ if (process.env.NODE_ENV === 'development') {
   // Assuming our container doesn't have an element with id 'dev-products'
   if (el) {
     // We are probably running in isolation (Scenario #1)
-    mount(el, {});
+    mount(el, { defaultHistory: createBrowserHistory() });
   }
 }
 
@@ -38,5 +57,4 @@ if (process.env.NODE_ENV === 'development') {
 // We are running this file in development or production through the CONTAINER app
 // NO GUARANTEE that an element with an id of 'dev-products' exists
 // WE DO NOT WANT to try to immediately render the app
-
 export { mount };
