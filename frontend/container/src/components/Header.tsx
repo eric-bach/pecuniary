@@ -35,9 +35,17 @@ export default function Header({ onSignOut }: any) {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant='h6' color='inherit' noWrap component={RouterLink} to='/'>
-            App
-          </Typography>
+          <AuthIsSignedIn>
+            <Typography variant='h6' color='inherit' noWrap component={RouterLink} to='/app'>
+              Pecuniary App
+            </Typography>
+          </AuthIsSignedIn>
+          <AuthIsNotSignedIn>
+            <Typography variant='h6' color='inherit' noWrap component={RouterLink} to='/'>
+              Pecuniary
+            </Typography>
+          </AuthIsNotSignedIn>
+
           <AuthIsSignedIn>
             <Button
               color='primary'

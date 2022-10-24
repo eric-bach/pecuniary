@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 import { gql } from '@apollo/client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -30,7 +31,7 @@ export const GET_ACCOUNTS = gql`
   }
 `;
 
-const AccountList = ({ client }: any) => {
+const AccountsList = ({ client }: any) => {
   const [lastEvaluatedKey, setLastEvaluatedKey]: [any, any] = useState();
   const [accounts, setAccounts]: [any, any] = useState([]);
   const [hasMoreData, setHasMoreData] = useState(false);
@@ -92,17 +93,19 @@ const AccountList = ({ client }: any) => {
   console.log('[ACCOUNT LIST] Accounts:', accounts);
 
   return (
-    <Grid container>
-      <Grid container direction='column' justifyContent='flex-start' alignItems='flex-start'>
-        <Typography variant='h5'>Accounts ({accounts.length} loaded) </Typography>
-        <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
-          {accounts.map((d: any) => {
-            return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
-          })}
-        </InfiniteScroll>
+    <Container>
+      <Grid container>
+        <Grid container direction='column' justifyContent='flex-start' alignItems='flex-start'>
+          <Typography variant='h5'>Accounts ({accounts.length} loaded) </Typography>
+          <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
+            {accounts.map((d: any) => {
+              return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
+            })}
+          </InfiniteScroll>
+        </Grid>
       </Grid>
-    </Grid>
+    </Container>
   );
 };
 
-export default AccountList;
+export default AccountsList;
