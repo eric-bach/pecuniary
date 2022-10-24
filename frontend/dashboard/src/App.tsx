@@ -34,9 +34,11 @@ export default ({ client }: any) => {
   const [lastEvaluatedKey, setLastEvaluatedKey]: [any, any] = useState();
   const [accounts, setAccounts]: [any, any] = useState([]);
   const [hasMoreData, setHasMoreData] = useState(false);
-  const [loading, setLoading]: [boolean, any] = useState(true);
+  const [isLoading, setLoading]: [boolean, any] = useState(true);
 
   const getAccounts = async () => {
+    console.log('[ACCOUNT LIST] Getting Accounts');
+
     const response = await client.query({
       query: GET_ACCOUNTS,
       variables: {
@@ -49,6 +51,8 @@ export default ({ client }: any) => {
           : lastEvaluatedKey,
       },
     });
+
+    console.log('[ACCOUNT LIST] Retrieved Accounts: ', response);
 
     if (response && response.data) {
       console.log('[ACCOUNT LIST] Get Accounts:', response.data.getAccounts.items);
@@ -71,20 +75,20 @@ export default ({ client }: any) => {
     }
 
     await getAccounts();
-
-    setLoading(false);
   }
 
+  // https://devtrium.com/posts/async-functions-useeffect
   useEffect(() => {
+    console.log('***Getting Accounts here');
     getAccounts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log('***Returned from Getting Accounts here');
   }, []);
 
-  if (!accounts) {
+  if (isLoading) {
     return <Loading />;
   }
 
-  console.log('[DASHBOARD] Apollo Client', client);
+  console.log('[ACCOUNT LIST] Apollo Client', client);
   console.log('[ACCOUNT LIST] Accounts:', accounts);
 
   return (

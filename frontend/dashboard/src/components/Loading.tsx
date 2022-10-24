@@ -13,7 +13,6 @@ const Loading = () => {
       }}
     >
       <CircularProgress />
-      <CircularProgress color='secondary' />
     </Box>
   );
 };

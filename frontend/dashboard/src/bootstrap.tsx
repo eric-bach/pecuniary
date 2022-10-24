@@ -8,7 +8,7 @@ import App from './App';
 import theme from './theme';
 
 const mount = (el: any, { client }: any) => {
-  console.log('BOOTSTRAP CLIENT ', client);
+  console.log('[DASHBOARD BOOTSTRAP] Apollo Client: ', client);
 
   ReactDOM.render(
     <ThemeProvider theme={theme}>
