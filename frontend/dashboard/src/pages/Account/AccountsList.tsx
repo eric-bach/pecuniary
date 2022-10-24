@@ -6,6 +6,8 @@ import { gql } from '@apollo/client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import Loading from '../../components/Loading';
+import AccountSummary from './AccountSummary';
+import { AccountReadModel } from './types/Account';
 
 export const GET_ACCOUNTS = gql`
   query GetAccounts($userId: String!, $lastEvaluatedKey: LastEvaluatedKey) {
@@ -98,8 +100,9 @@ const AccountsList = ({ client }: any) => {
         <Grid container direction='column' justifyContent='flex-start' alignItems='flex-start'>
           <Typography variant='h4'>Accounts ({accounts.length} loaded) </Typography>
           <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
-            {accounts.map((d: any) => {
-              return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
+            {accounts.map((d: AccountReadModel) => {
+              //return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
+              return <AccountSummary client={client} account={d} key={d.sk.toString()} />;
             })}
           </InfiniteScroll>
         </Grid>
