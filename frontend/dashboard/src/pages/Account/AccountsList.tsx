@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Button from '@mui/material/Button';
 import { gql } from '@apollo/client';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -99,6 +100,8 @@ const AccountsList = ({ client }: any) => {
       <Grid container>
         <Grid container direction='column' justifyContent='flex-start' alignItems='flex-start'>
           <Typography variant='h4'>Accounts ({accounts.length} loaded) </Typography>
+          <Button variant='contained'>Add Account</Button>
+
           <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
             {accounts.map((d: AccountReadModel) => {
               //return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
