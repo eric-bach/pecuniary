@@ -6,6 +6,8 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 import { gql, useMutation } from '@apollo/client';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -98,15 +100,9 @@ export default function AccountForm({ account }: any) {
   });
 
   return (
-    <Container>
+    <Container maxWidth='lg'>
       <Typography variant='h4'>Add Account </Typography>
-      <Box
-        component='form'
-        sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}
-        noValidate
-        autoComplete='off'
-        onSubmit={formik.handleSubmit}
-      >
+      <Box component='form' alignItems='left' sx={{ width: '50%' }} noValidate autoComplete='off' onSubmit={formik.handleSubmit}>
         <TextField
           id='name'
           name='name'
@@ -122,13 +118,24 @@ export default function AccountForm({ account }: any) {
           fullWidth
           autoFocus
         />
-        <Select id='accountType' name='accountType' label='Account Type' value={formik.values.accountType} onChange={formik.handleChange}>
-          {accountTypes.map((type) => (
-            <MenuItem key={type} value={type}>
-              {type}
-            </MenuItem>
-          ))}
-        </Select>
+        <FormControl sx={{ width: '100%' }}>
+          <InputLabel>Account Type</InputLabel>
+          <Select
+            id='accountType'
+            name='accountType'
+            label='Account Type'
+            value={formik.values.accountType}
+            onChange={formik.handleChange}
+            displayEmpty
+            sx={{ width: '100%' }}
+          >
+            {accountTypes.map((type) => (
+              <MenuItem key={type} value={type}>
+                {type}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
           id='description'
           name='description'
