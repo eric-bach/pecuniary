@@ -99,7 +99,7 @@ const AccountsList = () => {
 
   return (
     <Container>
-      <Grid container>
+      <Grid container maxWidth='lg'>
         <Grid container direction='column' justifyContent='flex-start' alignItems='flex-start'>
           <Typography variant='h4'>Accounts ({accounts.length} loaded) </Typography>
           <Button variant='contained' href='/app/accounts/new'>
