@@ -4,7 +4,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
-import ImageIcon from '@mui/icons-material/Image';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import Typography from '@mui/material/Typography';
 
 import { AccountReadModel, DeleteAccountInput } from './types/Account';
 
@@ -15,10 +16,20 @@ const AccountSummary = ({ client, account }: any) => {
         <ListItem>
           <ListItemAvatar>
             <Avatar>
-              <ImageIcon />
+              <AccountBalanceIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={account.name} secondary={account.description} />
+          <ListItemText
+            primary={account.name}
+            secondary={
+              <>
+                <Typography sx={{ display: 'inline' }} component='span' variant='body2' color='text.primary'>
+                  {account.type}
+                </Typography>
+                {` - ${account.description}`}
+              </>
+            }
+          />
         </ListItem>
       </List>
     </>
