@@ -7,7 +7,6 @@ import Progress from './components/Progress';
 import Header from './components/Header';
 
 import AuthProvider, { AuthIsSignedIn, AuthIsNotSignedIn, AuthStatus, IAuth } from './contexts/authContext';
-import { ApolloProvider } from '@apollo/client';
 import client from './client';
 
 const MarketingLazy = lazy(() => import('./components/MarketingApp'));
@@ -86,9 +85,7 @@ const App = () => {
               </Route>
               <Route path='/app'>
                 <AuthIsSignedIn>
-                  <ApolloProvider client={client}>
-                    <DashboardLazy client={client} />
-                  </ApolloProvider>
+                  <DashboardLazy client={client} />
                 </AuthIsSignedIn>
                 <AuthIsNotSignedIn>
                   <Redirect to='auth/signin' />

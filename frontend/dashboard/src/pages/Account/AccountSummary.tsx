@@ -7,9 +7,7 @@ import Avatar from '@mui/material/Avatar';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import Typography from '@mui/material/Typography';
 
-import { AccountReadModel, DeleteAccountInput } from './types/Account';
-
-const AccountSummary = ({ client, account }: any) => {
+const AccountSummary = ({ account }: any) => {
   return (
     <>
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>

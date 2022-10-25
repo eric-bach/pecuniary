@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -9,6 +9,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Loading from '../../components/Loading';
 import AccountSummary from './AccountSummary';
 import { AccountReadModel } from './types/Account';
+import UserContext from '../../contexts/UserContext';
 
 export const GET_ACCOUNTS = gql`
   query GetAccounts($userId: String!, $lastEvaluatedKey: LastEvaluatedKey) {
@@ -34,11 +35,12 @@ export const GET_ACCOUNTS = gql`
   }
 `;
 
-const AccountsList = ({ client }: any) => {
+const AccountsList = () => {
   const [lastEvaluatedKey, setLastEvaluatedKey]: [any, any] = useState();
   const [accounts, setAccounts]: [any, any] = useState([]);
   const [hasMoreData, setHasMoreData] = useState(false);
   const [isLoading, setLoading]: [boolean, any] = useState(true);
+  const client: any = useContext(UserContext);
 
   const getAccounts = async () => {
     console.log('[ACCOUNT LIST] Getting Accounts');
@@ -100,12 +102,13 @@ const AccountsList = ({ client }: any) => {
       <Grid container>
         <Grid container direction='column' justifyContent='flex-start' alignItems='flex-start'>
           <Typography variant='h4'>Accounts ({accounts.length} loaded) </Typography>
-          <Button variant='contained'>Add Account</Button>
+          <Button variant='contained' href='/app/accounts/new'>
+            Add Account
+          </Button>
 
           <InfiniteScroll dataLength={accounts.length} next={getAdditionalAccounts} hasMore={hasMoreData} loader={<Loading />}>
             {accounts.map((d: AccountReadModel) => {
-              //return d.name.toString(); //<AccountSummary key={d.sk.toString()} {...d} />;
-              return <AccountSummary client={client} account={d} key={d.sk.toString()} />;
+              return <AccountSummary account={d} key={d.sk.toString()} />;
             })}
           </InfiniteScroll>
         </Grid>

@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import { createMemoryHistory, createBrowserHistory } from 'history';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
+import { ApolloProvider } from '@apollo/client';
 
 import './MuiClassNameSetup';
 import App from './App';
 import theme from './theme';
+import UserContext from './contexts/UserContext';
 
 const mount = (el: any, { client, onNavigate, defaultHistory, initialPath }: any) => {
   const history = defaultHistory || createMemoryHistory({ initialEntries: [initialPath] });
@@ -22,7 +24,11 @@ const mount = (el: any, { client, onNavigate, defaultHistory, initialPath }: any
   ReactDOM.render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <App history={history} client={client} />
+      <ApolloProvider client={client}>
+        <UserContext.Provider value={client}>
+          <App history={history} />
+        </UserContext.Provider>
+      </ApolloProvider>
     </ThemeProvider>,
     el
   );
