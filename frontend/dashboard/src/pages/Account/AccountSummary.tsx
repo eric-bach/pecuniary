@@ -10,7 +10,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import Typography from '@mui/material/Typography';
 
 const AccountSummary = ({ account }: any) => {
-  const link = `/app/accounts/view/${account.aggregateId}`;
+  const link = `/app/accounts/${account.aggregateId}`;
 
   return (
     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>

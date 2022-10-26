@@ -2,8 +2,7 @@ import React from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
 
 import AccountsList from './pages/Account/AccountsList';
-import AccountForm from './pages/Account/AccountForm';
-import AccountDetail from './pages/Account/AccountDetail';
+import Account from './pages/Account/Account';
 import Dashboard from './pages/Home/Dashboard';
 
 export default ({ history }: any) => {
@@ -11,8 +10,8 @@ export default ({ history }: any) => {
     <Router history={history}>
       <Switch>
         <Route exact path='/app/accounts' component={AccountsList} />
-        <Route exact path='/app/accounts/new' component={AccountForm} />
-        <Route exact path='/app/accounts/view/:id' component={AccountDetail} />
+        <Route exact path='/app/accounts/new' component={Account} />
+        <Route exact path='/app/accounts/:id' component={Account} />
         <Route path='/' component={Dashboard} />
       </Switch>
     </Router>
