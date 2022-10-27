@@ -193,10 +193,26 @@ export default function AccountForm(props: AccountProps) {
             <Button id='edit' name='edit' type='submit' variant='contained' color='success'>
               Update
             </Button>
-            <Button id='delete' name='delete' type='submit' variant='contained' color='error'>
+            <Button
+              id='delete'
+              name='delete'
+              type='submit'
+              variant='contained'
+              color='error'
+              sx={{
+                ml: 1,
+              }}
+            >
               Delete
             </Button>
-            <Button variant='contained' color='primary' onClick={toggleEdit}>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={toggleEdit}
+              sx={{
+                ml: 1,
+              }}
+            >
               Cancel
             </Button>
           </>
