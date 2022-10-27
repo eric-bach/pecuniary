@@ -10,8 +10,7 @@ export default ({ history }: any) => {
     <Router history={history}>
       <Switch>
         <Route exact path='/app/accounts' component={AccountsList} />
-        <Route exact path='/app/accounts/new' component={Account} />
-        <Route exact path='/app/accounts/:id' component={Account} />
+        <Route exact path={['/app/accounts/new', '/app/accounts/:id']} component={Account} />
         <Route path='/' component={Dashboard} />
       </Switch>
     </Router>
