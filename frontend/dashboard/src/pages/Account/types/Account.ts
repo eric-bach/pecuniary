@@ -1,4 +1,8 @@
-import { AnyARecord } from 'dns';
+export type AccountViewModel = {
+  name: string;
+  type: string;
+  description: string;
+};
 
 export type CreateAccountInput = {
   createAccountInput: {

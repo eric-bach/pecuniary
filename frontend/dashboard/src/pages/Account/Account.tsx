@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -14,9 +14,8 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 import { CREATE_ACCOUNT, UPDATE_ACCOUNT, DELETE_ACCOUNT } from './graphql/graphql';
-import UserContext from '../../contexts/UserContext';
 import Loading from '../../components/Loading';
-import { AccountProps, CreateAccountInput, DeleteAccountInput, UpdateAccountInput } from './types/Account';
+import { AccountProps, AccountViewModel, CreateAccountInput, DeleteAccountInput, UpdateAccountInput } from './types/Account';
 
 const mockAccount = {
   userId: 'mock.user',
@@ -36,23 +35,24 @@ const mockAccount = {
   updatedAt: new Date(),
 };
 
+enum MODE {
+  CREATE,
+  VIEW,
+  EDIT,
+}
+
 export default function AccountForm(props: AccountProps) {
   const { id: aggregateId }: { id: string } = useParams();
 
   const [account, setAccount] = useState(props.location.state?.account ?? undefined);
   const [accountId, setAccountId] = useState(aggregateId);
-  const [mode, setMode] = useState(accountId ? 'view' : 'create');
+  const [mode, setMode] = useState(accountId ? MODE.VIEW : MODE.CREATE);
   const [userId, setUserId] = useState('');
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
   const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
   const [deleteAccountMutation] = useMutation(DELETE_ACCOUNT);
-  const client = useContext(UserContext);
 
   const accountTypes: string[] = ['TFSA', 'RRSP'];
-
-  console.log('ACCOUNT: ', account);
-  console.log('ACCOUNT ID: ', accountId);
-  console.log('APOLLO CLIENT: ', client);
 
   useEffect(() => {
     // Get the logged in username
@@ -67,20 +67,16 @@ export default function AccountForm(props: AccountProps) {
       setAccount(mockAccount);
 
       formik.values.name = mockAccount.name;
-      formik.values.accountType = mockAccount.type;
+      formik.values.type = mockAccount.type;
       formik.values.description = mockAccount.description;
     }
   }, []);
 
   const toggleEdit = () => {
-    setMode(mode === 'view' ? 'edit' : 'view');
+    setMode(mode === MODE.VIEW ? MODE.EDIT : MODE.VIEW);
   };
 
-  const handleClick = (event: any, values: any) => {
-    // TODO Take event and values to CREATE, UPDATE, or DELETE
-    console.log('Event:', event.submitter.id);
-    console.log('Values:', values);
-
+  const handleClick = (event: any, values: AccountViewModel) => {
     switch (event.submitter.id) {
       case 'create':
         createAccount(values);
@@ -94,43 +90,38 @@ export default function AccountForm(props: AccountProps) {
     }
   };
 
-  const createAccount = (values: any) => {
-    console.log('[ACCOUNT FORM] Creating Account...');
+  const createAccount = (values: AccountViewModel) => {
+    console.log('[ACCOUNT] Creating Account...');
 
     const params: CreateAccountInput = {
       createAccountInput: {
+        ...values,
         userId: `${userId}`,
-        type: `${values.accountType}`,
-        name: `${values.name}`,
-        description: `${values.description}`,
       },
     };
 
     createAccountMutation({
       variables: params,
     })
-      .then((res) => {
+      .then(() => {
         console.log('[ACCOUNT] Account created successfully');
         setTimeout(() => {
           window.location.pathname = '/app/accounts';
         }, 1000);
       })
       .catch((err) => {
-        console.error('[ACCOUNT] Error occurred creating account');
-        console.error(err);
+        console.error('[ACCOUNT] Error creating account', err);
       });
   };
 
-  const updateAccount = (values: any) => {
+  const updateAccount = (values: AccountViewModel) => {
     console.log('[ACCOUNT] Updating Account...');
 
     const params: UpdateAccountInput = {
       updateAccountInput: {
+        ...values,
         userId: `${userId}`,
         sk: account.sk,
-        type: `${values.accountType}`,
-        name: `${values.name}`,
-        description: `${values.description}`,
       },
     };
 
@@ -142,13 +133,12 @@ export default function AccountForm(props: AccountProps) {
         window.location.pathname = '/app/accounts';
       })
       .catch((err) => {
-        console.error('[ACCOUNT] Error occurred updating account');
-        console.error(err);
+        console.error('[ACCOUNT] Error updating account', err);
       });
   };
 
   const deleteAccount = () => {
-    console.log('[ACCOUNT] Deleting Account: ', accountId);
+    console.log('[ACCOUNT] Deleting Account:', accountId);
 
     const params: DeleteAccountInput = {
       deleteAccountInput: {
@@ -164,20 +154,19 @@ export default function AccountForm(props: AccountProps) {
         window.location.pathname = '/app/accounts';
       })
       .catch((err) => {
-        console.error('[ACCOUNT] Error occurred deleting account');
-        console.error(err);
+        console.error('[ACCOUNT] Error deleting account', err);
       });
   };
 
   const formik = useFormik({
     initialValues: {
       name: account?.name,
-      accountType: account?.type ?? '',
+      type: account?.type ?? '',
       description: account?.description,
     },
     validationSchema: yup.object({
       name: yup.string().required('Please enter an Account name'),
-      accountType: yup.string().required('Please select an Account type'),
+      type: yup.string().required('Please select an Account type'),
       description: yup.string().required('Please enter an Account description'),
     }),
     onSubmit: (values) => {
@@ -185,20 +174,21 @@ export default function AccountForm(props: AccountProps) {
     },
   });
 
-  if (!account && aggregateId) return <Loading />;
-
-  console.log('Mode:', mode);
+  // Wait until account is loaded if an aggregateId is passed in the URL
+  if (!account && aggregateId) {
+    return <Loading />;
+  }
 
   return (
     <Container maxWidth='lg'>
       <Typography variant='h4'>Add Account</Typography>
       <Box component='form' alignItems='left' sx={{ width: '50%' }} noValidate autoComplete='off' onSubmit={formik.handleSubmit}>
-        {mode === 'view' && (
+        {mode === MODE.VIEW && (
           <Button variant='contained' color='primary' onClick={toggleEdit}>
             Edit
           </Button>
         )}
-        {mode === 'edit' && (
+        {mode === MODE.EDIT && (
           <>
             <Button id='edit' name='edit' type='submit' variant='contained' color='success'>
               Update
@@ -210,7 +200,7 @@ export default function AccountForm(props: AccountProps) {
               Cancel
             </Button>
           </>
-        )}{' '}
+        )}
         <TextField
           id='name'
           name='name'
@@ -224,18 +214,18 @@ export default function AccountForm(props: AccountProps) {
           margin='normal'
           required
           fullWidth
-          disabled={mode === 'view'}
+          disabled={mode === MODE.VIEW}
           autoFocus
         />
         <FormControl sx={{ width: '100%' }}>
           <InputLabel>Account Type</InputLabel>
           <Select
-            id='accountType'
-            name='accountType'
+            id='type'
+            name='type'
             label='Account Type'
-            value={formik.values.accountType}
+            value={formik.values.type}
             onChange={formik.handleChange}
-            disabled={mode === 'view'}
+            disabled={mode === MODE.VIEW}
             displayEmpty
             sx={{ width: '100%' }}
           >
@@ -258,10 +248,10 @@ export default function AccountForm(props: AccountProps) {
           variant='outlined'
           margin='normal'
           required
-          disabled={mode === 'view'}
+          disabled={mode === MODE.VIEW}
           fullWidth
         />
-        {mode === 'create' && (
+        {mode === MODE.CREATE && (
           <Button id='create' name='create' type='submit' variant='contained' color='primary'>
             Submit
           </Button>
