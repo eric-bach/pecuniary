@@ -9,12 +9,14 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import { useMutation } from '@apollo/client';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
+import { CREATE_ACCOUNT, UPDATE_ACCOUNT, DELETE_ACCOUNT } from './graphql/graphql';
 import UserContext from '../../contexts/UserContext';
-import { AccountProps } from './types/Account';
 import Loading from '../../components/Loading';
+import { AccountProps, CreateAccountInput, DeleteAccountInput, UpdateAccountInput } from './types/Account';
 
 const mockAccount = {
   userId: 'mock.user',
@@ -41,6 +43,9 @@ export default function AccountForm(props: AccountProps) {
   const [accountId, setAccountId] = useState(aggregateId);
   const [mode, setMode] = useState(accountId ? 'view' : 'create');
   const [userId, setUserId] = useState('');
+  const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
+  const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
+  const [deleteAccountMutation] = useMutation(DELETE_ACCOUNT);
   const client = useContext(UserContext);
 
   const accountTypes: string[] = ['TFSA', 'RRSP'];
@@ -75,6 +80,93 @@ export default function AccountForm(props: AccountProps) {
     // TODO Take event and values to CREATE, UPDATE, or DELETE
     console.log('Event:', event.submitter.id);
     console.log('Values:', values);
+
+    switch (event.submitter.id) {
+      case 'create':
+        createAccount(values);
+        break;
+      case 'edit':
+        updateAccount(values);
+        break;
+      case 'delete':
+        deleteAccount();
+        break;
+    }
+  };
+
+  const createAccount = (values: any) => {
+    console.log('[ACCOUNT FORM] Creating Account...');
+
+    const params: CreateAccountInput = {
+      createAccountInput: {
+        userId: `${userId}`,
+        type: `${values.accountType}`,
+        name: `${values.name}`,
+        description: `${values.description}`,
+      },
+    };
+
+    createAccountMutation({
+      variables: params,
+    })
+      .then((res) => {
+        console.log('[ACCOUNT] Account created successfully');
+        setTimeout(() => {
+          window.location.pathname = '/app/accounts';
+        }, 1000);
+      })
+      .catch((err) => {
+        console.error('[ACCOUNT] Error occurred creating account');
+        console.error(err);
+      });
+  };
+
+  const updateAccount = (values: any) => {
+    console.log('[ACCOUNT] Updating Account...');
+
+    const params: UpdateAccountInput = {
+      updateAccountInput: {
+        userId: `${userId}`,
+        sk: account.sk,
+        type: `${values.accountType}`,
+        name: `${values.name}`,
+        description: `${values.description}`,
+      },
+    };
+
+    updateAccountMutation({
+      variables: params,
+    })
+      .then((res) => {
+        console.log('[ACCOUNT] Account updated successfully');
+        window.location.pathname = '/app/accounts';
+      })
+      .catch((err) => {
+        console.error('[ACCOUNT] Error occurred updating account');
+        console.error(err);
+      });
+  };
+
+  const deleteAccount = () => {
+    console.log('[ACCOUNT] Deleting Account: ', accountId);
+
+    const params: DeleteAccountInput = {
+      deleteAccountInput: {
+        userId: userId,
+        aggregateId: accountId,
+      },
+    };
+    deleteAccountMutation({
+      variables: params,
+    })
+      .then((res) => {
+        console.log('[ACCOUNT] Account deleted successfully');
+        window.location.pathname = '/app/accounts';
+      })
+      .catch((err) => {
+        console.error('[ACCOUNT] Error occurred deleting account');
+        console.error(err);
+      });
   };
 
   const formik = useFormik({
@@ -132,6 +224,7 @@ export default function AccountForm(props: AccountProps) {
           margin='normal'
           required
           fullWidth
+          disabled={mode === 'view'}
           autoFocus
         />
         <FormControl sx={{ width: '100%' }}>
@@ -142,6 +235,7 @@ export default function AccountForm(props: AccountProps) {
             label='Account Type'
             value={formik.values.accountType}
             onChange={formik.handleChange}
+            disabled={mode === 'view'}
             displayEmpty
             sx={{ width: '100%' }}
           >
@@ -164,6 +258,7 @@ export default function AccountForm(props: AccountProps) {
           variant='outlined'
           margin='normal'
           required
+          disabled={mode === 'view'}
           fullWidth
         />
         {mode === 'create' && (
