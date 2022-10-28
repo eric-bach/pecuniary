@@ -14,7 +14,7 @@ exports.handler = async (event: AccountAppSyncEvent) => {
     // Queries
     case 'getAccounts':
       console.debug(`🔔 GetAccounts: ${JSON.stringify(event.arguments.userId)}`);
-      return await getAccounts(event.arguments.userId, event.arguments.lastEvaluatedKey);
+      return await getAccounts(event.arguments.userId, event.arguments.aggregateId, event.arguments.lastEvaluatedKey);
 
     // Mutations
     case 'createAccount':

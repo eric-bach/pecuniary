@@ -41,6 +41,7 @@ export type AccountAppSyncEvent = {
   };
   arguments: {
     userId: string; //getAccounts
+    aggregateId: string; //getAccount
     lastEvaluatedKey: LastEvaluatedKey; //getAccounts
 
     createAccountInput: CreateAccountInput;

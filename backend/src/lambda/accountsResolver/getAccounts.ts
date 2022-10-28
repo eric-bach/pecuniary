@@ -4,19 +4,34 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { LastEvaluatedKey } from '../types/Account';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
-async function getAccounts(userId: string, lastEvaluatedKey: LastEvaluatedKey) {
+async function getAccounts(userId: string, aggregateId: string, lastEvaluatedKey: LastEvaluatedKey) {
   console.debug(`🕧 Get Accounts Initialized`);
 
-  const queryCommandInput: QueryCommandInput = {
-    TableName: process.env.DATA_TABLE_NAME,
-    //TODO TEMP Limit to 10
-    Limit: 10,
-    KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
-    ExpressionAttributeValues: {
-      ':v1': { S: userId },
-      ':v2': { S: 'ACC#' },
-    },
-  };
+  let queryCommandInput: QueryCommandInput;
+  if (aggregateId) {
+    // Get a single account
+    queryCommandInput = {
+      TableName: process.env.DATA_TABLE_NAME,
+      Limit: 1,
+      IndexName: 'aggregateId-lsi',
+      KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
+      ExpressionAttributeValues: {
+        ':v1': { S: userId },
+        ':v2': { S: aggregateId },
+      },
+    };
+  } else {
+    queryCommandInput = {
+      TableName: process.env.DATA_TABLE_NAME,
+      //TODO TEMP Limit to 10
+      Limit: 10,
+      KeyConditionExpression: 'userId = :v1 AND begins_with(sk, :v2)',
+      ExpressionAttributeValues: {
+        ':v1': { S: userId },
+        ':v2': { S: 'ACC#' },
+      },
+    };
+  }
   lastEvaluatedKey ? (queryCommandInput.ExclusiveStartKey = marshall(lastEvaluatedKey)) : lastEvaluatedKey;
 
   var result = await dynamoDbCommand(new QueryCommand(queryCommandInput));
