@@ -24,6 +24,7 @@
     "react-router-dom": "^5.3.0"
   },
   "devDependencies": {
+    "@apollo/client": "^3.6.9",
     "@babel/core": "^7.15.8",
     "@babel/plugin-transform-runtime": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
