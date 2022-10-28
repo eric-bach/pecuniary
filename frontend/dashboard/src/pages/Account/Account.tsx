@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -13,27 +13,10 @@ import { useMutation } from '@apollo/client';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { CREATE_ACCOUNT, UPDATE_ACCOUNT, DELETE_ACCOUNT } from './graphql/graphql';
+import { CREATE_ACCOUNT, UPDATE_ACCOUNT, DELETE_ACCOUNT, GET_ACCOUNT } from './graphql/graphql';
 import Loading from '../../components/Loading';
 import { AccountProps, AccountViewModel, CreateAccountInput, DeleteAccountInput, UpdateAccountInput } from './types/Account';
-
-const mockAccount = {
-  userId: 'mock.user',
-  sk: 'ACC#TEST',
-  aggregateId: '999',
-  type: 'TFSA',
-  name: 'Mock Account',
-  description: 'Mock Test Account',
-  currencies: [
-    {
-      currency: 'CAD',
-      bookValue: 0,
-      marketValue: 0,
-    },
-  ],
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
+import UserContext from '../../contexts/UserContext';
 
 enum MODE {
   CREATE,
@@ -52,7 +35,19 @@ export default function AccountForm(props: AccountProps) {
   const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
   const [deleteAccountMutation] = useMutation(DELETE_ACCOUNT);
 
+  const client: any = useContext(UserContext);
+
   const accountTypes: string[] = ['TFSA', 'RRSP'];
+
+  async function getAccount() {
+    return await client.query({
+      query: GET_ACCOUNT,
+      variables: {
+        userId: localStorage.getItem('userId'),
+        aggregateId: accountId,
+      },
+    });
+  }
 
   useEffect(() => {
     // Get the logged in username
@@ -63,14 +58,23 @@ export default function AccountForm(props: AccountProps) {
 
     // Loading URL directly with aggregateId
     if (!account && aggregateId) {
-      // TODO Fetch from backend API instead
-      setAccount(mockAccount);
+      getAccount().then((resp) => {
+        console.log('[ACCOUNT] Found Account response:', resp);
 
-      formik.values.name = mockAccount.name;
-      formik.values.type = mockAccount.type;
-      formik.values.description = mockAccount.description;
+        let acc = resp.data?.getAccounts?.items[0];
+
+        if (!acc) {
+          console.log('[ACCOUNT] No Account found matching:', accountId);
+          window.location.pathname = '/app/accounts';
+        }
+
+        formik.values.name = acc.name;
+        formik.values.type = acc.type;
+        formik.values.description = acc.description;
+        setAccount(acc);
+      });
     }
-  }, []);
+  }, [account]);
 
   const toggleEdit = () => {
     setMode(mode === MODE.VIEW ? MODE.EDIT : MODE.VIEW);

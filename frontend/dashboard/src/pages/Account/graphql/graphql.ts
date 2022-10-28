@@ -36,6 +36,26 @@ export const DELETE_ACCOUNT = gql`
   }
 `;
 
+export const GET_ACCOUNT = gql`
+  query GetAccounts($userId: String!, $aggregateId: String!) {
+    getAccounts(userId: $userId, aggregateId: $aggregateId) {
+      items {
+        userId
+        sk
+        aggregateId
+        type
+        name
+        description
+        currencies {
+          currency
+          bookValue
+          marketValue
+        }
+      }
+    }
+  }
+`;
+
 export const GET_ACCOUNTS = gql`
   query GetAccounts($userId: String!, $lastEvaluatedKey: LastEvaluatedKey) {
     getAccounts(userId: $userId, lastEvaluatedKey: $lastEvaluatedKey) {
