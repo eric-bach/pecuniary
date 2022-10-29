@@ -6,7 +6,8 @@
     "build:dev": "webpack --config config/webpack.dev.js",
     "build:start": "cd dist && PORT=8080 npx serve",
     "start": "webpack serve --config config/webpack.dev.js",
-    "start:live": "webpack serve --config config/webpack.dev.js --live-reload --hot"
+    "start:live": "webpack serve --config config/webpack.dev.js --live-reload --hot",
+    "cypress:open": "cypress open"
   },
   "license": "MIT",
   "author": {
@@ -39,6 +40,7 @@
     "aws-appsync-subscription-link": "^3.1.0",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.3.0",
+    "cypress": "^10.11.0",
     "dotenv": "^16.0.2",
     "dotenv-webpack": "^8.0.1",
     "graphql": "^14.3.1",
