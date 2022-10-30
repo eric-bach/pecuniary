@@ -6,8 +6,7 @@
     "build:dev": "webpack --config config/webpack.dev.js",
     "build:start": "cd dist && PORT=8083 npx serve",
     "start": "webpack serve --config config/webpack.dev.js",
-    "start:live": "webpack serve --config config/webpack.dev.js --live-reload --hot",
-    "cypress:open": "cypress open"
+    "start:live": "webpack serve --config config/webpack.dev.js --live-reload --hot"
   },
   "license": "MIT",
   "author": {

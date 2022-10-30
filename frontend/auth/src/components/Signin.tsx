@@ -89,6 +89,7 @@ export default function SignIn({ onSignIn }: any) {
             <FormControlLabel control={<Checkbox value='remember' color='primary' />} label='Remember me' />
             <Button
               type='submit'
+              name='signin'
               fullWidth
               variant='contained'
               color='primary'
