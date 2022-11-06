@@ -11,7 +11,7 @@ export default function Dashboard() {
         Dashboard
       </Typography>
       <Link to='/app/accounts'>
-        <Button variant='contained' color='primary'>
+        <Button name='toAccounts' variant='contained' color='primary'>
           Accounts
         </Button>
       </Link>

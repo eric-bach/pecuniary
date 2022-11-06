@@ -3,6 +3,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 
 import AccountsList from './pages/Account/AccountsList';
 import Account from './pages/Account/Account';
+import Test from './pages/Account/Test';
 import Dashboard from './pages/Home/Dashboard';
 
 export default ({ history }: any) => {

@@ -21,3 +21,6 @@ aws-exports.js
 !webpack.*.js
 !jest.config.js
 !.env.example
+
+cypress.*.json
+**/cypress/videos/
