@@ -35,13 +35,31 @@ describe('Create/Edit/Delete Account', () => {
     cy.get('input[name=description]').type('Cypress Test Account');
 
     cy.get('button[name=create]').click();
+    cy.wait(500);
   });
 
-  it('should edit existing account', () => {});
+  it('should edit existing account', () => {
+    cy.get('button[name=toAccounts]').click();
+    cy.visit('/app/accounts'); // TODO Because of initial login bug, need to force a refresh
+    cy.contains('Accounts');
 
-  it('should delete existing account', () => {});
+    cy.get('a').last().click();
+    cy.get('button[name=toggleEdit]').click();
+    cy.get('button[name=edit]').click();
+    cy.wait(500);
+  });
 
-  afterEach(() => {
-    // TODO Delete any test accounts
+  it('should delete existing account', () => {
+    cy.get('button[name=toAccounts]').click();
+    cy.visit('/app/accounts'); // TODO Because of initial login bug, need to force a refresh
+    cy.contains('Accounts');
+
+    cy.get('a').last().click();
+    cy.get('button[name=toggleEdit]').click();
+    cy.get('button[name=delete]').click();
+    cy.wait(500);
+
+    // Assert
+    cy.get('a').should('have.length', 4);
   });
 });
