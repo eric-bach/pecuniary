@@ -191,7 +191,7 @@ export default function Test(props: AccountProps) {
       <Typography variant='h4'>Add Account</Typography>
       <form onSubmit={formik.handleSubmit}>
         {mode === MODE.VIEW && (
-          <Button variant='contained' color='primary' onClick={toggleEdit}>
+          <Button id='toggleEdit' name='toggleEdit' variant='contained' color='primary' onClick={toggleEdit}>
             Edit
           </Button>
         )}
