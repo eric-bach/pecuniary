@@ -1,3 +1,6 @@
+/// <reference types="Cypress" />
+import '@testing-library/cypress/add-commands';
+
 Cypress.Commands.add('login', () => {
   cy.visit('/auth/signin');
 

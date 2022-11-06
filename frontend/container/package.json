@@ -7,7 +7,8 @@
     "build:start": "cd dist && PORT=8080 npx serve",
     "start": "webpack serve --config config/webpack.dev.js",
     "start:live": "webpack serve --config config/webpack.dev.js --live-reload --hot",
-    "cypress:open": "cypress open"
+    "cypress:run": "cypress run --e2e --browser chrome",
+    "cypress:open": "cypress open --e2e --browser chrome"
   },
   "license": "MIT",
   "author": {
@@ -31,6 +32,7 @@
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.10.4",
+    "@testing-library/cypress": "^8.0.3",
     "@types/node": "^18.7.17",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",

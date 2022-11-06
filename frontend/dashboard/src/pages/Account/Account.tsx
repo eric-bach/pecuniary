@@ -1,22 +1,20 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import FormHelperText from '@mui/material/FormHelperText';
 import { useMutation } from '@apollo/client';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { CREATE_ACCOUNT, UPDATE_ACCOUNT, DELETE_ACCOUNT, GET_ACCOUNT } from './graphql/graphql';
 import Loading from '../../components/Loading';
-import { AccountProps, AccountViewModel, CreateAccountInput, DeleteAccountInput, UpdateAccountInput } from './types/Account';
 import UserContext from '../../contexts/UserContext';
+import { CREATE_ACCOUNT, UPDATE_ACCOUNT, DELETE_ACCOUNT, GET_ACCOUNT } from './graphql/graphql';
+import { AccountProps, AccountViewModel, CreateAccountInput, DeleteAccountInput, UpdateAccountInput } from './types/Account';
 
 enum MODE {
   CREATE,
@@ -24,13 +22,13 @@ enum MODE {
   EDIT,
 }
 
-export default function AccountForm(props: AccountProps) {
+export default function Test(props: AccountProps) {
   const { id: aggregateId }: { id: string } = useParams();
-
   const [account, setAccount] = useState(props.location.state?.account ?? undefined);
-  const [accountId, setAccountId] = useState(aggregateId);
-  const [mode, setMode] = useState(accountId ? MODE.VIEW : MODE.CREATE);
+  const [mode, setMode] = useState(aggregateId ? MODE.VIEW : MODE.CREATE);
+  const [button, setButton] = useState('');
   const [userId, setUserId] = useState('');
+
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
   const [updateAccountMutation] = useMutation(UPDATE_ACCOUNT);
   const [deleteAccountMutation] = useMutation(DELETE_ACCOUNT);
@@ -44,7 +42,7 @@ export default function AccountForm(props: AccountProps) {
       query: GET_ACCOUNT,
       variables: {
         userId: localStorage.getItem('userId'),
-        aggregateId: accountId,
+        aggregateId,
       },
     });
   }
@@ -56,15 +54,19 @@ export default function AccountForm(props: AccountProps) {
       setUserId(u);
     }
 
-    // Loading URL directly with aggregateId
-    if (!account && aggregateId) {
+    if (account) {
+      formik.values.name = account.name;
+      formik.values.type = account.type;
+      formik.values.description = account.description;
+    } else if (!account && aggregateId) {
+      // Loading URL directly with aggregateId
       getAccount().then((resp) => {
         console.log('[ACCOUNT] Found Account response:', resp);
 
         let acc = resp.data?.getAccounts?.items[0];
 
         if (!acc) {
-          console.log('[ACCOUNT] No Account found matching:', accountId);
+          console.log('[ACCOUNT] No Account found matching:', aggregateId);
           window.location.pathname = '/app/accounts';
         }
 
@@ -80,8 +82,8 @@ export default function AccountForm(props: AccountProps) {
     setMode(mode === MODE.VIEW ? MODE.EDIT : MODE.VIEW);
   };
 
-  const handleClick = (event: any, values: AccountViewModel) => {
-    switch (event.submitter.id) {
+  const handleSubmit = (values: any) => {
+    switch (button) {
       case 'create':
         createAccount(values);
         break;
@@ -142,12 +144,12 @@ export default function AccountForm(props: AccountProps) {
   };
 
   const deleteAccount = () => {
-    console.log('[ACCOUNT] Deleting Account:', accountId);
+    console.log('[ACCOUNT] Deleting Account:', aggregateId);
 
     const params: DeleteAccountInput = {
       deleteAccountInput: {
         userId: userId,
-        aggregateId: accountId,
+        aggregateId: aggregateId,
       },
     };
     deleteAccountMutation({
@@ -164,9 +166,9 @@ export default function AccountForm(props: AccountProps) {
 
   const formik = useFormik({
     initialValues: {
-      name: account?.name,
-      type: account?.type ?? '',
-      description: account?.description,
+      name: '',
+      type: '',
+      description: '',
     },
     validationSchema: yup.object({
       name: yup.string().required('Please enter an Account name'),
@@ -174,7 +176,8 @@ export default function AccountForm(props: AccountProps) {
       description: yup.string().required('Please enter an Account description'),
     }),
     onSubmit: (values) => {
-      handleClick(event, values);
+      console.log('Formik Submitting:', values);
+      handleSubmit(values);
     },
   });
 
@@ -186,7 +189,7 @@ export default function AccountForm(props: AccountProps) {
   return (
     <Container maxWidth='lg'>
       <Typography variant='h4'>Add Account</Typography>
-      <Box component='form' alignItems='left' sx={{ width: '50%' }} noValidate autoComplete='off' onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
         {mode === MODE.VIEW && (
           <Button variant='contained' color='primary' onClick={toggleEdit}>
             Edit
@@ -194,7 +197,18 @@ export default function AccountForm(props: AccountProps) {
         )}
         {mode === MODE.EDIT && (
           <>
-            <Button id='edit' name='edit' type='submit' variant='contained' color='success'>
+            <Button
+              id='edit'
+              name='edit'
+              type='submit'
+              variant='contained'
+              color='success'
+              onClick={(e) => {
+                //@ts-ignore
+                setButton(e.target.id);
+                formik.handleSubmit;
+              }}
+            >
               Update
             </Button>
             <Button
@@ -205,6 +219,11 @@ export default function AccountForm(props: AccountProps) {
               color='error'
               sx={{
                 ml: 1,
+              }}
+              onClick={(e) => {
+                //@ts-ignore
+                setButton(e.target.id);
+                formik.handleSubmit;
               }}
             >
               Delete
@@ -221,6 +240,7 @@ export default function AccountForm(props: AccountProps) {
             </Button>
           </>
         )}
+
         <TextField
           id='name'
           name='name'
@@ -232,21 +252,20 @@ export default function AccountForm(props: AccountProps) {
           helperText={formik.touched.name && formik.errors.name}
           variant='outlined'
           margin='normal'
-          required
-          fullWidth
-          disabled={mode === MODE.VIEW}
-          autoFocus
+          sx={{ width: '100%' }}
         />
+
         <FormControl sx={{ width: '100%' }}>
-          <InputLabel>Account Type</InputLabel>
-          <Select
+          <TextField
+            select
             id='type'
             name='type'
-            label='Account Type'
+            label='Account type'
             value={formik.values.type}
             onChange={formik.handleChange}
-            disabled={mode === MODE.VIEW}
-            displayEmpty
+            error={formik.touched.type && Boolean(formik.errors.type)}
+            variant='outlined'
+            margin='normal'
             sx={{ width: '100%' }}
           >
             {accountTypes.map((type) => (
@@ -254,8 +273,10 @@ export default function AccountForm(props: AccountProps) {
                 {type}
               </MenuItem>
             ))}
-          </Select>
+          </TextField>
+          <FormHelperText>{formik.errors.type && formik.touched.type && formik.errors.type}</FormHelperText>
         </FormControl>
+
         <TextField
           id='description'
           name='description'
@@ -267,16 +288,26 @@ export default function AccountForm(props: AccountProps) {
           helperText={formik.touched.description && formik.errors.description}
           variant='outlined'
           margin='normal'
-          required
-          disabled={mode === MODE.VIEW}
-          fullWidth
+          sx={{ width: '100%' }}
         />
+
         {mode === MODE.CREATE && (
-          <Button id='create' name='create' type='submit' variant='contained' color='primary'>
+          <Button
+            id='create'
+            name='create'
+            type='submit'
+            variant='contained'
+            color='primary'
+            onClick={(e) => {
+              //@ts-ignore
+              setButton(e.target.id);
+              formik.handleSubmit;
+            }}
+          >
             Submit
           </Button>
         )}
-      </Box>
+      </form>
     </Container>
   );
 }

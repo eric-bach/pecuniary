@@ -86,7 +86,7 @@ export default function SignIn({ onSignIn }: any) {
               fullWidth
               autoComplete='current-password'
             />
-            <FormControlLabel control={<Checkbox value='remember' color='primary' />} label='Remember me' />
+            <FormControlLabel checked control={<Checkbox value='remember' color='primary' />} label='Remember me' />
             <Button
               type='submit'
               name='signin'

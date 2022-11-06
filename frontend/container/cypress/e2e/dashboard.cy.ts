@@ -1,7 +1,8 @@
+/// <reference types="Cypress" />
+
 describe('Dashboard Tests', () => {
   beforeEach(() => {
     cy.login();
-
     cy.contains('Logout');
   });
 

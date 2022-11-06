@@ -7,4 +7,5 @@ export default defineConfig({
     baseUrl: defaultBaseUrl,
     setupNodeEvents(on, config) {},
   },
+  video: false,
 });
