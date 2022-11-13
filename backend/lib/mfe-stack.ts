@@ -36,7 +36,7 @@ export class MfeStack extends Stack {
 
     // S3 bucket for client app
     const hostingBucket = new Bucket(this, 'PecuniaryWebsiteHostingBucket', {
-      bucketName: `${props.appName}-mfe-website-${props.envName}`,
+      bucketName: `${props.appName}-mfe-website-vietaws-${props.envName}`,
       websiteIndexDocument: 'index.html',
       publicReadAccess: false,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,

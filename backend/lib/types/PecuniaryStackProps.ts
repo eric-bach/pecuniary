@@ -19,10 +19,7 @@ export interface PecuniaryMessagingStackProps extends PecuniaryBaseStackProps {
 
 export interface PecuniaryApiStackProps extends PecuniaryBaseStackProps {
   params: {
-    userPoolId: string;
     dataTableArn: string;
-    eventHandlerQueueArn: string;
-    eventBusArn: string;
   };
 }
 

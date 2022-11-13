@@ -19,7 +19,6 @@
     "deploy-backend": "npm run quick-deploy -- -s backend",
     "deploy-frontend": "npm run quick-deploy -- -s frontend",
     "quick-deploy": "ts-node ./helpers/deploy.ts",
-    "seed": "npm run build && ts-node ./helpers/seed.ts",
     "test": "npm run build && jest --watchAll=false --coverage",
     "watch": "tsc -w"
   },
