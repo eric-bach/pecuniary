@@ -113,7 +113,7 @@ export class FrontendStack extends Stack {
       serverSideEncryption: ServerSideEncryption.AES_256,
       cacheControl: [CacheControl.setPublic(), CacheControl.maxAge(Duration.minutes(1))],
       distribution,
-      distributionPaths: ['*'],
+      distributionPaths: ['/*'],
     });
 
     // if (props.env === 'prod') {
