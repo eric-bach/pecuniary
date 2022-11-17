@@ -101,16 +101,16 @@ jobs:
       #     cat aws-exports.js
       #   working-directory: client/src
 
-      - name: Create frontend/container/.env file
-        run: |
-          touch .env
-          echo PRODUCTION_DOMAIN=${{ secrets.PRODUCTION_DOMAIN }} >> .env
-          echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.REACT_APP_COGNITO_USERPOOL_ID }} >> .env
-          echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
-          echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.REACT_APP_APPSYNC_ENDPOINT }} >> .env
-          echo REACT_APP_APPSYNC_REGION=${{ secrets.REACT_APP_APPSYNC_REGION }} >> .env
-          cat .env
-        working-directory: frontend/container
+      # - name: Create frontend/container/.env file
+      #   run: |
+      #     touch .env
+      #     echo PRODUCTION_DOMAIN=${{ secrets.PRODUCTION_DOMAIN }} >> .env
+      #     echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.REACT_APP_COGNITO_USERPOOL_ID }} >> .env
+      #     echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
+      #     echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.REACT_APP_APPSYNC_ENDPOINT }} >> .env
+      #     echo REACT_APP_APPSYNC_REGION=${{ secrets.REACT_APP_APPSYNC_REGION }} >> .env
+      #     cat .env
+      #   working-directory: frontend/container
 
       - name: Build All
         run: npm run build-all
