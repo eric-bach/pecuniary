@@ -113,8 +113,8 @@ jobs:
       #   working-directory: frontend/container
 
       - name: Build All
-        run: npm run build-all
-        working-directory: backend
+        run: npm ci && npm run build
+        working-directory: client
 
       - name: CDK Deploy Frontend
         run: npm run deploy-frontend prod
