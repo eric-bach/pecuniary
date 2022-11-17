@@ -47,7 +47,6 @@ export class ApiStack extends Stack {
         'accountsResolver',
         'package-lock.json'
       ),
-
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -55,8 +54,6 @@ export class ApiStack extends Stack {
         REGION: REGION,
       },
       bundling: {
-        format: OutputFormat.CJS,
-        target: 'es2020',
         commandHooks: {
           beforeBundling(): string[] {
             return [
@@ -124,7 +121,7 @@ export class ApiStack extends Stack {
       path: '/v1/orders',
       methods: [HttpMethod.POST],
       integration: new HttpLambdaIntegration(
-        'posts-todos-integration',
+        'posts-todos-33integration',
         accountsResolverFunction,
       ),
     });
