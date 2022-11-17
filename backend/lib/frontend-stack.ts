@@ -116,17 +116,17 @@ export class FrontendStack extends Stack {
       distributionPaths: ['/static/css/*'],
     });
 
-    if (props.env === 'prod') {
-      // Route53 HostedZone A record
-      var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
-        domainName: 'ericbach.dev',
-      });
-      new ARecord(this, 'AliasRecord', {
-        zone: existingHostedZone,
-        recordName: `${props.appName}.ericbach.dev`,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-      });
-    }
+    // if (props.env === 'prod') {
+    //   // Route53 HostedZone A record
+    //   var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
+    //     domainName: 'ericbach.dev',
+    //   });
+    //   new ARecord(this, 'AliasRecord', {
+    //     zone: existingHostedZone,
+    //     recordName: `${props.appName}.ericbach.dev`,
+    //     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+    //   });
+    // }
 
     /***
      *** Outputs

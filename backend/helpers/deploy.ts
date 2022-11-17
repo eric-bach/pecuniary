@@ -20,7 +20,7 @@ const cdkDeploy = () => {
 
     if (options.stage) {
       runCommand(
-        `npm run cdk -- deploy --all -c stage=${options.stage} -c env=${env} ${profileArg} --require-approval=never`,
+        `npm run cdk -- deploy --hotswap --all -c stage=${options.stage} -c env=${env} ${profileArg} --require-approval=never`,
         `🚀 Deploying ${options.stage}...`
       );
     } else {

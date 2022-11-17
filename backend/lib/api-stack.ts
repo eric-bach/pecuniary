@@ -2,14 +2,16 @@ import { Duration, Stack } from 'aws-cdk-lib';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { NodejsFunction, OutputFormat } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import * as path from 'path';
 import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
-
-const dotenv = require('dotenv');
-
-dotenv.config();
+import {
+  CorsHttpMethod,
+  HttpApi,
+  HttpMethod,
+} from '@aws-cdk/aws-apigatewayv2-alpha';
+import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 
 export class ApiStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryApiStackProps) {
@@ -22,14 +24,52 @@ export class ApiStack extends Stack {
       functionName: `${props.appName}-${props.envName}-AccountsResolver`,
       runtime: Runtime.NODEJS_14_X,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/accountsResolver/main.ts'),
+      entry: path.join(
+        __dirname,
+        '..',
+        'src',
+        'lambda',
+        'accountsResolver',
+        'index.ts'
+      ),
+      projectRoot: path.join(
+        __dirname,
+        '..',
+        'src',
+        'lambda',
+        'accountsResolver'
+      ),
+      depsLockFilePath: path.join(
+        __dirname,
+        '..',
+        'src',
+        'lambda',
+        'accountsResolver',
+        'package-lock.json'
+      ),
+
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
         DATA_TABLE_NAME: dataTable.tableName,
         REGION: REGION,
       },
-      //deadLetterQueue: commandHandlerQueue,
+      bundling: {
+        format: OutputFormat.CJS,
+        target: 'es2020',
+        commandHooks: {
+          beforeBundling(): string[] {
+            return [
+            ];
+          },
+          afterBundling(inputDir: string, outputDir: string): string[] {
+            return [`cp ${inputDir}/openapi.yml ${outputDir}`];
+          },
+          beforeInstall() {
+            return [];
+          },
+        },
+      }
     });
     // Add permissions to DynamoDB table
     accountsResolverFunction.addToRolePolicy(
@@ -42,9 +82,51 @@ export class ApiStack extends Stack {
     accountsResolverFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi'],
+        actions: ['dynamodb:*'],
+        resources: ["*"],
       })
     );
+
+    // 👇 create our HTTP Api
+    const httpApi = new HttpApi(this, 'http-api-example', {
+      description: 'HTTP API example',
+      corsPreflight: {
+        allowHeaders: [
+          'Content-Type',
+          'X-Amz-Date',
+          'Authorization',
+          'X-Api-Key',
+        ],
+        allowMethods: [
+          CorsHttpMethod.OPTIONS,
+          CorsHttpMethod.GET,
+          CorsHttpMethod.POST,
+          CorsHttpMethod.PUT,
+          CorsHttpMethod.PATCH,
+          CorsHttpMethod.DELETE,
+        ],
+        allowCredentials: true,
+        allowOrigins: ['http://localhost:3000'],
+      },
+    });
+    // 👇 add route for GET /todos
+    httpApi.addRoutes({
+      path: '/v1/orders',
+      methods: [HttpMethod.GET],
+      integration: new HttpLambdaIntegration(
+        'get-todos-integration',
+        accountsResolverFunction,
+      ),
+    });
+
+    // 👇 add route for POST /todos
+    httpApi.addRoutes({
+      path: '/v1/orders',
+      methods: [HttpMethod.POST],
+      integration: new HttpLambdaIntegration(
+        'posts-todos-integration',
+        accountsResolverFunction,
+      ),
+    });
   }
 }

@@ -1,13 +1,20 @@
+///<reference types="webpack-env" />
+import React from 'react';
 import ReactDOM from 'react-dom';
-import { ApolloProvider } from '@apollo/client';
+import {Provider} from 'react-redux';
 
-import client from './client';
+import './index.css';
+import store from './services/redux/store';
 
-import App from './App';
+const App = require('./App').default;
 
-ReactDOM.render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>,
-  document.getElementById('root')
-);
+const render = () => {
+	ReactDOM.render(
+		<Provider store={store}>
+			<App />
+		</Provider>,
+		document.getElementById('root')
+	);
+};
+
+render();

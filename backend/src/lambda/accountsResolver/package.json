@@ -1,20 +1,33 @@
 {
-  "name": "createaccount",
+  "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "files": [
+    "dist",
+    "openapi.yml",
+    "package*.json"
+  ],
   "scripts": {
+    "test": "jest",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "openapi-generator-cli": "openapi-generator-cli",
+    "build:watch": "tsc -w --preserveWatchOutput",
+    "typegen": "openapi-generator-cli generate -i ./src/openapi.yml -o src/generated-sources/openapi -g typescript-fetch --additional-properties=supportsES6=true,npmVersion=8.15.0,typescriptThreePlus=true"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.28.0",
-    "@aws-sdk/util-dynamodb": "^3.28.0",
-    "uuid": "^8.3.2"
+    "ulid": "^2.3.0",
+    "openapi-backend": "^5.3.0",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "2.767.0"
   },
   "devDependencies": {
-    "@types/node": "^18.7.18"
+    "@openapitools/openapi-generator-cli": "^2.5.2",
+    "@types/node": "^14.0.13",
+    "@types/source-map-support": "^0.5.3",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.8.4",
+    "@types/aws-lambda": "^8.10.56"
   }
 }

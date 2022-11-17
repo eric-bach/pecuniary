@@ -5,7 +5,7 @@ import { ApiStack } from '../lib/api-stack';
 import { CiCdStack } from '../lib/ci-cd-stack';
 import { APP_NAME, DEFAULT_VALUES } from '../lib/constants';
 import { DatabaseStack } from '../lib/database-stack';
-import { MfeStack } from '../lib/mfe-stack';
+import { FrontendStack } from '../lib/frontend-stack';
 import { GitHubStackProps, PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
 
 const app = new App();
@@ -44,7 +44,6 @@ switch (stage) {
   case 'backend': {
     const database = new DatabaseStack(app, `${APP_NAME}-database-${envName}`, baseProps);
 
-
     new ApiStack(app, `${APP_NAME}-api-${envName}`, {
       ...baseProps, 
         params: {
@@ -56,13 +55,12 @@ switch (stage) {
   }
 
   case 'frontend': {
-    new MfeStack(app, `${APP_NAME}-mfe-container-${envName}`, {
+    new FrontendStack(app, `${APP_NAME}-frontend-${envName}`, {
       ...baseProps,
       params: {
         certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
       },
     });
-
     break;
   }
 }
