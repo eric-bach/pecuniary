@@ -11,6 +11,13 @@ tags:
     description: Order
 
 paths:
+  /v1/products:
+    get:
+      operationId: getProducts
+      summary: getProducts
+      responses:
+        200:
+          description: Success
   /v1/orders:
     get:
       operationId: getOrders

@@ -4,9 +4,9 @@ import InstructionsBox from 'components/InstructionsBox';
 import { NOT_ENOUGH_PRODUCTS } from 'constants/Alerts';
 import React, { useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { getProducts } from 'services/product-service';
 import AppSlice from 'services/redux/actionsAndSlicers/AppSlice';
 import ProductSelectionSlice from 'services/redux/actionsAndSlicers/ProductSelectionSlice';
+import { fetchProducts } from 'services/redux/actionsAndSlicers/ProductSlice';
 import { RootState } from 'services/redux/rootReducer';
 import { useEffectUnsafe } from 'services/unsafeHooks';
 import ProductItem from './components/ProductItem';
@@ -19,17 +19,15 @@ const useStyles = makeStyles((theme) => ({
 		textAlign: 'center',
 	},
 
-
 	gridItem: {
 		maxWidth: theme.spacing(55),
 		margin: theme.spacing(0, 3, 4, 3),
 	},
 }));
 
-
-
 const ProductSelection: React.FC = () => {
-	const products = getProducts()
+	const { products } = useSelector((state: RootState) => state.Product, shallowEqual);
+
 	const ACTION_BUTTON_LABEL = 'Thêm vào giỏ hàng';
 	const ACTION_BUTTON_REMOVE_LABEL = 'Xóa khỏi giỏ hàng';
 
@@ -40,12 +38,11 @@ const ProductSelection: React.FC = () => {
 	const { selectedProducts } = productSelection
 	const dispatch = useDispatch();
 
+	dispatch(fetchProducts());
+
 	const manageNotEnoughItemsAlerts = () => {
 		if (selectedProducts.length < 1) {
 			dispatch(AppSlice.actions.addAlert(NOT_ENOUGH_PRODUCTS));
-			// dispatch(AppSlice.actions.goToInstructionsStep(5));
-			// dispatch(AppSlice.actions.setAreInstructionsVisible(true));
-
 		}
 		else { dispatch(AppSlice.actions.deleteAlert(NOT_ENOUGH_PRODUCTS)); }
 	};
@@ -70,13 +67,8 @@ const ProductSelection: React.FC = () => {
 
 					// action callback
 					const actionCallback = isSelected
-						? () => {
-							dispatch(ProductSelectionSlice.actions.deleteSelectedProduct(product.id));
-						}
-
-						: () => {
-							dispatch(ProductSelectionSlice.actions.addSelectedProduct(product));
-						}
+						? () => dispatch(ProductSelectionSlice.actions.deleteSelectedProduct(product.id))
+						: () => dispatch(ProductSelectionSlice.actions.addSelectedProduct(product))
 
 					return <>
 						<Fade

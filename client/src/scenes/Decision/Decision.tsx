@@ -139,9 +139,7 @@ const Decision: React.FC = () => {
 		const newStep = activeStepNum + newDirection;
 
 		if (newStep === 4) {
-			alert('create order')
 			const order: Order = {
-
 			}
 			order.contact = contact
 			order.deliveryAddress = deliveryAddress
@@ -149,7 +147,6 @@ const Decision: React.FC = () => {
 			dispatch(createOrderAsync(order))
 			setStepCompleted(activeStepNum);
 
-			
 			if (status === 'idle') {
 				setActiveStepNum([newStep, newDirection]);
 			}

@@ -3,6 +3,7 @@ import OpenAPIBackend, { Context } from 'openapi-backend';
 import { Order } from './generated-sources/openapi/models/Order';
 
 import * as orderService from './order/order-services';
+import { getProducts } from './product/product-service';
 export function replyJSON(
     json: unknown,
     opts?: Partial<Lambda.APIGatewayProxyStructuredResultV2>,
@@ -30,6 +31,9 @@ const api = new OpenAPIBackend({
             const order = c.request.requestBody as Order
             const createdOrder = await orderService.createOrder(order)
             return createdOrder;
+        },
+        getProducts:  async (c: Context) => {
+            return getProducts()
         },
         getOrders: async (c: Context) => {
             // Configure authentication

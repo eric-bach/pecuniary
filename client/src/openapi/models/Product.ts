@@ -25,7 +25,7 @@ export interface Product {
      * @type {string}
      * @memberof Product
      */
-    id?: string;
+    id: string;
     /**
      * 
      * @type {number}

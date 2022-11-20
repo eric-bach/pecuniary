@@ -2,9 +2,9 @@ import { Box, Button, Card, Collapse, FormControl, FormControlLabel, Radio, Radi
 import { ExpandMore } from "@material-ui/icons";
 import { InsetSpacing } from "components/Spacing";
 import React, { useState } from "react";
-import { Product } from "services/product-service";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
+import { Product } from "services/redux/actionsAndSlicers/ProductSlice";
 
 export type ProductItemProps = {
     product: Product

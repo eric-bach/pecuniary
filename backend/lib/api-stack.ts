@@ -125,5 +125,15 @@ export class ApiStack extends Stack {
         accountsResolverFunction,
       ),
     });
+
+    // 👇 add route for POST /todos
+    httpApi.addRoutes({
+      path: '/v1/products',
+      methods: [HttpMethod.GET],
+      integration: new HttpLambdaIntegration(
+        'posts-todos-get',
+        accountsResolverFunction,
+      ),
+    });
   }
 }

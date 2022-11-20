@@ -71,8 +71,8 @@ const App: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		if (isDarkModeActive) {localStorage.setItem('isDarkModeActive', 'true');}
-		else {localStorage.setItem('isDarkModeActive', 'false');}
+		if (isDarkModeActive) { localStorage.setItem('isDarkModeActive', 'true'); }
+		else { localStorage.setItem('isDarkModeActive', 'false'); }
 	}, [isDarkModeActive]);
 
 	const defineDarkMode = () => {
@@ -84,11 +84,11 @@ const App: React.FC = () => {
 				setIsDarkModeActive(false);
 				localStorage.setItem('isDarkModeActive', 'false');
 			}
-		} else if (localStorage.getItem('isDarkModeActive') === 'true') {setIsDarkModeActive(true);}
+		} else if (localStorage.getItem('isDarkModeActive') === 'true') { setIsDarkModeActive(true); }
 	};
 
 	const initializeGoogleAnalytics = () => {
-		if (process.env.REACT_APP_googleAnalyticsKey != null) {ReactGA.initialize(process.env.REACT_APP_googleAnalyticsKey);}
+		if (process.env.REACT_APP_googleAnalyticsKey != null) { ReactGA.initialize(process.env.REACT_APP_googleAnalyticsKey); }
 
 		if (window.matchMedia('(display-mode: standalone)').matches) {
 			ReactGA.event({
@@ -131,10 +131,10 @@ const App: React.FC = () => {
 						position='static'
 						color='primary'
 						className={classes.appBar}
-						style={{marginBottom: isMobile ? 0 : appTheme.spacing(-2)}}
+						style={{ marginBottom: isMobile ? 0 : appTheme.spacing(-2) }}
 					>
 						<Toolbar>
-							<div style={{flexGrow: 1}} />
+							<div style={{ flexGrow: 1 }} />
 							<ComponentsTooltip>
 								<IconButton
 									aria-label={isDarkModeActive ? 'Set light theme' : 'Set dark theme'}
