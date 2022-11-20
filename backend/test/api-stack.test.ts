@@ -36,7 +36,7 @@ describe('Api Stack contains expected resources', () => {
     template.hasResourceProperties(
       'AWS::Lambda::Function',
       Match.objectLike({
-        FunctionName: `pecuniary-${props.envName}-AccountsResolver`,
+        FunctionName: `pecuniary-${props.envName}-OrderApi`,
         Handler: 'index.handler',
         Runtime: 'nodejs14.x',
       })

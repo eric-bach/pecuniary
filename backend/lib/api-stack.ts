@@ -20,8 +20,8 @@ export class ApiStack extends Stack {
     const REGION = Stack.of(this).region;
     const dataTable = Table.fromTableArn(this, 'table', props.params.dataTableArn);
 
-    const accountsResolverFunction = new NodejsFunction(this, 'AccountsResolver', {
-      functionName: `${props.appName}-${props.envName}-AccountsResolver`,
+    const OrderApiFunction = new NodejsFunction(this, 'OrderApi', {
+      functionName: `${props.appName}-${props.envName}-OrderApi`,
       runtime: Runtime.NODEJS_14_X,
       handler: 'handler',
       entry: path.join(
@@ -29,7 +29,7 @@ export class ApiStack extends Stack {
         '..',
         'src',
         'lambda',
-        'accountsResolver',
+        'OrderApi',
         'index.ts'
       ),
       projectRoot: path.join(
@@ -37,14 +37,14 @@ export class ApiStack extends Stack {
         '..',
         'src',
         'lambda',
-        'accountsResolver'
+        'OrderApi'
       ),
       depsLockFilePath: path.join(
         __dirname,
         '..',
         'src',
         'lambda',
-        'accountsResolver',
+        'OrderApi',
         'package-lock.json'
       ),
       memorySize: 512,
@@ -69,14 +69,14 @@ export class ApiStack extends Stack {
       }
     });
     // Add permissions to DynamoDB table
-    accountsResolverFunction.addToRolePolicy(
+    OrderApiFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
         resources: [dataTable.tableArn],
       })
     );
-    accountsResolverFunction.addToRolePolicy(
+    OrderApiFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:*'],
@@ -112,7 +112,7 @@ export class ApiStack extends Stack {
       methods: [HttpMethod.GET],
       integration: new HttpLambdaIntegration(
         'get-todos-integration',
-        accountsResolverFunction,
+        OrderApiFunction,
       ),
     });
 
@@ -122,7 +122,7 @@ export class ApiStack extends Stack {
       methods: [HttpMethod.POST],
       integration: new HttpLambdaIntegration(
         'posts-todos-33integration',
-        accountsResolverFunction,
+        OrderApiFunction,
       ),
     });
 
@@ -132,7 +132,7 @@ export class ApiStack extends Stack {
       methods: [HttpMethod.GET],
       integration: new HttpLambdaIntegration(
         'posts-todos-get',
-        accountsResolverFunction,
+        OrderApiFunction,
       ),
     });
   }
