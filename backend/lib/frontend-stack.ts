@@ -1,8 +1,4 @@
-import { Stack, Duration, RemovalPolicy } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-import { PolicyStatement, CanonicalUserPrincipal } from 'aws-cdk-lib/aws-iam';
-import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { BlockPublicAccess, Bucket, HttpMethods } from 'aws-cdk-lib/aws-s3';
+import { Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import {
   CloudFrontAllowedMethods,
   CloudFrontWebDistribution,
@@ -10,15 +6,17 @@ import {
   PriceClass,
   SecurityPolicyProtocol,
   SSLMethod,
-  ViewerCertificate,
+  ViewerCertificate
 } from 'aws-cdk-lib/aws-cloudfront';
-import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
-import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import { CanonicalUserPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { BlockPublicAccess, Bucket, HttpMethods } from 'aws-cdk-lib/aws-s3';
+import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { Construct } from 'constructs';
 
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { PecuniaryFrontendStackProps } from './types/PecuniaryStackProps';
 
 const dotenv = require('dotenv');
-import { PecuniaryFrontendStackProps } from './types/PecuniaryStackProps';
 
 dotenv.config();
 
