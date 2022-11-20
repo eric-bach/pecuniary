@@ -37,7 +37,7 @@ export class FrontendStack extends Stack {
 
     // S3 bucket for client app
     const hostingBucket = new Bucket(this, 'PecuniaryHostingBucket', {
-      bucketName: `${props.appName}-hosting-bucket-${props.envName}`,
+      bucketName: `${props.appName}-hosting-bucket111-${props.envName}`,
       websiteIndexDocument: 'index.html',
       publicReadAccess: false,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
