@@ -14,6 +14,8 @@ import { BucketDeployment, CacheControl, ServerSideEncryption, Source } from 'aw
 import { Construct } from 'constructs';
 
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { PecuniaryFrontendStackProps } from './types/PecuniaryStackProps';
 
 const dotenv = require('dotenv');
@@ -94,7 +96,7 @@ export class FrontendStack extends Stack {
       viewerCertificate:
         props.envName === 'prod'
           ? ViewerCertificate.fromAcmCertificate(certificate, {
-              aliases: [`${props.appName}.ericbach.dev`],
+              aliases: [`${props.appName}.bebi.store`],
               securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
               sslMethod: SSLMethod.SNI,
             })
@@ -114,17 +116,17 @@ export class FrontendStack extends Stack {
       distributionPaths: ['/*'],
     });
 
-    // if (props.env === 'prod') {
-    //   // Route53 HostedZone A record
-    //   var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
-    //     domainName: 'ericbach.dev',
-    //   });
-    //   new ARecord(this, 'AliasRecord', {
-    //     zone: existingHostedZone,
-    //     recordName: `${props.appName}.ericbach.dev`,
-    //     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-    //   });
-    // }
+    if (props.env === 'prod') {
+      // Route53 HostedZone A record
+      var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
+        domainName: 'bebi.store',
+      });
+      new ARecord(this, 'AliasRecord', {
+        zone: existingHostedZone,
+        recordName: `${props.appName}.bebi.store`,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+      });
+    }
 
     /***
      *** Outputs
