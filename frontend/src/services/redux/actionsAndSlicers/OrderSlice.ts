@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Configuration, Order, OrderApi } from 'openapi';
 
 const configuration = new Configuration({
-	basePath: process.env.ORDERS_API_URL,
+	basePath: process.env.ORDERS_API_URL ?? 'https://sss9czm0s0.execute-api.ap-southeast-1.amazonaws.com',
 });
 
 const orderApi = new OrderApi(configuration);

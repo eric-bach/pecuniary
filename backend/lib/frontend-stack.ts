@@ -111,7 +111,7 @@ export class FrontendStack extends Stack {
       distributionPaths: ['/*'],
     });
 
-    if (props.env === 'prod') {
+    if (props.envName === 'prod') {
       var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
         domainName: 'bebi.store',
       });

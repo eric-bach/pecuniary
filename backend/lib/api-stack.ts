@@ -76,6 +76,7 @@ export class ApiStack extends Stack {
     );
 
     const httpApi = new HttpApi(this, 'http-api', {
+      apiName: `${props.appName}-${props.envName}-orders-api`,
       description: 'HTTP API',
       corsPreflight: {
         allowHeaders: [
@@ -93,7 +94,7 @@ export class ApiStack extends Stack {
           CorsHttpMethod.DELETE,
         ],
         allowCredentials: true,
-        allowOrigins: ['http://localhost:3000'],
+        allowOrigins: ['http://localhost:3000', 'http://127.0.0.1:5500', 'https://vietaws-meetup-10-cdk.bebi.store'],
       },
     });
 

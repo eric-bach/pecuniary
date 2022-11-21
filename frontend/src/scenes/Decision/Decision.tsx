@@ -16,7 +16,6 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { createOrderAsync } from 'services/redux/actionsAndSlicers/OrderSlice';
 
 import ComponentsTooltip from '../../components/ComponentsTooltip';
-import InstructionsBox from '../../components/InstructionsBox';
 import { NOT_ENOUGH_CONTACT, NOT_ENOUGH_PRODUCTS } from '../../constants/Alerts';
 import AppSlice from '../../services/redux/actionsAndSlicers/AppSlice';
 import { RootState } from '../../services/redux/rootReducer';
@@ -119,11 +118,6 @@ const Decision: React.FC = () => {
 			})
 		);
 	};
-
-	const isInstructionsVisible =
-		(instructionsStepNum === 5 && activeStepNum === 1) ||
-		(instructionsStepNum === 7 && activeStepNum === 2) ||
-		(instructionsStepNum === 9 && activeStepNum === 3);
 
 	const setStepCompleted = (stepNum: number) => {
 		const newSteps = [...steps];
@@ -249,9 +243,6 @@ const Decision: React.FC = () => {
 							</Fab>
 						</ComponentsTooltip>
 					)}
-				</Grid>
-				<Grid className={classes.instructionsWrapper} item>
-					<InstructionsBox show={isInstructionsVisible} />
 				</Grid>
 				<Grid item>
 					{activeStepNum !== steps.length && (

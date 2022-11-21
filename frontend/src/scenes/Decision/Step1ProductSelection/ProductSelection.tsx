@@ -1,6 +1,5 @@
 import { Button, Fade, makeStyles } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
-import InstructionsBox from 'components/InstructionsBox';
 import { NOT_ENOUGH_PRODUCTS } from 'constants/Alerts';
 import React, { useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -117,8 +116,6 @@ function getActionButton(
 				>
 					{selectedLabel}
 				</Button>
-
-				<InstructionsBox show={false} />
 			</>
 		)
 	}

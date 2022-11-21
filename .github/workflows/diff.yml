@@ -7,7 +7,7 @@ on:
 
 jobs:
   prod-diff:
-    name: Diff
+    name: Production Diff
     runs-on: ubuntu-latest
     permissions:
       actions: write

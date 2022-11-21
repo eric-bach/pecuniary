@@ -21,7 +21,7 @@ type ProductState = {
 export const fetchProducts = createAsyncThunk(
 	'product/fetchProducts',
 	async () => {
-		const response = await fetch(`${process.env.ORDERS_API_URL}/v1/products`);
+		const response = await fetch(`${process.env.ORDERS_API_URL?? 'https://sss9czm0s0.execute-api.ap-southeast-1.amazonaws.com'}/v1/products`);
 		const j = await response.json();
 		return j
 	});

@@ -1,1 +1,6 @@
-{}
+{
+  "hosted-zone:account=827539266883:domainName=bebi.store:region=ap-southeast-1": {
+    "Id": "/hostedzone/Z06227862JSPQAH441KH7",
+    "Name": "bebi.store."
+  }
+}
