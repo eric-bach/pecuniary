@@ -13,12 +13,17 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Use Node.js 14.x
+      - name: Configure Node
         uses: actions/setup-node@v3
         with:
           node-version: 14.x
