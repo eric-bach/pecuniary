@@ -52,14 +52,6 @@ jobs:
         run: npm run cinstall-all
         working-directory: backend
 
-      - name: CDK Diff Check
-        if: contains(github.event_name, 'pull_request')
-        run: npm run diff-backend prod
-        env:
-          CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
-          DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-        working-directory: backend
-
       - name: CDK Deploy Backend
         if: contains(github.event_name, 'push')
         run: npm run deploy-backend prod
