@@ -47,7 +47,7 @@ export class ApiStack extends Stack {
         'order-api',
         'package-lock.json'
       ),
-      memorySize: 512,
+      memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {
         ORDERS_TABLE_NAME: ordersTable.tableName,
