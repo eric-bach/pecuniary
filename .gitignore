@@ -2,7 +2,7 @@
 *.d.ts
 !remoteTypes.d.ts
 node_modules
-/client/build
+/frontend/build
 **/dist/
 
 # CDK asset staging directory
