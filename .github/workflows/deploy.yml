@@ -1,4 +1,4 @@
-name: deploy-prod
+name: prod-deploy
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  deploy-backend:
-    name: Deploy Backend
+  prod-deploy-backend:
+    name: Production Deploy Backend
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -28,39 +28,36 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
           aws-region: ap-southeast-1
-
-      - name: Install NPM Dependencies (Backend)
-        run: npm ci
-        working-directory: backend
 
       - name: Create backend/.env file
         run: |
           touch .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
-          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
           cat .env
+        working-directory: backend
+
+      - name: Install NPM Dependencies (Backend)
+        run: npm ci
         working-directory: backend
 
       - name: Install NPM Dependencies
         run: npm run cinstall-all
         working-directory: backend
 
-      - name: CDK Deploy Backend
-        if: contains(github.event_name, 'push')
+      - name: Production CDK Deploy Backend
         run: npm run deploy-backend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
         working-directory: backend
 
-  deploy-frontend:
-    name: Deploy Frontend
+  prod-deploy-frontend:
+    name: Production Deploy Frontend
     runs-on: ubuntu-latest
-    needs: deploy-backend
+    needs: prod-deploy-backend
     permissions:
       actions: write
       contents: read
       id-token: write
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -84,42 +81,16 @@ jobs:
         run: npm run cinstall-all
         working-directory: backend
 
-      # - name: Create client/.env file - TEMP
-      #   run: |
-      #     touch .env
-      #     echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.REACT_APP_COGNITO_USERPOOL_ID }} >> .env
-      #     cp .env .env.prod
-      #     cat .env.prod
-      #   working-directory: client
-
-      # - name: Create client/src/aws-exports.js file - TEMP
-      #   run: |
-      #     touch aws-exports.js
-      #     echo const awsmobile = { aws_project_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_cognito_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_user_pools_id: '${{secrets.REACT_APP_COGNITO_USERPOOL_ID}}', aws_user_pools_web_client_id: '${{ secrets.REACT_APP_COGNITO_CLIENT_ID }}', aws_appsync_graphqlEndpoint: '${{ secrets.AWS_APPSYNC_GRAPHQL_ENDPOINT }}', aws_appsync_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS', }; >> aws-exports.js
-      #     echo export default awsmobile; >> aws-exports.js
-      #     cat aws-exports.js
-      #   working-directory: client/src
-
-      # - name: Create frontend/container/.env file
-      #   run: |
-      #     touch .env
-      #     echo PRODUCTION_DOMAIN=${{ secrets.PRODUCTION_DOMAIN }} >> .env
-      #     echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.REACT_APP_COGNITO_USERPOOL_ID }} >> .env
-      #     echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
-      #     echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.REACT_APP_APPSYNC_ENDPOINT }} >> .env
-      #     echo REACT_APP_APPSYNC_REGION=${{ secrets.REACT_APP_APPSYNC_REGION }} >> .env
-      #     cat .env
-      #   working-directory: frontend/container
-
-      - name: Build All
+      - name: Production Build Frontend
         if: contains(github.event_name, 'push')
         run: npm ci && npm run build
-        working-directory: client
+        env:
+          ORDERS_API_URL: hello.com
+        working-directory: frontend
 
-      - name: CDK Deploy Frontend
+      - name: Production CDK Deploy Frontend
         if: contains(github.event_name, 'push')
         run: npm run deploy-frontend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
-          DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
         working-directory: backend

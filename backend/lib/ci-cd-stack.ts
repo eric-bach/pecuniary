@@ -1,7 +1,7 @@
 import { Stack, Duration, CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { OpenIdConnectProvider, Role, WebIdentityPrincipal, ManagedPolicy, Conditions } from 'aws-cdk-lib/aws-iam';
-import { GitHubStackProps } from './types/PecuniaryStackProps';
+import { GitHubStackProps } from './types/StackProps';
 
 export class CiCdStack extends Stack {
   constructor(scope: Construct, id: string, props: GitHubStackProps) {

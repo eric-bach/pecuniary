@@ -1,0 +1,85 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@fontsource/inter": "^4.5.13",
+	"@material-ui/core": "^4.11.4",
+	"@material-ui/icons": "^4.11.2",
+	"@material-ui/lab": "^4.0.0-alpha.58",
+	"@reduxjs/toolkit": "^1.6.0",
+	"crypto-js": "^4.0.0",
+	"eslint-plugin-unused-imports": "^1.1.1",
+	"framer-motion": "^4.1.17",
+	"react": "^17.0.2",
+	"react-device-detect": "^1.17.0",
+	"react-dom": "^17.0.2",
+	"react-ga": "^3.3.0",
+	"react-redux": "^7.2.4",
+	"react-scripts": "^4.0.3",
+	"redux": "^4.1.0",
+	"redux-offline": "^2.0.0",
+	"redux-thunk": "^2.3.0",
+	"rxjs": "^7.1.0",
+	"yargs-parser": "^20.2.7"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:prod": "env-cmd -f .env.prod npm run-script build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/axe-core": "^2.0.7",
+		"@types/crypto-js": "^4.0.1",
+		"@types/cypress-axe": "^0.11.0",
+		"@types/jest": "^26.0.23",
+		"@types/jwt-decode": "^3.1.0",
+		"@types/react": "^17.0.11",
+		"@types/react-dom": "^17.0.7",
+		"@types/react-redux": "^7.1.16",
+		"@types/react-router-dom": "^5.1.7",
+		"@types/recharts": "^2.0.0",
+		"@types/redux-mock-store": "^1.0.2",
+		"@types/webpack-env": "^1.16.0",
+		"@typescript-eslint/eslint-plugin": "^4.26.1",
+		"@typescript-eslint/parser": "^4.26.1",
+		"babel-eslint": "^10.1.0",
+		"cypress": "^7.5.0",
+		"eslint": "^7.28.0",
+		"eslint-config-airbnb": "^18.2.1",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-config-react-app": "^6.0.0",
+		"eslint-plugin-flowtype": "^5.7.2",
+		"eslint-plugin-import": "^2.23.4",
+		"eslint-plugin-jsx-a11y": "^6.4.1",
+		"eslint-plugin-react": "^7.24.0",
+		"eslint-plugin-react-hooks": "^4.2.0",
+		"gh-pages": "^3.2.0",
+		"git-branch-is": "^4.0.0",
+		"husky": "^6.0.0",
+		"lint-staged": "^11.0.0",
+		"prettier": "2.3.1",
+		"redux-mock-store": "^1.5.4",
+		"typescript": "^4.3.2"
+	}
+}

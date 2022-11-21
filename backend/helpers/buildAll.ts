@@ -3,7 +3,7 @@ import { existsSync, readdirSync, statSync } from 'fs';
 import * as path from 'path';
 
 const root = path.resolve(process.cwd() + '/..');
-const excludedDirs = ['node_modules', 'cdk.out', 'build', 'client'];
+const excludedDirs = ['node_modules', 'cdk.out', 'build', 'frontend'];
 
 const subdirs = (dir: string) => {
   return readdirSync(dir)

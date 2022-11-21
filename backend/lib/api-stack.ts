@@ -5,7 +5,7 @@ import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, OutputFormat } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import * as path from 'path';
-import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
+import { ApiStackProps as ApiStackProps } from './types/StackProps';
 import {
   CorsHttpMethod,
   HttpApi,
@@ -14,14 +14,14 @@ import {
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 
 export class ApiStack extends Stack {
-  constructor(scope: Construct, id: string, props: PecuniaryApiStackProps) {
+  constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, props);
 
     const REGION = Stack.of(this).region;
-    const dataTable = Table.fromTableArn(this, 'table', props.params.dataTableArn);
+    const ordersTable = Table.fromTableArn(this, 'table', props.params.ordersTableArn);
 
-    const OrderApiFunction = new NodejsFunction(this, 'OrderApi', {
-      functionName: `${props.appName}-${props.envName}-OrderApi`,
+    const ordersApiFunction = new NodejsFunction(this, 'orders-api', {
+      functionName: `${props.appName}-${props.envName}-orders-api`,
       runtime: Runtime.NODEJS_14_X,
       handler: 'handler',
       entry: path.join(
@@ -29,7 +29,7 @@ export class ApiStack extends Stack {
         '..',
         'src',
         'lambda',
-        'OrderApi',
+        'order-api',
         'index.ts'
       ),
       projectRoot: path.join(
@@ -37,27 +37,25 @@ export class ApiStack extends Stack {
         '..',
         'src',
         'lambda',
-        'OrderApi'
+        'order-api'
       ),
       depsLockFilePath: path.join(
         __dirname,
         '..',
         'src',
         'lambda',
-        'OrderApi',
+        'order-api',
         'package-lock.json'
       ),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
-        REGION: REGION,
+        ORDERS_TABLE_NAME: ordersTable.tableName,
       },
       bundling: {
         commandHooks: {
           beforeBundling(): string[] {
-            return [
-            ];
+            return [];
           },
           afterBundling(inputDir: string, outputDir: string): string[] {
             return [`cp ${inputDir}/openapi.yml ${outputDir}`];
@@ -68,25 +66,17 @@ export class ApiStack extends Stack {
         },
       }
     });
-    // Add permissions to DynamoDB table
-    OrderApiFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
-        resources: [dataTable.tableArn],
-      })
-    );
-    OrderApiFunction.addToRolePolicy(
+
+    ordersApiFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:*'],
-        resources: ["*"],
+        resources: [ordersTable.tableArn],
       })
     );
 
-    // 👇 create our HTTP Api
-    const httpApi = new HttpApi(this, 'http-api-example', {
-      description: 'HTTP API example',
+    const httpApi = new HttpApi(this, 'http-api', {
+      description: 'HTTP API',
       corsPreflight: {
         allowHeaders: [
           'Content-Type',
@@ -106,33 +96,31 @@ export class ApiStack extends Stack {
         allowOrigins: ['http://localhost:3000'],
       },
     });
-    // 👇 add route for GET /todos
+
     httpApi.addRoutes({
       path: '/v1/orders',
       methods: [HttpMethod.GET],
       integration: new HttpLambdaIntegration(
-        'get-todos-integration',
-        OrderApiFunction,
+        'get-orders-integration',
+        ordersApiFunction,
       ),
     });
 
-    // 👇 add route for POST /todos
     httpApi.addRoutes({
       path: '/v1/orders',
       methods: [HttpMethod.POST],
       integration: new HttpLambdaIntegration(
-        'posts-todos-33integration',
-        OrderApiFunction,
+        'post-orders-integration',
+        ordersApiFunction,
       ),
     });
 
-    // 👇 add route for POST /todos
     httpApi.addRoutes({
       path: '/v1/products',
       methods: [HttpMethod.GET],
       integration: new HttpLambdaIntegration(
-        'posts-todos-get',
-        OrderApiFunction,
+        'get-products-integration',
+        ordersApiFunction,
       ),
     });
   }

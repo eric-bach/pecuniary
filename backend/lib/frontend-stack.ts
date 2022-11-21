@@ -16,19 +16,15 @@ import { Construct } from 'constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
-import { PecuniaryFrontendStackProps } from './types/PecuniaryStackProps';
+import { FrontendStackProps } from './types/StackProps';
 
 const dotenv = require('dotenv');
 
 dotenv.config();
 
 export class FrontendStack extends Stack {
-  constructor(scope: Construct, id: string, props: PecuniaryFrontendStackProps) {
+  constructor(scope: Construct, id: string, props: FrontendStackProps) {
     super(scope, id, props);
-
-    /***
-     *** Deploy web hosting to prod account only
-     ***/
 
     // CloudFront OAI
     const cloudfrontOAI = new OriginAccessIdentity(this, 'cloudfront-OAI', {
@@ -36,8 +32,8 @@ export class FrontendStack extends Stack {
     });
 
     // S3 bucket for client app
-    const hostingBucket = new Bucket(this, 'PecuniaryHostingBucket', {
-      bucketName: `${props.appName}-hosting-bucket111-${props.envName}`,
+    const hostingBucket = new Bucket(this, 'HostingBucket', {
+      bucketName: `${props.appName}-hosting-bucket-${props.envName}`,
       websiteIndexDocument: 'index.html',
       publicReadAccess: false,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
@@ -52,6 +48,7 @@ export class FrontendStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
     });
+
     // Grant access to CloudFront
     hostingBucket.addToResourcePolicy(
       new PolicyStatement({
@@ -65,7 +62,7 @@ export class FrontendStack extends Stack {
     const certificate = Certificate.fromCertificateArn(this, 'Certificate', props.params.certificateArn || '');
 
     // CloudFront distribution
-    const distribution = new CloudFrontWebDistribution(this, 'PecuniaryWebsiteCloudFront', {
+    const distribution = new CloudFrontWebDistribution(this, 'WebsiteCloudFront', {
       priceClass: PriceClass.PRICE_CLASS_100,
       originConfigs: [
         {
@@ -96,20 +93,18 @@ export class FrontendStack extends Stack {
       viewerCertificate:
         props.envName === 'prod'
           ? ViewerCertificate.fromAcmCertificate(certificate, {
-              aliases: [`${props.appName}.bebi.store`],
-              securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
-              sslMethod: SSLMethod.SNI,
-            })
+            aliases: [`${props.appName}.bebi.store`],
+            securityPolicy: SecurityPolicyProtocol.TLS_V1_2_2021,
+            sslMethod: SSLMethod.SNI,
+          })
           : undefined,
     });
 
-    // S3 bucket deployment
-    new BucketDeployment(this, 'PecuniaryWebsiteDeployment', {
-      sources: [Source.asset('../client/build')],
+    new BucketDeployment(this, 'WebsiteDeployment', {
+      sources: [Source.asset('../frontend/build')],
       destinationBucket: hostingBucket,
       retainOnDelete: false,
       contentLanguage: 'en',
-      //storageClass: StorageClass.INTELLIGENT_TIERING,
       serverSideEncryption: ServerSideEncryption.AES_256,
       cacheControl: [CacheControl.setPublic(), CacheControl.maxAge(Duration.minutes(1))],
       distribution,
@@ -117,7 +112,6 @@ export class FrontendStack extends Stack {
     });
 
     if (props.env === 'prod') {
-      // Route53 HostedZone A record
       var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
         domainName: 'bebi.store',
       });
@@ -127,9 +121,5 @@ export class FrontendStack extends Stack {
         target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
       });
     }
-
-    /***
-     *** Outputs
-     ***/
   }
 }
