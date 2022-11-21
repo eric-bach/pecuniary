@@ -5,7 +5,6 @@ on:
     branches:
       - main
 
-
 jobs:
   deploy-backend:
     name: Deploy Backend
