@@ -42,4 +42,6 @@ jobs:
 
       - name: Production CDK Diff Check
         run: npm run diff-backend prod
+        env:
+          CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
         working-directory: backend
