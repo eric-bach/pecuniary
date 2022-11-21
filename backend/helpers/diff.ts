@@ -1,7 +1,7 @@
 import { runCommand } from './runCommand';
 import { Command } from 'commander';
 
-const cdkDeploy = () => {
+const cdkDiff = () => {
   try {
     const program = new Command();
     program.arguments('<env> [profile]').option('-s, --stage <stage>');
@@ -40,4 +40,4 @@ const cdkDeploy = () => {
   }
 };
 
-cdkDeploy();
+cdkDiff();
