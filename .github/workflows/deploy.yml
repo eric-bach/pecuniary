@@ -95,7 +95,6 @@ jobs:
       #   run: |
       #     touch .env
       #     echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.REACT_APP_COGNITO_USERPOOL_ID }} >> .env
-      #     echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
       #     cp .env .env.prod
       #     cat .env.prod
       #   working-directory: client
