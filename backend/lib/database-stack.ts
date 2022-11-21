@@ -13,10 +13,6 @@ export class DatabaseStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryBaseStackProps) {
     super(scope, id, props);
 
-    /***
-     *** AWS DynamoDB
-     ***/
-
     const dataTable = new Table(this, 'Data', {
       tableName: `${props.appName}-${props.envName}-Data`,
       billingMode: BillingMode.PAY_PER_REQUEST,
@@ -30,37 +26,11 @@ export class DatabaseStack extends Stack {
       },
       removalPolicy: RemovalPolicy.DESTROY,
     });
-    // LSIs for Data table
-    dataTable.addLocalSecondaryIndex({
-      indexName: 'aggregateId-lsi',
-      sortKey: {
-        name: 'aggregateId',
-        type: AttributeType.STRING,
-      },
-    });
-    // GSIs for Data Table
-    dataTable.addGlobalSecondaryIndex({
-      indexName: 'aggregateId-gsi',
-      partitionKey: {
-        name: 'aggregateId',
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'transactionDate',
-        type: AttributeType.STRING,
-      },
-    });
 
-    /***
-     *** Outputs
-     ***/
 
     new CfnOutput(this, 'DataTableArn', { value: dataTable.tableArn, exportName: `${props.appName}-${props.envName}-dataTableArn` });
     new CfnOutput(this, 'DataTableName', { value: dataTable.tableName, exportName: `${props.appName}-${props.envName}-dataTableName` });
 
-    /***
-     *** Properties
-     ***/
 
     this.dataTableArn = dataTable.tableArn;
   }
