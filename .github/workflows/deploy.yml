@@ -1,4 +1,4 @@
-name: deploy
+name: deploy-prod
 
 on:
   push:
@@ -129,6 +129,7 @@ jobs:
       #   working-directory: frontend/container
 
       - name: Build All
+        if: contains(github.event_name, 'push')
         run: npm ci && npm run build
         working-directory: client
 
