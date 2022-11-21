@@ -65,7 +65,6 @@ jobs:
         run: npm run deploy-backend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
-          DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
         working-directory: backend
 
   deploy-frontend:
