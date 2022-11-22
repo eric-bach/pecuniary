@@ -114,7 +114,7 @@ function getActionButton(
 					size="large"
 					variant="outlined"
 				>
-					{selectedLabel}
+					Edited {selectedLabel}
 				</Button>
 			</>
 		)
