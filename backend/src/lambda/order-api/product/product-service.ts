@@ -49,8 +49,16 @@ export function getProducts() {
         description: '',
         price: 34000,
         thumbnail_url: '/images/products/tui-phu-kien.png'
+    }
+
+    const product6: Product = {
+        id: 'tui-phu-kien3333',
+        name: 'Túi phụ kiện 3333',
+        description: '',
+        price: 34000,
+        thumbnail_url: '/images/products/tui-phu-kien.png'
 
     }
 
-    return [product1, product2, product3, product4, product5]
+    return [product1, product2, product3, product4, product5, product6]
 }

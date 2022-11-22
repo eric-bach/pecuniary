@@ -129,7 +129,7 @@ const App: React.FC = () => {
 				<div className={classes.divMain}>
 					<AppBar
 						position='static'
-						color='primary'
+						color='secondary'
 						className={classes.appBar}
 						style={{ marginBottom: isMobile ? 0 : appTheme.spacing(-2) }}
 					>
