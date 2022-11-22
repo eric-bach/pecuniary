@@ -1,0 +1,40 @@
+name: test
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+
+      - name: Install NPM Dependencies (CDK)
+        run: npm ci
+        working-directory: backend
+
+      - name: Install NPM Dependencies
+        run: npm run cinstall-all
+        working-directory: backend
+
+      - name: Build Backend
+        run: npm run build-all
+        working-directory: backend
+
+      - name: Run CDK Unit Tests
+        run: npm run test
+        working-directory: backend
