@@ -52,8 +52,8 @@ export function getProducts() {
     }
 
     const product6: Product = {
-        id: 'tui-phu-kien3333',
-        name: 'Túi phụ kiện 3333',
+        id: 'nguyen-huuty',
+        name: 'Nguyen Huu Ty',
         description: '',
         price: 34000,
         thumbnail_url: '/images/products/tui-phu-kien.png'
