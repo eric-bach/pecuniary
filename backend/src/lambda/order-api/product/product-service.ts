@@ -51,14 +51,5 @@ export function getProducts() {
         thumbnail_url: '/images/products/tui-phu-kien.png'
     }
 
-    const product6: Product = {
-        id: 'nguyen-huuty',
-        name: 'Nguyen Huu Ty',
-        description: '',
-        price: 34000,
-        thumbnail_url: '/images/products/tui-phu-kien.png'
-
-    }
-
-    return [product1, product2, product3, product4, product5, product6]
+    return [product1, product2, product3, product4, product5]
 }

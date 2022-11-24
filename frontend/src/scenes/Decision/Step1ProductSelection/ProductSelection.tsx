@@ -114,7 +114,7 @@ function getActionButton(
 					size="large"
 					variant="outlined"
 				>
-					26/12/2022 Ty Changed {selectedLabel}
+					{selectedLabel}
 				</Button>
 			</>
 		)

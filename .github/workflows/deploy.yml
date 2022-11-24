@@ -83,14 +83,12 @@ jobs:
         working-directory: backend
 
       - name: Production Build Frontend
-        if: contains(github.event_name, 'push')
         run: npm ci && npm run build
         env:
           ORDERS_API_URL: https://sss9czm0s0.execute-api.ap-southeast-1.amazonaws.com
         working-directory: frontend
 
       - name: Production CDK Deploy Frontend
-        if: contains(github.event_name, 'push')
         run: npm run deploy-frontend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}

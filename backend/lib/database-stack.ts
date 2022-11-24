@@ -24,28 +24,6 @@ export class DatabaseStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    new Table(this, 'orders2', {
-      tableName: `${props.appName}-${props.envName}-orders2`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING,
-      },
-
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-
-    new Table(this, 'viet-aws-cdkdemo', {
-      tableName: `${props.appName}-${props.envName}-viet-aws-cdkdemo`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING,
-      },
-
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-
     new CfnOutput(this, 'OrdersTableArn', { value: ordersTable.tableArn, exportName: `${props.appName}-${props.envName}-ordersTableArn` });
     new CfnOutput(this, 'OrdersTableName', { value: ordersTable.tableName, exportName: `${props.appName}-${props.envName}-ordersTableName` });
 
