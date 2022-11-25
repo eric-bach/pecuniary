@@ -24,6 +24,17 @@ export class DatabaseStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
+    new Table(this, 'orders3', {
+      tableName: `${props.appName}-${props.envName}-orders3`,
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      partitionKey: {
+        name: 'id',
+        type: AttributeType.STRING,
+      },
+
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
     new CfnOutput(this, 'OrdersTableArn', { value: ordersTable.tableArn, exportName: `${props.appName}-${props.envName}-ordersTableArn` });
     new CfnOutput(this, 'OrdersTableName', { value: ordersTable.tableName, exportName: `${props.appName}-${props.envName}-ordersTableName` });
 
