@@ -27,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
 const ProductSelection: React.FC = () => {
 	const { products } = useSelector((state: RootState) => state.Product, shallowEqual);
 
-	const ACTION_BUTTON_LABEL = 'Thêm vào giỏ hàng';
-	const ACTION_BUTTON_REMOVE_LABEL = 'Xóa khỏi giỏ hàng';
+	const ACTION_BUTTON_LABEL = 'Thêm vào giỏ hàng!';
+	const ACTION_BUTTON_REMOVE_LABEL = 'Xóa khỏi giỏ hàng!';
 
 	const classes = useStyles();
 
