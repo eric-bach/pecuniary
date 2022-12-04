@@ -31,6 +31,8 @@
 
 This quick start guide describes how to get the application running. An `AWS account` is required to deploy the infrastructure required for this project.
 
+## Configure the app
+
 1.  Clone the project
 
     ```bash
@@ -56,30 +58,7 @@ This quick start guide describes how to get the application running. An `AWS acc
     - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
     - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
 
-5.  Deploy the Stacks
-
-    a. To deploy all stacks (backend + frontend)
-
-    ```
-    // Get AWS credentials
-    $ aws sso login --profile PROFILE_NAME
-
-    // Deploy a 'dev' environment to the PROFILE_NAME
-    $ npm run deploy dev PROFILE_NAME
-    ```
-
-    b. To deploy a specific stage
-
-    ```
-    // Get AWS credentials
-    $ aws sso login --profile PROFILE_NAME
-
-    // Deploy a specific stage for the 'dev' environment to the PROFILE_NAME
-    $ npm run deploy-backend dev PROFILE_NAME
-    $ npm run deploy-frontend dev PROFILE_NAME
-    ```
-
-6.  Copy the `./client/.env.example` file to `./client/.env` and `./client/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
+5.  Copy the `./frontend/container/.env.example` file to `./frontend/container/.env` and `./frontend/container/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
 
     - `PRODUCTION_DOMAIN` - AWS CloudFront Distribution domain name created in step 2
     - `REACT_APP_COGNITO_USERPOOL_ID` - AWS Cognito User Pool Id created in step 2
@@ -87,15 +66,39 @@ This quick start guide describes how to get the application running. An `AWS acc
     - `REACT_APP_APPSYNC_ENDPOINT` - AWS AppSync GraphQL endpoint URL created in step 2
     - `REACT_APP_APPSYNC_REGION` - AWS AppSync region
 
-7.  Start the client locally on http://localhost:3000/
+## Deploy the app
+
+1.  Follow the steps in [Deployment with CDK CLI](#deployment-with-cdk-cli)
+
+## Running the app locally
+
+1.  Start the MFE frontend:
+
+    a. with each MFE app individually
 
     ```bash
-    $ npm start
+    // Start marketing MFE on https://localhost:8081
+    $ cd frontend/marketing
+    $ npm run start
+
+    // Start auth MFE on https://localhost:8082
+    $ cd ../../frontend/auth
+    $ npm run start
+
+    // Start dashbaord MFE on https://localhost:8083
+    $ cd ../../frontend/dashboard
+    $ npm run start
+
+    // Start host/container MFE on https://localhost:8080
+    $ cd ../../frontend/container
+    $ npm run start
     ```
 
-# Event Sourcing and CQRS Architecture
+    b. as one command (note: any error encountered with each MFE may not be surfaced with this approach)
 
-For more detailed information about the event-driven nature of the Pecuniary application and it's architecture, please see the [Architecture.md](ARCHITECTURE.md)
+    ```bash
+    $ npm run start --prefix ./marketing & npm run start --prefix ./auth & npm run start --prefix ./dashboard & npm run start --prefix ./container
+    ```
 
 # Deployment
 
@@ -154,6 +157,30 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    REACT_APP_APPSYNC_ENDPOINT - AWS AppSync GraphQL endpoint URL
    REACT_APP_APPSYNC_REGION - AWS AppSync region
    ```
+
+# Testing
+
+## Cypress
+
+### Locally
+
+Test the frontend using cypress
+
+```
+$ npm run cypress:open
+
+or headless,
+
+$ npm run cypress:run
+```
+
+### GitHub Actions
+
+TBA
+
+# Event Sourcing and CQRS Architecture
+
+For more detailed information about the event-driven nature of the Pecuniary application and it's architecture, please see the [Architecture.md](ARCHITECTURE.md)
 
 # Projects References
 
