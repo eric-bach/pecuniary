@@ -53,6 +53,10 @@ jobs:
         with:
           node-version: 14.x
 
+      - name: Install NPM Dependencies
+        run: npm run cinstall-all
+        working-directory: backend
+
       # - name: Create client/.env file
       #   run: |
       #     touch .env
