@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-describe('Launch APp', () => {
+describe('Launch App', () => {
   it('should display app', () => {
     cy.visit('/');
 
