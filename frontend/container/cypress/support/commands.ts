@@ -4,7 +4,7 @@ import '@testing-library/cypress/add-commands';
 Cypress.Commands.add('login', () => {
   cy.visit('/auth/signin');
 
-  cy.contains('Sign it');
+  cy.contains('Sign in');
 
   cy.get('input[name=email]').type(Cypress.env('username'));
   cy.get('input[name=password]').type(Cypress.env('password'));
