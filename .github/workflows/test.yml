@@ -87,8 +87,9 @@ jobs:
       - name: Create cypress.env.json file
         run: |
           touch cypress.env.json
-          echo const cypress = { "username": "${{ secrets.CYPRESS_USERNAME }}", "password": "${{ secrets.CYPRESS_PASSWORD }}" }; >> cypress.env.json
+          echo const cypress = { """username""": """${{ secrets.CYPRESS_USERNAME }}""", """password""": """${{ secrets.CYPRESS_PASSWORD }}""" }; >> cypress.env.json
           echo export default cypress; >> cypress.env.json
+          cat cypress.env.json
         working-directory: frontend/container
 
       - name: Run Cypress Frontend Tests
