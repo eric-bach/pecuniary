@@ -116,7 +116,7 @@ export class FrontendStack extends Stack {
       distributionPaths: ['/static/css/*'],
     });
 
-    if (props.env === 'prod') {
+    if (props.envName === 'prod') {
       // Route53 HostedZone A record
       var existingHostedZone = HostedZone.fromLookup(this, 'Zone', {
         domainName: 'ericbach.dev',
