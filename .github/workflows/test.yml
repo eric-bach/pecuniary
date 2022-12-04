@@ -57,7 +57,6 @@ jobs:
           echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
           echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.REACT_APP_APPSYNC_ENDPOINT }} >> .env
           echo REACT_APP_APPSYNC_REGION=${{ secrets.REACT_APP_APPSYNC_REGION }} >> .env
-          cat .env
         working-directory: frontend/container
 
       - name: Build Backend
