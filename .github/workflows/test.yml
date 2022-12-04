@@ -66,3 +66,7 @@ jobs:
       - name: Run CDK Unit Tests
         run: npm run test
         working-directory: backend
+
+      - name: Run Cypress Frontend Tests
+        run: npm run cypress:run
+        working-directory: frontend/container
