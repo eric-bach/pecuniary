@@ -8,6 +8,7 @@ on:
       - opened
       - reopened
       - ready_for_review
+      - synchronize
 
 jobs:
   unit-tests:
@@ -56,7 +57,6 @@ jobs:
           echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
           echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.REACT_APP_APPSYNC_ENDPOINT }} >> .env
           echo REACT_APP_APPSYNC_REGION=${{ secrets.REACT_APP_APPSYNC_REGION }} >> .env
-          cat .env
         working-directory: frontend/container
 
       - name: Build Backend
@@ -66,3 +66,23 @@ jobs:
       - name: Run CDK Unit Tests
         run: npm run test
         working-directory: backend
+
+      - name: Start marketing MFE
+        run: npm run start &
+        working-directory: frontend/marketing
+
+      - name: Start auth MFE
+        run: npm run start &
+        working-directory: frontend/auth
+
+      - name: Start dashboard MFE
+        run: npm run start &
+        working-directory: frontend/dashboard
+
+      - name: Start container MFE
+        run: npm run start &
+        working-directory: frontend/container
+
+      - name: Run Cypress Frontend Tests
+        run: npx cypress run --env username=${{ secrets.CYPRESS_USERNAME }},password=${{ secrets.CYPRESS_PASSWORD }}
+        working-directory: frontend/container
