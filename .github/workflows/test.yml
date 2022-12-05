@@ -32,6 +32,31 @@ jobs:
         run: npm run cinstall-all
         working-directory: backend
 
+      - name: Build Backend
+        run: npm run build-all
+        working-directory: backend
+
+      - name: Run CDK Unit Tests
+        run: npm run test
+        working-directory: backend
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+
+      - name: Install NPM Dependencies
+        run: npm run cinstall-all
+        working-directory: backend
+
       # - name: Create client/.env file
       #   run: |
       #     touch .env
@@ -58,14 +83,6 @@ jobs:
           echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.REACT_APP_APPSYNC_ENDPOINT }} >> .env
           echo REACT_APP_APPSYNC_REGION=${{ secrets.REACT_APP_APPSYNC_REGION }} >> .env
         working-directory: frontend/container
-
-      - name: Build Backend
-        run: npm run build-all
-        working-directory: backend
-
-      - name: Run CDK Unit Tests
-        run: npm run test
-        working-directory: backend
 
       - name: Start marketing MFE
         run: npm run start &
