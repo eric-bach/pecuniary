@@ -181,7 +181,6 @@ export default function Account(props: AccountProps) {
       handleSubmit(values);
     },
   });
-
   // Wait until account is loaded if an aggregateId is passed in the URL
   if (!account && aggregateId) {
     return <Loading />;
@@ -309,12 +308,15 @@ export default function Account(props: AccountProps) {
           </Button>
         )}
       </form>
-
-      <Typography variant='h4'>Transactions</Typography>
-      <Button name='addTransaction' variant='contained' href='/app/transactions/new'>
-        Add Transaction
-      </Button>
-      <TransactionsList aggregateId={account.aggregateId} />
+      {mode !== MODE.CREATE && (
+        <>
+          <Typography variant='h4'>Transactions</Typography>
+          <Button name='addTransaction' variant='contained' href='/app/transactions/new'>
+            Add Transaction
+          </Button>
+          <TransactionsList aggregateId={account.aggregateId} />
+        </>
+      )}
     </Container>
   );
 }
