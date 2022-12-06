@@ -3,7 +3,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 
 import AccountsList from './pages/Account/AccountsList';
 import Account from './pages/Account/Account';
-import Test from './pages/Account/Test';
+import Transaction from './pages/Transaction/Transaction';
 import Dashboard from './pages/Home/Dashboard';
 
 export default ({ history }: any) => {
@@ -12,6 +12,7 @@ export default ({ history }: any) => {
       <Switch>
         <Route exact path='/app/accounts' component={AccountsList} />
         <Route exact path={['/app/accounts/new', '/app/accounts/:id']} component={Account} />
+        <Route exact path='/app/transactions/new' component={Transaction} />
         <Route path='/' component={Dashboard} />
       </Switch>
     </Router>

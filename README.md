@@ -156,6 +156,8 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    REACT_APP_COGNITO_CLIENT_ID - Cognito User Pool Client Id
    REACT_APP_APPSYNC_ENDPOINT - AWS AppSync GraphQL endpoint URL
    REACT_APP_APPSYNC_REGION - AWS AppSync region
+   CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
+   CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
    ```
 
 # Testing
@@ -176,7 +178,12 @@ $ npm run cypress:run
 
 ### GitHub Actions
 
-TBA
+Ensure to configure the GitHub Secrets to include:
+
+    ```
+    CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
+    CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
+    ```
 
 # Event Sourcing and CQRS Architecture
 

@@ -13,6 +13,7 @@ import * as yup from 'yup';
 
 import Loading from '../../components/Loading';
 import UserContext from '../../contexts/UserContext';
+import TransactionsList from '../Transaction/TransactionsList';
 import { CREATE_ACCOUNT, UPDATE_ACCOUNT, DELETE_ACCOUNT, GET_ACCOUNT } from './graphql/graphql';
 import { AccountProps, AccountViewModel, CreateAccountInput, DeleteAccountInput, UpdateAccountInput } from './types/Account';
 
@@ -22,7 +23,7 @@ enum MODE {
   EDIT,
 }
 
-export default function Test(props: AccountProps) {
+export default function Account(props: AccountProps) {
   const { id: aggregateId }: { id: string } = useParams();
   const [account, setAccount] = useState(props.location.state?.account ?? undefined);
   const [mode, setMode] = useState(aggregateId ? MODE.VIEW : MODE.CREATE);
@@ -308,6 +309,12 @@ export default function Test(props: AccountProps) {
           </Button>
         )}
       </form>
+
+      <Typography variant='h4'>Transactions</Typography>
+      <Button name='addTransaction' variant='contained' href='/app/transactions/new'>
+        Add Transaction
+      </Button>
+      <TransactionsList aggregateId={account.aggregateId} />
     </Container>
   );
 }
