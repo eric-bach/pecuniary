@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
@@ -13,8 +14,58 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-const Transaction = () => {
+import Loading from '../../components/Loading';
+import { CREATE_TRANSACTION } from './graphql/graphql';
+import { CreateTransactionInput, TransactionsProps, TransactionViewModel } from './types/Transaction';
+import { useMutation } from '@apollo/client';
+
+const Transaction = (props: TransactionsProps) => {
+  const { id: aggregateId }: { id: string } = useParams();
+  const [userId, setUserId] = useState('');
   const transactionTypes: string[] = ['Buy', 'Sell'];
+
+  const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
+
+  useEffect(() => {
+    // Get the logged in username
+    let u = localStorage.getItem('userId');
+    if (u) {
+      setUserId(u);
+    }
+  }, []);
+
+  const handleSubmit = (values: TransactionViewModel) => {
+    createTransaction(values);
+  };
+
+  const createTransaction = (values: TransactionViewModel) => {
+    console.log('[TRANSACTION] Creating Transaction...');
+    console.log('[TRANSACTION] Aggregate...', aggregateId);
+
+    const params: CreateTransactionInput = {
+      createTransactionInput: {
+        ...values,
+        transactionDate: values.transactionDate.toISOString().substring(0, 10),
+        aggregateId: aggregateId,
+        userId: `${userId}`,
+      },
+    };
+
+    console.log(params);
+
+    createTransactionMutation({
+      variables: params,
+    })
+      .then(() => {
+        console.log('[TRANSACTIOn] Transaction created successfully');
+        setTimeout(() => {
+          window.location.pathname = '/app/accounts';
+        }, 1000);
+      })
+      .catch((err: any) => {
+        console.error('[TRANSACTION] Error creating transaction', err);
+      });
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -36,10 +87,9 @@ const Transaction = () => {
       price: yup.number().required('Please enter the share price').min(0.01, 'Price is invalid'),
       commission: yup.string().required('Please enter the commission').min(0, 'Commission is invalid'),
     }),
-    onSubmit: (values) => {
+    onSubmit: (values: TransactionViewModel) => {
       console.log('Formik Submitting:', values);
-
-      //handleSubmit(values);
+      handleSubmit(values);
     },
   });
 

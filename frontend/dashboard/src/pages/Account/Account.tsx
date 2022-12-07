@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
@@ -311,7 +311,7 @@ export default function Account(props: AccountProps) {
       {mode !== MODE.CREATE && (
         <>
           <Typography variant='h4'>Transactions</Typography>
-          <Button name='addTransaction' variant='contained' href='/app/transactions/new'>
+          <Button component={Link} to={`/app/transactions/new/${account.aggregateId}`}>
             Add Transaction
           </Button>
           <TransactionsList aggregateId={account.aggregateId} />

@@ -12,7 +12,7 @@ export default ({ history }: any) => {
       <Switch>
         <Route exact path='/app/accounts' component={AccountsList} />
         <Route exact path={['/app/accounts/new', '/app/accounts/:id']} component={Account} />
-        <Route exact path='/app/transactions/new' component={Transaction} />
+        <Route exact path='/app/transactions/new/:id' component={Transaction} />
         <Route path='/' component={Dashboard} />
       </Switch>
     </Router>
