@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 import { TransactionsProps } from './types/Transaction';
 import { GET_TRANSACTIONS } from './graphql/graphql';
@@ -38,6 +45,7 @@ const TransactionsList = (props: TransactionsProps) => {
       setLastEvaluatedKey(response.data.getTransactions.lastEvaluatedKey);
 
       setTransactions([...transactions, ...response.data.getTransactions.items]);
+
       if (response.data.getTransactions.lastEvaluatedKey) {
         setHasMoreData(true);
       }
@@ -64,6 +72,10 @@ const TransactionsList = (props: TransactionsProps) => {
     return <Loading />;
   }
 
+  function createData(id: string, type: string, date: string, symbol: string, shares: number, price: number, commission: number) {
+    return { id, type, date, symbol, shares, price, commission };
+  }
+
   console.log('[TRANSACTIONS LIST] Transactions: ', transactions);
   console.log('[TRANSACTIONS LIST] LastEvaluatedKey: ', lastEvaluatedKey);
   console.log('[TRANSACTIONS LIST] HasMoreDate: ', hasMoreData);
@@ -71,7 +83,34 @@ const TransactionsList = (props: TransactionsProps) => {
   return (
     <>
       <InfiniteScroll dataLength={transactions.length} next={getAdditionalTransactions} hasMore={hasMoreData} loader={<Loading />}>
-        Display Transactions Here
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+            <TableHead>
+              <TableRow>
+                <TableCell>Type</TableCell>
+                <TableCell align='right'>Date</TableCell>
+                <TableCell align='right'>Symbol</TableCell>
+                <TableCell align='right'>Shres</TableCell>
+                <TableCell align='right'>Price</TableCell>
+                <TableCell align='right'>Commission</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {transactions.map((t: any) => (
+                <TableRow key={t.sk} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component='th' scope='row'>
+                    {t.type}
+                  </TableCell>
+                  <TableCell align='right'>{t.transactionDate}</TableCell>
+                  <TableCell align='right'>{t.symbol}</TableCell>
+                  <TableCell align='right'>{t.shares}</TableCell>
+                  <TableCell align='right'>{t.price}</TableCell>
+                  <TableCell align='right'>{t.commission}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </InfiniteScroll>
     </>
   );
