@@ -22,4 +22,24 @@ export type CreateTransactionInput = {
 
 export type TransactionsProps = {
   aggregateId: string;
+
+  location?: {
+    state: {
+      transaction: TransactionReadModel;
+    };
+  };
+};
+
+export type TransactionReadModel = {
+  userId: string;
+  sk: string;
+  aggregateId: string;
+  type: string;
+  transactionDate: string;
+  symbol: string;
+  price: number;
+  shares: number;
+  commission: number;
+  createdAt: Date;
+  updatedAt: Date;
 };

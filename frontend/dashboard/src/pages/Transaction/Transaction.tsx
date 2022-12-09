@@ -21,10 +21,13 @@ import { useMutation } from '@apollo/client';
 
 const Transaction = (props: TransactionsProps) => {
   const { id: aggregateId }: { id: string } = useParams();
+  const [transaction, setTransaction] = useState(props.location?.state?.transaction ?? undefined);
   const [userId, setUserId] = useState('');
   const transactionTypes: string[] = ['Buy', 'Sell'];
 
   const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
+
+  console.log('👍', transaction);
 
   useEffect(() => {
     // Get the logged in username
