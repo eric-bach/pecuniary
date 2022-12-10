@@ -63,10 +63,12 @@ const Transaction = (props: TransactionsProps) => {
         break;
       case 'edit':
         // TODO Hookup Edit
+        console.log('EDIT');
         //updateTransaction(values);
         break;
       case 'delete':
         // TODO Hookup Delete
+        console.log('DELETE');
         //deleteTransaction();
         break;
     }
@@ -127,7 +129,7 @@ const Transaction = (props: TransactionsProps) => {
 
   return (
     <Container maxWidth='lg'>
-      <Typography variant='h4'>Add Transaction</Typography>
+      <Typography variant='h4'>{mode === MODE.CREATE ? 'Add' : 'Edit'} Transaction</Typography>
       <form onSubmit={formik.handleSubmit}>
         <FormControl sx={{ width: '100%' }}>
           <TextField
