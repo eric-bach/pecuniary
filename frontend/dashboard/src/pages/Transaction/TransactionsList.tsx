@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -91,14 +92,15 @@ const TransactionsList = (props: TransactionsProps) => {
               <TableCell align='right'>Shres</TableCell>
               <TableCell align='right'>Price</TableCell>
               <TableCell align='right'>Commission</TableCell>
+              <TableCell align='right'></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {transactions.map((t: TransactionReadModel) => (
               <TableRow
                 key={t.sk}
-                component={Link}
-                to={{ pathname: link, state: { transaction: t } }}
+                // component={Link}
+                // to={{ pathname: link, state: { transaction: t } }}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component='th' scope='row'>
@@ -109,6 +111,11 @@ const TransactionsList = (props: TransactionsProps) => {
                 <TableCell align='right'>{t.shares}</TableCell>
                 <TableCell align='right'>{t.price}</TableCell>
                 <TableCell align='right'>{t.commission}</TableCell>
+                <TableCell align='right'>
+                  <Button id='edit' variant='contained' component={Link} to={{ pathname: link, state: { transaction: t } }}>
+                    Edit
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
