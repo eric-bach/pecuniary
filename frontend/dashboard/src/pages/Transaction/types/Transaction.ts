@@ -20,6 +20,29 @@ export type CreateTransactionInput = {
   };
 };
 
+export type UpdateTransactionInput = {
+  updateTransactionInput: {
+    userId: string;
+    sk: string;
+    aggregateId: string;
+    type: string;
+    transactionDate: string;
+    symbol: string;
+    shares: number;
+    price: number;
+    commission: number;
+  };
+};
+
+export type DeleteTransactionInput = {
+  deleteTransactionInput: {
+    userId: string;
+    sk: string;
+    aggregateId: string;
+    symbol: string;
+  };
+};
+
 export type TransactionsProps = {
   aggregateId: string;
 

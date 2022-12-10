@@ -14,8 +14,15 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { CREATE_TRANSACTION } from './graphql/graphql';
-import { CreateTransactionInput, TransactionsProps, TransactionViewModel } from './types/Transaction';
+import { CREATE_TRANSACTION, UPDATE_TRANSACTION, DELETE_TRANSACTION } from './graphql/graphql';
+import {
+  CreateTransactionInput,
+  UpdateTransactionInput,
+  DeleteTransactionInput,
+  TransactionReadModel,
+  TransactionsProps,
+  TransactionViewModel,
+} from './types/Transaction';
 import { useMutation } from '@apollo/client';
 
 enum MODE {
@@ -32,11 +39,10 @@ const Transaction = (props: TransactionsProps) => {
   const [userId, setUserId] = useState('');
 
   const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
+  const [updateTransactionMutation] = useMutation(UPDATE_TRANSACTION);
+  const [deleteTransactionMutation] = useMutation(DELETE_TRANSACTION);
 
   const transactionTypes: string[] = ['Buy', 'Sell'];
-
-  console.log('👍', props);
-  console.log('👍', transaction);
 
   useEffect(() => {
     // Get the logged in username
@@ -62,14 +68,10 @@ const Transaction = (props: TransactionsProps) => {
         createTransaction(values);
         break;
       case 'edit':
-        // TODO Hookup Edit
-        console.log('EDIT');
-        //updateTransaction(values);
+        updateTransaction(values);
         break;
       case 'delete':
-        // TODO Hookup Delete
-        console.log('DELETE');
-        //deleteTransaction();
+        deleteTransaction(values);
         break;
     }
   };
@@ -91,13 +93,63 @@ const Transaction = (props: TransactionsProps) => {
       variables: params,
     })
       .then(() => {
-        console.log('[TRANSACTIOn] Transaction created successfully');
+        console.log('[TRANSACTION] Transaction created successfully');
         setTimeout(() => {
           window.location.pathname = '/app/accounts';
         }, 1000);
       })
       .catch((err: any) => {
         console.error('[TRANSACTION] Error creating transaction', err);
+      });
+  };
+
+  const updateTransaction = (values: TransactionViewModel) => {
+    console.log('[TRANSACTION] Updating Transaction...');
+
+    const params: UpdateTransactionInput = {
+      updateTransactionInput: {
+        ...values,
+        userId: `${userId}`,
+        transactionDate: values.transactionDate.toISOString().substring(0, 10),
+        sk: transaction?.sk ?? '',
+        aggregateId: aggregateId,
+      },
+    };
+
+    updateTransactionMutation({
+      variables: params,
+    })
+      .then((res) => {
+        console.log('[TRANSACTION] Transaction updated successfully');
+
+        window.location.pathname = '/app/accounts';
+      })
+      .catch((err) => {
+        console.error('[TRANSACTION] Error occurred updating transaction', err);
+      });
+  };
+
+  const deleteTransaction = (values: TransactionReadModel) => {
+    console.log('[TRANSACTION] Deleting Transaction...');
+
+    const params: DeleteTransactionInput = {
+      deleteTransactionInput: {
+        userId: userId,
+        sk: transaction?.sk ?? '',
+        aggregateId: aggregateId,
+        symbol: `${values.symbol}`,
+      },
+    };
+
+    deleteTransactionMutation({
+      variables: params,
+    })
+      .then((res) => {
+        console.log('[TRANSACTION] Transaction deleted successfully');
+        window.location.pathname = '/app/accounts';
+      })
+      .catch((err) => {
+        console.error('[TRANSACTION] Error occurred deleting transaction', err);
       });
   };
 
