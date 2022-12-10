@@ -14,19 +14,28 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import Loading from '../../components/Loading';
 import { CREATE_TRANSACTION } from './graphql/graphql';
 import { CreateTransactionInput, TransactionsProps, TransactionViewModel } from './types/Transaction';
 import { useMutation } from '@apollo/client';
 
+enum MODE {
+  CREATE,
+  VIEW,
+  EDIT,
+}
+
 const Transaction = (props: TransactionsProps) => {
   const { id: aggregateId }: { id: string } = useParams();
   const [transaction, setTransaction] = useState(props.location?.state?.transaction ?? undefined);
+  const [mode, setMode] = useState(transaction ? MODE.EDIT : MODE.CREATE);
+  const [button, setButton] = useState('');
   const [userId, setUserId] = useState('');
-  const transactionTypes: string[] = ['Buy', 'Sell'];
 
   const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
 
+  const transactionTypes: string[] = ['Buy', 'Sell'];
+
+  console.log('👍', props);
   console.log('👍', transaction);
 
   useEffect(() => {
@@ -35,15 +44,37 @@ const Transaction = (props: TransactionsProps) => {
     if (u) {
       setUserId(u);
     }
+
+    if (transaction) {
+      console.log(transaction);
+      formik.values.type = transaction.type;
+      formik.values.transactionDate = new Date(transaction.transactionDate);
+      formik.values.symbol = transaction.symbol;
+      formik.values.shares = transaction.shares;
+      formik.values.price = transaction.price;
+      formik.values.commission = transaction.commission;
+    }
   }, []);
 
   const handleSubmit = (values: TransactionViewModel) => {
-    createTransaction(values);
+    switch (button) {
+      case 'create':
+        createTransaction(values);
+        break;
+      case 'edit':
+        // TODO Hookup Edit
+        //updateTransaction(values);
+        break;
+      case 'delete':
+        // TODO Hookup Delete
+        //deleteTransaction();
+        break;
+    }
   };
 
   const createTransaction = (values: TransactionViewModel) => {
     console.log('[TRANSACTION] Creating Transaction...');
-    console.log('[TRANSACTION] Aggregate...', aggregateId);
+    console.log('[TRANSACTION] Aggregate Id...', aggregateId);
 
     const params: CreateTransactionInput = {
       createTransactionInput: {
@@ -53,8 +84,6 @@ const Transaction = (props: TransactionsProps) => {
         userId: `${userId}`,
       },
     };
-
-    console.log(params);
 
     createTransactionMutation({
       variables: params,
@@ -201,17 +230,38 @@ const Transaction = (props: TransactionsProps) => {
 
         <Box sx={{ width: '100%' }}>
           <Button
-            id='create'
-            name='create'
+            id={mode === MODE.CREATE ? 'create' : 'edit'}
+            name={mode === MODE.CREATE ? 'create' : 'edit'}
             type='submit'
             variant='contained'
             color='primary'
             onClick={(e) => {
+              //@ts-ignore
+              setButton(e.target.id);
               formik.handleSubmit;
             }}
           >
             Submit
           </Button>
+          {mode === MODE.EDIT && (
+            <Button
+              id='delete'
+              name='delete'
+              type='submit'
+              variant='contained'
+              color='error'
+              sx={{
+                ml: 1,
+              }}
+              onClick={(e) => {
+                //@ts-ignore
+                setButton(e.target.id);
+                formik.handleSubmit;
+              }}
+            >
+              Delete
+            </Button>
+          )}
         </Box>
       </form>
     </Container>

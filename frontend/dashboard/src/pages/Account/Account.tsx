@@ -181,6 +181,7 @@ export default function Account(props: AccountProps) {
       handleSubmit(values);
     },
   });
+
   // Wait until account is loaded if an aggregateId is passed in the URL
   if (!account && aggregateId) {
     return <Loading />;
