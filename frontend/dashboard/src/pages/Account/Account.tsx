@@ -313,6 +313,7 @@ export default function Account(props: AccountProps) {
         <>
           <Typography variant='h4'>Transactions</Typography>
           <Button
+            data-cy='addTransaction'
             variant='contained'
             sx={{
               mt: 1,

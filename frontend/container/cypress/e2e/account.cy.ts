@@ -33,7 +33,18 @@ describe('Create/Edit/Delete Account', () => {
     cy.get('[name="type"]').parent().click();
     cy.findByRole('option', { name: 'TFSA' }).click();
     cy.get('input[name=description]').type('Cypress Test Account');
+    cy.get('button[name=create]').click();
 
+    cy.wait(5000);
+    cy.get('a').last().click();
+
+    // Create Transaction
+    cy.get('a[data-cy=addTransaction]').click();
+    // TODO Cannot find this drop down
+    cy.findByRole('option', { name: 'Buy' }).click();
+    cy.get('input[name=symbol]').type('AAPL');
+    cy.get('input[name=shares]').type('100');
+    cy.get('input[name=price]').type('100');
     cy.get('button[name=create]').click();
     cy.wait(500);
   });
