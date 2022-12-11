@@ -312,7 +312,15 @@ export default function Account(props: AccountProps) {
       {mode !== MODE.CREATE && (
         <>
           <Typography variant='h4'>Transactions</Typography>
-          <Button variant='contained' component={Link} to={`/app/transactions/new/${account.aggregateId}`}>
+          <Button
+            variant='contained'
+            sx={{
+              mt: 1,
+              mb: 1,
+            }}
+            component={Link}
+            to={`/app/transactions/new/${account.aggregateId}`}
+          >
             Add Transaction
           </Button>
           <TransactionsList aggregateId={account.aggregateId} />

@@ -316,6 +316,19 @@ const Transaction = (props: TransactionsProps) => {
               Delete
             </Button>
           )}
+          <Button
+            id='cancel'
+            name='cancel'
+            variant='contained'
+            sx={{
+              ml: 1,
+            }}
+            onClick={(e) => {
+              window.location.pathname = `/app/accounts/${aggregateId}`;
+            }}
+          >
+            Cancel
+          </Button>
         </Box>
       </form>
     </Container>

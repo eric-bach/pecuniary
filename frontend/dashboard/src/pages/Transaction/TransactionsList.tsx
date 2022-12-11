@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -81,9 +80,9 @@ const TransactionsList = (props: TransactionsProps) => {
   const link = `/app/transactions/new/${aggregateId}`;
 
   return (
-    <InfiniteScroll dataLength={transactions.length} next={getAdditionalTransactions} hasMore={hasMoreData} loader={<Loading />}>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <TableContainer>
+        <Table stickyHeader sx={{ minWidth: 650 }} aria-label='simple table'>
           <TableHead>
             <TableRow>
               <TableCell>Type</TableCell>
@@ -98,9 +97,9 @@ const TransactionsList = (props: TransactionsProps) => {
           <TableBody>
             {transactions.map((t: TransactionReadModel) => (
               <TableRow
-                key={t.sk}
                 // component={Link}
                 // to={{ pathname: link, state: { transaction: t } }}
+                key={t.sk}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component='th' scope='row'>
@@ -121,7 +120,7 @@ const TransactionsList = (props: TransactionsProps) => {
           </TableBody>
         </Table>
       </TableContainer>
-    </InfiniteScroll>
+    </Paper>
   );
 };
 
