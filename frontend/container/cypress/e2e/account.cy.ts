@@ -21,7 +21,7 @@ describe('Create/Edit/Delete Account', () => {
     cy.contains('Logout');
   });
 
-  it('should create new account', () => {
+  it('should create new account and transaction', () => {
     cy.get('button[name=toAccounts]').click();
     cy.visit('/app/accounts'); // TODO Because of initial login bug, need to force a refresh
 
@@ -40,13 +40,18 @@ describe('Create/Edit/Delete Account', () => {
 
     // Create Transaction
     cy.get('a[data-cy=addTransaction]').click();
-    // TODO Cannot find this drop down
-    cy.findByRole('option', { name: 'Buy' }).click();
+    cy.get('#type').parent().click().get('ul > li[data-value="Buy"]').click();
     cy.get('input[name=symbol]').type('AAPL');
     cy.get('input[name=shares]').type('100');
     cy.get('input[name=price]').type('100');
     cy.get('button[name=create]').click();
-    cy.wait(500);
+    cy.wait(5000);
+
+    // Verify Account and Transaction
+    cy.visit('/app/accounts');
+    cy.contains('Cypress Test');
+    cy.get('a').last().click();
+    cy.contains('AAPL');
   });
 
   it('should edit existing account', () => {
@@ -71,6 +76,6 @@ describe('Create/Edit/Delete Account', () => {
     cy.wait(500);
 
     // Assert
-    cy.get('a').should('have.length', 4);
+    cy.get('a').should('have.length.at.least', 4);
   });
 });
