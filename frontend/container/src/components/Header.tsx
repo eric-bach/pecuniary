@@ -2,8 +2,10 @@ import React, { useContext } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 import { AuthContext, AuthIsNotSignedIn, AuthIsSignedIn } from '../contexts/authContext';
 
@@ -29,37 +31,55 @@ export default function Header({ onSignOut }: any) {
           borderBottom: '1px solid',
         }}
       >
-        <Toolbar
-          sx={{
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-          }}
-        >
+        <Toolbar>
+          <MonetizationOnIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Typography
+            variant='h6'
+            color='inherit'
+            noWrap
+            component={RouterLink}
+            to='/'
+            sx={{
+              mr: 12,
+              display: { xs: 'none', md: 'flex' },
+              textDecoration: 'none',
+            }}
+          >
+            Pecuniary
+          </Typography>
           <AuthIsSignedIn>
-            <Typography variant='h6' color='inherit' noWrap component={RouterLink} to='/app'>
-              Pecuniary App
+            <Typography
+              variant='h6'
+              color='inherit'
+              noWrap
+              component={RouterLink}
+              to='/app'
+              sx={{
+                mr: 3,
+                display: { xs: 'none', md: 'flex' },
+                textDecoration: 'none',
+              }}
+            >
+              Dashboard
+            </Typography>
+            <Typography
+              variant='h6'
+              color='inherit'
+              noWrap
+              component={RouterLink}
+              to='/app/accounts'
+              sx={{
+                mr: 3,
+                display: { xs: 'none', md: 'flex' },
+                textDecoration: 'none',
+              }}
+            >
+              Accounts
             </Typography>
           </AuthIsSignedIn>
-          <AuthIsNotSignedIn>
-            <Typography variant='h6' color='inherit' noWrap component={RouterLink} to='/'>
-              Pecuniary
-            </Typography>
-          </AuthIsNotSignedIn>
 
           <AuthIsSignedIn>
-            <Button
-              color='primary'
-              variant='outlined'
-              sx={{
-                mt: 1,
-                mb: 1,
-                ml: 1.5,
-                mr: 1.5,
-              }}
-              component={RouterLink}
-              to='/'
-              onClick={onClick}
-            >
+            <Button color='primary' variant='outlined' component={RouterLink} to='/' onClick={onClick} sx={{ marginLeft: 'auto' }}>
               Logout
             </Button>
           </AuthIsSignedIn>
@@ -67,15 +87,10 @@ export default function Header({ onSignOut }: any) {
             <Button
               color='primary'
               variant='outlined'
-              sx={{
-                mt: 1,
-                mb: 1,
-                ml: 1.5,
-                mr: 1.5,
-              }}
               component={RouterLink}
               to='/auth/signin'
               onClick={onClick}
+              sx={{ marginLeft: 'auto' }}
             >
               Login
             </Button>
