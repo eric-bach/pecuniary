@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
@@ -13,6 +13,7 @@ import * as yup from 'yup';
 
 import Loading from '../../components/Loading';
 import UserContext from '../../contexts/UserContext';
+import TransactionsList from '../Transaction/TransactionsList';
 import { CREATE_ACCOUNT, UPDATE_ACCOUNT, DELETE_ACCOUNT, GET_ACCOUNT } from './graphql/graphql';
 import { AccountProps, AccountViewModel, CreateAccountInput, DeleteAccountInput, UpdateAccountInput } from './types/Account';
 
@@ -22,7 +23,7 @@ enum MODE {
   EDIT,
 }
 
-export default function Test(props: AccountProps) {
+export default function Account(props: AccountProps) {
   const { id: aggregateId }: { id: string } = useParams();
   const [account, setAccount] = useState(props.location.state?.account ?? undefined);
   const [mode, setMode] = useState(aggregateId ? MODE.VIEW : MODE.CREATE);
@@ -308,6 +309,24 @@ export default function Test(props: AccountProps) {
           </Button>
         )}
       </form>
+      {mode !== MODE.CREATE && (
+        <>
+          <Typography variant='h4'>Transactions</Typography>
+          <Button
+            data-cy='addTransaction'
+            variant='contained'
+            sx={{
+              mt: 1,
+              mb: 1,
+            }}
+            component={Link}
+            to={`/app/transactions/new/${account.aggregateId}`}
+          >
+            Add Transaction
+          </Button>
+          <TransactionsList aggregateId={account.aggregateId} />
+        </>
+      )}
     </Container>
   );
 }
