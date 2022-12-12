@@ -35,7 +35,7 @@ describe('Create/Edit/Delete Account', () => {
     cy.get('input[name=description]').type('Cypress Test Account');
     cy.get('button[name=create]').click();
 
-    cy.wait(2000);
+    cy.wait(5000);
     cy.get('a').last().click();
 
     // Create Transaction
