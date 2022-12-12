@@ -45,7 +45,7 @@ describe('Create/Edit/Delete Account', () => {
     cy.get('input[name=shares]').type('100');
     cy.get('input[name=price]').type('100');
     cy.get('button[name=create]').click();
-    cy.wait(5000);
+    cy.wait(2000);
 
     // Verify Account and Transaction
     cy.visit('/app/accounts');
@@ -57,7 +57,7 @@ describe('Create/Edit/Delete Account', () => {
   it('should edit existing account', () => {
     cy.get('button[name=toAccounts]').click();
     cy.visit('/app/accounts'); // TODO Because of initial login bug, need to force a refresh
-    cy.contains('Accounts');
+    cy.contains('Cypress Test Account');
 
     cy.get('a').last().click();
     cy.get('button[name=toggleEdit]').click();
@@ -68,7 +68,7 @@ describe('Create/Edit/Delete Account', () => {
   it('should delete existing account', () => {
     cy.get('button[name=toAccounts]').click();
     cy.visit('/app/accounts'); // TODO Because of initial login bug, need to force a refresh
-    cy.contains('Accounts');
+    cy.contains('Cypress Test Account');
 
     cy.get('a').last().click();
     cy.get('button[name=toggleEdit]').click();
