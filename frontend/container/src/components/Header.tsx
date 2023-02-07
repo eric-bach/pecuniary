@@ -68,6 +68,7 @@ export default function Header({ onSignOut }: any) {
               noWrap
               component={RouterLink}
               to='/app/accounts'
+              id='toAccounts'
               sx={{
                 mr: 3,
                 display: { xs: 'none', md: 'flex' },
