@@ -7,7 +7,7 @@ describe('List Accounts', () => {
   });
 
   it('should display accounts page', () => {
-    cy.get('button[name=toAccounts]').click();
+    cy.get('a[id="toAccounts"]').click();
     cy.visit('/app/accounts'); // TODO Because of initial login bug, need to force a refresh
 
     cy.contains('Accounts');
@@ -22,7 +22,7 @@ describe('Create/Edit/Delete Account', () => {
   });
 
   it('should create new account and transaction', () => {
-    cy.get('button[name=toAccounts]').click();
+    cy.get('a[id="toAccounts"]').click();
     cy.visit('/app/accounts'); // TODO Because of initial login bug, need to force a refresh
 
     cy.contains('Accounts');
@@ -55,7 +55,7 @@ describe('Create/Edit/Delete Account', () => {
   });
 
   it('should edit existing account', () => {
-    cy.get('button[name=toAccounts]').click();
+    cy.get('a[id="toAccounts"]').click();
     cy.visit('/app/accounts'); // TODO Because of initial login bug, need to force a refresh
     cy.contains('Cypress Test Account');
 
@@ -66,7 +66,7 @@ describe('Create/Edit/Delete Account', () => {
   });
 
   it('should delete existing account', () => {
-    cy.get('button[name=toAccounts]').click();
+    cy.get('a[id="toAccounts"]').click();
     cy.visit('/app/accounts'); // TODO Because of initial login bug, need to force a refresh
     cy.contains('Cypress Test Account');
 
