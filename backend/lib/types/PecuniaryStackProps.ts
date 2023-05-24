@@ -25,7 +25,3 @@ export interface PecuniaryApiStackProps extends PecuniaryBaseStackProps {
     eventBusArn: string;
   };
 }
-
-export interface GitHubStackProps extends StackProps {
-  readonly repositoryConfig: { owner: string; repo: string; filter?: string }[];
-}

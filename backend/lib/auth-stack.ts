@@ -33,7 +33,7 @@ export class AuthStack extends Stack {
 
     // AWS Cognito post-confirmation lambda function
     const cognitoPostConfirmationTrigger = new NodejsFunction(this, 'CognitoPostConfirmationTrigger', {
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       functionName: `${props.appName}-${props.envName}-CognitoPostConfirmationTrigger`,
       handler: 'handler',
       entry: path.resolve(__dirname, '../src/lambda/cognitoPostConfirmation/main.ts'),

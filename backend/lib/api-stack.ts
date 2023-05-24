@@ -53,7 +53,7 @@ export class ApiStack extends Stack {
     // Resolver for Accounts
     const accountsResolverFunction = new NodejsFunction(this, 'AccountsResolver', {
       functionName: `${props.appName}-${props.envName}-AccountsResolver`,
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       handler: 'handler',
       entry: path.resolve(__dirname, '../src/lambda/accountsResolver/main.ts'),
       memorySize: 512,
@@ -102,7 +102,7 @@ export class ApiStack extends Stack {
     // Resolver for Transactions
     const transactionsReolverFunction = new NodejsFunction(this, 'TransactionsResolver', {
       functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       handler: 'handler',
       entry: path.resolve(__dirname, '../src/lambda/transactionsResolver/main.ts'),
       memorySize: 512,
@@ -160,7 +160,7 @@ export class ApiStack extends Stack {
     // Resolver for Positions
     const positionsResolverFunction = new NodejsFunction(this, 'PositionsResolver', {
       functionName: `${props.appName}-${props.envName}-PositionsResolver`,
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       handler: 'handler',
       entry: path.resolve(__dirname, '../src/lambda/positionsResolver/main.ts'),
       memorySize: 512,
@@ -192,7 +192,7 @@ export class ApiStack extends Stack {
      ***/
 
     const updatePositionsFunction = new NodejsFunction(this, 'UpdatePositions', {
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       functionName: `${props.appName}-${props.envName}-UpdatePositions`,
       handler: 'handler',
       entry: path.resolve(__dirname, '../src/lambda/updatePositions/main.ts'),
