@@ -24,8 +24,8 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Install Backend Dependencies
-        run: npm run cinstall-all-backend
+      - name: Install Dependencies
+        run: npm run cinstall-all
         working-directory: backend
 
       - name: Run CDK Unit Tests
