@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: npm run cinstall-all
         working-directory: backend
-      
+
       - name: Build Frontend
         run: npm run build-all-frontend
         working-directory: backend
