@@ -45,8 +45,8 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Install CKD Dependencies
-        run: npm run ci
+      - name: Install CDK Dependencies
+        run: npm run install
         working-directory: backend
 
       - name: Install Frontend Dependencies
