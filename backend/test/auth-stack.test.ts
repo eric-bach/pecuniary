@@ -30,7 +30,7 @@ describe('Auth Stack contains expected resources', () => {
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-CognitoPostConfirmationTrigger`,
         Handler: 'index.handler',
-        Runtime: 'nodejs14.x',
+        Runtime: 'nodejs18.x',
       })
     );
   });
