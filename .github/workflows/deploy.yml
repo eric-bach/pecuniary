@@ -28,7 +28,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE }}
+          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_PROD }}
           aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
 
       - name: Install Backend Dependencies
@@ -71,7 +71,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE }}
+          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_PROD }}
           aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
 
       - name: Install Backend Dependencies
@@ -81,10 +81,10 @@ jobs:
       - name: Create frontend/container/.env file
         run: |
           touch .env
-          echo PRODUCTION_DOMAIN=${{ secrets.PRODUCTION_DOMAIN }} >> .env
-          echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.COGNITO_USERPOOL_ID }} >> .env
-          echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.COGNITO_WEB_CLIENT_ID }} >> .env
-          echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.APPSYNC_ENDPOINT }} >> .env
+          echo PRODUCTION_DOMAIN=${{ secrets.CLOUDFRONT_DOMAIN_PROD }} >> .env
+          echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.COGNITO_USERPOOL_ID_PROD }} >> .env
+          echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.COGNITO_WEB_CLIENT_ID_PROD }} >> .env
+          echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.APPSYNC_ENDPOINT_PROD }} >> .env
           echo REACT_APP_APPSYNC_REGION=${{ secrets.CDK_DEFAULT_REGION }} >> .env
           cat .env
         working-directory: frontend/container
