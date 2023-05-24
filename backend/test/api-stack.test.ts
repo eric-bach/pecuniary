@@ -68,7 +68,7 @@ describe('Api Stack contains expected resources', () => {
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-AccountsResolver`,
         Handler: 'index.handler',
-        Runtime: 'nodejs14.x',
+        Runtime: 'nodejs18.x',
       })
     );
     template.hasResourceProperties(
@@ -76,7 +76,7 @@ describe('Api Stack contains expected resources', () => {
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-TransactionsResolver`,
         Handler: 'index.handler',
-        Runtime: 'nodejs14.x',
+        Runtime: 'nodejs18.x',
       })
     );
     template.hasResourceProperties(
@@ -84,7 +84,7 @@ describe('Api Stack contains expected resources', () => {
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-PositionsResolver`,
         Handler: 'index.handler',
-        Runtime: 'nodejs14.x',
+        Runtime: 'nodejs18.x',
       })
     );
     template.hasResourceProperties(
@@ -92,7 +92,7 @@ describe('Api Stack contains expected resources', () => {
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-UpdatePositions`,
         Handler: 'index.handler',
-        Runtime: 'nodejs14.x',
+        Runtime: 'nodejs18.x',
       })
     );
   });

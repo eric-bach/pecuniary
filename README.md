@@ -146,19 +146,31 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
 
 2. Add the following GitHub Secrets to the repository
 
-   ```
-   AWS_ACCESS_ARN - AWS ARN of the GitHub Actions Role to Assume (from step 1)
-   CDK_DEFAULT_REGION - AWS default region for all resources to be created
-   CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
-   DLQ_NOTIFICATIONS - email address to send DLQ messages to
-   PRODUCTION_DOMAIN - AWS CloudFront Distribution domain name
-   REACT_APP_COGNITO_USERPOOL_ID - Cognito User Pool Id
-   REACT_APP_COGNITO_CLIENT_ID - Cognito User Pool Client Id
-   REACT_APP_APPSYNC_ENDPOINT - AWS AppSync GraphQL endpoint URL
-   REACT_APP_APPSYNC_REGION - AWS AppSync region
-   CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
-   CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
-   ```
+    Common
+    ```
+    CDK_DEFAULT_REGION - AWS default region for all resources to be created
+    ```
+
+    Dev environment
+    ```
+    CLOUDFRONT_DOMAIN_DEV - AWS CloudFront Distribution domain name
+    COGNITO_USERPOOL_ID_DEV - Cognito User Pool Id
+    COGNITO_WEB_CLIENT_ID_DEV - Cognito User Pool Client Id
+    APPSYNC_ENDPOINT_DEV - AWS AppSync GraphQL endpoint URL
+    CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
+    CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
+    ```
+
+    Production environment
+    ```
+    AWS_SERVICE_ROLE_PROD - AWS ARN of the GitHub Actions Role to Assume (from step 1)
+    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
+    DLQ_NOTIFICATIONS - email address to send DLQ messages to
+    CLOUDFRONT_DOMAIN_PROD - AWS CloudFront Distribution domain name
+    COGNITO_USERPOOL_ID_PROD - Cognito User Pool Id
+    COGNITO_WEB_CLIENT_ID_PROD - Cognito User Pool Client Id
+    APPSYNC_ENDPOINT_PROD - AWS AppSync GraphQL endpoint URL
+    ```
 
 # Testing
 
