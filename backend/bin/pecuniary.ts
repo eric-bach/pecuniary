@@ -32,14 +32,23 @@ switch (stage) {
   case 'backend': {
     const auth = new AuthStack(app, `${APP_NAME}-auth-${envName}`, baseProps);
 
-    const database = new DatabaseStack(app, `${APP_NAME}-database-${envName}`, baseProps);
+    const database = new DatabaseStack(
+      app,
+      `${APP_NAME}-database-${envName}`,
+      baseProps
+    );
 
-    const messaging = new MessagingStack(app, `${APP_NAME}-messaging-${envName}`, {
-      ...baseProps,
-      params: {
-        dlqNotifications: process.env.DLQ_NOTIFICATIONS ?? DEFAULT_VALUES.EMAIL,
-      },
-    });
+    const messaging = new MessagingStack(
+      app,
+      `${APP_NAME}-messaging-${envName}`,
+      {
+        ...baseProps,
+        params: {
+          dlqNotifications:
+            process.env.DLQ_NOTIFICATIONS ?? DEFAULT_VALUES.EMAIL,
+        },
+      }
+    );
 
     new ApiStack(app, `${APP_NAME}-api-${envName}`, {
       ...baseProps,
@@ -62,7 +71,7 @@ switch (stage) {
     //   },
     // });
 
-    new MfeStack(app, `${APP_NAME}-mfe-container-${envName}`, {
+    new MfeStack(app, `${APP_NAME}-mfe-${envName}`, {
       ...baseProps,
       params: {
         certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',

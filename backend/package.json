@@ -20,7 +20,6 @@
     "deploy": "npm run build && npm run build-all && ts-node ./helpers/deploy.ts",
     "deploy-backend": "npm run quick-deploy -- -s backend",
     "deploy-frontend": "npm run quick-deploy -- -s frontend",
-    "install-all": "npm i && npm run cdk-clear-context && ts-node ./helpers/installAll.ts",
     "quick-deploy": "ts-node ./helpers/deploy.ts",
     "seed": "npm run build && ts-node ./helpers/seed.ts",
     "test": "npm run build && jest --watchAll=false --coverage",
