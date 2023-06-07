@@ -3,7 +3,12 @@ import { Construct } from 'constructs';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
-import { GraphqlApi, FieldLogLevel, AuthorizationType, Schema } from '@aws-cdk/aws-appsync-alpha';
+import {
+  GraphqlApi,
+  FieldLogLevel,
+  AuthorizationType,
+  SchemaFile,
+} from 'aws-cdk-lib/aws-appsync';
 import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 
@@ -21,10 +26,26 @@ export class ApiStack extends Stack {
     super(scope, id, props);
 
     const REGION = Stack.of(this).region;
-    const userPool = UserPool.fromUserPoolId(this, 'userPool', props.params.userPoolId);
-    const dataTable = Table.fromTableArn(this, 'table', props.params.dataTableArn);
-    const eventHandlerQueue = Queue.fromQueueArn(this, 'eventHandlerQueue', props.params.eventHandlerQueueArn);
-    const eventBus = EventBus.fromEventBusArn(this, 'eventBus', props.params.eventBusArn);
+    const userPool = UserPool.fromUserPoolId(
+      this,
+      'userPool',
+      props.params.userPoolId
+    );
+    const dataTable = Table.fromTableArn(
+      this,
+      'table',
+      props.params.dataTableArn
+    );
+    const eventHandlerQueue = Queue.fromQueueArn(
+      this,
+      'eventHandlerQueue',
+      props.params.eventHandlerQueueArn
+    );
+    const eventBus = EventBus.fromEventBusArn(
+      this,
+      'eventBus',
+      props.params.eventBusArn
+    );
 
     /***
      *** AWS AppSync
@@ -35,7 +56,9 @@ export class ApiStack extends Stack {
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
       },
-      schema: Schema.fromAsset(path.join(__dirname, './graphql/schema.graphql')),
+      schema: SchemaFile.fromAsset(
+        path.join(__dirname, './graphql/schema.graphql')
+      ),
       authorizationConfig: {
         defaultAuthorization: {
           authorizationType: AuthorizationType.USER_POOL,
@@ -51,24 +74,35 @@ export class ApiStack extends Stack {
      ***/
 
     // Resolver for Accounts
-    const accountsResolverFunction = new NodejsFunction(this, 'AccountsResolver', {
-      functionName: `${props.appName}-${props.envName}-AccountsResolver`,
-      runtime: Runtime.NODEJS_18_X,
-      handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/accountsResolver/main.ts'),
-      memorySize: 512,
-      timeout: Duration.seconds(10),
-      environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
-        REGION: REGION,
-      },
-      //deadLetterQueue: commandHandlerQueue,
-    });
+    const accountsResolverFunction = new NodejsFunction(
+      this,
+      'AccountsResolver',
+      {
+        functionName: `${props.appName}-${props.envName}-AccountsResolver`,
+        runtime: Runtime.NODEJS_18_X,
+        handler: 'handler',
+        entry: path.resolve(
+          __dirname,
+          '../src/lambda/accountsResolver/main.ts'
+        ),
+        memorySize: 512,
+        timeout: Duration.seconds(10),
+        environment: {
+          DATA_TABLE_NAME: dataTable.tableName,
+          REGION: REGION,
+        },
+        //deadLetterQueue: commandHandlerQueue,
+      }
+    );
     // Add permissions to DynamoDB table
     accountsResolverFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+        actions: [
+          'dynamodb:PutItem',
+          'dynamodb:UpdateItem',
+          'dynamodb:DeleteItem',
+        ],
         resources: [dataTable.tableArn],
       })
     );
@@ -76,49 +110,72 @@ export class ApiStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi'],
+        resources: [
+          dataTable.tableArn,
+          dataTable.tableArn + '/index/aggregateId-lsi',
+        ],
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
-    const accountsResolverDataSource = api.addLambdaDataSource('accountsDataSource', accountsResolverFunction);
+    const accountsResolverDataSource = api.addLambdaDataSource(
+      'accountsDataSource',
+      accountsResolverFunction,
+      {
+        name: 'AccountsLambdaDataSource',
+      }
+    );
     // Resolvers
-    accountsResolverDataSource.createResolver({
-      typeName: 'Query',
-      fieldName: 'getAccounts',
-    });
-    accountsResolverDataSource.createResolver({
+    accountsResolverDataSource.createResolver(
+      `${props.appName}-${props.envName}-getAccountsResolver`,
+      {
+        typeName: 'Query',
+        fieldName: 'getAccounts',
+      }
+    );
+    accountsResolverDataSource.createResolver('createAccountResolver', {
       typeName: 'Mutation',
       fieldName: 'createAccount',
     });
-    accountsResolverDataSource.createResolver({
+    accountsResolverDataSource.createResolver('updateAccountResolver', {
       typeName: 'Mutation',
       fieldName: 'updateAccount',
     });
-    accountsResolverDataSource.createResolver({
+    accountsResolverDataSource.createResolver('deleteAccountResolver', {
       typeName: 'Mutation',
       fieldName: 'deleteAccount',
     });
 
     // Resolver for Transactions
-    const transactionsReolverFunction = new NodejsFunction(this, 'TransactionsResolver', {
-      functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
-      runtime: Runtime.NODEJS_18_X,
-      handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/transactionsResolver/main.ts'),
-      memorySize: 512,
-      timeout: Duration.seconds(10),
-      environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
-        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
-        REGION: REGION,
-      },
-      //deadLetterQueue: commandHandlerQueue,
-    });
+    const transactionsReolverFunction = new NodejsFunction(
+      this,
+      'TransactionsResolver',
+      {
+        functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
+        runtime: Runtime.NODEJS_18_X,
+        handler: 'handler',
+        entry: path.resolve(
+          __dirname,
+          '../src/lambda/transactionsResolver/main.ts'
+        ),
+        memorySize: 512,
+        timeout: Duration.seconds(10),
+        environment: {
+          DATA_TABLE_NAME: dataTable.tableName,
+          EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
+          REGION: REGION,
+        },
+        //deadLetterQueue: commandHandlerQueue,
+      }
+    );
     // Add permissions to DynamoDB table
     transactionsReolverFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+        actions: [
+          'dynamodb:PutItem',
+          'dynamodb:UpdateItem',
+          'dynamodb:DeleteItem',
+        ],
         resources: [dataTable.tableArn],
       })
     );
@@ -126,7 +183,11 @@ export class ApiStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
+        resources: [
+          dataTable.tableArn,
+          dataTable.tableArn + '/index/aggregateId-lsi',
+          dataTable.tableArn + '/index/aggregateId-gsi',
+        ],
       })
     );
     // Add permission to send to EventBridge
@@ -138,39 +199,50 @@ export class ApiStack extends Stack {
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
-    const transactionsResolverDataSource = api.addLambdaDataSource('transactionsDataSource', transactionsReolverFunction);
+    const transactionsResolverDataSource = api.addLambdaDataSource(
+      'transactionsDataSource',
+      transactionsReolverFunction,
+      { name: 'TransactionsLambdaDataSource' }
+    );
     // Resolvers
-    transactionsResolverDataSource.createResolver({
+    transactionsResolverDataSource.createResolver('getTransactionResolver', {
       typeName: 'Query',
       fieldName: 'getTransactions',
     });
-    transactionsResolverDataSource.createResolver({
+    transactionsResolverDataSource.createResolver('createTransactionResolver', {
       typeName: 'Mutation',
       fieldName: 'createTransaction',
     });
-    transactionsResolverDataSource.createResolver({
+    transactionsResolverDataSource.createResolver('updateTransactionResolver', {
       typeName: 'Mutation',
       fieldName: 'updateTransaction',
     });
-    transactionsResolverDataSource.createResolver({
+    transactionsResolverDataSource.createResolver('deleteTransactionResolver', {
       typeName: 'Mutation',
       fieldName: 'deleteTransaction',
     });
 
     // Resolver for Positions
-    const positionsResolverFunction = new NodejsFunction(this, 'PositionsResolver', {
-      functionName: `${props.appName}-${props.envName}-PositionsResolver`,
-      runtime: Runtime.NODEJS_18_X,
-      handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/positionsResolver/main.ts'),
-      memorySize: 512,
-      timeout: Duration.seconds(10),
-      environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
-        REGION: REGION,
-      },
-      //deadLetterQueue: commandHandlerQueue,
-    });
+    const positionsResolverFunction = new NodejsFunction(
+      this,
+      'PositionsResolver',
+      {
+        functionName: `${props.appName}-${props.envName}-PositionsResolver`,
+        runtime: Runtime.NODEJS_18_X,
+        handler: 'handler',
+        entry: path.resolve(
+          __dirname,
+          '../src/lambda/positionsResolver/main.ts'
+        ),
+        memorySize: 512,
+        timeout: Duration.seconds(10),
+        environment: {
+          DATA_TABLE_NAME: dataTable.tableName,
+          REGION: REGION,
+        },
+        //deadLetterQueue: commandHandlerQueue,
+      }
+    );
     // Add permissions to DynamoDB table
     positionsResolverFunction.addToRolePolicy(
       new PolicyStatement({
@@ -180,9 +252,13 @@ export class ApiStack extends Stack {
       })
     );
     // Set the new Lambda function as a data source for the AppSync API
-    const positionsResolverDataSource = api.addLambdaDataSource('positionsDataSource', positionsResolverFunction);
+    const positionsResolverDataSource = api.addLambdaDataSource(
+      'positionsDataSource',
+      positionsResolverFunction,
+      { name: 'GetPositionsLambdaResolver' }
+    );
     // Resolvers
-    positionsResolverDataSource.createResolver({
+    positionsResolverDataSource.createResolver('getPositionsResolver', {
       typeName: 'Query',
       fieldName: 'getPositions',
     });
@@ -191,32 +267,44 @@ export class ApiStack extends Stack {
      *** AWS Lambda - Event Handlers
      ***/
 
-    const updatePositionsFunction = new NodejsFunction(this, 'UpdatePositions', {
-      runtime: Runtime.NODEJS_18_X,
-      functionName: `${props.appName}-${props.envName}-UpdatePositions`,
-      handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/updatePositions/main.ts'),
-      memorySize: 1024,
-      timeout: Duration.seconds(10),
-      environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
-        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
-        REGION: REGION,
-      },
-      deadLetterQueue: eventHandlerQueue,
-    });
+    const updatePositionsFunction = new NodejsFunction(
+      this,
+      'UpdatePositions',
+      {
+        runtime: Runtime.NODEJS_18_X,
+        functionName: `${props.appName}-${props.envName}-UpdatePositions`,
+        handler: 'handler',
+        entry: path.resolve(__dirname, '../src/lambda/updatePositions/main.ts'),
+        memorySize: 1024,
+        timeout: Duration.seconds(10),
+        environment: {
+          DATA_TABLE_NAME: dataTable.tableName,
+          EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
+          REGION: REGION,
+        },
+        deadLetterQueue: eventHandlerQueue,
+      }
+    );
     // Add permissions to call DynamoDB
     updatePositionsFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
+        resources: [
+          dataTable.tableArn,
+          dataTable.tableArn + '/index/aggregateId-lsi',
+          dataTable.tableArn + '/index/aggregateId-gsi',
+        ],
       })
     );
     updatePositionsFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem'],
+        actions: [
+          'dynamodb:GetItem',
+          'dynamodb:PutItem',
+          'dynamodb:UpdateItem',
+        ],
         resources: [dataTable.tableArn],
       })
     );
@@ -242,15 +330,19 @@ export class ApiStack extends Stack {
      ***/
 
     // EventBus Rule - TransactionSavedEventRule
-    const transactionSavedEventRule = new Rule(this, 'TransactionSavedEventRule', {
-      ruleName: `${props.appName}-TransactionSavedEvent-${props.envName}`,
-      description: 'TransactionSavedEvent',
-      eventBus: eventBus,
-      eventPattern: {
-        source: ['custom.pecuniary'],
-        detailType: ['TransactionSavedEvent'],
-      },
-    });
+    const transactionSavedEventRule = new Rule(
+      this,
+      'TransactionSavedEventRule',
+      {
+        ruleName: `${props.appName}-TransactionSavedEvent-${props.envName}`,
+        description: 'TransactionSavedEvent',
+        eventBus: eventBus,
+        eventPattern: {
+          source: ['custom.pecuniary'],
+          detailType: ['TransactionSavedEvent'],
+        },
+      }
+    );
     transactionSavedEventRule.addTarget(
       new LambdaFunction(updatePositionsFunction, {
         //deadLetterQueue: SqsQueue,
@@ -268,12 +360,22 @@ export class ApiStack extends Stack {
 
     // EventBridge
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
-    new CfnOutput(this, 'TransactionSavedEventRuleArn', { value: transactionSavedEventRule.ruleArn });
+    new CfnOutput(this, 'TransactionSavedEventRuleArn', {
+      value: transactionSavedEventRule.ruleArn,
+    });
 
     // Lambda functions
-    new CfnOutput(this, 'AccountResolverFunctionArn', { value: accountsResolverFunction.functionArn });
-    new CfnOutput(this, 'TransactionsResolverFunctionArn', { value: transactionsReolverFunction.functionArn });
-    new CfnOutput(this, 'PositionsResolverFunctionArn', { value: positionsResolverFunction.functionArn });
-    new CfnOutput(this, 'UpdatePositionsFunctionArn', { value: updatePositionsFunction.functionArn });
+    new CfnOutput(this, 'AccountResolverFunctionArn', {
+      value: accountsResolverFunction.functionArn,
+    });
+    new CfnOutput(this, 'TransactionsResolverFunctionArn', {
+      value: transactionsReolverFunction.functionArn,
+    });
+    new CfnOutput(this, 'PositionsResolverFunctionArn', {
+      value: positionsResolverFunction.functionArn,
+    });
+    new CfnOutput(this, 'UpdatePositionsFunctionArn', {
+      value: updatePositionsFunction.functionArn,
+    });
   }
 }
