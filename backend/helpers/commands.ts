@@ -32,9 +32,14 @@ const runCmd = () => {
     program.parse();
 
     const cmd = program.args[0] ?? '';
-    const dir = program.args[1] ? process.cwd() + '/../' + program.args[1] : process.cwd() + '/..';
+    const dir = program.args[1]
+      ? process.cwd() + '/../' + program.args[1]
+      : process.cwd() + '/..';
     const root = path.resolve(dir);
-    const excludedDirs = program.args.length > 2 ? program.args[2].split(',') : ['node_modules', 'cdk.out', 'build'];
+    const excludedDirs =
+      program.args.length > 2
+        ? program.args[2].split(',')
+        : ['node_modules', 'cdk.out', 'build'];
 
     execCmd(cmd, root, excludedDirs);
   } catch (error) {
