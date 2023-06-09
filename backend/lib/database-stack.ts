@@ -18,25 +18,17 @@ export class DatabaseStack extends Stack {
      ***/
 
     const dataTable = new Table(this, 'Data', {
-      tableName: `${props.appName}-${props.envName}-Data`,
+      tableName: `${props.appName}-Data`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
-        name: 'userId',
+        name: 'pk',
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'sk',
+        name: 'createdAt',
         type: AttributeType.STRING,
       },
       removalPolicy: RemovalPolicy.DESTROY,
-    });
-    // LSIs for Data table
-    dataTable.addLocalSecondaryIndex({
-      indexName: 'aggregateId-lsi',
-      sortKey: {
-        name: 'aggregateId',
-        type: AttributeType.STRING,
-      },
     });
     // GSIs for Data Table
     dataTable.addGlobalSecondaryIndex({
@@ -47,6 +39,17 @@ export class DatabaseStack extends Stack {
       },
       sortKey: {
         name: 'transactionDate',
+        type: AttributeType.STRING,
+      },
+    });
+    dataTable.addGlobalSecondaryIndex({
+      indexName: 'userId-gsi',
+      partitionKey: {
+        name: 'userId',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'createdAt',
         type: AttributeType.STRING,
       },
     });

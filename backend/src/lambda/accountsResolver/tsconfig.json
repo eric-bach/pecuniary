@@ -12,5 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true
   },
+  "ts-node": {
+    "swc": true
+  },
   "exclude": ["node_modules", "**/*.test.ts"]
 }

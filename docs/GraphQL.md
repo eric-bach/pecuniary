@@ -1,3 +1,32 @@
+# Version 3
+
+```
+mutation CreateAccount {
+  createAccount(input: {
+    name: "Test",
+    type: "TFSA"
+  })
+  {
+    pk
+    createdAt
+    aggregateId
+    entity
+    name
+    type
+    updatedAt
+  }
+}
+
+
+query GetAccount {
+  getAccount(accountId: "acc#f4152231-f6ec-402e-979f-d10bb983fd80",) {
+    pk
+    createdAt
+  }
+}
+
+```
+
 # Version 2
 
 ```

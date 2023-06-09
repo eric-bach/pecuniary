@@ -1,13 +1,10 @@
-type Data @model @aws_cognito_user_pools {
-  userId: ID
-  sk: String
-  createdAt: AWSDateTime
-  updatedAt: AWSDateTime
+type Data @model @aws_cognito_user_pools(cognito_groups: ["Users"]) {
+  pk: ID!
+  createdAt: String!
   aggregateId: ID
   entity: String
   type: String
   name: String
-  description: String
   transactionDate: AWSDate
   symbol: String
   shares: Float
@@ -20,153 +17,157 @@ type Data @model @aws_cognito_user_pools {
   acb: Float
   payee: String
   amount: Float
+  updatedAt: AWSDateTime
 }
 
+# CreateAccount
 input CreateAccountInput {
-  userId: ID!
   type: String!
   name: String!
-  description: String!
-}
-
-input UpdateAccountInput {
-  userId: ID!
-  sk: String!
-  type: String!
-  name: String!
-  description: String!
-}
-
-input DeleteAccountInput {
-  userId: ID!
-  aggregateId: ID!
-}
-
-input CreateTransactionInput {
-  userId: ID!
-  aggregateId: ID!
-  type: String!
-  transactionDate: AWSDate!
-  symbol: String!
-  shares: Float!
-  price: Float!
-  commission: Float!
-}
-
-input UpdateTransactionInput {
-  userId: ID!
-  sk: String!
-  aggregateId: String!
-  type: String!
-  transactionDate: AWSDate!
-  symbol: String!
-  shares: Float!
-  price: Float!
-  commission: Float!
-}
-
-input DeleteTransactionInput {
-  userId: ID!
-  sk: String!
-  aggregateId: ID!
-  symbol: String!
-}
-
-type DeleteResponse {
-  userId: ID
-  aggregateId: String
-}
-
-input LastEvaluatedKey {
-  userId: ID
-  sk: String
-}
-
-input TransactionLastEvaluatedKey {
-  userId: ID
-  sk: String
-  aggregateId: ID
-  transactionDate: AWSDate
-}
-
-type GetAccountsResponse {
-  items: [AccountReadModel]
-  lastEvaluatedKey: LastEvaluatedKeyResponse
-}
-
-type LastEvaluatedKeyResponse {
-  userId: ID
-  sk: String
-}
-
-type AccountReadModel {
-  userId: ID
-  sk: String
-  createdAt: AWSDateTime
-  updatedAt: AWSDateTime
-  aggregateId: ID
-  entity: String
-  type: String
-  name: String
-  description: String
-  currencies: [Currency]
-  acb: Float
-  payee: String
-  amount: Float
-}
-
-type GetTransactionsResponse {
-  items: [TransactionReadModel]
-  lastEvaluatedKey: TransactionLastEvaluatedKeyResponse
-}
-
-type TransactionLastEvaluatedKeyResponse {
-  userId: ID
-  sk: String
-  aggregateId: ID
-  transactionDate: AWSDate
-}
-
-type TransactionReadModel {
-  userId: ID
-  sk: String
-  createdAt: AWSDateTime
-  updatedAt: AWSDateTime
-  aggregateId: ID
-  entity: String
-  type: String
-  transactionDate: AWSDate
-  symbol: String
-  shares: Float
-  price: Float
-  commission: Float
-}
-
-type Currency {
-  currency: String
-  bookValue: Float
-  marketValue: Float
 }
 
 # GraphQL actions
 type Query {
-  getAccounts(userId: String!, aggregateId: String, lastEvaluatedKey: LastEvaluatedKey): GetAccountsResponse
-    @aws_cognito_user_pools(cognito_groups: ["Users"])
-  getTransactions(userId: String!, aggregateId: String!, lastEvaluatedKey: TransactionLastEvaluatedKey): GetTransactionsResponse
-    @aws_cognito_user_pools(cognito_groups: ["Users"])
-  getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccount(accountId: String!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+
+  # getAccounts(userId: String!, aggregateId: String, lastEvaluatedKey: LastEvaluatedKey): GetAccountsResponse
+  #   @aws_cognito_user_pools(cognito_groups: ["Users"])
+  # getTransactions(userId: String!, aggregateId: String!, lastEvaluatedKey: TransactionLastEvaluatedKey): GetTransactionsResponse
+  #   @aws_cognito_user_pools(cognito_groups: ["Users"])
+  # getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {
-  createAccount(createAccountInput: CreateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
-  updateAccount(updateAccountInput: UpdateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteAccount(deleteAccountInput: DeleteAccountInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
-  createTransaction(createTransactionInput: CreateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
-  updateTransaction(updateTransactionInput: UpdateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createAccount(input: CreateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+
+  # createAccount(createAccountInput: CreateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  # updateAccount(updateAccountInput: UpdateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  # deleteAccount(deleteAccountInput: DeleteAccountInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  # createTransaction(createTransactionInput: CreateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  # updateTransaction(updateTransactionInput: UpdateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  # deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 schema {
   query: Query
   mutation: Mutation
 }
+
+# input UpdateAccountInput {
+#   userId: ID!
+#   sk: String!
+#   type: String!
+#   name: String!
+#   description: String!
+# }
+
+# input DeleteAccountInput {
+#   userId: ID!
+#   aggregateId: ID!
+# }
+
+# input CreateTransactionInput {
+#   userId: ID!
+#   aggregateId: ID!
+#   type: String!
+#   transactionDate: AWSDate!
+#   symbol: String!
+#   shares: Float!
+#   price: Float!
+#   commission: Float!
+# }
+
+# input UpdateTransactionInput {
+#   userId: ID!
+#   sk: String!
+#   aggregateId: String!
+#   type: String!
+#   transactionDate: AWSDate!
+#   symbol: String!
+#   shares: Float!
+#   price: Float!
+#   commission: Float!
+# }
+
+# input DeleteTransactionInput {
+#   userId: ID!
+#   sk: String!
+#   aggregateId: ID!
+#   symbol: String!
+# }
+
+# type DeleteResponse {
+#   userId: ID
+#   aggregateId: String
+# }
+
+# input LastEvaluatedKey {
+#   userId: ID
+#   sk: String
+# }
+
+# input TransactionLastEvaluatedKey {
+#   userId: ID
+#   sk: String
+#   aggregateId: ID
+#   transactionDate: AWSDate
+# }
+
+# type GetAccountsResponse {
+#   items: [AccountReadModel]
+#   lastEvaluatedKey: LastEvaluatedKeyResponse
+# }
+
+# type LastEvaluatedKeyResponse {
+#   userId: ID
+#   sk: String
+# }
+
+# type AccountReadModel {
+#   userId: ID
+#   sk: String
+#   createdAt: AWSDateTime
+#   updatedAt: AWSDateTime
+#   aggregateId: ID
+#   entity: String
+#   type: String
+#   name: String
+#   description: String
+#   currencies: [Currency]
+#   acb: Float
+#   payee: String
+#   amount: Float
+# }
+
+# type GetTransactionsResponse {
+#   items: [TransactionReadModel]
+#   lastEvaluatedKey: TransactionLastEvaluatedKeyResponse
+# }
+
+# type TransactionLastEvaluatedKeyResponse {
+#   userId: ID
+#   sk: String
+#   aggregateId: ID
+#   transactionDate: AWSDate
+# }
+
+# type TransactionReadModel {
+#   userId: ID
+#   sk: String
+#   createdAt: AWSDateTime
+#   updatedAt: AWSDateTime
+#   aggregateId: ID
+#   entity: String
+#   type: String
+#   transactionDate: AWSDate
+#   symbol: String
+#   shares: Float
+#   price: Float
+#   commission: Float
+# }
+
+# type Currency {
+#   currency: String
+#   bookValue: Float
+#   marketValue: Float
+# }
