@@ -43,9 +43,8 @@ type Account {
 type Query {
   getAccount(accountId: String!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAccountDetail(accountId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccounts: [Account] @aws_cognito_user_pools(cognito_groups: ["Users"])
 
-  # getAccounts(userId: String!, aggregateId: String, lastEvaluatedKey: LastEvaluatedKey): GetAccountsResponse
-  #   @aws_cognito_user_pools(cognito_groups: ["Users"])
   # getTransactions(userId: String!, aggregateId: String!, lastEvaluatedKey: TransactionLastEvaluatedKey): GetTransactionsResponse
   #   @aws_cognito_user_pools(cognito_groups: ["Users"])
   # getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])

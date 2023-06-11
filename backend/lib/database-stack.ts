@@ -53,6 +53,17 @@ export class DatabaseStack extends Stack {
         type: AttributeType.STRING,
       },
     });
+    dataTable.addGlobalSecondaryIndex({
+      indexName: 'entity-gsi',
+      partitionKey: {
+        name: 'entity',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'createdAt',
+        type: AttributeType.STRING,
+      },
+    });
 
     /***
      *** Outputs

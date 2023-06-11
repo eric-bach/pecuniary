@@ -115,6 +115,13 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '/graphql/Query.getAccountDetail.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
+    const getAccountsFunction = new AppsyncFunction(this, 'getAccountsFunction', {
+      name: 'getAccounts',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '/graphql/Query.getAccounts.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
 
     const passthrough = InlineCode.fromInline(`
         // The before step
@@ -152,6 +159,14 @@ export class ApiStack extends Stack {
       fieldName: 'getAccountDetail',
       runtime: FunctionRuntime.JS_1_0_0,
       pipelineConfig: [getAccountDetailFunction],
+      code: passthrough,
+    });
+    const getAccountsResolver = new Resolver(this, 'getAccountsResolver', {
+      api: api,
+      typeName: 'Query',
+      fieldName: 'getAccounts',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [getAccountsFunction],
       code: passthrough,
     });
 

@@ -13,6 +13,12 @@ export function request(ctx) {
         ':accountId': `acc${util.dynamodb.toDynamoDB(accountId)}`,
       },
     },
+    filter: {
+      expression: 'userId = :userId',
+      expressionValues: {
+        ':userId': util.dynamodb.toDynamoDB(ctx.identity.username),
+      },
+    },
     limit: 1,
   };
 }

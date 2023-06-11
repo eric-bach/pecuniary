@@ -1,18 +1,15 @@
 import { util } from '@aws-appsync/utils';
 
 export function request(ctx) {
-  console.log('🔔 GetAccountDetail Request: ', ctx);
-
-  const { accountId } = ctx.args;
+  console.log('🔔 GetAccounts Request: ', ctx);
 
   return {
-    version: '2017-02-28',
     operation: 'Query',
-    index: 'accountId-gsi',
+    index: 'entity-gsi',
     query: {
-      expression: 'accountId = :accountId',
+      expression: 'entity = :entity',
       expressionValues: {
-        ':accountId': util.dynamodb.toDynamoDB(accountId),
+        ':entity': util.dynamodb.toDynamoDB('account'),
       },
     },
     filter: {
@@ -25,7 +22,7 @@ export function request(ctx) {
 }
 
 export function response(ctx) {
-  console.log('🔔 GetAccountDetail Response: ', ctx);
+  console.log('🔔 GetAccounts Response: ', ctx);
 
   if (ctx.error) {
     util.error(ctx.error.message, ctx.error.type, ctx.result);
