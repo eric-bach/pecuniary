@@ -1,8 +1,9 @@
 type Data @model @aws_cognito_user_pools(cognito_groups: ["Users"]) {
   pk: ID!
   createdAt: String!
-  aggregateId: ID
-  entity: String
+  userId: String!
+  accountId: ID!
+  entity: String!
   type: String
   name: String
   transactionDate: AWSDate
@@ -17,7 +18,7 @@ type Data @model @aws_cognito_user_pools(cognito_groups: ["Users"]) {
   acb: Float
   payee: String
   amount: Float
-  updatedAt: AWSDateTime
+  updatedAt: AWSDateTime!
 }
 
 # CreateAccount
@@ -26,9 +27,22 @@ input CreateAccountInput {
   name: String!
 }
 
+# Account entity
+type Account {
+  pk: ID!
+  createdAt: String!
+  accountId: ID!
+  entity: String!
+  type: String!
+  name: String!
+  userId: String!
+  updatedAt: AWSDateTime!
+}
+
 # GraphQL actions
 type Query {
-  getAccount(accountId: String!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccount(accountId: String!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAccountDetail(accountId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   # getAccounts(userId: String!, aggregateId: String, lastEvaluatedKey: LastEvaluatedKey): GetAccountsResponse
   #   @aws_cognito_user_pools(cognito_groups: ["Users"])
@@ -38,7 +52,7 @@ type Query {
 }
 
 type Mutation {
-  createAccount(input: CreateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createAccount(input: CreateAccountInput!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   # createAccount(createAccountInput: CreateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
   # updateAccount(updateAccountInput: UpdateAccountInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])

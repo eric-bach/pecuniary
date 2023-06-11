@@ -32,13 +32,13 @@ export class DatabaseStack extends Stack {
     });
     // GSIs for Data Table
     dataTable.addGlobalSecondaryIndex({
-      indexName: 'aggregateId-gsi',
+      indexName: 'accountId-gsi',
       partitionKey: {
-        name: 'aggregateId',
+        name: 'accountId',
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'transactionDate',
+        name: 'createdAt',
         type: AttributeType.STRING,
       },
     });

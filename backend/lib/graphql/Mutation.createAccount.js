@@ -14,7 +14,7 @@ export function request(ctx) {
     attributeValues: {
       userId: util.dynamodb.toDynamoDB(ctx.identity.username),
       entity: util.dynamodb.toDynamoDB('account'),
-      aggregateId: util.dynamodb.toDynamoDB(accountId),
+      accountId: util.dynamodb.toDynamoDB(accountId),
       type: util.dynamodb.toDynamoDB(ctx.args.input.type),
       name: util.dynamodb.toDynamoDB(ctx.args.input.name),
       updatedAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),

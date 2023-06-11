@@ -9,7 +9,7 @@ mutation CreateAccount {
   {
     pk
     createdAt
-    aggregateId
+    accountId
     entity
     name
     type
@@ -17,12 +17,24 @@ mutation CreateAccount {
   }
 }
 
-
 query GetAccount {
   getAccount(accountId: "acc#f4152231-f6ec-402e-979f-d10bb983fd80",) {
     pk
     createdAt
   }
+}
+
+query GetAccountDetail {
+  getAccountDetail(accountId: "f4152231-f6ec-402e-979f-d10bb983fd80")
+    items {
+      pk
+      createdAt
+      accountId
+      entity
+      name
+      type
+      updatedAt
+    }
 }
 
 ```
