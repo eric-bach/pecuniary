@@ -101,6 +101,13 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '/graphql/Mutation.createAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
+    const updateAccountFunction = new AppsyncFunction(this, 'updateAccountFunction', {
+      name: 'updateAccount',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '/graphql/Mutation.updateAccount.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
     const getAccountFunction = new AppsyncFunction(this, 'getAccountFunction', {
       name: 'getAccount',
       api: api,
@@ -108,18 +115,25 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '/graphql/Query.getAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
-    const getAccountDetailFunction = new AppsyncFunction(this, 'getAccountDetailFunction', {
-      name: 'getAccountDetail',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '/graphql/Query.getAccountDetail.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
-    });
     const getAccountsFunction = new AppsyncFunction(this, 'getAccountsFunction', {
       name: 'getAccounts',
       api: api,
       dataSource: dynamoDbDataSource,
       code: Code.fromAsset(path.join(__dirname, '/graphql/Query.getAccounts.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const getAggregateFunction = new AppsyncFunction(this, 'getAggregateFunction', {
+      name: 'getAggregate',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '/graphql/Query.getAggregate.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const deleteAggregateFunction = new AppsyncFunction(this, 'deleteAggregateFunction', {
+      name: 'deleteAggregate',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '/graphql/Mutation.deleteAggregate.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
 
@@ -145,6 +159,14 @@ export class ApiStack extends Stack {
       pipelineConfig: [createAccountFunction],
       code: passthrough,
     });
+    const updateAccountResolver = new Resolver(this, 'updateAccountResolver', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'updateAccount',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [updateAccountFunction],
+      code: passthrough,
+    });
     const getAccountResolver = new Resolver(this, 'getAccountResolver', {
       api: api,
       typeName: 'Query',
@@ -153,20 +175,28 @@ export class ApiStack extends Stack {
       pipelineConfig: [getAccountFunction],
       code: passthrough,
     });
-    const getAccountDetailResolver = new Resolver(this, 'getAccountDetailResolver', {
-      api: api,
-      typeName: 'Query',
-      fieldName: 'getAccountDetail',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getAccountDetailFunction],
-      code: passthrough,
-    });
     const getAccountsResolver = new Resolver(this, 'getAccountsResolver', {
       api: api,
       typeName: 'Query',
       fieldName: 'getAccounts',
       runtime: FunctionRuntime.JS_1_0_0,
       pipelineConfig: [getAccountsFunction],
+      code: passthrough,
+    });
+    const getAggregateResolver = new Resolver(this, 'getAggregateResolver', {
+      api: api,
+      typeName: 'Query',
+      fieldName: 'getAggregate',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [getAggregateFunction],
+      code: passthrough,
+    });
+    const deleteAggregateResolver = new Resolver(this, 'deleteAggregatesResolver', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'deleteAggregate',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [getAggregateFunction, deleteAggregateFunction],
       code: passthrough,
     });
 

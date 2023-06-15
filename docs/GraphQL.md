@@ -17,6 +17,20 @@ mutation CreateAccount {
   }
 }
 
+mutation UpdateAccount {
+  updateAccount(input: {
+    pk: "acc#f4152231-f6ec-402e-979f-d10bb983fd80",
+    createdAt: "2023-06-09T01:38:39.183Z",
+    name: "asdfasdf",
+    type: "TFSA"
+  })
+  {
+    pk
+    name
+    type
+  }
+}
+
 query GetAccount {
   getAccount(accountId: "acc#f4152231-f6ec-402e-979f-d10bb983fd80",) {
     pk
@@ -24,17 +38,28 @@ query GetAccount {
   }
 }
 
-query GetAccountDetail {
-  getAccountDetail(accountId: "f4152231-f6ec-402e-979f-d10bb983fd80")
-    items {
-      pk
-      createdAt
-      accountId
-      entity
-      name
-      type
-      updatedAt
-    }
+query GetAggregate {
+  getAggregate(accountId: "f4152231-f6ec-402e-979f-d10bb983fd80") {
+    pk
+    createdAt
+    accountId
+    entity
+    name
+    type
+    updatedAt
+  }
+}
+
+mutation DeleteAggregate {
+  deleteAggregate(accountId: "f4152231-f6ec-402e-979f-d10bb983fd80") {
+    pk
+    createdAt
+    accountId
+    entity
+    name
+    type
+    updatedAt
+  }
 }
 
 ```
