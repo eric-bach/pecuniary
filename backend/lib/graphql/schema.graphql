@@ -47,15 +47,19 @@ type Account {
   updatedAt: AWSDateTime!
 }
 
+# Aggregate Response
+type Aggregates {
+  items: [Data];
+}
+
 # GraphQL actions
 type Query {
   getAccount(accountId: String!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAccounts: [Account] @aws_cognito_user_pools(cognito_groups: ["Users"])
 
-  getAggregate(accountId: String!, type: String): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getAggregate(accountId: String!, type: String): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
 
-  # getTransactions(userId: String!, aggregateId: String!, lastEvaluatedKey: TransactionLastEvaluatedKey): GetTransactionsResponse
-  #   @aws_cognito_user_pools(cognito_groups: ["Users"])
+  # getTransactions(userId: String!, aggregateId: String!, lastEvaluatedKey: TransactionLastEvaluatedKey): GetTransactionsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
   # getPositions(userId: String!, aggregateId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
@@ -63,7 +67,7 @@ type Mutation {
   createAccount(input: CreateAccountInput!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateAccount(input: UpdateAccountInput!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
 
-  deleteAggregate(accountId: String!): [Data] @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteAggregate(accountId: String!): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   # createTransaction(createTransactionInput: CreateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
   # updateTransaction(updateTransactionInput: UpdateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])

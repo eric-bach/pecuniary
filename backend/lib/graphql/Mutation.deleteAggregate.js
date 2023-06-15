@@ -30,7 +30,7 @@ export function response(ctx) {
     util.error(ctx.error.message, ctx.error.type, ctx.result);
   }
 
-  return ctx.prev.result;
+  return { items: ctx.prev.result };
   // const deleted = ctx.result.data['pecuniary-Data'];
   // return { deleted };
 }
