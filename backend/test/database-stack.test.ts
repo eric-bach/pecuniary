@@ -23,7 +23,7 @@ describe('Database Stack contains expected resources', () => {
     template.hasResourceProperties(
       'AWS::DynamoDB::Table',
       Match.objectLike({
-        TableName: `pecuniary-${props.envName}-Data`,
+        TableName: `pecuniary-Data`,
         BillingMode: 'PAY_PER_REQUEST',
       })
     );
