@@ -18,35 +18,49 @@ export class DatabaseStack extends Stack {
      ***/
 
     const dataTable = new Table(this, 'Data', {
-      tableName: `${props.appName}-${props.envName}-Data`,
+      tableName: `${props.appName}-Data`,
       billingMode: BillingMode.PAY_PER_REQUEST,
+      partitionKey: {
+        name: 'pk',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'createdAt',
+        type: AttributeType.STRING,
+      },
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+    // GSIs for Data Table
+    dataTable.addGlobalSecondaryIndex({
+      indexName: 'accountId-gsi',
+      partitionKey: {
+        name: 'accountId',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'createdAt',
+        type: AttributeType.STRING,
+      },
+    });
+    dataTable.addGlobalSecondaryIndex({
+      indexName: 'userId-gsi',
       partitionKey: {
         name: 'userId',
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'sk',
-        type: AttributeType.STRING,
-      },
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-    // LSIs for Data table
-    dataTable.addLocalSecondaryIndex({
-      indexName: 'aggregateId-lsi',
-      sortKey: {
-        name: 'aggregateId',
+        name: 'createdAt',
         type: AttributeType.STRING,
       },
     });
-    // GSIs for Data Table
     dataTable.addGlobalSecondaryIndex({
-      indexName: 'aggregateId-gsi',
+      indexName: 'entity-gsi',
       partitionKey: {
-        name: 'aggregateId',
+        name: 'entity',
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'transactionDate',
+        name: 'createdAt',
         type: AttributeType.STRING,
       },
     });
