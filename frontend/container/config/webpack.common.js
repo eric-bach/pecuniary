@@ -29,7 +29,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [['@babel/preset-react'], ['@babel/preset-env'], ['@babel/preset-typescript', { allowNamespaces: true }]],
+            presets: [
+              ['@babel/preset-react'],
+              ['@babel/preset-env'],
+              ['@babel/preset-typescript', { allowNamespaces: true }],
+            ],
             plugins: ['@babel/plugin-transform-runtime'],
           },
         },
@@ -39,7 +43,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      publicPath: '/',
+      // This may be required to load deep paths but breaks AWS deployment - https://medium.com/@bacheric/mastering-microfrontends-loading-deep-paths-91bc56889e9
+      //publicPath: '/',
     }),
     new Dotenv(),
   ],

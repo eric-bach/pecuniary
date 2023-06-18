@@ -10,11 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.171.0",
     "aws-lambda": "^1.0.7"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.104",
+    "@aws-sdk/client-cognito-identity-provider": "^3.347.1",
+    "@types/aws-lambda": "^8.10.116",
     "@types/node": "^18.7.18",
     "esbuild": "^0.15.7"
   }

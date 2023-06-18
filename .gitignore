@@ -10,6 +10,7 @@ node_modules
 cdk.out
 
 # Files to convert to TypeScript
+!/backend/lib/graphql/*.js
 !/client/src/client.js
 !/client/src/utils/Session.js
 

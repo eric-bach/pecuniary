@@ -1,0 +1,80 @@
+{
+  "name": "pecuniary",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/client": "^3.4.16",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^12.20.21",
+    "@types/react": "^16.8.0",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-router": "^5.1.16",
+    "amazon-cognito-identity-js": "^5.1.0",
+    "aws-appsync": "^4.1.2",
+    "aws-appsync-react": "^4.0.10",
+    "aws-appsync-subscription-link": "^3.0.9",
+    "chart.js": "^3.6.2",
+    "dotenv": "^10.0.0",
+    "faker": "^5.5.3",
+    "formik": "^2.2.9",
+    "formik-semantic-ui-react": "^2.0.0",
+    "graphql": "^14.3.1",
+    "graphql-tag": "^2.12.5",
+    "path-browserify": "^1.0.1",
+    "react": "^16.13.1",
+    "react-apollo": "^2.5.8",
+    "react-chartjs-2": "^4.0.0",
+    "react-datepicker": "^4.3.0",
+    "react-dom": "^16.13.1",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-number-format": "^4.7.3",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "5.0.1",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.4",
+    "subscriptions-transport-ws": "^0.9.19",
+    "type-fest": "^0.21.3",
+    "typescript": "^4.4.2",
+    "uuid": "^8.3.2",
+    "web-vitals": "^1.1.2",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:prod": "env-cmd -f .env.prod npm run-script build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/faker": "^5.5.9",
+    "@types/react-datepicker": "^4.1.7",
+    "@types/react-router-dom": "^5.1.9",
+    "@types/uuid": "^8.3.1",
+    "env-cmd": "^10.1.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
+  }
+}

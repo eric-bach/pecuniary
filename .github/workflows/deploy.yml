@@ -23,16 +23,16 @@ jobs:
       - name: Configure Node
         uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 18.x
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
-          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_PROD }}
+          aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
 
-      - name: Install NPM Dependencies (Backend)
-        run: npm ci
+      - name: Install Backend Dependencies
+        run: npm run cinstall-all-backend
         working-directory: backend
 
       - name: Create backend/.env file
@@ -41,10 +41,6 @@ jobs:
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
           cat .env
-        working-directory: backend
-
-      - name: Install NPM Dependencies
-        run: npm run cinstall-all
         working-directory: backend
 
       - name: CDK Deploy Backend
@@ -70,52 +66,31 @@ jobs:
       - name: Configure Node
         uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 18.x
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.AWS_ACCESS_ARN }}
-          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_PROD }}
+          aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
 
-      - name: Install NPM Dependencies (Backend)
-        run: npm ci
-        working-directory: backend
-
-      - name: Install NPM Dependencies
+      - name: Install Dependencies
         run: npm run cinstall-all
         working-directory: backend
-
-      # - name: Create client/.env file - TEMP
-      #   run: |
-      #     touch .env
-      #     echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.REACT_APP_COGNITO_USERPOOL_ID }} >> .env
-      #     echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
-      #     cp .env .env.prod
-      #     cat .env.prod
-      #   working-directory: client
-
-      # - name: Create client/src/aws-exports.js file - TEMP
-      #   run: |
-      #     touch aws-exports.js
-      #     echo const awsmobile = { aws_project_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_cognito_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_user_pools_id: '${{secrets.REACT_APP_COGNITO_USERPOOL_ID}}', aws_user_pools_web_client_id: '${{ secrets.REACT_APP_COGNITO_CLIENT_ID }}', aws_appsync_graphqlEndpoint: '${{ secrets.AWS_APPSYNC_GRAPHQL_ENDPOINT }}', aws_appsync_region: '${{ secrets.CDK_DEFAULT_REGION }}', aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS', }; >> aws-exports.js
-      #     echo export default awsmobile; >> aws-exports.js
-      #     cat aws-exports.js
-      #   working-directory: client/src
 
       - name: Create frontend/container/.env file
         run: |
           touch .env
-          echo PRODUCTION_DOMAIN=${{ secrets.PRODUCTION_DOMAIN }} >> .env
-          echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.REACT_APP_COGNITO_USERPOOL_ID }} >> .env
-          echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.REACT_APP_COGNITO_CLIENT_ID }} >> .env
-          echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.REACT_APP_APPSYNC_ENDPOINT }} >> .env
-          echo REACT_APP_APPSYNC_REGION=${{ secrets.REACT_APP_APPSYNC_REGION }} >> .env
+          echo PRODUCTION_DOMAIN=${{ secrets.CLOUDFRONT_DOMAIN_PROD }} >> .env
+          echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.COGNITO_USERPOOL_ID_PROD }} >> .env
+          echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.COGNITO_WEB_CLIENT_ID_PROD }} >> .env
+          echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.APPSYNC_ENDPOINT_PROD }} >> .env
+          echo REACT_APP_APPSYNC_REGION=${{ secrets.CDK_DEFAULT_REGION }} >> .env
           cat .env
         working-directory: frontend/container
 
-      - name: Build All
-        run: npm run build-all
+      - name: Build Frontend
+        run: npm run build-all-frontend
         working-directory: backend
 
       - name: CDK Deploy Frontend

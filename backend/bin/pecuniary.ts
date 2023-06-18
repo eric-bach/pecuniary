@@ -6,9 +6,8 @@ import { ApiStack } from '../lib/api-stack';
 import { DatabaseStack } from '../lib/database-stack';
 import { MessagingStack } from '../lib/messaging-stack';
 import { FrontendStack } from '../lib/frontend-stack';
-import { GitHubStackProps, PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
+import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
 import { MfeStack } from '../lib/mfe-stack';
-import { CiCdStack } from '../lib/ci-cd-stack';
 import { APP_NAME, DEFAULT_VALUES } from '../lib/constants';
 
 const app = new App();
@@ -30,31 +29,26 @@ const baseProps: PecuniaryBaseStackProps = {
 };
 
 switch (stage) {
-  case 'cicd': {
-    const gitHubProps: GitHubStackProps = {
-      repositoryConfig: [
-        {
-          owner: DEFAULT_VALUES.GITHUB_OWNER,
-          repo: APP_NAME,
-        },
-      ],
-    };
-    new CiCdStack(app, `${APP_NAME}-cicd-${envName}`, { ...baseProps, ...gitHubProps });
-
-    break;
-  }
-
   case 'backend': {
     const auth = new AuthStack(app, `${APP_NAME}-auth-${envName}`, baseProps);
 
-    const database = new DatabaseStack(app, `${APP_NAME}-database-${envName}`, baseProps);
+    const database = new DatabaseStack(
+      app,
+      `${APP_NAME}-database-${envName}`,
+      baseProps
+    );
 
-    const messaging = new MessagingStack(app, `${APP_NAME}-messaging-${envName}`, {
-      ...baseProps,
-      params: {
-        dlqNotifications: process.env.DLQ_NOTIFICATIONS ?? DEFAULT_VALUES.EMAIL,
-      },
-    });
+    const messaging = new MessagingStack(
+      app,
+      `${APP_NAME}-messaging-${envName}`,
+      {
+        ...baseProps,
+        params: {
+          dlqNotifications:
+            process.env.DLQ_NOTIFICATIONS ?? DEFAULT_VALUES.EMAIL,
+        },
+      }
+    );
 
     new ApiStack(app, `${APP_NAME}-api-${envName}`, {
       ...baseProps,
@@ -77,7 +71,7 @@ switch (stage) {
     //   },
     // });
 
-    new MfeStack(app, `${APP_NAME}-mfe-container-${envName}`, {
+    new MfeStack(app, `${APP_NAME}-mfe-${envName}`, {
       ...baseProps,
       params: {
         certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
