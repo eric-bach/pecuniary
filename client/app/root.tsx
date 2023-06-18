@@ -1,4 +1,5 @@
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import { LinksFunction } from '@remix-run/node';
 import { Container } from '@mui/material';
 import { logout } from './utils/session.server';
 
@@ -8,14 +9,19 @@ import config from './aws-exports';
 import { Authenticator } from '@aws-amplify/ui-react';
 
 import styles from '@aws-amplify/ui-react/styles.css';
+import footerStyles from '~/styles/footer.css';
 
 import Header from './header';
+import Footer from './footer';
 
 Amplify.configure({ ...config });
 
-export function links() {
-  return [{ rel: 'stylesheet', href: styles }];
-}
+export const links: LinksFunction = () => {
+  return [
+    { rel: 'stylesheet', href: styles },
+    { rel: 'stylesheet', href: footerStyles },
+  ];
+};
 
 /**
  * this action function is called when the user logs
@@ -42,6 +48,7 @@ export default function App() {
           </Container>
           <Scripts />
           <LiveReload />
+          <Footer />
         </Authenticator.Provider>
       </body>
     </html>
