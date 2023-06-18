@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useFetcher } from '@remix-run/react';
 import { AppBar, Avatar, Box, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
-import { logout } from './utils/session.server';
 import MenuIcon from '@mui/icons-material/Menu';
-import SpaIcon from '@mui/icons-material/Spa';
+import PaidIcon from '@mui/icons-material/Paid';
 
 import { Auth } from 'aws-amplify';
 import { useAuthenticator } from '@aws-amplify/ui-react';
@@ -19,15 +18,6 @@ function stringAvatar(name: string) {
     children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
   };
 }
-
-/**
- * this action function is called when the user logs
- * out of the application. We call logout on server to
- * clear out the session cookies
- */
-export const action = async ({ request }: any) => {
-  return await logout(request);
-};
 
 export default function Header() {
   const fetcher = useFetcher();
@@ -70,7 +60,7 @@ export default function Header() {
     <AppBar position='static'>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
-          <SpaIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <PaidIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant='h6'
             noWrap
@@ -121,14 +111,14 @@ export default function Header() {
                 <Link
                   key={page}
                   to={page.toLocaleLowerCase()}
-                  style={{ margin: 2, color: 'white', display: 'block', textDecoration: 'none' }}
+                  style={{ margin: 6, color: 'white', display: 'block', textDecoration: 'none' }}
                 >
                   {page}
                 </Link>
               ))}
             </Menu>
           </Box>
-          <SpaIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <PaidIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant='h5'
             noWrap
@@ -152,7 +142,7 @@ export default function Header() {
               <Link
                 key={page}
                 to={page.toLocaleLowerCase()}
-                style={{ margin: 2, color: 'white', display: 'block', textDecoration: 'none' }}
+                style={{ margin: 6, color: 'white', display: 'block', textDecoration: 'none' }}
               >
                 {page}
               </Link>
