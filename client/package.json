@@ -11,6 +11,7 @@
     "@aws-amplify/ui-react": "^5.0.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@hookform/resolvers": "^3.1.1",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.5",
     "@remix-run/css-bundle": "^1.17.1",
@@ -22,7 +23,10 @@
     "graphql-tag": "^2.12.6",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.45.0",
+    "remix-hook-form": "^1.1.1",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.17.1",

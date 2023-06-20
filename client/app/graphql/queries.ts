@@ -7,3 +7,15 @@ export const GET_ACCOUNTS = `query GetAccounts {
         updatedAt      
     }
   }`;
+
+export const CREATE_ACCOUNT = `mutation CreateAccount($input: CreateAccountInput!) {
+    createAccount(input: $input) {
+        pk
+        createdAt
+        accountId
+        entity
+        name
+        type
+        updatedAt
+    }
+  }`;
