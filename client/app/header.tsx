@@ -6,16 +6,20 @@ import PaidIcon from '@mui/icons-material/Paid';
 
 import { Auth } from 'aws-amplify';
 import { useAuthenticator } from '@aws-amplify/ui-react';
+import { AmplifyUser } from '@aws-amplify/ui';
 
 const pages: string[] = ['Dashboard', 'Account'];
 const settings: string[] = ['My Profile', 'My Bookings', 'Logout'];
 
-function stringAvatar(name: string) {
+function stringAvatar(user: AmplifyUser) {
   return {
     sx: {
       bgcolor: '#ccc',
     },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    children:
+      user.attributes?.given_name && user.attributes?.family_name
+        ? `${user.attributes?.given_name[0]}${user.attributes?.family_name[0]}`
+        : undefined,
   };
 }
 
@@ -153,7 +157,7 @@ export default function Header() {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title='Open settings'>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar {...stringAvatar(`${user.attributes?.given_name} ${user.attributes?.family_name}`)} />
+                  <Avatar {...stringAvatar(user)} />
                 </IconButton>
               </Tooltip>
               <Menu

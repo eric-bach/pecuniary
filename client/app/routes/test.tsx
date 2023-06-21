@@ -43,6 +43,37 @@ export const Input = ({ name, title, id }: { name: string; title?: string; id?: 
   );
 };
 
+// Select
+
+import { MenuItem, FormControl } from '@mui/material';
+
+export const Select = ({ name, title, id, options }: { name: string; title?: string; id?: string; options: string[] }) => {
+  const field = useField(name);
+  return (
+    <FormControl sx={{ width: '100%' }}>
+      <TextField
+        {...field.getInputProps()}
+        select
+        id={id ? id : name}
+        name={name}
+        type='select'
+        label={title}
+        placeholder={title}
+        error={field.error !== undefined}
+        helperText={field.error}
+        variant='outlined'
+        margin='normal'
+      >
+        {options.map((type) => (
+          <MenuItem key={type} value={type}>
+            {type}
+          </MenuItem>
+        ))}
+      </TextField>
+    </FormControl>
+  );
+};
+
 // Form
 
 import { Container } from '@mui/material';
@@ -52,6 +83,8 @@ import { withZod } from '@remix-validated-form/with-zod';
 import { ValidatedForm, validationError } from 'remix-validated-form';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
+
+const accountTypes: string[] = ['TFSA', 'RRSP'];
 
 const createPostSchema = zfd.formData({
   name: z.string().nonempty('Account name is required'),
@@ -72,6 +105,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   const { name, type } = validation.data;
   console.log('Creating Post...', { name, type });
+
+  return null;
 };
 
 export default function () {
@@ -81,7 +116,7 @@ export default function () {
     <Container>
       <ValidatedForm validator={validator} method='post'>
         <Input name='name' title='Account name' />
-        <Input name='type' title='Account type' />
+        <Select name='type' title='Account type' options={accountTypes} />
 
         <SubmitButton submitText='Create Post' />
       </ValidatedForm>
