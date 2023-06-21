@@ -79,7 +79,6 @@ export default function NewProject() {
       <Form method='post' action='/account/new' noValidate={true}>
         <TextField
           id='name'
-          name='name'
           type='text'
           label='Account name'
           placeholder='Account name'
