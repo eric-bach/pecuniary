@@ -58,6 +58,7 @@ export const Select = ({ name, title, id, options }: { name: string; title?: str
         name={name}
         type='select'
         label={title}
+        defaultValue=''
         placeholder={title}
         error={field.error !== undefined}
         helperText={field.error}
