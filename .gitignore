@@ -14,6 +14,10 @@ cdk.out
 !/client/src/client.js
 !/client/src/utils/Session.js
 
+# Remix
+!remix.config.js
+!remix.env.d.ts
+
 # Exclude configuration files (provided with *.example files)
 .env*
 backend/deploy.sh
