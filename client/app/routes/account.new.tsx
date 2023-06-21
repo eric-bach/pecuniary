@@ -1,58 +1,47 @@
-import { Form, useActionData } from '@remix-run/react';
+import { useActionData } from '@remix-run/react';
 import { ActionFunction, redirect } from '@remix-run/node';
-import { Button, Container, FormControl, MenuItem, TextField } from '@mui/material';
-import gql from 'graphql-tag';
+import { Container } from '@mui/material';
 import { z } from 'zod';
+import { zfd } from 'zod-form-data';
+import { withZod } from '@remix-validated-form/with-zod';
+import gql from 'graphql-tag';
 
 import { getClient } from '~/utils/session.server';
 import { CREATE_ACCOUNT } from '~/graphql/queries';
 import { Account } from '~/types/types';
+import { ValidatedForm, validationError } from 'remix-validated-form';
+
+import { Input } from '~/components/input';
+import { Select } from '~/components/select';
+import { SubmitButton } from '~/components/submit';
 
 const accountTypes: string[] = ['TFSA', 'RRSP'];
 
-const validateForm = async (formData: FormData) => {
-  const getValidationErrors = (err: any) => {
-    const validationErrors = {} as any;
+const createPostSchema = zfd.formData({
+  name: z.string().nonempty('Account name is required'),
+  type: z.string().nonempty('Account type is required'),
+});
 
-    err.issues.forEach((error: any) => {
-      if (error.path) {
-        validationErrors[error.path] = error.message;
-      }
-    });
+export type CreatePostType = z.infer<typeof createPostSchema>;
 
-    return validationErrors;
-  };
-
-  const formJSON: { [key: string]: any } = {};
-  for (var key of formData.keys()) {
-    formJSON[key] = formData.get(key);
-  }
-
-  const schema = z.object({
-    name: z.string().nonempty('Account name is required'),
-    type: z.string().nonempty('Account type is required'),
-  });
-
-  try {
-    const data = await schema.parse(formJSON);
-    return data;
-  } catch (error) {
-    throw getValidationErrors(error);
-  }
-};
+const validator = withZod(createPostSchema);
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   try {
-    const data = await validateForm(formData);
-    console.log('data', data);
+    const validation = await validator.validate(formData);
+
+    if (validation.error) {
+      return validationError(validation.error);
+    }
+
+    const { name, type } = validation.data;
 
     const input = {
-      name: data.name,
-      type: data.type,
+      name: name,
+      type: type,
     };
-    console.log(input);
 
     // Save account
     const client = await getClient(request);
@@ -71,49 +60,17 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-export default function NewProject() {
+export default function () {
   const actionData = useActionData();
 
   return (
-    <Container maxWidth='lg'>
-      <Form method='post' action='/account/new' noValidate={true}>
-        <TextField
-          id='name'
-          type='text'
-          label='Account name'
-          placeholder='Account name'
-          error={actionData?.errors['name'] !== undefined}
-          helperText={actionData?.errors['name']}
-          variant='outlined'
-          margin='normal'
-          sx={{ width: '100%' }}
-        />
+    <Container>
+      <ValidatedForm validator={validator} method='post'>
+        <Input name='name' title='Account name' />
+        <Select name='type' title='Account type' options={accountTypes} />
 
-        <FormControl sx={{ width: '100%' }}>
-          <TextField
-            select
-            id='type'
-            name='type'
-            type='select'
-            label='Account type'
-            defaultValue=''
-            error={actionData?.errors['type'] !== undefined}
-            helperText={actionData?.errors['type']}
-            variant='outlined'
-            margin='normal'
-          >
-            {accountTypes.map((type) => (
-              <MenuItem key={type} value={type}>
-                {type}
-              </MenuItem>
-            ))}
-          </TextField>
-        </FormControl>
-
-        <Button id='create' name='create' type='submit' variant='contained' color='primary'>
-          Create
-        </Button>
-      </Form>
+        <SubmitButton submitText='Create Post' />
+      </ValidatedForm>
     </Container>
   );
 }
