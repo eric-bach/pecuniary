@@ -1,11 +1,12 @@
-import { Form, Link, useActionData } from '@remix-run/react';
+import { Form, useActionData } from '@remix-run/react';
 import { ActionFunction, redirect } from '@remix-run/node';
-import { Button, Container, FormControl, MenuItem, Select, InputLabel, TextField } from '@mui/material';
-import * as Yup from 'yup';
-import { getClient } from '~/utils/session.server';
+import { Button, Container, FormControl, MenuItem, TextField } from '@mui/material';
 import gql from 'graphql-tag';
-import { Account } from '~/types/types';
+import { z } from 'zod';
+
+import { getClient } from '~/utils/session.server';
 import { CREATE_ACCOUNT } from '~/graphql/queries';
+import { Account } from '~/types/types';
 
 const accountTypes: string[] = ['TFSA', 'RRSP'];
 
@@ -13,7 +14,7 @@ const validateForm = async (formData: FormData) => {
   const getValidationErrors = (err: any) => {
     const validationErrors = {} as any;
 
-    err.inner.forEach((error: any) => {
+    err.issues.forEach((error: any) => {
       if (error.path) {
         validationErrors[error.path] = error.message;
       }
@@ -27,13 +28,13 @@ const validateForm = async (formData: FormData) => {
     formJSON[key] = formData.get(key);
   }
 
-  const schema = Yup.object({
-    name: Yup.string().required('Account name is required'),
-    type: Yup.string().required('Account type is required'),
+  const schema = z.object({
+    name: z.string().nonempty('Account name is required'),
+    type: z.string().nonempty('Account type is required'),
   });
 
   try {
-    const data = await schema.validate(formJSON, { abortEarly: false });
+    const data = await schema.parse(formJSON);
     return data;
   } catch (error) {
     throw getValidationErrors(error);
@@ -65,6 +66,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     return redirect('/account');
   } catch (errors) {
+    console.log('GOT ERRORS', JSON.stringify({ errors }));
     return { errors };
   }
 };
