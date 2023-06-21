@@ -1,11 +1,12 @@
 import { LoaderArgs } from '@remix-run/node';
-import { Link, Outlet, useLoaderData } from '@remix-run/react';
-import { Box, Typography } from '@mui/material';
+import { Link, useLoaderData, useNavigation } from '@remix-run/react';
+import { Box } from '@mui/material';
 import { getClient } from '~/utils/session.server';
 import { gql } from 'graphql-tag';
 
 import { GET_ACCOUNTS } from '~/graphql/queries';
 import { Account, GetAccountsResponse } from '~/types/types';
+import { Loader } from '@aws-amplify/ui-react';
 
 export async function loader({ request }: LoaderArgs) {
   const client = await getClient(request);
@@ -18,7 +19,10 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function AccountRoute() {
+  const navigation = useNavigation();
   const accounts = useLoaderData();
+
+  if (navigation.state === 'loading') return <Loader />;
 
   return (
     <Box>
