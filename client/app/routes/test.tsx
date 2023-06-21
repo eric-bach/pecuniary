@@ -1,89 +1,14 @@
-// Submit
-
-import { Button } from '@mui/material';
-import { useIsSubmitting } from 'remix-validated-form';
-
-export const SubmitButton = ({ submitText = 'Submit' }: { submitText?: string }) => {
-  const isSubmitting = useIsSubmitting();
-
-  return (
-    <Button type='submit' variant='contained' color='primary' disabled={isSubmitting}>
-      {isSubmitting ? 'Submitting...' : submitText}
-    </Button>
-  );
-};
-
-// Input
-
-import { useField } from 'remix-validated-form';
-import { TextField } from '@mui/material';
-
-export const Input = ({ name, title, id }: { name: string; title?: string; id?: string }) => {
-  const field = useField(name);
-  return (
-    <TextField
-      {...field.getInputProps()}
-      id={id ? id : name}
-      name={name}
-      type='text'
-      label={title}
-      placeholder={title}
-      error={field.error !== undefined}
-      helperText={field.error}
-      onClick={() => {
-        field.clearError();
-      }}
-      onChange={() => {
-        if (field.error) field.clearError();
-      }}
-      variant='outlined'
-      margin='normal'
-      sx={{ width: '100%' }}
-    />
-  );
-};
-
-// Select
-
-import { MenuItem, FormControl } from '@mui/material';
-
-export const Select = ({ name, title, id, options }: { name: string; title?: string; id?: string; options: string[] }) => {
-  const field = useField(name);
-  return (
-    <FormControl sx={{ width: '100%' }}>
-      <TextField
-        {...field.getInputProps()}
-        select
-        id={id ? id : name}
-        name={name}
-        type='select'
-        label={title}
-        defaultValue=''
-        placeholder={title}
-        error={field.error !== undefined}
-        helperText={field.error}
-        variant='outlined'
-        margin='normal'
-      >
-        {options.map((type) => (
-          <MenuItem key={type} value={type}>
-            {type}
-          </MenuItem>
-        ))}
-      </TextField>
-    </FormControl>
-  );
-};
-
-// Form
-
 import { Container } from '@mui/material';
-import { Form, useActionData } from '@remix-run/react';
-import { ActionArgs, ActionFunction } from '@remix-run/node';
+import { useActionData } from '@remix-run/react';
+import { ActionFunction } from '@remix-run/node';
 import { withZod } from '@remix-validated-form/with-zod';
 import { ValidatedForm, validationError } from 'remix-validated-form';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
+
+import { Input } from '~/components/input';
+import { Select } from '~/components/select';
+import { SubmitButton } from '~/components/submit';
 
 const accountTypes: string[] = ['TFSA', 'RRSP'];
 
@@ -105,7 +30,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const { name, type } = validation.data;
-  console.log('Creating Post...', { name, type });
+  console.log('Creating Account...', { name, type });
 
   return null;
 };
