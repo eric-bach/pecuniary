@@ -36,8 +36,10 @@ jobs:
         run: npm run test
         working-directory: backend
 
-  integration-tests:
-    name: Integration Tests
+  # frontend-integration-tests:
+
+  mfe-integration-tests:
+    name: MFE Integration Tests
     runs-on: ubuntu-latest
 
     steps:

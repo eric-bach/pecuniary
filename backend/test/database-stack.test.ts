@@ -15,6 +15,9 @@ describe('Database Stack contains expected resources', () => {
     },
   };
 
+  process.env.CERTIFICATE_ARN = 'test';
+  process.env.DLQ_NOTIFICATIONS = 'test';
+
   const stack = new DatabaseStack(app, 'PecuniaryTestStack', props);
 
   const template = Template.fromStack(stack);

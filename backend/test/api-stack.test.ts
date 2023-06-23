@@ -24,6 +24,9 @@ describe('Api Stack contains expected resources', () => {
     },
   };
 
+  process.env.CERTIFICATE_ARN = 'test';
+  process.env.DLQ_NOTIFICATIONS = 'test';
+
   const fromTableArnMock = jest.spyOn(Table, 'fromTableArn');
   const fromQueueArn = jest.spyOn(Queue, 'fromQueueArn');
   const fromEventBusArn = jest.spyOn(EventBus, 'fromEventBusArn');

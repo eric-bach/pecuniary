@@ -31,7 +31,6 @@ export class ApiStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryApiStackProps) {
     super(scope, id, props);
 
-    const REGION = Stack.of(this).region;
     const userPool = UserPool.fromUserPoolId(this, 'userPool', props.params.userPoolId);
     const dataTable = Table.fromTableArn(this, 'table', props.params.dataTableArn);
     const eventHandlerQueue = Queue.fromQueueArn(this, 'eventHandlerQueue', props.params.eventHandlerQueueArn);
