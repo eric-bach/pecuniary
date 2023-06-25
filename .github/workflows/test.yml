@@ -61,7 +61,7 @@ jobs:
         working-directory: client
 
       - name: 🚀 Deploy
-        if: github.ref == 'refs/heads/main'
+        #if: github.ref == 'refs/heads/main'
         run: arc deploy --production --prune
         env:
           CI: true
