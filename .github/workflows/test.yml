@@ -173,7 +173,7 @@ jobs:
 
       - name: TEST
         run: ls -la
-        working-directory: frontend
+        working-directory: frontend/server
 
       - name: 🚀 Deploy
         run: npm run deploy dev
