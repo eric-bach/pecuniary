@@ -166,3 +166,9 @@ jobs:
       - name: 🚀 Deploy
         run: npm run deploy dev
         working-directory: backend
+
+      # - name: Invalidate CloudFront
+      #   uses: chetan/invalidate-cloudfront-action@v2
+      #   env:
+      #     DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
+      #     PATHS: "/*"
