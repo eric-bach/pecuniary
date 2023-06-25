@@ -7,8 +7,3 @@ remix-architect-app
   src server
 
 @static
-
-# @aws
-# profile default
-# region us-west-1
-  
