@@ -1,4 +1,4 @@
-import { Stack, Duration } from 'aws-cdk-lib';
+import { Stack, Duration, RemovalPolicy, CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
@@ -7,6 +7,7 @@ import {
   AllowedMethods,
   CachePolicy,
   Distribution,
+  GeoRestriction,
   OriginRequestCookieBehavior,
   OriginRequestHeaderBehavior,
   OriginRequestPolicy,
@@ -37,7 +38,10 @@ export class RemixStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryFrontendStackProps) {
     super(scope, id, props);
 
-    const bucket = new Bucket(this, 'StaticAssetsBucket');
+    const bucket = new Bucket(this, 'WebsiteHostingBucket', {
+      bucketName: `${props.appName}-website-${props.envName}`,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
 
     new BucketDeployment(this, 'DeployStaticAssets', {
       sources: [Source.asset(join(__dirname, '../../client/public'))],
@@ -45,9 +49,10 @@ export class RemixStack extends Stack {
       destinationKeyPrefix: '_static',
     });
 
-    const fn = new NodejsFunction(this, 'remixSSR', {
+    const remixServerFunction = new NodejsFunction(this, 'RemixServer', {
       runtime: Runtime.NODEJS_18_X,
       handler: 'handler',
+      functionName: `${props.appName}-${props.envName}-RemixSSR`,
       entry: join(__dirname, '../../client/server/index.js'),
       environment: {
         NODE_ENV: 'production',
@@ -56,58 +61,57 @@ export class RemixStack extends Stack {
         nodeModules: ['@remix-run/architect', 'react', 'react-dom'],
       },
       timeout: Duration.seconds(10),
-      logRetention: RetentionDays.THREE_DAYS,
+      logRetention: RetentionDays.ONE_YEAR,
       tracing: Tracing.ACTIVE,
     });
 
-    const integration = new HttpLambdaIntegration('RequestHandlerIntegration', fn, {
+    const httpLambdaIntegration = new HttpLambdaIntegration('RequestHandlerIntegration', remixServerFunction, {
       payloadFormatVersion: api.PayloadFormatVersion.VERSION_2_0,
     });
 
     const httpApi = new api.HttpApi(this, 'WebsiteApi', {
-      defaultIntegration: integration,
+      defaultIntegration: httpLambdaIntegration,
+      apiName: `${props.appName}-${props.envName}-website`,
     });
 
     const httpApiUrl = `${httpApi.httpApiId}.execute-api.${Stack.of(this).region}.${Stack.of(this).urlSuffix}`;
 
-    const requestHandlerOrigin = new origin.HttpOrigin(httpApiUrl);
-    const originRequestPolicy = new OriginRequestPolicy(this, 'RequestHandlerPolicy', {
-      originRequestPolicyName: 'website-request-handler',
-      queryStringBehavior: OriginRequestQueryStringBehavior.all(),
-      cookieBehavior: OriginRequestCookieBehavior.all(),
-      // https://stackoverflow.com/questions/65243953/pass-query-params-from-cloudfront-to-api-gateway
-      headerBehavior: OriginRequestHeaderBehavior.none(),
-    });
-    const requestHandlerBehavior: AddBehaviorOptions = {
-      allowedMethods: AllowedMethods.ALLOW_ALL,
-      viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      cachePolicy: CachePolicy.CACHING_DISABLED,
-      originRequestPolicy,
-    };
+    // Existing ACM certificate
+    const certificate = Certificate.fromCertificateArn(this, 'Certificate', props.params.certificateArn || '');
 
+    const distribution = new Distribution(this, 'CloudFrontDistribution', {
+      priceClass: PriceClass.PRICE_CLASS_100,
+      // Add API GW origin and behaviour
+      defaultBehavior: {
+        origin: new origin.HttpOrigin(httpApiUrl),
+        allowedMethods: AllowedMethods.ALLOW_ALL,
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        cachePolicy: CachePolicy.CACHING_DISABLED,
+        originRequestPolicy: new OriginRequestPolicy(this, 'RequestHandlerPolicy', {
+          originRequestPolicyName: 'website-request-handler',
+          queryStringBehavior: OriginRequestQueryStringBehavior.all(),
+          cookieBehavior: OriginRequestCookieBehavior.all(),
+          // https://stackoverflow.com/questions/65243953/pass-query-params-from-cloudfront-to-api-gateway
+          headerBehavior: OriginRequestHeaderBehavior.none(),
+        }),
+      },
+      geoRestriction: GeoRestriction.allowlist('CA'),
+      // TODO This may not work
+      certificate: props.envName === 'prod' ? certificate : undefined,
+    });
+
+    // Add S3 origin and behaviour
     const assetOrigin = new origin.S3Origin(bucket);
     const assetBehaviorOptions = {
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
-
-    // Existing ACM certificate
-    const certificate = Certificate.fromCertificateArn(this, 'Certificate', props.params.certificateArn || '');
-
-    const distribution = new Distribution(this, 'CloudFront', {
-      defaultBehavior: {
-        origin: requestHandlerOrigin,
-        ...requestHandlerBehavior,
-      },
-      priceClass: PriceClass.PRICE_CLASS_100,
-    });
-
     distribution.addBehavior('/_static/*', assetOrigin, assetBehaviorOptions);
 
-    new StringParameter(this, 'DistributionUrlParameter', {
-      parameterName: this.distributionUrlParameterName,
-      stringValue: distribution.distributionDomainName,
-      tier: ParameterTier.STANDARD,
-    });
+    // new StringParameter(this, 'DistributionUrlParameter', {
+    //   parameterName: this.distributionUrlParameterName,
+    //   stringValue: distribution.distributionDomainName,
+    //   tier: ParameterTier.STANDARD,
+    // });
 
     if (props.envName === 'prod') {
       // Route53 HostedZone A record
@@ -124,5 +128,9 @@ export class RemixStack extends Stack {
     /***
      *** Outputs
      ***/
+
+    new CfnOutput(this, 'BucketWebsiteUrl', { value: bucket.bucketWebsiteUrl });
+    new CfnOutput(this, 'ApiWebsiteEndpointUrl', { value: httpApi.apiEndpoint });
+    new CfnOutput(this, 'CloudFrontDistributionDomainName', { value: distribution.distributionDomainName });
   }
 }
