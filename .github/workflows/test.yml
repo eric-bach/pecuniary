@@ -24,9 +24,20 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: 📥 Install Dependencies
-        run: npm run cinstall-all
-        working-directory: backend
+      - name: 👀 Env
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Git ref:    ${{ github.ref }}"
+          echo "GH actor:   ${{ github.actor }}"
+          echo "SHA:        ${{ github.sha }}"
+          VER=`node --version`; echo "Node ver:   $VER"
+          VER=`npm --version`; echo "npm ver:    $VER"
+
+      # - name: 📥 Install Dependencies
+      #   run: npm run cinstall-all
+      #   working-directory: backend
+      - name: 📥  Install Backend and Sources
+        uses: ./.github/actions/backend
 
       # # - name: 🏗 Build Frontend
       # #   run: npm run build-frontend
@@ -62,9 +73,11 @@ jobs:
         run: npm install
         working-directory: backend
 
-      - name: Install Frontend Dependencies
-        run: npm run cinstall-frontend
-        working-directory: backend
+      # - name: 📥 Install Frontend Dependencies
+      #   run: npm run cinstall-frontend
+      #   working-directory: backend
+      - name: 📥 Install Frontend
+        uses: ./.github/actions/frontend
 
       # - name: 🗒️ Create aws-exports.js
       #   run: |
@@ -139,20 +152,24 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      - name: 📥 Install Dependencies
-        run: npm run cinstall-all
+      # - name: 📥 Install Dependencies
+      #   run: npm run cinstall-all
+      #   working-directory: backend
+      - name: 📥  Install Backend and Sources
+        uses: ./.github/actions/backend
+      - name: 📥 Install Frontend
+        uses: ./.github/actions/frontend
+
+      - name: 🗒️ Create aws-exports.js
+        run: |
+          touch aws-exports.js
+          echo const awsmobile = { aws_project_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_cognito_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_user_pools_id: \'${{secrets.COGNITO_USERPOOL_ID_PROD}}\', aws_user_pools_web_client_id: \'${{ secrets.COGNITO_WEB_CLIENT_ID_PROD }}\', mandatorySignIn: true, aws_appsync_graphqlEndpoint: \'${{ secrets.GRAPHQL_ENDPOINT_PROD }}\', aws_appsync_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_appsync_authenticationType: \'AMAZON_COGNITO_USER_POOLS\' } >> aws-exports.js
+          echo export default awsmobile >> aws-exports.js
+        working-directory: frontend/app
+
+      - name: 🏗 Build Frontend
+        run: npm run build-frontend
         working-directory: backend
-
-      # # - name: 🏗 Build Frontend
-      # #   run: npm run build-frontend
-      # #   working-directory: backend
-
-      # - name: 🗒️ Create aws-exports.js
-      #   run: |
-      #     touch aws-exports.js
-      #     echo const awsmobile = { aws_project_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_cognito_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_user_pools_id: \'${{secrets.COGNITO_USERPOOL_ID_PROD}}\', aws_user_pools_web_client_id: \'${{ secrets.COGNITO_WEB_CLIENT_ID_PROD }}\', mandatorySignIn: true, aws_appsync_graphqlEndpoint: \'${{ secrets.GRAPHQL_ENDPOINT_PROD }}\', aws_appsync_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_appsync_authenticationType: \'AMAZON_COGNITO_USER_POOLS\' } >> aws-exports.js
-      #     echo export default awsmobile >> aws-exports.js
-      #   working-directory: frontend/app
 
       - name: 🚀 Deploy
         run: npm run deploy dev
