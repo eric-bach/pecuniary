@@ -171,6 +171,10 @@ jobs:
         run: npm run build-frontend
         working-directory: backend
 
+      - name: TEST
+        run: ls -la
+        working-directory: frontend
+
       - name: 🚀 Deploy
         run: npm run deploy dev
         working-directory: backend
