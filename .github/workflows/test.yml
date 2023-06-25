@@ -50,18 +50,22 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           install-command: yarn --frozen-lockfile --silent
+          working-directory: client
 
       - name: 🏗 Build
         run: yarn build
+        working-directory: client
 
       - name: 🛠 Install Arc
         run: yarn global add @architect/architect
+        working-directory: client
 
       - name: 🚀 Deploy
         if: github.ref == 'refs/heads/main'
         run: arc deploy --production --prune
         env:
           CI: true
+        working-directory: client
 
   # unit-tests:
   #   name: Unit Tests
