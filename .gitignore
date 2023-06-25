@@ -19,6 +19,12 @@ cdk.out
 backend/deploy.sh
 aws-exports.js
 
+# Remix
+!remix.config.js
+!remix.env.d.ts
+**/index.js.map
+
+!.eslintrc.js
 !webpack.*.js
 !jest.config.js
 !.env.example
