@@ -33,9 +33,6 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      # - name: 📥 Install Dependencies
-      #   run: npm run cinstall-all
-      #   working-directory: backend
       - name: 📥  Install Backend and Sources
         uses: ./.github/actions/backend
 
@@ -73,9 +70,6 @@ jobs:
         run: npm install
         working-directory: backend
 
-      # - name: 📥 Install Frontend Dependencies
-      #   run: npm run cinstall-frontend
-      #   working-directory: backend
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
@@ -152,11 +146,9 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      # - name: 📥 Install Dependencies
-      #   run: npm run cinstall-all
-      #   working-directory: backend
       - name: 📥  Install Backend and Sources
         uses: ./.github/actions/backend
+
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
@@ -170,14 +162,6 @@ jobs:
       - name: 🏗 Build Frontend
         run: npm run build-frontend
         working-directory: backend
-
-      - name: TEST
-        run: ls -la
-        working-directory: frontend/server
-
-      - name: TEST
-        run: cat index.js
-        working-directory: frontend/server
 
       - name: 🚀 Deploy
         run: npm run deploy dev
