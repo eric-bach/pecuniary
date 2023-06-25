@@ -32,6 +32,8 @@ async function seedItem(tableName: string, item: any) {
 
   const putItemCommandInput: PutItemCommandInput = {
     TableName: tableName,
+    // TODO Fix this error
+    //@ts-ignore
     Item: marshall(item),
   };
 

@@ -9,6 +9,7 @@ import { FrontendStack } from '../lib/frontend-stack';
 import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
 import { MfeStack } from '../lib/mfe-stack';
 import { APP_NAME, DEFAULT_VALUES } from '../lib/constants';
+import { RemixStack } from '../lib/remix-stack';
 
 const app = new App();
 
@@ -32,23 +33,14 @@ switch (stage) {
   case 'backend': {
     const auth = new AuthStack(app, `${APP_NAME}-auth-${envName}`, baseProps);
 
-    const database = new DatabaseStack(
-      app,
-      `${APP_NAME}-database-${envName}`,
-      baseProps
-    );
+    const database = new DatabaseStack(app, `${APP_NAME}-database-${envName}`, baseProps);
 
-    const messaging = new MessagingStack(
-      app,
-      `${APP_NAME}-messaging-${envName}`,
-      {
-        ...baseProps,
-        params: {
-          dlqNotifications:
-            process.env.DLQ_NOTIFICATIONS ?? DEFAULT_VALUES.EMAIL,
-        },
-      }
-    );
+    const messaging = new MessagingStack(app, `${APP_NAME}-messaging-${envName}`, {
+      ...baseProps,
+      params: {
+        dlqNotifications: process.env.DLQ_NOTIFICATIONS ?? DEFAULT_VALUES.EMAIL,
+      },
+    });
 
     new ApiStack(app, `${APP_NAME}-api-${envName}`, {
       ...baseProps,
@@ -71,12 +63,19 @@ switch (stage) {
     //   },
     // });
 
-    new MfeStack(app, `${APP_NAME}-mfe-${envName}`, {
+    new RemixStack(app, `${APP_NAME}-remix-${envName}`, {
       ...baseProps,
       params: {
         certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
       },
     });
+
+    // new MfeStack(app, `${APP_NAME}-mfe-${envName}`, {
+    //   ...baseProps,
+    //   params: {
+    //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
+    //   },
+    // });
 
     break;
   }
