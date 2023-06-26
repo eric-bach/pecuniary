@@ -13,6 +13,7 @@ import {
   OriginRequestPolicy,
   OriginRequestQueryStringBehavior,
   PriceClass,
+  SSLMethod,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
@@ -98,6 +99,8 @@ export class RemixStack extends Stack {
       geoRestriction: GeoRestriction.allowlist('CA'),
       // TODO This may not work
       certificate: props.envName === 'prod' ? certificate : undefined,
+      // domainNames: props.envName === 'prod' ? [`${props.appName}-remix.ericbach.dev`] : undefined,
+      // sslSupportMethod: props.envName === 'prod' ? SSLMethod.SNI : undefined,
     });
 
     // Add S3 origin and behaviour
@@ -120,7 +123,7 @@ export class RemixStack extends Stack {
       });
       new ARecord(this, 'AliasRecord', {
         zone: existingHostedZone,
-        recordName: `${props.appName}.ericbach.dev`,
+        recordName: `${props.appName}-remix.ericbach.dev`,
         target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
       });
     }
