@@ -99,8 +99,8 @@ export class RemixStack extends Stack {
       geoRestriction: GeoRestriction.allowlist('CA'),
       // TODO This may not work
       certificate: props.envName === 'prod' ? certificate : undefined,
-      // domainNames: props.envName === 'prod' ? [`${props.appName}-remix.ericbach.dev`] : undefined,
-      // sslSupportMethod: props.envName === 'prod' ? SSLMethod.SNI : undefined,
+      domainNames: props.envName === 'prod' ? [`${props.appName}-remix.ericbach.dev`] : undefined,
+      sslSupportMethod: props.envName === 'prod' ? SSLMethod.SNI : undefined,
     });
 
     // Add S3 origin and behaviour
