@@ -215,6 +215,12 @@ jobs:
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
+      - name: 🗒️ Create .env
+        run: |
+          touch .env
+          echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
+        working-directory: backend
+
       - name: 🗒️ Create aws-exports.js
         run: |
           touch aws-exports.js
