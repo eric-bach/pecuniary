@@ -42,29 +42,25 @@ This quick start guide describes how to get the application running. An `AWS acc
 2.  Install dependencies for CDK
 
     ```bash
-    $ cd ./backend
+    $ cd ./infrastructure
     $ npm install
     ```
 
 3.  Install dependencies for the rest of the application using the recursive-install script
 
     ```bash
-    $ cd ./backend
-    $ npm recursive-install
+    $ cd ./infrastructure
+    $ npm cinstall-all
     ```
 
-4.  Copy the `./backend/.env.example` file to `./backend/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
+4.  Copy the `./infrastructure/.env.example` file to `./infrastructure/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
 
     - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
     - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
 
-5.  Copy the `./frontend/container/.env.example` file to `./frontend/container/.env` and `./frontend/container/.env.prod` and fill in the parameter values from the CDK stack outputs in step 2:
+5.  Copy the `./frontend/app/aws-exports.js.example` file to `./frontend/app/aws-exports.js` and fill in the parameter values from the CDK stack outputs in step 2:
 
-    - `PRODUCTION_DOMAIN` - AWS CloudFront Distribution domain name created in step 2
-    - `REACT_APP_COGNITO_USERPOOL_ID` - AWS Cognito User Pool Id created in step 2
-    - `REACT_APP_COGNITO_CLIENT_ID` - AWS Cognito User Pool client Id created in step 2
-    - `REACT_APP_APPSYNC_ENDPOINT` - AWS AppSync GraphQL endpoint URL created in step 2
-    - `REACT_APP_APPSYNC_REGION` - AWS AppSync region
+    TODO Fill in values here
 
 ## Deploy the app
 
@@ -72,32 +68,11 @@ This quick start guide describes how to get the application running. An `AWS acc
 
 ## Running the app locally
 
-1.  Start the MFE frontend:
-
-    a. with each MFE app individually
+1.  Start the frontend:
 
     ```bash
-    // Start marketing MFE on https://localhost:8081
-    $ cd frontend/marketing
-    $ npm run start
-
-    // Start auth MFE on https://localhost:8082
-    $ cd ../../frontend/auth
-    $ npm run start
-
-    // Start dashbaord MFE on https://localhost:8083
-    $ cd ../../frontend/dashboard
-    $ npm run start
-
-    // Start host/container MFE on https://localhost:8080
-    $ cd ../../frontend/container
-    $ npm run start
-    ```
-
-    b. as one command (note: any error encountered with each MFE may not be surfaced with this approach)
-
-    ```bash
-    $ npm run start --prefix ./marketing & npm run start --prefix ./auth & npm run start --prefix ./dashboard & npm run start --prefix ./container
+    $ cd frontend
+    $ npm run dev
     ```
 
 # Deployment
@@ -146,31 +121,34 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
 
 2. Add the following GitHub Secrets to the repository
 
-    Common
-    ```
-    CDK_DEFAULT_REGION - AWS default region for all resources to be created
-    ```
+   Common
 
-    Dev environment
-    ```
-    CLOUDFRONT_DOMAIN_DEV - AWS CloudFront Distribution domain name
-    COGNITO_USERPOOL_ID_DEV - Cognito User Pool Id
-    COGNITO_WEB_CLIENT_ID_DEV - Cognito User Pool Client Id
-    APPSYNC_ENDPOINT_DEV - AWS AppSync GraphQL endpoint URL
-    CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
-    CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
-    ```
+   ```
+   CDK_DEFAULT_REGION - AWS default region for all resources to be created
+   ```
 
-    Production environment
-    ```
-    AWS_SERVICE_ROLE_PROD - AWS ARN of the GitHub Actions Role to Assume (from step 1)
-    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
-    DLQ_NOTIFICATIONS - email address to send DLQ messages to
-    CLOUDFRONT_DOMAIN_PROD - AWS CloudFront Distribution domain name
-    COGNITO_USERPOOL_ID_PROD - Cognito User Pool Id
-    COGNITO_WEB_CLIENT_ID_PROD - Cognito User Pool Client Id
-    APPSYNC_ENDPOINT_PROD - AWS AppSync GraphQL endpoint URL
-    ```
+   Dev environment
+
+   ```
+   CLOUDFRONT_DOMAIN_DEV - AWS CloudFront Distribution domain name
+   COGNITO_USERPOOL_ID_DEV - Cognito User Pool Id
+   COGNITO_WEB_CLIENT_ID_DEV - Cognito User Pool Client Id
+   APPSYNC_ENDPOINT_DEV - AWS AppSync GraphQL endpoint URL
+   CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
+   CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
+   ```
+
+   Production environment
+
+   ```
+   AWS_SERVICE_ROLE_PROD - AWS ARN of the GitHub Actions Role to Assume (from step 1)
+   CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
+   DLQ_NOTIFICATIONS - email address to send DLQ messages to
+   CLOUDFRONT_DOMAIN_PROD - AWS CloudFront Distribution domain name
+   COGNITO_USERPOOL_ID_PROD - Cognito User Pool Id
+   COGNITO_WEB_CLIENT_ID_PROD - Cognito User Pool Client Id
+   APPSYNC_ENDPOINT_PROD - AWS AppSync GraphQL endpoint URL
+   ```
 
 # Testing
 
