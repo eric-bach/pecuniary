@@ -46,7 +46,7 @@ export class ApiStack extends Stack {
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
       },
-      schema: SchemaFile.fromAsset(path.join(__dirname, './graphql/schema.graphql')),
+      schema: SchemaFile.fromAsset(path.join(__dirname, '../../backend/graphql/schema.graphql')),
       authorizationConfig: {
         defaultAuthorization: {
           authorizationType: AuthorizationType.USER_POOL,
@@ -98,42 +98,42 @@ export class ApiStack extends Stack {
       name: 'createAccount',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '/graphql/Mutation.createAccount.js')),
+      code: Code.fromAsset(path.join(__dirname, '../../backend/graphql/Mutation.createAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const updateAccountFunction = new AppsyncFunction(this, 'updateAccountFunction', {
       name: 'updateAccount',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '/graphql/Mutation.updateAccount.js')),
+      code: Code.fromAsset(path.join(__dirname, '../../backend/graphql/Mutation.updateAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const getAccountFunction = new AppsyncFunction(this, 'getAccountFunction', {
       name: 'getAccount',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '/graphql/Query.getAccount.js')),
+      code: Code.fromAsset(path.join(__dirname, '../../backend/graphql/Query.getAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const getAccountsFunction = new AppsyncFunction(this, 'getAccountsFunction', {
       name: 'getAccounts',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '/graphql/Query.getAccounts.js')),
+      code: Code.fromAsset(path.join(__dirname, '../../backend/graphql/Query.getAccounts.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const getAggregateFunction = new AppsyncFunction(this, 'getAggregateFunction', {
       name: 'getAggregate',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '/graphql/Query.getAggregate.js')),
+      code: Code.fromAsset(path.join(__dirname, '../../backend/graphql/Query.getAggregate.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const deleteAggregateFunction = new AppsyncFunction(this, 'deleteAggregateFunction', {
       name: 'deleteAggregate',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '/graphql/Mutation.deleteAggregate.js')),
+      code: Code.fromAsset(path.join(__dirname, '../../backend/graphql/Mutation.deleteAggregate.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
 

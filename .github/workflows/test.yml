@@ -68,7 +68,7 @@ jobs:
 
       - name: 📥 Install CDK Dependencies
         run: npm install
-        working-directory: backend
+        working-directory: infrastructure
 
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
@@ -161,11 +161,11 @@ jobs:
 
       - name: 🏗 Build Frontend
         run: npm run build-frontend
-        working-directory: backend
+        working-directory: infrastructure
 
       - name: 🚀 Deploy
         run: npm run deploy dev
-        working-directory: backend
+        working-directory: infrastructure
 
       # - name: Invalidate CloudFront
       #   uses: chetan/invalidate-cloudfront-action@v2
@@ -219,7 +219,7 @@ jobs:
         run: |
           touch .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
-        working-directory: backend
+        working-directory: infrastructure
 
       - name: 🗒️ Create aws-exports.js
         run: |
@@ -230,11 +230,11 @@ jobs:
 
       - name: 🏗 Build Frontend
         run: npm run build-frontend
-        working-directory: backend
+        working-directory: infrastructure
 
       - name: 🚀 Deploy
         run: npm run deploy prod
-        working-directory: backend
+        working-directory: infrastructure
 
       # - name: Invalidate CloudFront
       #   uses: chetan/invalidate-cloudfront-action@v2
