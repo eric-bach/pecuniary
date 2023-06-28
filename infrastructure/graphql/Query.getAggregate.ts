@@ -1,12 +1,12 @@
-import { util } from '@aws-appsync/utils';
+import { AppSyncIdentityCognito, Context, DynamoDBQueryRequest, util } from '@aws-appsync/utils';
+import { Aggregates, QueryGetAggregateArgs } from './types/appsync';
 
-export function request(ctx) {
+export function request(ctx: Context<QueryGetAggregateArgs>): DynamoDBQueryRequest {
   console.log('🔔 GetAggregate Request: ', ctx);
 
   const { accountId, type } = ctx.args;
 
   return {
-    version: '2017-02-28',
     operation: 'Query',
     index: 'accountId-gsi',
     query: {
@@ -22,20 +22,20 @@ export function request(ctx) {
             '#type': 'type',
           },
           expressionValues: {
-            ':userId': util.dynamodb.toDynamoDB(ctx.identity.username),
+            ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
             ':type': util.dynamodb.toDynamoDB(ctx.args.type),
           },
         }
       : {
           expression: 'userId = :userId',
           expressionValues: {
-            ':userId': util.dynamodb.toDynamoDB(ctx.identity.username),
+            ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
           },
         },
   };
 }
 
-export function response(ctx) {
+export function response(ctx: Context<QueryGetAggregateArgs>): Aggregates {
   console.log('🔔 GetAggregate Response: ', ctx);
 
   if (ctx.error) {

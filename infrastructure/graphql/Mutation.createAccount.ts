@@ -1,6 +1,7 @@
-import { util } from '@aws-appsync/utils';
+import { AppSyncIdentityCognito, Context, DynamoDBPutItemRequest, util } from '@aws-appsync/utils';
+import { Account, MutationCreateAccountArgs } from './types/appsync';
 
-export function request(ctx) {
+export function request(ctx: Context<MutationCreateAccountArgs>): DynamoDBPutItemRequest {
   console.log('🔔 CreateAccount Request: ', ctx);
 
   const accountId = util.autoId();
@@ -12,7 +13,7 @@ export function request(ctx) {
       createdAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),
     },
     attributeValues: {
-      userId: util.dynamodb.toDynamoDB(ctx.identity.username),
+      userId: util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       entity: util.dynamodb.toDynamoDB('account'),
       accountId: util.dynamodb.toDynamoDB(accountId),
       type: util.dynamodb.toDynamoDB(ctx.args.input.type),
@@ -22,7 +23,7 @@ export function request(ctx) {
   };
 }
 
-export function response(ctx) {
+export function response(ctx: Context<MutationCreateAccountArgs>): Account {
   console.log('🔔 CreateAccount Response: ', ctx);
 
   if (ctx.error) {

@@ -9,10 +9,9 @@ node_modules
 .cdk.staging
 cdk.out
 
-# Files to convert to TypeScript
-!/backend/graphql/*.js
-!/client/src/client.js
-!/client/src/utils/Session.js
+# Files to convert to TypeScript - for old client
+!/*client*/src/client.js
+!/*client*/src/utils/Session.js
 
 # Exclude configuration files (provided with *.example files)
 .env*

@@ -1,6 +1,7 @@
-import { util } from '@aws-appsync/utils';
+import { AppSyncIdentityCognito, Context, DynamoDBQueryRequest, util } from '@aws-appsync/utils';
+import { Account } from './types/appsync';
 
-export function request(ctx) {
+export function request(ctx: Context): DynamoDBQueryRequest {
   console.log('🔔 GetAccounts Request: ', ctx);
 
   return {
@@ -15,13 +16,13 @@ export function request(ctx) {
     filter: {
       expression: 'userId = :userId',
       expressionValues: {
-        ':userId': util.dynamodb.toDynamoDB(ctx.identity.username),
+        ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       },
     },
   };
 }
 
-export function response(ctx) {
+export function response(ctx: Context): Account[] {
   console.log('🔔 GetAccounts Response: ', ctx);
 
   if (ctx.error) {

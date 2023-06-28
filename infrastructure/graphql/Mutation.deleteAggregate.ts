@@ -1,6 +1,7 @@
-import { util, runtime } from '@aws-appsync/utils';
+import { Context, util, runtime, DynamoDBBatchDeleteItemRequest } from '@aws-appsync/utils';
+import { Aggregates } from './types/appsync';
 
-export function request(ctx) {
+export function request(ctx: Context<string>): DynamoDBBatchDeleteItemRequest {
   console.log('🔔 DeleteAccount Request: ', ctx);
 
   const aggregates = ctx.prev.result;
@@ -23,7 +24,7 @@ export function request(ctx) {
   };
 }
 
-export function response(ctx) {
+export function response(ctx: Context<string>): Aggregates {
   console.log('🔔 DeleteAccount Response: ', ctx);
 
   if (ctx.error) {

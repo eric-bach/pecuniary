@@ -1,6 +1,7 @@
-import { util } from '@aws-appsync/utils';
+import { AppSyncIdentityCognito, Context, DynamoDBUpdateItemRequest, util } from '@aws-appsync/utils';
+import { Account, MutationUpdateAccountArgs } from './types/appsync';
 
-export function request(ctx) {
+export function request(ctx: Context<MutationUpdateAccountArgs>): DynamoDBUpdateItemRequest {
   console.log('🔔 UpdateAccount Request: ', ctx);
 
   return {
@@ -24,13 +25,13 @@ export function request(ctx) {
     condition: {
       expression: 'userId = :userId',
       expressionValues: {
-        ':userId': util.dynamodb.toDynamoDB(ctx.identity.username),
+        ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       },
     },
   };
 }
 
-export function response(ctx) {
+export function response(ctx: Context<MutationUpdateAccountArgs>): Account {
   console.log('🔔 UpdateAccount Response: ', ctx);
 
   if (ctx.error) {
