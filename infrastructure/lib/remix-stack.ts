@@ -18,13 +18,12 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
-import * as origin from 'aws-cdk-lib/aws-cloudfront-origins';
-import * as api from '@aws-cdk/aws-apigatewayv2-alpha';
+import { HttpOrigin, S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { HttpApi, PayloadFormatVersion } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
-import { ParameterTier, StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { join } from 'path';
 
@@ -67,10 +66,10 @@ export class RemixStack extends Stack {
     });
 
     const httpLambdaIntegration = new HttpLambdaIntegration('RequestHandlerIntegration', remixServerFunction, {
-      payloadFormatVersion: api.PayloadFormatVersion.VERSION_2_0,
+      payloadFormatVersion: PayloadFormatVersion.VERSION_2_0,
     });
 
-    const httpApi = new api.HttpApi(this, 'WebsiteApi', {
+    const httpApi = new HttpApi(this, 'WebsiteApi', {
       defaultIntegration: httpLambdaIntegration,
       apiName: `${props.appName}-${props.envName}-website`,
     });
@@ -84,7 +83,7 @@ export class RemixStack extends Stack {
       priceClass: PriceClass.PRICE_CLASS_100,
       // Add API GW origin and behaviour
       defaultBehavior: {
-        origin: new origin.HttpOrigin(httpApiUrl),
+        origin: new HttpOrigin(httpApiUrl),
         allowedMethods: AllowedMethods.ALLOW_ALL,
         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: CachePolicy.CACHING_DISABLED,
@@ -97,14 +96,13 @@ export class RemixStack extends Stack {
         }),
       },
       geoRestriction: GeoRestriction.allowlist('CA'),
-      // TODO This may not work
       certificate: props.envName === 'prod' ? certificate : undefined,
       domainNames: props.envName === 'prod' ? [`${props.appName}-remix.ericbach.dev`] : undefined,
       sslSupportMethod: props.envName === 'prod' ? SSLMethod.SNI : undefined,
     });
 
     // Add S3 origin and behaviour
-    const assetOrigin = new origin.S3Origin(bucket);
+    const assetOrigin = new S3Origin(bucket);
     const assetBehaviorOptions = {
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
