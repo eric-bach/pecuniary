@@ -1,135 +1,77 @@
-/**
- * By default, Remix will handle generating the HTTP Response for you.
- * You are free to delete this file if you'd like to, but if you ever want it revealed again, you can run `npx remix reveal` ✨
- * For more information, see https://remix.run/file-conventions/entry.server
- */
+import type { EntryContext, RouteComponent } from '@remix-run/node';
+import { Response } from '@remix-run/node';
+import { RemixServer } from '@remix-run/react';
+import isbot from 'isbot';
+import { renderToPipeableStream, renderToString } from 'react-dom/server';
+import { PassThrough } from 'stream';
+import { Head } from '~/root';
 
-import { PassThrough } from "node:stream";
+const ABORT_DELAY = 5000;
 
-import type { AppLoadContext, EntryContext } from "@remix-run/node";
-import { Response } from "@remix-run/node";
-import { RemixServer } from "@remix-run/react";
-import isbot from "isbot";
-import { renderToPipeableStream } from "react-dom/server";
+export default function handleRequest(request: Request, responseStatusCode: number, responseHeaders: Headers, remixContext: EntryContext) {
+  const callbackName = isbot(request.headers.get('user-agent')) ? 'onAllReady' : 'onShellReady';
 
-const ABORT_DELAY = 5_000;
+  // create new context renders only <Head> and does not render errors
+  let headContext = switchRootComponent(remixContext, Head);
 
-export default function handleRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  remixContext: EntryContext,
-  loadContext: AppLoadContext
-) {
-  return isbot(request.headers.get("user-agent"))
-    ? handleBotRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      )
-    : handleBrowserRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      );
-}
+  let head = renderToString(<RemixServer context={headContext} url={request.url} />);
 
-function handleBotRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  remixContext: EntryContext
-) {
   return new Promise((resolve, reject) => {
-    let shellRendered = false;
-    const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
-      {
-        onAllReady() {
-          shellRendered = true;
-          const body = new PassThrough();
+    let didError = false;
 
-          responseHeaders.set("Content-Type", "text/html");
+    const { pipe, abort } = renderToPipeableStream(<RemixServer context={remixContext} url={request.url} />, {
+      [callbackName]: () => {
+        const body = new PassThrough();
 
-          resolve(
-            new Response(body, {
-              headers: responseHeaders,
-              status: responseStatusCode,
-            })
-          );
+        responseHeaders.set('Content-Type', 'text/html');
 
-          pipe(body);
-        },
-        onShellError(error: unknown) {
-          reject(error);
-        },
-        onError(error: unknown) {
-          responseStatusCode = 500;
-          // Log streaming rendering errors from inside the shell.  Don't log
-          // errors encountered during initial shell rendering since they'll
-          // reject and get logged in handleDocumentRequest.
-          if (shellRendered) {
-            console.error(error);
-          }
-        },
-      }
-    );
+        resolve(
+          new Response(body, {
+            headers: responseHeaders,
+            status: didError ? 500 : responseStatusCode,
+          })
+        );
+        const html = `<!DOCTYPE html><html><head><!--start head-->${head}<!--end head--></head><body><div id="root">`;
+        body.write(html);
+        pipe(body);
+        body.write(`</div></body></html>`);
+      },
+      onShellError(err: unknown) {
+        reject(err);
+      },
+      onError(error: unknown) {
+        didError = true;
+
+        console.error(error);
+      },
+    });
 
     setTimeout(abort, ABORT_DELAY);
   });
 }
 
-function handleBrowserRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  remixContext: EntryContext
-) {
-  return new Promise((resolve, reject) => {
-    let shellRendered = false;
-    const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
-      {
-        onShellReady() {
-          shellRendered = true;
-          const body = new PassThrough();
+export function switchRootComponent(remixContext: EntryContext, Head: RouteComponent): EntryContext {
+  let serverHandoffString = remixContext.serverHandoffString;
+  if (serverHandoffString) {
+    let serverHandoff = JSON.parse(serverHandoffString);
+    // remove errors from JSON string
+    delete serverHandoff?.state?.errors;
+    serverHandoffString = JSON.stringify(serverHandoff);
+  }
 
-          responseHeaders.set("Content-Type", "text/html");
-
-          resolve(
-            new Response(body, {
-              headers: responseHeaders,
-              status: responseStatusCode,
-            })
-          );
-
-          pipe(body);
-        },
-        onShellError(error: unknown) {
-          reject(error);
-        },
-        onError(error: unknown) {
-          responseStatusCode = 500;
-          // Log streaming rendering errors from inside the shell.  Don't log
-          // errors encountered during initial shell rendering since they'll
-          // reject and get logged in handleDocumentRequest.
-          if (shellRendered) {
-            console.error(error);
-          }
-        },
-      }
-    );
-
-    setTimeout(abort, ABORT_DELAY);
-  });
+  return {
+    ...remixContext,
+    serverHandoffString,
+    staticHandlerContext: {
+      ...remixContext.staticHandlerContext,
+      errors: null, // remove errors from context
+    },
+    routeModules: {
+      ...remixContext.routeModules,
+      root: {
+        ...remixContext.routeModules.root,
+        default: Head,
+      },
+    },
+  };
 }
