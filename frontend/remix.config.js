@@ -7,11 +7,11 @@ module.exports = {
   serverBuildPath: 'server/index.js',
   serverModuleFormat: 'cjs',
   ignoredRouteFiles: ['**/.*'],
-  future: {
-    v2_errorBoundary: true,
-    v2_headers: true,
-    v2_meta: true,
-    v2_normalizeFormMethod: true,
-    v2_routeConvention: true,
-  },
+  // future: {
+  //   v2_errorBoundary: true,
+  //   v2_headers: true,
+  //   v2_meta: true,
+  //   v2_normalizeFormMethod: true,
+  //   v2_routeConvention: true,
+  // },
 };

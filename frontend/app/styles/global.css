@@ -1,3 +1,14 @@
 body {
+  font-family: sans-serif;
+  color: #fff;
+  background-color: rgb(21, 32, 43);
   margin: 0;
+}
+a {
+  color: #fff;
+  text-decoration: none;
+}
+nav {
+  display: flex;
+  gap: 1rem;
 }

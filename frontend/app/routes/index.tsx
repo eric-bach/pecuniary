@@ -1,10 +1,12 @@
-import type { V2_MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { Button, Container } from '@mui/material';
+import { Container } from '@mui/material';
 
-export const meta: V2_MetaFunction = () => {
-  return [{ title: 'New Remix App' }, { name: 'description', content: 'Welcome to Remix!' }];
-};
+export function meta() {
+  return {
+    title: 'Home Page',
+    description: 'This is the Home Page!',
+  };
+}
 
 export async function loader() {
   return await fetch('https://goweather.herokuapp.com/weather/Edmonton');
