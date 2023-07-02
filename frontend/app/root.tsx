@@ -1,8 +1,15 @@
 import { Links, LiveReload, Meta, NavLink, Outlet, Scripts, ScrollRestoration, useCatch } from '@remix-run/react';
+import { LinksFunction } from '@remix-run/node';
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ClientOnly, useHydrated } from 'remix-utils';
+
 import Header from './header';
+import styles from './styles/global.css';
+
+export const links: LinksFunction = () => {
+  return [{ rel: 'stylesheet', href: styles }];
+};
 
 export function Head({ title }: { title?: string }) {
   const [renderHead, setRenderHead] = React.useState(false);
