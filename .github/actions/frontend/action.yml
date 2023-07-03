@@ -1,0 +1,33 @@
+name: Frontend Install
+
+description: 'Installs required dependencies for frontend'
+
+runs:
+  using: composite
+
+  steps:
+    - name: 🔒 Cache CDK Dependencies
+      id: cdk-cache
+      uses: actions/cache@v3
+      with:
+        path: infrastructure/node_modules
+        key: infrastructure-${{ hashFiles('infrastructure/package-lock.json') }}
+
+    - name: 📥 Install CDK
+      if: steps.cdk-cache.outputs.cache-hit != 'true'
+      run: npm ci
+      working-directory: infrastructure
+      shell: bash
+
+    - name: 🔒 Cache Frontend
+      id: frontend-cache
+      uses: actions/cache@v3
+      with:
+        path: frontend/node_modules
+        key: frontend-${{ hashFiles('frontend/package-lock.json') }}
+
+    - name: 📥 Install Frontend
+      if: steps.frontend-cache.outputs.cache-hit != 'true'
+      run: npm run cinstall-frontend
+      working-directory: infrastructure
+      shell: bash

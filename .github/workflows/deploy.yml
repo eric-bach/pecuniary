@@ -33,22 +33,22 @@ jobs:
 
       - name: Install Backend Dependencies
         run: npm run cinstall-all-backend
-        working-directory: backend
+        working-directory: infrastructure
 
-      - name: Create backend/.env file
+      - name: Create infrastructure/.env file
         run: |
           touch .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
           cat .env
-        working-directory: backend
+        working-directory: infrastructure
 
       - name: CDK Deploy Backend
         run: npm run deploy-backend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-        working-directory: backend
+        working-directory: infrastructure
 
   deploy-frontend:
     name: Deploy Frontend
@@ -76,7 +76,7 @@ jobs:
 
       - name: Install Dependencies
         run: npm run cinstall-all
-        working-directory: backend
+        working-directory: infrastructure
 
       - name: Create frontend/container/.env file
         run: |
@@ -91,11 +91,11 @@ jobs:
 
       - name: Build Frontend
         run: npm run build-all-frontend
-        working-directory: backend
+        working-directory: infrastructure
 
       - name: CDK Deploy Frontend
         run: npm run deploy-frontend prod
         env:
           CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
           DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-        working-directory: backend
+        working-directory: infrastructure
