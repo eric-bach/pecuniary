@@ -22,7 +22,7 @@ aws-exports.js
 !remix.config.js
 !remix.env.d.ts
 **/index.js.map
-.cache
+**/.cache
 **/public/build
 
 !.eslintrc.js
