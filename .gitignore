@@ -9,21 +9,23 @@
 .cdk.staging
 cdk.out
 
+# AppSync
+**/infrastructure/graphql/types
+
 # Files to convert to TypeScript - for old client
 !/*client*/src/client.js
 !/*client*/src/utils/Session.js
 
 # Exclude configuration files (provided with *.example files)
 .env*
-backend/deploy.sh
 aws-exports.js
 
 # Remix
 !remix.config.js
 !remix.env.d.ts
-**/index.js.map
 **/.cache
 **/public/build
+**/frontend*/server
 
 !.eslintrc.js
 !webpack.*.js

@@ -53,7 +53,7 @@ export class RemixStack extends Stack {
       runtime: Runtime.NODEJS_18_X,
       handler: 'handler',
       functionName: `${props.appName}-${props.envName}-RemixSSR`,
-      entry: join(__dirname, '../../frontend/server/index.js'),
+      entry: join(__dirname, '../../frontend/server/index.mjs'),
       environment: {
         NODE_ENV: 'production',
       },
