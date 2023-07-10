@@ -19,7 +19,7 @@
     "cinstall-frontend": "npm i && npm run cdk-clear-context && ts-node ./helpers/commands.ts \"npm ci\" \"frontend\"",
     "clean-all": "npm run cdk-clear-context && ts-node ./helpers/cleanAll.ts",
     "codegen": "graphql-codegen",
-    "deploy": "npm run build && npm run build-all && npm run codegen && npm run build-appsync && ts-node ./helpers/deploy.ts",
+    "deploy": "npm run codegen && npm run build-appsync && npm run build && npm run build-all && ts-node ./helpers/deploy.ts",
     "deploy-backend": "npm run codegen && npm run build-appsync && npm run quick-deploy -- -s backend",
     "deploy-frontend": "npm run quick-deploy -- -s frontend",
     "quick-deploy": "ts-node ./helpers/deploy.ts",
