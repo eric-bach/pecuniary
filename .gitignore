@@ -23,6 +23,7 @@ aws-exports.js
 # Remix
 !remix.config.js
 !remix.env.d.ts
+!plugin-remix.js
 **/.cache
 **/public/build
 **/frontend*/server
