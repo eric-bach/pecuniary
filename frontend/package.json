@@ -9,10 +9,17 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^5.0.4",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.0",
+    "@mui/material": "^5.14.0",
     "@remix-run/architect": "^1.18.1",
     "@remix-run/css-bundle": "^1.18.1",
     "@remix-run/node": "^1.18.1",
     "@remix-run/react": "^1.18.1",
+    "aws-amplify": "^5.3.4",
+    "aws-appsync": "^4.1.9",
     "cross-env": "^7.0.3",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
