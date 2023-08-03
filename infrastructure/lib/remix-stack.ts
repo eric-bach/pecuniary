@@ -44,7 +44,7 @@ export class RemixStack extends Stack {
     });
 
     new BucketDeployment(this, 'DeployStaticAssets', {
-      sources: [Source.asset(join(__dirname, '../../frontend/public'))],
+      sources: [Source.asset(join(__dirname, '../../frontend-architect/public'))],
       destinationBucket: bucket,
       destinationKeyPrefix: '_static',
     });
@@ -53,7 +53,7 @@ export class RemixStack extends Stack {
       runtime: Runtime.NODEJS_18_X,
       handler: 'handler',
       functionName: `${props.appName}-${props.envName}-RemixSSR`,
-      entry: join(__dirname, '../../frontend/server/index.mjs'),
+      entry: join(__dirname, '../../frontend-architect/server/index.mjs'),
       environment: {
         NODE_ENV: 'production',
       },
