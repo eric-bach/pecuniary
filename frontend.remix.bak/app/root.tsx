@@ -11,8 +11,8 @@ import { Authenticator } from '@aws-amplify/ui-react';
 import styles from '@aws-amplify/ui-react/styles.css';
 import footerStyles from '~/styles/footer.css';
 
-import Header from './header';
-import Footer from './footer';
+import Header from './components/header';
+import Footer from './components/footer';
 
 Amplify.configure({ ...config });
 

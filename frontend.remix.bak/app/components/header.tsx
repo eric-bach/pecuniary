@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useFetcher } from '@remix-run/react';
 import { AppBar, Avatar, Box, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import PaidIcon from '@mui/icons-material/Paid';
+// import MenuIcon from '@mui/icons-material/Menu';
+// import PaidIcon from '@mui/icons-material/Paid';
 
 import { Auth } from 'aws-amplify';
 import { useAuthenticator } from '@aws-amplify/ui-react';
@@ -60,7 +60,7 @@ export default function Header() {
     <AppBar position='static'>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
-          <PaidIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          {/* <PaidIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
           <Typography
             variant='h6'
             noWrap
@@ -87,7 +87,7 @@ export default function Header() {
               onClick={handleOpenNavMenu}
               color='inherit'
             >
-              <MenuIcon />
+              {/* <MenuIcon /> */}
             </IconButton>
             <Menu
               id='menu-appbar'
@@ -118,7 +118,7 @@ export default function Header() {
               ))}
             </Menu>
           </Box>
-          <PaidIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          {/* <PaidIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
           <Typography
             variant='h5'
             noWrap
@@ -149,7 +149,7 @@ export default function Header() {
             ))}
           </Box>
 
-          {user && (
+          {user ? (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title='Open settings'>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -179,6 +179,10 @@ export default function Header() {
                 ))}
               </Menu>
             </Box>
+          ) : (
+            <Link to='/login' style={{ margin: 6, color: 'white', display: 'block', textDecoration: 'none' }}>
+              Login
+            </Link>
           )}
         </Toolbar>
       </Container>
