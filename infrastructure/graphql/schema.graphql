@@ -65,7 +65,7 @@ type Query {
 type Mutation {
   createAccount(input: CreateAccountInput!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateAccount(input: UpdateAccountInput!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
-  eleteAggregate(accountId: String!): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteAggregate(accountId: String!): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   # createTransaction(createTransactionInput: CreateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
   # updateTransaction(updateTransactionInput: UpdateTransactionInput!): Data @aws_cognito_user_pools(cognito_groups: ["Users"])
