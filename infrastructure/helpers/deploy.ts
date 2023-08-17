@@ -34,10 +34,10 @@ const cdkDeploy = () => {
         '🚀 Deploying backend...'
       );
 
-      runCommand(
-        `npm run cdk -- deploy --all -c stage=frontend -c env=${env} ${profileArg} --require-approval=never`,
-        '🚀 Deploying frontend...'
-      );
+      // runCommand(
+      //   `npm run cdk -- deploy --all -c stage=frontend -c env=${env} ${profileArg} --require-approval=never`,
+      //   '🚀 Deploying frontend...'
+      // );
     }
   } catch (error) {
     console.error('🛑 Error deploying CDK app\n', error);
