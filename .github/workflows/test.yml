@@ -163,9 +163,13 @@ jobs:
         run: npm run build-frontend
         working-directory: infrastructure
 
-      - name: 🚀 Deploy
+      - name: 🚀 Deploy Backend
         run: npm run deploy dev
         working-directory: infrastructure
+
+      - name: 🚀 Deploy Frontend
+        run: npx sst deploy --stage dev
+        working-directory: frontend
 
       # - name: Invalidate CloudFront
       #   uses: chetan/invalidate-cloudfront-action@v2
@@ -232,11 +236,15 @@ jobs:
         run: npm run build-frontend
         working-directory: infrastructure
 
-      - name: 🚀 Deploy
+      - name: 🚀 Deploy Backend
         run: npm run deploy prod
         working-directory: infrastructure
 
-      # - name: Invalidate CloudFront
+      - name: 🚀 Deploy Frontend
+        run: npx sst deploy --stage prod
+        working-directory: frontend
+
+        # - name: Invalidate CloudFront
       #   uses: chetan/invalidate-cloudfront-action@v2
       #   env:
       #     DISTRIBUTION: ${{ secrets.DISTRIBUTION }}

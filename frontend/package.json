@@ -3,9 +3,11 @@
   "sideEffects": false,
   "scripts": {
     "build": "remix build",
-    "dev": "remix dev",
+    "dev": "sst bind remix dev",
     "start": "remix-serve build",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "sst:deploy": "sst deploy",
+    "sst:dev": "sst dev"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^5.0.4",
@@ -13,11 +15,10 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.14.0",
-    "@remix-run/architect": "^1.18.1",
-    "@remix-run/css-bundle": "^1.18.1",
-    "@remix-run/node": "^1.18.1",
-    "@remix-run/react": "^1.18.1",
-    "@remix-run/serve": "^1.18.1",
+    "@remix-run/css-bundle": "^1.19.3",
+    "@remix-run/node": "^1.19.3",
+    "@remix-run/react": "^1.19.3",
+    "@remix-run/serve": "^1.19.3",
     "aws-amplify": "^5.3.4",
     "aws-appsync": "^4.1.9",
     "isbot": "^3.6.8",
@@ -25,13 +26,15 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@architect/architect": "^10.12.1",
-    "@remix-run/dev": "^1.18.1",
-    "@remix-run/eslint-config": "^1.18.1",
+    "@remix-run/dev": "^1.19.3",
+    "@remix-run/eslint-config": "^1.19.3",
     "@types/react": "^18.0.35",
     "@types/react-dom": "^18.0.11",
     "eslint": "^8.38.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "sst": "^2.24.4",
+    "aws-cdk-lib": "2.91.0",
+    "constructs": "10.2.69"
   },
   "engines": {
     "node": ">=14.0.0"

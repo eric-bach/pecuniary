@@ -1,11 +1,9 @@
 import { Typography } from '@mui/material';
 
-export default function Header() {
+export default function Footer() {
   return (
     <footer>
-      <Typography variant='body2' align='center'>
-        &copy; 2023 Eric Bach
-      </Typography>
+      <Typography variant='body2'>2023 Eric Bach</Typography>
     </footer>
   );
 }

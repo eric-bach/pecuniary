@@ -8,11 +8,11 @@ import { Amplify } from 'aws-amplify';
 import config from './aws-exports';
 import { Authenticator } from '@aws-amplify/ui-react';
 
-import styles from '@aws-amplify/ui-react/styles.css';
-import footerStyles from '~/styles/footer.css';
-
 import Header from './components/header';
 import Footer from './components/footer';
+
+import styles from '@aws-amplify/ui-react/styles.css';
+import footerStyles from '~/styles/footer.css';
 
 Amplify.configure({ ...config });
 
@@ -46,9 +46,9 @@ export default function App() {
             <Outlet />
             <ScrollRestoration />
           </Container>
+          <Footer />
           <Scripts />
           <LiveReload />
-          <Footer />
         </Authenticator.Provider>
       </body>
     </html>
