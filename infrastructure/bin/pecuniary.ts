@@ -56,28 +56,28 @@ switch (stage) {
   }
 
   // Remix frontend deployed via SST
-  case 'frontend': {
-    // new RemixStack(app, `${APP_NAME}-remix-${envName}`, {
-    //   ...baseProps,
-    //   params: {
-    //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
-    //   },
-    // });
+  // case 'frontend': {
+  // new RemixStack(app, `${APP_NAME}-remix-${envName}`, {
+  //   ...baseProps,
+  //   params: {
+  //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
+  //   },
+  // });
 
-    // new FrontendStack(app, `${APP_NAME}-frontend-${envName}`, {
-    //   ...baseProps,
-    //   params: {
-    //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
-    //   },
-    // });
+  // new FrontendStack(app, `${APP_NAME}-frontend-${envName}`, {
+  //   ...baseProps,
+  //   params: {
+  //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
+  //   },
+  // });
 
-    // new MfeStack(app, `${APP_NAME}-mfe-${envName}`, {
-    //   ...baseProps,
-    //   params: {
-    //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
-    //   },
-    // });
+  // new MfeStack(app, `${APP_NAME}-mfe-${envName}`, {
+  //   ...baseProps,
+  //   params: {
+  //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
+  //   },
+  // });
 
-    break;
-  }
+  //   break;
+  // }
 }
