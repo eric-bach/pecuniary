@@ -230,6 +230,10 @@ jobs:
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
         working-directory: infrastructure
 
+      - name: 🚀 Deploy Backend
+        run: npm run deploy prod
+        working-directory: infrastructure
+
       - name: 🗒️ Create aws-exports.js
         run: |
           touch aws-exports.js
@@ -243,14 +247,9 @@ jobs:
           echo export const CERTIFICATE_ARN = \'${{ secrets.CERTIFICATE_ARN }}\'; >> constants.ts
         working-directory: frontend
 
-      - name: 🏗 Build Frontend
-        run: npm run build-frontend
-        working-directory: infrastructure
-
-      - name: 🚀 Deploy Backend
-        run: npm run deploy prod
-        working-directory: infrastructure
-
+      # - name: 🏗 Build Frontend
+      #   run: npm run build-frontend
+      #   working-directory: infrastructure
       - name: 🚀 Deploy Frontend
         run: npx sst deploy --stage prod
         working-directory: frontend

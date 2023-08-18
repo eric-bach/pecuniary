@@ -1,7 +1,8 @@
 import type { SSTConfig } from 'sst';
 import { RemixSite } from 'sst/constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { CERTIFICATE_ARN } from './constants';
+import { HostedZone } from 'aws-cdk-lib/aws-route53';
+import { CERTIFICATE_ARN, HOSTED_ZONE_ID, HOSTED_ZONE_NAME } from './constants';
 
 export default {
   config(_input) {
@@ -21,6 +22,10 @@ export default {
                   domainName: 'pecuniary-remix-sst.ericbach.dev',
                   cdk: {
                     certificate: Certificate.fromCertificateArn(stack, 'Certificate', CERTIFICATE_ARN),
+                    hostedZone: HostedZone.fromHostedZoneAttributes(stack, 'MyZone', {
+                      hostedZoneId: HOSTED_ZONE_ID,
+                      zoneName: HOSTED_ZONE_NAME,
+                    }),
                   },
                 }
               : undefined,
