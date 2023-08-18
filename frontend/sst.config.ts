@@ -22,10 +22,10 @@ export default {
                   domainName: 'pecuniary-remix-sst.ericbach.dev',
                   cdk: {
                     certificate: Certificate.fromCertificateArn(stack, 'Certificate', CERTIFICATE_ARN),
-                    hostedZone: HostedZone.fromHostedZoneAttributes(stack, 'MyZone', {
-                      hostedZoneId: HOSTED_ZONE_ID,
-                      zoneName: HOSTED_ZONE_NAME,
-                    }),
+                    // hostedZone: HostedZone.fromHostedZoneAttributes(stack, 'MyZone', {
+                    //   hostedZoneId: HOSTED_ZONE_ID,
+                    //   zoneName: HOSTED_ZONE_NAME,
+                    // }),
                   },
                 }
               : undefined,
