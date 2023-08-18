@@ -2,7 +2,8 @@ import type { SSTConfig } from 'sst';
 import { RemixSite } from 'sst/constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
-import { CERTIFICATE_ARN, HOSTED_ZONE_ID, HOSTED_ZONE_NAME } from './constants';
+
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
 export default {
   config(_input) {
@@ -15,16 +16,19 @@ export default {
   stacks(app) {
     app.stack(
       function Site({ stack }) {
+        const certificateArn = StringParameter.fromStringParameterName(stack, '/sst/pecuniary/prod/certificateArn', 1);
+        const hostedZoneId = StringParameter.fromStringParameterName(stack, '/sst/pecuniary/prod/hostedZoneId', 1);
+
         const site = new RemixSite(stack, 'site', {
           customDomain:
             app.stage === 'prod'
               ? {
                   domainName: 'percuiary-remix-sst.ericbach.dev',
                   cdk: {
-                    certificate: Certificate.fromCertificateArn(stack, 'Certificate', CERTIFICATE_ARN),
+                    certificate: Certificate.fromCertificateArn(stack, 'Certificate', certificateArn.stringValue),
                     hostedZone: HostedZone.fromHostedZoneAttributes(stack, 'MyZone', {
-                      hostedZoneId: HOSTED_ZONE_ID,
-                      zoneName: HOSTED_ZONE_NAME,
+                      hostedZoneId: hostedZoneId.stringValue,
+                      zoneName: 'ericbach.dev',
                     }),
                   },
                 }

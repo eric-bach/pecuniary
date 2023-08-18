@@ -1,43 +1,10 @@
-2023-08-18T20:10:50.605Z   +490ms [debug] Config loaded {"version":"2.24.4","cdkVersion":"2.91.0","constructsVersion":"10.2.69","config":{"name":"pecuniary","region":"us-east-1","stage":"prod","profile":"bach-prod","ssmPrefix":"/sst/pecuniary/prod/"},"metafile":{"inputs":{"sst.config.ts":{"bytes":418,"imports":[{"path":"sst/constructs","kind":"import-statement","external":true},{"path":"aws-cdk-lib/aws-certificatemanager","kind":"import-statement","external":true},{"path":"aws-cdk-lib/aws-route53","kind":"import-statement","external":true},{"path":"./constants","kind":"import-statement","external":true}],"format":"esm"}},"outputs":{".sst.config.1692389450545.mjs":{"imports":[],"exports":["default"],"entryPoint":"sst.config.ts","inputs":{"sst.config.ts":{"bytesInOutput":124}},"bytes":306}}},"paths":{"config":"D:\\Projects\\pecuniary\\frontend\\sst.config.ts","root":"D:\\Projects\\pecuniary\\frontend","out":"D:\\Projects\\pecuniary\\frontend\\.sst","artifacts":"D:\\Projects\\pecuniary\\frontend\\.sst\\artifacts"}}
-2023-08-18T20:10:52.317Z  +1712ms [debug] Using AWS profile bach-prod
-2023-08-18T20:10:52.343Z    +26ms [debug] Created AWS client STSClient
-2023-08-18T20:10:52.344Z     +1ms [debug] Fetching app metadata
-2023-08-18T20:10:52.344Z     +0ms [debug] Initializing bootstrap context
-2023-08-18T20:10:52.344Z     +0ms [debug] Created AWS client CloudFormationClient
-2023-08-18T20:10:53.064Z   +720ms [debug] Using identity Account: 115499684434 User: AROARVZCRKJJEK6YY75YL:eric.bach
-2023-08-18T20:10:53.135Z    +71ms [debug] Loaded bootstrap status
-2023-08-18T20:10:53.135Z     +0ms [debug] Bootstrap context initialized {"status":"ready","version":"7.2","bucket":"sstbootstrap-useast124d14e4b-1m3omtx98985b"}
-2023-08-18T20:10:53.555Z   +420ms [debug] Synthesizing stacks...
-2023-08-18T20:10:53.669Z   +114ms [debug] Generating types in D:\Projects\pecuniary\frontend\.sst\types
-2023-08-18T20:10:53.671Z     +2ms [debug] Running 1 deferred tasks with concurrency: 23
-2023-08-18T20:10:53.672Z     +1ms [debug] Running "npm run build" script
-2023-08-18T20:10:56.371Z  +2699ms [debug] Building function c8d598b626c8865cac0f184fa4da5b2a094738b2ff
-2023-08-18T20:10:56.385Z    +14ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\build\\metafile.js.json","relative":"build\\metafile.js.json"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:10:56.385Z     +0ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\build\\metafile.server.json","relative":"build\\metafile.server.json"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:10:56.385Z     +0ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\build\\index.js","relative":"build\\index.js"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:10:56.420Z    +35ms [debug] Publishing event {"type":"function.build.started","properties":{"functionID":"c8d598b626c8865cac0f184fa4da5b2a094738b2ff"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:10:57.722Z  +1302ms [debug] {"functionID":"c8d598b626c8865cac0f184fa4da5b2a094738b2ff","handler":"build\\server.handler","freeMemory":"9671 MB","totalMemory":"32674 MB","rss":"186 MB","heapTotal":"146 MB","heapUsed":"105 MB","external":"37 MB","arrayBuffers":"11 MB"}
-2023-08-18T20:10:57.722Z     +0ms [debug] Publishing event {"type":"function.build.success","properties":{"functionID":"c8d598b626c8865cac0f184fa4da5b2a094738b2ff"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:10:57.924Z   +202ms [debug] Generated build ID 1f2e102a65f368d4ddc6a3cb4dfc4f751dce98f6
-2023-08-18T20:10:57.996Z    +72ms [debug] [{"key":"hosted-zone:account=115499684434:domainName=percuiary-remix-sst.ericbach.dev:region=us-east-1","provider":"hosted-zone","props":{"account":"115499684434","region":"us-east-1","domainName":"percuiary-remix-sst.ericbach.dev","lookupRoleArn":"arn:${AWS::Partition}:iam::115499684434:role/cdk-hnb659fds-lookup-role-115499684434-us-east-1"}}]
-2023-08-18T20:10:57.996Z     +0ms [debug] Loading v2 AWS SDK
-2023-08-18T20:10:57.996Z     +0ms [debug] Looking up context for: ["hosted-zone:account=115499684434:domainName=percuiary-remix-sst.ericbach.dev:region=us-east-1"] Previous: {}
-2023-08-18T20:10:58.773Z   +777ms [debug] Generating types in D:\Projects\pecuniary\frontend\.sst\types
-2023-08-18T20:10:58.774Z     +1ms [debug] Running 1 deferred tasks with concurrency: 23
-2023-08-18T20:10:58.775Z     +1ms [debug] Running "npm run build" script
-2023-08-18T20:11:01.580Z  +2805ms [debug] Building function c8d598b626c8865cac0f184fa4da5b2a094738b2ff
-2023-08-18T20:11:01.585Z     +5ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\cdk.context.json","relative":"cdk.context.json"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.607Z    +22ms [debug] Publishing event {"type":"function.build.started","properties":{"functionID":"c8d598b626c8865cac0f184fa4da5b2a094738b2ff"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.686Z    +79ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\public\\build\\entry.client-D762DZ3D.js","relative":"public\\build\\entry.client-D762DZ3D.js"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.686Z     +0ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\public\\build\\routes\\account-J733SA43.js","relative":"public\\build\\routes\\account-J733SA43.js"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.687Z     +1ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\public\\build\\_assets\\footer-A2S5W52M.css","relative":"public\\build\\_assets\\footer-A2S5W52M.css"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.687Z     +0ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\public\\build\\_shared\\chunk-ACOY2VEA.js","relative":"public\\build\\_shared\\chunk-ACOY2VEA.js"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.698Z    +11ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\build\\metafile.js.json","relative":"build\\metafile.js.json"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.698Z     +0ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\build\\metafile.server.json","relative":"build\\metafile.server.json"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.698Z     +0ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\build\\index.js","relative":"build\\index.js"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.698Z     +0ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\public\\build\\root-UW5ZLDGB.js","relative":"public\\build\\root-UW5ZLDGB.js"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:01.698Z     +0ms [debug] Publishing event {"type":"file.changed","properties":{"file":"D:\\Projects\\pecuniary\\frontend\\public\\build\\manifest-E42077DA.js","relative":"public\\build\\manifest-E42077DA.js"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:02.990Z  +1292ms [debug] {"functionID":"c8d598b626c8865cac0f184fa4da5b2a094738b2ff","handler":"build\\server.handler","freeMemory":"9452 MB","totalMemory":"32674 MB","rss":"198 MB","heapTotal":"155 MB","heapUsed":"109 MB","external":"62 MB","arrayBuffers":"11 MB"}
-2023-08-18T20:11:02.990Z     +0ms [debug] Publishing event {"type":"function.build.success","properties":{"functionID":"c8d598b626c8865cac0f184fa4da5b2a094738b2ff"},"sourceID":"fa2816efee38354e79b91eb73b58ffdb"}
-2023-08-18T20:11:03.140Z   +150ms [debug] Generated build ID 1f2e102a65f368d4ddc6a3cb4dfc4f751dce98f6
-2023-08-18T20:11:03.197Z    +57ms [debug] [{"key":"hosted-zone:account=115499684434:domainName=percuiary-remix-sst.ericbach.dev:region=us-east-1","provider":"hosted-zone","props":{"account":"115499684434","region":"us-east-1","domainName":"percuiary-remix-sst.ericbach.dev","lookupRoleArn":"arn:${AWS::Partition}:iam::115499684434:role/cdk-hnb659fds-lookup-role-115499684434-us-east-1"}}]
+2023-08-18T20:55:40.809Z   +497ms [debug] Config loaded {"version":"2.24.4","cdkVersion":"2.91.0","constructsVersion":"10.2.69","config":{"name":"pecuniary","region":"us-east-1","stage":"prod","profile":"bach-prod","ssmPrefix":"/sst/pecuniary/prod/"},"metafile":{"inputs":{"sst.config.ts":{"bytes":418,"imports":[{"path":"sst/constructs","kind":"import-statement","external":true},{"path":"aws-cdk-lib/aws-certificatemanager","kind":"import-statement","external":true},{"path":"aws-cdk-lib/aws-route53","kind":"import-statement","external":true},{"path":"./constants","kind":"import-statement","external":true}],"format":"esm"}},"outputs":{".sst.config.1692392140747.mjs":{"imports":[],"exports":["default"],"entryPoint":"sst.config.ts","inputs":{"sst.config.ts":{"bytesInOutput":124}},"bytes":306}}},"paths":{"config":"D:\\Projects\\pecuniary\\frontend\\sst.config.ts","root":"D:\\Projects\\pecuniary\\frontend","out":"D:\\Projects\\pecuniary\\frontend\\.sst","artifacts":"D:\\Projects\\pecuniary\\frontend\\.sst\\artifacts"}}
+2023-08-18T20:55:42.561Z  +1752ms [debug] Using AWS profile bach-prod
+2023-08-18T20:55:42.588Z    +27ms [debug] Created AWS client STSClient
+2023-08-18T20:55:42.590Z     +2ms [debug] Fetching app metadata
+2023-08-18T20:55:42.590Z     +0ms [debug] Initializing bootstrap context
+2023-08-18T20:55:42.591Z     +1ms [debug] Created AWS client CloudFormationClient
+2023-08-18T20:55:43.381Z   +790ms [debug] Using identity Account: 115499684434 User: AROARVZCRKJJEK6YY75YL:eric.bach
+2023-08-18T20:55:43.382Z     +1ms [debug] Loaded bootstrap status
+2023-08-18T20:55:43.382Z     +0ms [debug] Bootstrap context initialized {"status":"ready","version":"7.2","bucket":"sstbootstrap-useast124d14e4b-1m3omtx98985b"}
+2023-08-18T20:55:43.779Z   +397ms [debug] Synthesizing stacks...
