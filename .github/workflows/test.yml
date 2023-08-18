@@ -239,10 +239,8 @@ jobs:
 
       - name: 🗒️ Create constants.ts
         run: |
-          touch constants.ts
-          echo export const CERTIFICATE_ARN = \'${{ secrets.CERTIFICATE_ARN }}\'; >> constants.ts
-          echo export const HOSTED_ZONE_ID = \'${{ secrets.HOSTED_ZONE_ID }}\'; >> constants.ts
-          echo export const HOSTED_ZONE_NAME = \'${{ secrets.HOSTED_ZONE_NAME }}\'; >> constants.ts
+          touch prod.config
+          echo { certificateArn: \'${{ secrets.CERTIFICATE_ARN }}\', hostedZoneId: \'${{ secrets.HOSTED_ZONE_ID }}\' } >> prod.config
         working-directory: frontend
 
       # - name: 🏗 Build Frontend
