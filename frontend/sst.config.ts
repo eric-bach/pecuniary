@@ -3,7 +3,6 @@ import { RemixSite } from 'sst/constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 
-const path = require('path');
 const fs = require('fs');
 
 export default {
@@ -19,7 +18,7 @@ export default {
       function Site({ stack }) {
         let config;
         if (app.stage === 'prod') {
-          config = JSON.parse(fs.readFileSync(`${process.env.NODE_ENV}.config`));
+          config = JSON.parse(fs.readFileSync('prod.config'));
         }
 
         const site = new RemixSite(stack, 'site', {
