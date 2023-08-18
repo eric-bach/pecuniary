@@ -237,11 +237,11 @@ jobs:
           echo export default awsmobile >> aws-exports.js
         working-directory: frontend/app
 
-      - name: 🗒️ Create constants.ts
-        run: |
-          touch constants.ts
-          echo export const CERTIFICATE_ARN = \'${{ secrets.CERTIFICATE_ARN }}\'; >> constants.ts
-        working-directory: frontend
+      # - name: 🗒️ Create constants.ts
+      #   run: |
+      #     touch constants.ts
+      #     echo export const CERTIFICATE_ARN = \'${{ secrets.CERTIFICATE_ARN }}\'; >> constants.ts
+      #   working-directory: frontend
 
       # - name: 🏗 Build Frontend
       #   run: npm run build-frontend
