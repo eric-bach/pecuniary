@@ -159,6 +159,11 @@ jobs:
           echo export default awsmobile >> aws-exports.js
         working-directory: frontend/app
 
+      - name: 🗒️ Create constants.ts
+        run: |
+          touch constants.ts
+        working-directory: frontend
+
       - name: 🏗 Build Frontend
         run: npm run build-frontend
         working-directory: infrastructure
@@ -231,6 +236,12 @@ jobs:
           echo const awsmobile = { aws_project_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_cognito_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_user_pools_id: \'${{secrets.COGNITO_USERPOOL_ID_PROD}}\', aws_user_pools_web_client_id: \'${{ secrets.COGNITO_WEB_CLIENT_ID_PROD }}\', mandatorySignIn: true, aws_appsync_graphqlEndpoint: \'${{ secrets.APPSYNC_ENDPOINT_PROD }}\', aws_appsync_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_appsync_authenticationType: \'AMAZON_COGNITO_USER_POOLS\' } >> aws-exports.js
           echo export default awsmobile >> aws-exports.js
         working-directory: frontend/app
+
+      - name: 🗒️ Create constants.ts
+        run: |
+          touch constants.ts
+          echo export const CERTIFICATE_ARN = \'${{ secrets.CERTIFICATE_ARN }}\'; >> constants.ts
+        working-directory: frontend
 
       - name: 🏗 Build Frontend
         run: npm run build-frontend
