@@ -1,10 +1,10 @@
-2023-08-18T20:55:40.809Z   +497ms [debug] Config loaded {"version":"2.24.4","cdkVersion":"2.91.0","constructsVersion":"10.2.69","config":{"name":"pecuniary","region":"us-east-1","stage":"prod","profile":"bach-prod","ssmPrefix":"/sst/pecuniary/prod/"},"metafile":{"inputs":{"sst.config.ts":{"bytes":418,"imports":[{"path":"sst/constructs","kind":"import-statement","external":true},{"path":"aws-cdk-lib/aws-certificatemanager","kind":"import-statement","external":true},{"path":"aws-cdk-lib/aws-route53","kind":"import-statement","external":true},{"path":"./constants","kind":"import-statement","external":true}],"format":"esm"}},"outputs":{".sst.config.1692392140747.mjs":{"imports":[],"exports":["default"],"entryPoint":"sst.config.ts","inputs":{"sst.config.ts":{"bytesInOutput":124}},"bytes":306}}},"paths":{"config":"D:\\Projects\\pecuniary\\frontend\\sst.config.ts","root":"D:\\Projects\\pecuniary\\frontend","out":"D:\\Projects\\pecuniary\\frontend\\.sst","artifacts":"D:\\Projects\\pecuniary\\frontend\\.sst\\artifacts"}}
-2023-08-18T20:55:42.561Z  +1752ms [debug] Using AWS profile bach-prod
-2023-08-18T20:55:42.588Z    +27ms [debug] Created AWS client STSClient
-2023-08-18T20:55:42.590Z     +2ms [debug] Fetching app metadata
-2023-08-18T20:55:42.590Z     +0ms [debug] Initializing bootstrap context
-2023-08-18T20:55:42.591Z     +1ms [debug] Created AWS client CloudFormationClient
-2023-08-18T20:55:43.381Z   +790ms [debug] Using identity Account: 115499684434 User: AROARVZCRKJJEK6YY75YL:eric.bach
-2023-08-18T20:55:43.382Z     +1ms [debug] Loaded bootstrap status
-2023-08-18T20:55:43.382Z     +0ms [debug] Bootstrap context initialized {"status":"ready","version":"7.2","bucket":"sstbootstrap-useast124d14e4b-1m3omtx98985b"}
-2023-08-18T20:55:43.779Z   +397ms [debug] Synthesizing stacks...
+2023-08-18T21:26:47.982Z   +493ms [debug] Config loaded {"version":"2.24.4","cdkVersion":"2.91.0","constructsVersion":"10.2.69","config":{"name":"pecuniary","region":"us-east-1","stage":"prod","profile":"bach-prod","ssmPrefix":"/sst/pecuniary/prod/"},"metafile":{"inputs":{"sst.config.ts":{"bytes":393,"imports":[{"path":"sst/constructs","kind":"import-statement","external":true},{"path":"aws-cdk-lib/aws-certificatemanager","kind":"import-statement","external":true},{"path":"aws-cdk-lib/aws-route53","kind":"import-statement","external":true},{"path":"path","kind":"require-call","external":true},{"path":"fs","kind":"require-call","external":true}],"format":"esm"}},"outputs":{".sst.config.1692394007917.mjs":{"imports":[{"path":"path","kind":"require-call","external":true},{"path":"fs","kind":"require-call","external":true}],"exports":["default"],"entryPoint":"sst.config.ts","inputs":{"sst.config.ts":{"bytesInOutput":180}},"bytes":731}}},"paths":{"config":"D:\\Projects\\pecuniary\\frontend\\sst.config.ts","root":"D:\\Projects\\pecuniary\\frontend","out":"D:\\Projects\\pecuniary\\frontend\\.sst","artifacts":"D:\\Projects\\pecuniary\\frontend\\.sst\\artifacts"}}
+2023-08-18T21:26:49.698Z  +1716ms [debug] Using AWS profile bach-prod
+2023-08-18T21:26:49.725Z    +27ms [debug] Created AWS client STSClient
+2023-08-18T21:26:49.726Z     +1ms [debug] Fetching app metadata
+2023-08-18T21:26:49.727Z     +1ms [debug] Initializing bootstrap context
+2023-08-18T21:26:49.727Z     +0ms [debug] Created AWS client CloudFormationClient
+2023-08-18T21:26:50.407Z   +680ms [debug] Using identity Account: 115499684434 User: AROARVZCRKJJEK6YY75YL:eric.bach
+2023-08-18T21:26:50.471Z    +64ms [debug] Loaded bootstrap status
+2023-08-18T21:26:50.471Z     +0ms [debug] Bootstrap context initialized {"status":"ready","version":"7.2","bucket":"sstbootstrap-useast124d14e4b-1m3omtx98985b"}
+2023-08-18T21:26:50.887Z   +416ms [debug] Synthesizing stacks...

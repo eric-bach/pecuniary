@@ -21,7 +21,9 @@
     "@remix-run/serve": "^1.19.3",
     "aws-amplify": "^5.3.4",
     "aws-appsync": "^4.1.9",
+    "fs": "^0.0.1-security",
     "isbot": "^3.6.8",
+    "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -30,11 +32,11 @@
     "@remix-run/eslint-config": "^1.19.3",
     "@types/react": "^18.0.35",
     "@types/react-dom": "^18.0.11",
-    "eslint": "^8.38.0",
-    "typescript": "^5.0.4",
-    "sst": "^2.24.4",
     "aws-cdk-lib": "2.91.0",
-    "constructs": "10.2.69"
+    "constructs": "10.2.69",
+    "eslint": "^8.38.0",
+    "sst": "^2.24.4",
+    "typescript": "^5.0.4"
   },
   "engines": {
     "node": ">=14.0.0"

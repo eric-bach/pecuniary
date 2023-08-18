@@ -19,7 +19,7 @@ export default {
       function Site({ stack }) {
         let config;
         if (app.stage === 'prod') {
-          config = JSON.parse(fs.readFileSync(path.join(__dirname, `${process.env.NODE_ENV}.config`)));
+          config = JSON.parse(fs.readFileSync(`${process.env.NODE_ENV}.config`));
         }
 
         const site = new RemixSite(stack, 'site', {
