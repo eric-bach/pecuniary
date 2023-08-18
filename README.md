@@ -79,7 +79,7 @@ This quick start guide describes how to get the application running. An `AWS acc
 
 ## Deployment with CDK CLI
 
-The Pecuniary application consists of the CDK backend and React frontend, each of which has an independent method of deploying.
+The Pecuniary application consists of the CDK backend and React frontend, each of which has an independent method of deploying. The backend is deployed via CDK where the frontend is deployed via SST.
 
 ### Deploy backend via CDK script
 
@@ -143,6 +143,8 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    ```
    AWS_SERVICE_ROLE_PROD - AWS ARN of the GitHub Actions Role to Assume (from step 1)
    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
+   HOSTED_ZONE_ID - Route53 Hosted Zone ID
+   HOSTED_ZONE_NAME - Route53 Hosted Zone Name
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
    CLOUDFRONT_DOMAIN_PROD - AWS CloudFront Distribution domain name
    COGNITO_USERPOOL_ID_PROD - Cognito User Pool Id

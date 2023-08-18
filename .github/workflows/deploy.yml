@@ -17,37 +17,43 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout Code
+      - name: 🚫 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+
+      - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
-      - name: Configure Node
+      - name: ⚒️ Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
 
-      - name: Configure AWS credentials
+      - name: 🔑 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_PROD }}
-          aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
+          aws-region: us-east-1
 
-      - name: Install Backend Dependencies
-        run: npm run cinstall-all-backend
-        working-directory: infrastructure
+      - name: 👀 Env
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Git ref:    ${{ github.ref }}"
+          echo "GH actor:   ${{ github.actor }}"
+          echo "SHA:        ${{ github.sha }}"
+          VER=`node --version`; echo "Node ver:   $VER"
+          VER=`npm --version`; echo "npm ver:    $VER"
 
-      - name: Create infrastructure/.env file
+      - name: 📥  Install Backend and Sources
+        uses: ./.github/actions/backend
+
+      - name: 🗒️ Create .env
         run: |
           touch .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
-          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-          cat .env
         working-directory: infrastructure
 
-      - name: CDK Deploy Backend
-        run: npm run deploy-backend prod
-        env:
-          CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
-          DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
+      - name: 🚀 Deploy Backend
+        run: npm run deploy prod
         working-directory: infrastructure
 
   deploy-frontend:
@@ -60,46 +66,48 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout Code
+      - name: 🚫 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+
+      - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
-      - name: Configure Node
+      - name: ⚒️ Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
 
-      - name: Configure AWS credentials
+      - name: 🔑 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_PROD }}
-          aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
+          aws-region: us-east-1
 
-      - name: Install Dependencies
-        run: npm run cinstall-all
-        working-directory: infrastructure
-
-      - name: Create frontend/container/.env file
+      - name: 👀 Env
         run: |
-          touch .env
-          echo PRODUCTION_DOMAIN=${{ secrets.CLOUDFRONT_DOMAIN_PROD }} >> .env
-          echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.COGNITO_USERPOOL_ID_PROD }} >> .env
-          echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.COGNITO_WEB_CLIENT_ID_PROD }} >> .env
-          echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.APPSYNC_ENDPOINT_PROD }} >> .env
-          echo REACT_APP_APPSYNC_REGION=${{ secrets.CDK_DEFAULT_REGION }} >> .env
-          cat .env
-        working-directory: frontend/container
+          echo "Event name: ${{ github.event_name }}"
+          echo "Git ref:    ${{ github.ref }}"
+          echo "GH actor:   ${{ github.actor }}"
+          echo "SHA:        ${{ github.sha }}"
+          VER=`node --version`; echo "Node ver:   $VER"
+          VER=`npm --version`; echo "npm ver:    $VER"
 
-      - name: Build Frontend
-        run: npm run build-all-frontend
-        working-directory: infrastructure
+      - name: 📥 Install Frontend
+        uses: ./.github/actions/frontend
 
-      - name: Deploy Frontend
-        run: npx sst deploy --stage prod
+      - name: 🗒️ Create aws-exports.js
+        run: |
+          touch aws-exports.js
+          echo const awsmobile = { aws_project_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_cognito_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_user_pools_id: \'${{secrets.COGNITO_USERPOOL_ID_PROD}}\', aws_user_pools_web_client_id: \'${{ secrets.COGNITO_WEB_CLIENT_ID_PROD }}\', mandatorySignIn: true, aws_appsync_graphqlEndpoint: \'${{ secrets.APPSYNC_ENDPOINT_PROD }}\', aws_appsync_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_appsync_authenticationType: \'AMAZON_COGNITO_USER_POOLS\' } >> aws-exports.js
+          echo export default awsmobile >> aws-exports.js
+        working-directory: frontend/app
+
+      - name: 🗒️ Create prod.config
+        run: |
+          touch prod.config
+          echo { \"certificateArn\": \"${{ secrets.CERTIFICATE_ARN }}\", \"hostedZoneId\": \"${{ secrets.HOSTED_ZONE_ID }}\" } >> prod.config
         working-directory: frontend
 
-      # - name: CDK Deploy Frontend
-      #   run: npm run deploy-frontend prod
-      #   env:
-      #     CERTIFICATE_ARN: ${{secrets.CERTIFICATE_ARN}}
-      #     DLQ_NOTIFICATIONS: ${{secrets.DLQ_NOTIFICATIONS}}
-      #   working-directory: infrastructure
+      - name: 🚀 Deploy Frontend
+        run: npx sst deploy --stage prod
+        working-directory: frontend

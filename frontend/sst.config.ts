@@ -16,6 +16,7 @@ export default {
   stacks(app) {
     app.stack(
       function Site({ stack }) {
+        // TODO Move to SSM and use AWS SDK to read from SSM
         let config;
         if (app.stage === 'prod') {
           config = JSON.parse(fs.readFileSync('prod.config'));
@@ -25,12 +26,12 @@ export default {
           customDomain:
             app.stage === 'prod'
               ? {
-                  domainName: 'percuiary-remix-sst.ericbach.dev',
+                  domainName: `percuiary-remix-sst.${config.hostedZoneName}`,
                   cdk: {
                     certificate: Certificate.fromCertificateArn(stack, 'Certificate', config.certificateArn),
-                    hostedZone: HostedZone.fromHostedZoneAttributes(stack, 'MyZone', {
+                    hostedZone: HostedZone.fromHostedZoneAttributes(stack, 'HostedZone', {
                       hostedZoneId: config.hostedZoneId,
-                      zoneName: 'ericbach.dev',
+                      zoneName: config.hostedZoneName,
                     }),
                   },
                 }
