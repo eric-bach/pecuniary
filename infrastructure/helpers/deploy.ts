@@ -34,6 +34,7 @@ const cdkDeploy = () => {
         '🚀 Deploying backend...'
       );
 
+      // Remix frontend deployed by SST
       // runCommand(
       //   `npm run cdk -- deploy --all -c stage=frontend -c env=${env} ${profileArg} --require-approval=never`,
       //   '🚀 Deploying frontend...'

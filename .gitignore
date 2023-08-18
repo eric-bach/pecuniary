@@ -32,6 +32,7 @@ aws-exports.js
 /frontend/.cache
 /frontend/.sst
 /frontend/build
+/frontend/constants.ts
 
 !.eslintrc.js
 !webpack.*.js
