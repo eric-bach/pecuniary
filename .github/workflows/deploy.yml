@@ -8,8 +8,8 @@ on:
       - main
 
 jobs:
-  deploy-backend:
-    name: Deploy Backend
+  deploy-prod:
+    name: Deploy Prod (Temporary)
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -46,52 +46,6 @@ jobs:
       - name: 📥  Install Backend and Sources
         uses: ./.github/actions/backend
 
-      - name: 🗒️ Create .env
-        run: |
-          touch .env
-          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-        working-directory: infrastructure
-
-      - name: 🚀 Deploy Backend
-        run: npm run deploy prod
-        working-directory: infrastructure
-
-  deploy-frontend:
-    name: Deploy Frontend
-    runs-on: ubuntu-latest
-    needs: deploy-backend
-    permissions:
-      actions: write
-      contents: read
-      id-token: write
-
-    steps:
-      - name: 🚫 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
-      - name: ⬇️ Checkout Code
-        uses: actions/checkout@v3
-
-      - name: ⚒️ Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-
-      - name: 🔑 Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_PROD }}
-          aws-region: us-east-1
-
-      - name: 👀 Env
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Git ref:    ${{ github.ref }}"
-          echo "GH actor:   ${{ github.actor }}"
-          echo "SHA:        ${{ github.sha }}"
-          VER=`node --version`; echo "Node ver:   $VER"
-          VER=`npm --version`; echo "npm ver:    $VER"
-
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
@@ -111,8 +65,12 @@ jobs:
       - name: 🗒️ Create prod.config
         run: |
           touch prod.config
-          echo { \"certificateArn\": \"${{ secrets.CERTIFICATE_ARN }}\", \"hostedZoneId\": \"${{ secrets.HOSTED_ZONE_ID }}\" } >> prod.config
+          echo { \"certificateArn\": \"${{ secrets.CERTIFICATE_ARN }}\", \"hostedZoneId\": \"${{ secrets.HOSTED_ZONE_ID }}\", \"hostedZoneName\": \"${{ secrets.HOSTED_ZONE_NAME }}\" } >> prod.config
         working-directory: frontend
+
+      - name: 🚀 Deploy Backend
+        run: npm run deploy prod
+        working-directory: infrastructure
 
       - name: 🚀 Deploy Frontend
         run: npx sst deploy --stage prod
