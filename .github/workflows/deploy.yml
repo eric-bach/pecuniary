@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy-prod:
-    name: Deploy Prod (Temporary)
+    name: Deploy Prod
     runs-on: ubuntu-latest
     permissions:
       actions: write
