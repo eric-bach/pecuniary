@@ -27,7 +27,7 @@ export default {
           customDomain:
             app.stage === 'prod'
               ? {
-                  domainName: `pecuniary-remix-sst.${config.hostedZoneName}`,
+                  domainName: `pecuniary.${config.hostedZoneName}`,
                   cdk: {
                     certificate: Certificate.fromCertificateArn(stack, 'Certificate', config.certificateArn),
                     hostedZone: HostedZone.fromHostedZoneAttributes(stack, 'HostedZone', {
@@ -44,7 +44,7 @@ export default {
         });
       },
       {
-        stackName: `pecuniary-remix-sst-${app.stage}`,
+        stackName: `pecuniary-frontend-${app.stage}`,
       }
     );
   },
