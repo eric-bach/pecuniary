@@ -36,13 +36,10 @@ jobs:
       - name: 📥  Install Backend and Sources
         uses: ./.github/actions/backend
 
-      # # - name: 🏗 Build Frontend
-      # #   run: npm run build-frontend
-      # #   working-directory: backend
-
+      # Currently failing
       # - name: 🔭 Run CDK Unit Tests
       #   run: npm run test
-      #   working-directory: backend
+      #   working-directory: infrastructure
 
   integration-tests:
     name: Integration Tests
@@ -73,38 +70,7 @@ jobs:
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
-      # - name: 🗒️ Create aws-exports.js
-      # run: |
-      #   touch aws-exports.js
-      #   echo const awsmobile = { aws_project_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_cognito_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_user_pools_id: \'${{secrets.COGNITO_USERPOOL_ID_DEV}}\', aws_user_pools_web_client_id: \'${{ secrets.COGNITO_WEB_CLIENT_ID_DEV }}\', mandatorySignIn: true, aws_appsync_graphqlEndpoint: \'${{ secrets.APPSYNC_ENDPOINT_DEV }}\', aws_appsync_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_appsync_authenticationType: \'AMAZON_COGNITO_USER_POOLS\' } >> aws-exports.js
-      #   echo export default awsmobile >> aws-exports.js
-      # working-directory: frontend/app
-
-      # - name: Create frontend/container/.env file
-      #   run: |
-      #     ktouch .env
-      #     echo PRODUCTION_DOMAIN=${{ secrets.CLOUDFRONT_DOMAIN_DEV }} >> .env
-      #     echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.COGNITO_USERPOOL_ID_DEV }} >> .env
-      #     echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.COGNITO_WEB_CLIENT_ID_DEV }} >> .env
-      #     echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.APPSYNC_ENDPOINT_DEV }} >> .env
-      #     echo REACT_APP_APPSYNC_REGION=${{ secrets.CDK_DEFAULT_REGION }} >> .env
-      #   working-directory: frontend/container
-
-      # - name: Start marketing MFE
-      #   run: npm run start &
-      #   working-directory: frontend/marketing
-
-      # - name: Start auth MFE
-      #   run: npm run start &
-      #   working-directory: frontend/auth
-
-      # - name: Start dashboard MFE
-      #   run: npm run start &
-      #   working-directory: frontend/dashboard
-
-      # - name: Start container MFE
-      #   run: npm run start &
-      #   working-directory: frontend/container
+      # TODO Deploy backend and frontend
 
       # - name: Run Cypress Frontend Tests
       #   run: npx cypress run --env username=${{ secrets.CYPRESS_USERNAME }},password=${{ secrets.CYPRESS_PASSWORD }}
@@ -168,6 +134,12 @@ jobs:
         run: npm run build-frontend
         working-directory: infrastructure
 
+      - name: 🗒️ Create .env
+        run: |
+          touch .env
+          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
+        working-directory: infrastructure
+
       - name: 🚀 Deploy Backend
         run: npm run deploy dev
         working-directory: infrastructure
@@ -175,12 +147,6 @@ jobs:
       - name: 🚀 Deploy Frontend
         run: npx sst deploy --stage dev
         working-directory: frontend
-
-      # - name: Invalidate CloudFront
-      #   uses: chetan/invalidate-cloudfront-action@v2
-      #   env:
-      #     DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
-      #     PATHS: "/*"
 
   deploy-prod:
     name: Deploy Prod (Temporary)
@@ -227,7 +193,7 @@ jobs:
       - name: 🗒️ Create .env
         run: |
           touch .env
-          echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
+          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
         working-directory: infrastructure
 
       - name: 🗒️ Create aws-exports.js
@@ -243,10 +209,6 @@ jobs:
           echo { \"certificateArn\": \"${{ secrets.CERTIFICATE_ARN }}\", \"hostedZoneId\": \"${{ secrets.HOSTED_ZONE_ID }}\", \"hostedZoneName\": \"${{ secrets.HOSTED_ZONE_NAME }}\" } >> prod.config
         working-directory: frontend
 
-      # - name: 🏗 Build Frontend
-      #   run: npm run build-frontend
-      #   working-directory: infrastructure
-
       - name: 🚀 Deploy Backend
         run: npm run deploy prod
         working-directory: infrastructure
@@ -254,9 +216,3 @@ jobs:
       - name: 🚀 Deploy Frontend
         run: npx sst deploy --stage prod
         working-directory: frontend
-
-        # - name: Invalidate CloudFront
-      #   uses: chetan/invalidate-cloudfront-action@v2
-      #   env:
-      #     DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
-      #     PATHS: "/*"

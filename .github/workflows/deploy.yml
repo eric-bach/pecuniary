@@ -49,7 +49,7 @@ jobs:
       - name: 🗒️ Create .env
         run: |
           touch .env
-          echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
+          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
         working-directory: infrastructure
 
       - name: 🚀 Deploy Backend
@@ -94,6 +94,12 @@ jobs:
 
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
+
+      - name: 🗒️ Create .env
+        run: |
+          touch .env
+          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
+        working-directory: infrastructure
 
       - name: 🗒️ Create aws-exports.js
         run: |

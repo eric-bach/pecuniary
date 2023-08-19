@@ -2,6 +2,7 @@ import type { SSTConfig } from 'sst';
 import { RemixSite } from 'sst/constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
+import { GeoRestriction } from 'aws-cdk-lib/aws-cloudfront';
 
 const fs = require('fs');
 
