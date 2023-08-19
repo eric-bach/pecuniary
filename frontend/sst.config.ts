@@ -26,7 +26,7 @@ export default {
           customDomain:
             app.stage === 'prod'
               ? {
-                  domainName: `percuiary-remix-sst.${config.hostedZoneName}`,
+                  domainName: `pecuniary-remix-sst.${config.hostedZoneName}`,
                   cdk: {
                     certificate: Certificate.fromCertificateArn(stack, 'Certificate', config.certificateArn),
                     hostedZone: HostedZone.fromHostedZoneAttributes(stack, 'HostedZone', {
