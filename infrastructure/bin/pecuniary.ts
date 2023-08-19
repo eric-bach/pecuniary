@@ -5,11 +5,8 @@ import { AuthStack } from '../lib/auth-stack';
 import { ApiStack } from '../lib/api-stack';
 import { DatabaseStack } from '../lib/database-stack';
 import { MessagingStack } from '../lib/messaging-stack';
-import { FrontendStack } from '../lib/frontend-stack';
 import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
-import { MfeStack } from '../lib/mfe-stack';
 import { APP_NAME, DEFAULT_VALUES } from '../lib/constants';
-import { RemixStack } from '../lib/remix-stack';
 
 const app = new App();
 
@@ -51,31 +48,6 @@ switch (stage) {
         eventBusArn: messaging.eventBusArn,
       },
     });
-
-    break;
-  }
-
-  case 'frontend': {
-    // new FrontendStack(app, `${APP_NAME}-frontend-${envName}`, {
-    //   ...baseProps,
-    //   params: {
-    //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
-    //   },
-    // });
-
-    new RemixStack(app, `${APP_NAME}-remix-${envName}`, {
-      ...baseProps,
-      params: {
-        certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
-      },
-    });
-
-    // new MfeStack(app, `${APP_NAME}-mfe-${envName}`, {
-    //   ...baseProps,
-    //   params: {
-    //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
-    //   },
-    // });
 
     break;
   }

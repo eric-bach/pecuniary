@@ -28,6 +28,12 @@ aws-exports.js
 **/public/build
 **/frontend*/server
 
+# SST
+/frontend/.cache
+/frontend/.sst
+/frontend/build
+/frontend/prod.config
+
 !.eslintrc.js
 !webpack.*.js
 !jest.config.js

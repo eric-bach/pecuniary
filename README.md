@@ -55,12 +55,35 @@ This quick start guide describes how to get the application running. An `AWS acc
 
 4.  Copy the `./infrastructure/.env.example` file to `./infrastructure/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
 
-    - `CERTIFICATE_ARN` - ARN to ACM Certificate for CloudFront Distribution
-    - `DLQ_NOTIFICATIONS` - email address to send failed event message notifications to
+    ```
+    DLQ_NOTIFICATIONS - email address to send failed event message notifications to.
+    ```
 
 5.  Copy the `./frontend/app/aws-exports.js.example` file to `./frontend/app/aws-exports.js` and fill in the parameter values from the CDK stack outputs in step 2:
 
-    TODO Fill in values here
+    ```
+    const awsmobile = {
+      aws_project_region: 'AWS_REGION',
+      aws_cognito_region: 'AWS_REGION',
+      aws_user_pools_id: 'USER_POOL_ID',
+      aws_user_pools_web_client_id: 'USER_POOL_CLIENT_ID',
+      mandatorySignIn: true,
+      aws_appsync_graphqlEndpoint: 'APPSYNC_ENDPOINT',
+      aws_appsync_region: 'AWS_REGION',
+      aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS',
+    };
+    export default awsmobile;
+    ```
+
+6.  Copy the `./frontend/prod.config.example` file to `./frontend/prod.config` and fill in the parameter values from existing Certificate and Route53 resources. If these do not exist from a prior app, create new instances.
+
+    ```
+    {
+      "certificateArn": "",
+      "hostedZoneId": "",
+      "hostedZoneName": ""
+    }
+    ```
 
 ## Deploy the app
 
@@ -79,7 +102,7 @@ This quick start guide describes how to get the application running. An `AWS acc
 
 ## Deployment with CDK CLI
 
-The Pecuniary application consists of the CDK backend and React frontend, each of which has an independent method of deploying.
+The Pecuniary application consists of the CDK backend and React frontend, each of which has an independent method of deploying. The backend is deployed via CDK where the frontend is deployed via SST.
 
 ### Deploy backend via CDK script
 
@@ -95,20 +118,16 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    aws sso login --profile PROFILE_NAME
    ```
 
-3. Deploy the Stacks
-
-   a. To deploy all stacks (backend + frontend)
+3. Deploy the backend
 
    ```
    $ npm run deploy dev PROFILE_NAME
    ```
 
-   b. To deploy a specific stage
+4. Deploy the frontend (using SST)
 
    ```
-   // Deploy a specific stage for the 'dev' environment to the PROFILE_NAME
-   $ npm run deploy-backend dev PROFILE_NAME
-   $ npm run deploy-frontend dev PROFILE_NAME
+   $ npx sst dev
    ```
 
 ## Deployment via GitHub Actions
@@ -143,6 +162,8 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    ```
    AWS_SERVICE_ROLE_PROD - AWS ARN of the GitHub Actions Role to Assume (from step 1)
    CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
+   HOSTED_ZONE_ID - Route53 Hosted Zone ID
+   HOSTED_ZONE_NAME - Route53 Hosted Zone Name
    DLQ_NOTIFICATIONS - email address to send DLQ messages to
    CLOUDFRONT_DOMAIN_PROD - AWS CloudFront Distribution domain name
    COGNITO_USERPOOL_ID_PROD - Cognito User Pool Id
@@ -152,7 +173,13 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
 
 # Testing
 
+## Jest
+
+To be added
+
 ## Cypress
+
+To be added
 
 ### Locally
 
