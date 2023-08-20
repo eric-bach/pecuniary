@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useFetcher } from '@remix-run/react';
 import { AppBar, Avatar, Box, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
 // import MenuIcon from '@mui/icons-material/Menu';
@@ -25,8 +25,6 @@ export default function Header() {
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-
-  useEffect(() => {}, [user]);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -78,46 +76,48 @@ export default function Header() {
           >
             Pecuniary
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size='large'
-              aria-label='account of current user'
-              aria-controls='menu-appbar'
-              aria-haspopup='true'
-              onClick={handleOpenNavMenu}
-              color='inherit'
-            >
-              {/* <MenuIcon /> */}
-            </IconButton>
-            <Menu
-              id='menu-appbar'
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={(e) => handleCloseNavMenu(e)}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {pages?.map((page) => (
-                <Link
-                  key={page}
-                  to={page.toLocaleLowerCase()}
-                  style={{ margin: 6, color: 'white', display: 'block', textDecoration: 'none' }}
-                >
-                  {page}
-                </Link>
-              ))}
-            </Menu>
-          </Box>
+          {user && (
+            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+              <IconButton
+                size='large'
+                aria-label='account of current user'
+                aria-controls='menu-appbar'
+                aria-haspopup='true'
+                onClick={handleOpenNavMenu}
+                color='inherit'
+              >
+                {/* <MenuIcon /> */}
+              </IconButton>
+              <Menu
+                id='menu-appbar'
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={(e) => handleCloseNavMenu(e)}
+                sx={{
+                  display: { xs: 'block', md: 'none' },
+                }}
+              >
+                {pages?.map((page) => (
+                  <Link
+                    key={page}
+                    to={page.toLocaleLowerCase()}
+                    style={{ margin: 6, color: 'white', display: 'block', textDecoration: 'none' }}
+                  >
+                    {page}
+                  </Link>
+                ))}
+              </Menu>
+            </Box>
+          )}
           {/* <PaidIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
           <Typography
             variant='h5'
@@ -137,17 +137,19 @@ export default function Header() {
           >
             Pecuniary
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Link
-                key={page}
-                to={page.toLocaleLowerCase()}
-                style={{ margin: 6, color: 'white', display: 'block', textDecoration: 'none' }}
-              >
-                {page}
-              </Link>
-            ))}
-          </Box>
+          {user && (
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+              {pages.map((page) => (
+                <Link
+                  key={page}
+                  to={page.toLocaleLowerCase()}
+                  style={{ margin: 6, color: 'white', display: 'block', textDecoration: 'none' }}
+                >
+                  {page}
+                </Link>
+              ))}
+            </Box>
+          )}
 
           {user ? (
             <Box sx={{ flexGrow: 0 }}>
