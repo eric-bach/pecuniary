@@ -1,11 +1,11 @@
-import { LoaderArgs } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { Link, useLoaderData, useNavigation } from '@remix-run/react';
 import { Box } from '@mui/material';
 import { getClient } from '~/utils/session.server';
 import { gql } from 'graphql-tag';
 
 import { GET_ACCOUNTS } from '~/graphql/queries';
-import { Account, GetAccountsResponse } from '~/types/types';
+import type { Account, GetAccountsResponse } from '~/types/types';
 import { Loader } from '@aws-amplify/ui-react';
 
 export async function loader({ request }: LoaderArgs) {

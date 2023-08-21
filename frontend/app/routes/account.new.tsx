@@ -1,4 +1,5 @@
-import { ActionFunction, redirect } from '@remix-run/node';
+import type { ActionFunction} from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { Container } from '@mui/material';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
@@ -7,7 +8,7 @@ import gql from 'graphql-tag';
 
 import { getClient } from '~/utils/session.server';
 import { CREATE_ACCOUNT } from '~/graphql/queries';
-import { Account } from '~/types/types';
+import type { Account } from '~/types/types';
 import { ValidatedForm, validationError } from 'remix-validated-form';
 
 import { Input } from '~/components/input';
