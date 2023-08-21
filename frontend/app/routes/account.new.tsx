@@ -1,4 +1,3 @@
-import { useActionData } from '@remix-run/react';
 import { ActionFunction, redirect } from '@remix-run/node';
 import { Container } from '@mui/material';
 import { z } from 'zod';
@@ -61,7 +60,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function () {
-  const actionData = useActionData();
+  // const actionData = useActionData();
 
   return (
     <Container>
