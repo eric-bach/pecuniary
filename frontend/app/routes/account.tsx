@@ -9,7 +9,7 @@ export async function loader({ request }: LoaderArgs) {
   return null;
 }
 
-export default function DashboardRoute() {
+export default function AccountRoute() {
   return (
     <Box>
       <Typography variant='h4' gutterBottom>

@@ -1,5 +1,10 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node';
-export * from 'aws-appsync';
+import { Amplify } from 'aws-amplify';
+import AWSAppSyncClient from 'aws-appsync';
+
+import config from '../aws-exports';
+Amplify.configure({ ...config });
+//export * from 'aws-appsync';
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -26,7 +31,7 @@ export async function getUserSessionInfo(request: Request): Promise<string | und
   return userSessionInfo;
 }
 
-export async function requireUserId(request: Request, redirectTo: string | null): Promise<string> {
+export async function requireUserId(request: Request, redirectTo: string | null): Promise<any> {
   const userId = await getUserSessionInfo(request);
 
   if (!userId && redirectTo) {
@@ -62,3 +67,23 @@ export async function logout(request: Request) {
     console.log('server logout error', e);
   }
 }
+
+export const getClient = async (request: Request) => {
+  const response = await requireUserId(request, '/login');
+  const { accessToken } = response || {};
+
+  const client = new AWSAppSyncClient({
+    url: config.aws_appsync_graphqlEndpoint,
+    region: config.aws_appsync_region,
+    auth: {
+      type: 'AMAZON_COGNITO_USER_POOLS',
+      jwtToken: () => accessToken,
+    },
+    disableOffline: true,
+    offlineConfig: {
+      keyPrefix: 'pecuniary',
+    },
+  });
+
+  return client;
+};
