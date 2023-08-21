@@ -44,17 +44,16 @@ export const action: ActionFunction = async ({ request }) => {
 
     // Save account
     const client = await getClient(request);
-    console.log(request);
     const result = await client.mutate<Account>({
       mutation: gql(CREATE_ACCOUNT),
       variables: { input: input },
     });
 
-    console.log(result);
+    console.debug('Create Account Result', result);
 
     return redirect('/account');
   } catch (errors) {
-    console.log('GOT ERRORS', JSON.stringify({ errors }));
+    console.log('Create Account Errors', JSON.stringify({ errors }));
     return { errors };
   }
 };
@@ -67,7 +66,6 @@ export default function () {
       <ValidatedForm validator={validator} method='post'>
         <Input name='name' title='Account name' />
         <Select name='type' title='Account type' options={accountTypes} />
-
         <SubmitButton submitText='Create Post' />
       </ValidatedForm>
     </Container>

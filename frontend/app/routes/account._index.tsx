@@ -11,13 +11,11 @@ import { Loader } from '@aws-amplify/ui-react';
 export async function loader({ request }: LoaderArgs) {
   const client = await getClient(request);
 
-  console.log('Client', client);
-
   const { data } = await client.query<GetAccountsResponse>({
     query: gql(GET_ACCOUNTS),
   });
 
-  console.log('Results: ', data);
+  console.debug('Accounts: ', data);
 
   return data.getAccounts;
 }

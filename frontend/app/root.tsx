@@ -8,8 +8,8 @@ import { Amplify } from 'aws-amplify';
 import config from './aws-exports';
 import { Authenticator } from '@aws-amplify/ui-react';
 
-import Header from './components/header';
-import Footer from './components/footer';
+import Header from './header';
+import Footer from './footer';
 
 import styles from '@aws-amplify/ui-react/styles.css';
 import footerStyles from '~/styles/footer.css';
