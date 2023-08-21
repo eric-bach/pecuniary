@@ -1,6 +1,6 @@
 <h1 align="center">
   <p align="center">
-    <img src="diagrams/icon.png" height="28" width="28" alt="icon">
+    <img src="references/diagrams/icon.png" height="28" width="28" alt="icon">
     Pecuniary
   </p>
 </h1>
@@ -25,7 +25,7 @@
    ⚠️ <strong>NOTE</strong> ⚠️ The Event Sourcing and CQRS version is no longer maintained.  Please see <a href="()https://github.com/eric-bach/pecuniary/tree/cqrs-v1">branch</a> and <a href="()https://github.com/eric-bach/pecuniary/blob/cqrs-v1/ARCHITECTURE.md">CQRS Architecture</a> for the last release.
 </p>
 
-![Top Level](diagrams/toplevel.jpg)
+![Top Level](references/diagrams/toplevel.jpg)
 
 # Getting Started
 
