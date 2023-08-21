@@ -36,84 +36,15 @@ jobs:
       - name: 📥  Install Backend and Sources
         uses: ./.github/actions/backend
 
-      # # - name: 🏗 Build Frontend
-      # #   run: npm run build-frontend
-      # #   working-directory: backend
-
+      # Currently failing
       # - name: 🔭 Run CDK Unit Tests
       #   run: npm run test
-      #   working-directory: backend
-
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: ⬇️ Checkout Code
-        uses: actions/checkout@v3
-
-      - name: ⚒️ Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-
-      - name: 👀 Env
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Git ref:    ${{ github.ref }}"
-          echo "GH actor:   ${{ github.actor }}"
-          echo "SHA:        ${{ github.sha }}"
-          VER=`node --version`; echo "Node ver:   $VER"
-          VER=`npm --version`; echo "npm ver:    $VER"
-
-      - name: 📥 Install CDK Dependencies
-        run: npm install
-        working-directory: infrastructure
-
-      - name: 📥 Install Frontend
-        uses: ./.github/actions/frontend
-
-      # - name: 🗒️ Create aws-exports.js
-      # run: |
-      #   touch aws-exports.js
-      #   echo const awsmobile = { aws_project_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_cognito_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_user_pools_id: \'${{secrets.COGNITO_USERPOOL_ID_DEV}}\', aws_user_pools_web_client_id: \'${{ secrets.COGNITO_WEB_CLIENT_ID_DEV }}\', mandatorySignIn: true, aws_appsync_graphqlEndpoint: \'${{ secrets.APPSYNC_ENDPOINT_DEV }}\', aws_appsync_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_appsync_authenticationType: \'AMAZON_COGNITO_USER_POOLS\' } >> aws-exports.js
-      #   echo export default awsmobile >> aws-exports.js
-      # working-directory: frontend/app
-
-      # - name: Create frontend/container/.env file
-      #   run: |
-      #     ktouch .env
-      #     echo PRODUCTION_DOMAIN=${{ secrets.CLOUDFRONT_DOMAIN_DEV }} >> .env
-      #     echo REACT_APP_COGNITO_USERPOOL_ID=${{ secrets.COGNITO_USERPOOL_ID_DEV }} >> .env
-      #     echo REACT_APP_COGNITO_CLIENT_ID=${{ secrets.COGNITO_WEB_CLIENT_ID_DEV }} >> .env
-      #     echo REACT_APP_APPSYNC_ENDPOINT=${{ secrets.APPSYNC_ENDPOINT_DEV }} >> .env
-      #     echo REACT_APP_APPSYNC_REGION=${{ secrets.CDK_DEFAULT_REGION }} >> .env
-      #   working-directory: frontend/container
-
-      # - name: Start marketing MFE
-      #   run: npm run start &
-      #   working-directory: frontend/marketing
-
-      # - name: Start auth MFE
-      #   run: npm run start &
-      #   working-directory: frontend/auth
-
-      # - name: Start dashboard MFE
-      #   run: npm run start &
-      #   working-directory: frontend/dashboard
-
-      # - name: Start container MFE
-      #   run: npm run start &
-      #   working-directory: frontend/container
-
-      # - name: Run Cypress Frontend Tests
-      #   run: npx cypress run --env username=${{ secrets.CYPRESS_USERNAME }},password=${{ secrets.CYPRESS_PASSWORD }}
-      #   working-directory: frontend/container
+      #   working-directory: infrastructure
 
   deploy-dev:
-    name: Deploy Dev (Temporary)
+    name: Deploy Dev
     runs-on: ubuntu-latest
-    needs: [unit-tests, integration-tests]
+    needs: [unit-tests]
     permissions:
       actions: write
       contents: read
@@ -159,33 +90,35 @@ jobs:
           echo export default awsmobile >> aws-exports.js
         working-directory: frontend/app
 
+      - name: 🗒️ Create constants.ts
+        run: |
+          touch constants.ts
+        working-directory: frontend
+
       - name: 🏗 Build Frontend
         run: npm run build-frontend
         working-directory: infrastructure
 
-      - name: 🚀 Deploy
+      - name: 🗒️ Create .env
+        run: |
+          touch .env
+          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
+        working-directory: infrastructure
+
+      - name: 🚀 Deploy Backend
         run: npm run deploy dev
         working-directory: infrastructure
 
-      # - name: Invalidate CloudFront
-      #   uses: chetan/invalidate-cloudfront-action@v2
-      #   env:
-      #     DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
-      #     PATHS: "/*"
+      - name: 🚀 Deploy Frontend
+        run: npx sst deploy --stage dev
+        working-directory: frontend
 
-  deploy-prod:
-    name: Deploy Prod (Temporary)
+  integration-tests:
+    name: Integration Tests
     runs-on: ubuntu-latest
-    needs: [unit-tests, integration-tests, deploy-dev]
-    permissions:
-      actions: write
-      contents: read
-      id-token: write
+    needs: [deploy-dev]
 
     steps:
-      - name: 🚫 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
@@ -193,12 +126,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-
-      - name: 🔑 Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_PROD }}
-          aws-region: us-east-1
 
       - name: 👀 Env
         run: |
@@ -209,35 +136,15 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      - name: 📥  Install Backend and Sources
-        uses: ./.github/actions/backend
+      - name: 📥 Install CDK Dependencies
+        run: npm install
+        working-directory: infrastructure
 
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
-      - name: 🗒️ Create .env
-        run: |
-          touch .env
-          echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
-        working-directory: infrastructure
+      # TODO Deploy backend and frontend
 
-      - name: 🗒️ Create aws-exports.js
-        run: |
-          touch aws-exports.js
-          echo const awsmobile = { aws_project_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_cognito_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_user_pools_id: \'${{secrets.COGNITO_USERPOOL_ID_PROD}}\', aws_user_pools_web_client_id: \'${{ secrets.COGNITO_WEB_CLIENT_ID_PROD }}\', mandatorySignIn: true, aws_appsync_graphqlEndpoint: \'${{ secrets.APPSYNC_ENDPOINT_PROD }}\', aws_appsync_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_appsync_authenticationType: \'AMAZON_COGNITO_USER_POOLS\' } >> aws-exports.js
-          echo export default awsmobile >> aws-exports.js
-        working-directory: frontend/app
-
-      - name: 🏗 Build Frontend
-        run: npm run build-frontend
-        working-directory: infrastructure
-
-      - name: 🚀 Deploy
-        run: npm run deploy prod
-        working-directory: infrastructure
-
-      # - name: Invalidate CloudFront
-      #   uses: chetan/invalidate-cloudfront-action@v2
-      #   env:
-      #     DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
-      #     PATHS: "/*"
+      # - name: Run Cypress Frontend Tests
+      #   run: npx cypress run --env username=${{ secrets.CYPRESS_USERNAME }},password=${{ secrets.CYPRESS_PASSWORD }}
+      #   working-directory: frontend/container

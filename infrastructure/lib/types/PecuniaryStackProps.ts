@@ -5,12 +5,6 @@ export interface PecuniaryBaseStackProps extends StackProps {
   envName: string;
 }
 
-export interface PecuniaryFrontendStackProps extends PecuniaryBaseStackProps {
-  params: {
-    certificateArn: string;
-  };
-}
-
 export interface PecuniaryMessagingStackProps extends PecuniaryBaseStackProps {
   params: {
     dlqNotifications: string;
