@@ -7,7 +7,7 @@ import { AppBar, Avatar, Box, Container, IconButton, Menu, MenuItem, Toolbar, To
 import { Auth } from 'aws-amplify';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 
-const pages: string[] = ['Dashboard', 'Account'];
+const pages: string[] = ['Dashboard', 'Account', 'Integrations'];
 const settings: string[] = ['My Profile', 'My Bookings', 'Logout'];
 
 function stringAvatar(name: string) {

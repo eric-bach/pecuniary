@@ -71,6 +71,8 @@ This quick start guide describes how to get the application running. An `AWS acc
       aws_appsync_graphqlEndpoint: 'APPSYNC_ENDPOINT',
       aws_appsync_region: 'AWS_REGION',
       aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS',
+      qt_client_id: 'Questrade Client Id',
+      qt_redirect_url: 'Questrade Redirect URL'
     };
     export default awsmobile;
     ```

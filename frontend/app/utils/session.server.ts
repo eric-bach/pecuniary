@@ -48,7 +48,7 @@ export async function createUserSession({ request, userInfo, redirectTo }: { req
   return redirect(redirectTo || '/dashboard', {
     headers: {
       'Set-Cookie': await sessionStorage.commitSession(session, {
-        maxAge: 60 * 60 * 24 * 7, // 7 days
+        maxAge: 60 * 60 * 24, // 24 hours
       }),
     },
   });
@@ -58,6 +58,8 @@ export async function logout(request: Request) {
   try {
     console.log('server logout');
     const session = await getSession(request);
+    localStorage.clear();
+
     return redirect('/', {
       headers: {
         'Set-Cookie': await sessionStorage.destroySession(session),
