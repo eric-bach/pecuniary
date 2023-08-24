@@ -9,12 +9,10 @@ export async function loader({ request }: LoaderArgs) {
   return null;
 }
 
-export default function AccountRoute() {
+export default function IntegrationsRoute() {
   return (
     <Box>
-      <Typography variant='h4' gutterBottom>
-        Account
-      </Typography>
+      <Typography variant='h4'>Integrations</Typography>
       <Outlet />
     </Box>
   );

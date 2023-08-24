@@ -1,0 +1,15 @@
+// Development;
+const awsmobile = {
+  aws_project_region: 'us-east-1',
+  aws_cognito_region: 'us-east-1',
+  aws_user_pools_id: 'us-east-',
+  aws_user_pools_web_client_id: '',
+  mandatorySignIn: true,
+  aws_appsync_graphqlEndpoint: '',
+  aws_appsync_region: 'us-east-1',
+  aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS',
+  qt_client_id: '',
+  qt_redirect_url: '',
+};
+
+export default awsmobile;
