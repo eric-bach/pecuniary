@@ -7,6 +7,7 @@ import { DatabaseStack } from '../lib/database-stack';
 import { MessagingStack } from '../lib/messaging-stack';
 import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
 import { APP_NAME, DEFAULT_VALUES } from '../lib/constants';
+import { FrontendStack } from '../lib/frontend-stack';
 
 const app = new App();
 
@@ -46,6 +47,17 @@ switch (stage) {
         dataTableArn: database.dataTableArn,
         eventHandlerQueueArn: messaging.eventHandlerQueueArn,
         eventBusArn: messaging.eventBusArn,
+      },
+    });
+
+    break;
+  }
+
+  case 'frontend': {
+    new FrontendStack(app, `${APP_NAME}-frontend-${envName}`, {
+      ...baseProps,
+      params: {
+        certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
       },
     });
 
