@@ -19,3 +19,9 @@ export interface PecuniaryApiStackProps extends PecuniaryBaseStackProps {
     eventBusArn: string;
   };
 }
+
+export interface PecuniaryFrontendStackProps extends PecuniaryBaseStackProps {
+  params: {
+    certificateArn: string;
+  };
+}

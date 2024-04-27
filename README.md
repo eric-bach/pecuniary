@@ -118,16 +118,10 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    aws sso login --profile PROFILE_NAME
    ```
 
-3. Deploy the backend
+3. Deploy the backend and frontend
 
    ```
    $ npm run deploy dev PROFILE_NAME
-   ```
-
-4. Deploy the frontend (using SST)
-
-   ```
-   $ npx sst dev
    ```
 
 ## Deployment via GitHub Actions
