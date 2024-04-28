@@ -1,0 +1,8 @@
+{
+  "Auth": {
+    "Cognito": {
+      "userPoolId": "",
+      "userPoolClientId": ""
+    }
+  }
+}
