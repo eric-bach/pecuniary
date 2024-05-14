@@ -1,0 +1,2 @@
+- Add authentication middleware - https://www.youtube.com/watch?v=Y3o4or23V-0
+- Make sidebar responsive - https://www.youtube.com/watch?v=FYBC3TjRULo
