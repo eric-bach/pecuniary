@@ -8,11 +8,15 @@ import {
   NavbarMenuItem,
 } from '@nextui-org/navbar';
 import { Button } from '@nextui-org/button';
-import { Kbd } from '@nextui-org/kbd';
 import { Link } from '@nextui-org/link';
-import { Input } from '@nextui-org/input';
+
+import { cookies } from 'next/headers';
+import { runWithAmplifyServerContext } from '@/utils/amplifyServerUtils';
 
 import { link as linkStyles } from '@nextui-org/theme';
+
+import { getCurrentUser } from 'aws-amplify/auth/server';
+import { signOut } from 'aws-amplify/auth';
 
 import { siteConfig } from '@/config/site';
 import NextLink from 'next/link';
@@ -23,25 +27,42 @@ import { TwitterIcon, GithubIcon, DiscordIcon, HeartFilledIcon, SearchIcon } fro
 
 import { Logo } from '@/components/icons';
 
-export const Navbar = () => {
-  const searchInput = (
-    <Input
-      aria-label='Search'
-      classNames={{
-        inputWrapper: 'bg-default-100',
-        input: 'text-sm',
-      }}
-      endContent={
-        <Kbd className='hidden lg:inline-block' keys={['command']}>
-          K
-        </Kbd>
-      }
-      labelPlacement='outside'
-      placeholder='Search...'
-      startContent={<SearchIcon className='text-base text-default-400 pointer-events-none flex-shrink-0' />}
-      type='search'
-    />
-  );
+export const dynamic = 'force-dynamic';
+
+async function getData() {
+  try {
+    console.log('Fetting currently logged in user');
+    // https://docs.amplify.aws/javascript/build-a-backend/server-side-rendering/nextjs/
+    const currentUser = await runWithAmplifyServerContext({
+      nextServerContext: { cookies },
+      operation: (contextSpec) => getCurrentUser(contextSpec),
+    });
+    console.log(currentUser);
+    console.log('DONE');
+    return currentUser;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function logOut() {
+  'use server';
+  try {
+    console.log('signing out');
+    await runWithAmplifyServerContext({
+      nextServerContext: { cookies },
+      operation: (contextSpec) => signOut(),
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export const Navbar = async () => {
+  // const user = await getData();
+  // if (user) {
+  //   console.log('Logged In');
+  // }
 
   return (
     <NextUINavbar maxWidth='xl' position='sticky'>
@@ -80,7 +101,19 @@ export const Navbar = () => {
           </Link>
           <ThemeSwitch />
         </NavbarItem>
-        <NavbarItem className='hidden lg:flex'>{searchInput}</NavbarItem>
+        {/* <NavbarItem>
+          {user ? (
+            <form action={logOut}>
+              <Button type='submit' color='primary' variant='flat'>
+                Sign Out
+              </Button>
+            </form>
+          ) : (
+            <Button as='link' color='primary' href='#' variant='flat'>
+              Sign In
+            </Button>
+          )}
+        </NavbarItem> */}
       </NavbarContent>
 
       <NavbarContent className='sm:hidden basis-1 pl-4' justify='end'>
@@ -92,7 +125,6 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarMenu>
-        {searchInput}
         <div className='mx-4 mt-2 flex flex-col gap-2'>
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>

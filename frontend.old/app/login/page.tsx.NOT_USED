@@ -1,9 +1,7 @@
 'use client';
 
-import { Authenticator, Theme, ThemeProvider, View, useTheme, withAuthenticator } from '@aws-amplify/ui-react';
+import { Authenticator, Theme, ThemeProvider, View } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import { useSearchParams } from 'next/navigation';
-import { redirect } from 'next/navigation';
 
 const theme: Theme = {
   name: 'Theme',
@@ -56,23 +54,18 @@ const formFields = {
   },
 };
 
-const Login = () => {
-  const searchParams = useSearchParams();
-
-  const origin = searchParams.get('origin');
-  if (origin) {
-    redirect(origin);
-  }
-
-  return <div>LOGIN</div>;
-};
-
-//export default withAuthenticator(Login);
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <View paddingTop='6em'>
-        <Authenticator formFields={formFields} hideSignUp={false}></Authenticator>
+        <Authenticator formFields={formFields} hideSignUp={false}>
+          {({ signOut, user }) => (
+            <main>
+              <h1>Hello {user?.username}</h1>
+              <button onClick={signOut}>Sign out</button>
+            </main>
+          )}
+        </Authenticator>
       </View>
     </ThemeProvider>
   );

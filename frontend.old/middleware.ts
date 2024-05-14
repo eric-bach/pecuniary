@@ -1,6 +1,6 @@
 import { fetchAuthSession } from 'aws-amplify/auth/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { runWithAmplifyServerContext } from './utils//server-utils';
+import { runWithAmplifyServerContext } from './utils/amplifyServerUtils';
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
@@ -9,7 +9,9 @@ export async function middleware(request: NextRequest) {
     nextServerContext: { request, response },
     operation: async (contextSpec) => {
       try {
+        console.log('Checking if user is authenticated');
         const session = await fetchAuthSession(contextSpec);
+        console.log('User Sub:', session.userSub);
         return session.tokens !== undefined;
       } catch (error) {
         console.log(error);
