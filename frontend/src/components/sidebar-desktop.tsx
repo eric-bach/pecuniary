@@ -10,6 +10,7 @@ import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { LogOut, MoreHorizontal, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { handleSignOut } from '@/lib/cognitoActions';
 
 interface SidebarDesktopProps {
   sidebarItems: SidebarItems;
@@ -59,8 +60,8 @@ export default function SidebarDesktop(props: SidebarDesktopProps) {
                     <SidebarButton size='sm' icon={Settings} className='w-full'>
                       Settings
                     </SidebarButton>
-                    <SidebarButton size='sm' icon={LogOut} className='w-full'>
-                      Log Out
+                    <SidebarButton size='sm' icon={LogOut} onClick={handleSignOut} className='w-full'>
+                      Sign Out
                     </SidebarButton>
                   </Link>
                 </div>

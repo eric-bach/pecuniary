@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
-import { signUp, confirmSignUp, signIn, signOut, resendSignUpCode } from 'aws-amplify/auth';
+import { signUp, confirmSignUp, signIn, signOut, resendSignUpCode, autoSignIn } from 'aws-amplify/auth';
 import { getErrorMessage } from '@/utils/get-error-message';
+import { nextRedirect } from '@/utils/amplify-server-utils';
 
 export async function handleSignUp(prevState: string | undefined, formData: FormData) {
   try {
@@ -48,6 +49,8 @@ export async function handleConfirmSignUp(prevState: string | undefined, formDat
       username: String(formData.get('email')),
       confirmationCode: String(formData.get('code')),
     });
+
+    autoSignIn();
   } catch (error) {
     return getErrorMessage(error);
   }
@@ -76,9 +79,14 @@ export async function handleSignIn(prevState: string | undefined, formData: Form
 
 export async function handleSignOut() {
   try {
+    console.log('Signing out');
     await signOut();
   } catch (error) {
     console.log(getErrorMessage(error));
+    return false;
   }
-  redirect('/auth/login');
+
+  // NOTE: redirect can only be used in a Client Component through a Server Action
+  // https://nextjs.org/docs/app/api-reference/functions/redirect#client-component
+  nextRedirect('/auth/login');
 }

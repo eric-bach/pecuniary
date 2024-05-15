@@ -1,9 +1,10 @@
 'use client';
 
-import { Coins, Home, MoreHorizontal, User } from 'lucide-react';
+import { BuildingIcon, Coins, Home, MoreHorizontal, User } from 'lucide-react';
 import SidebarDesktop from './sidebar-desktop';
 import { SidebarItems } from '@/types';
 import SidebarButton from './sidebar-button';
+import useAuthUser from '@/app/hooks/use-auth-user';
 
 const sidebarItems: SidebarItems = {
   links: [
@@ -24,5 +25,20 @@ const sidebarItems: SidebarItems = {
 };
 
 export default function Sidebar() {
+  const user = useAuthUser();
+
+  if (user && user.isAdmin) {
+    const adminLink = {
+      label: 'Admin Area',
+      href: '/dashboard/admin',
+      icon: BuildingIcon,
+    };
+
+    // TODO: Hack to prevent duplicate admin links
+    if (!sidebarItems.links.some((link) => link.label === adminLink.label)) {
+      sidebarItems.links.push(adminLink);
+    }
+  }
+
   return <SidebarDesktop sidebarItems={sidebarItems} />;
 }
