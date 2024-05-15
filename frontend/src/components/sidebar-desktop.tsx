@@ -8,7 +8,7 @@ import { Separator } from './ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { LogOut, MoreHorizontal, Settings } from 'lucide-react';
+import { CircleDollarSign, LogOut, MoreHorizontal, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { handleSignOut } from '@/lib/cognitoActions';
 
@@ -23,6 +23,7 @@ export default function SidebarDesktop(props: SidebarDesktopProps) {
     <aside className='w-[270px] max-w-xs h-screen fixed left-0 top-0 z-40 border-r'>
       <div className='h-full px-3 py-4'>
         <h3 className='mx-3 text-lg font-semibold text-foreground'>
+          <CircleDollarSign className='flex float-start mr-1 mt-0.5' />
           <Link href='/'>Pecuniary</Link>
         </h3>
         <div className='mt-5'>

@@ -20,7 +20,7 @@ export async function handleSignUp(prevState: string | undefined, formData: Form
   } catch (error) {
     return getErrorMessage(error);
   }
-  redirect('/auth/confirm');
+  redirect('/auth/verify');
 }
 
 export async function handleSendEmailVerificationCode(prevState: { message: string; errorMessage: string }, formData: FormData) {
@@ -69,7 +69,7 @@ export async function handleSignIn(prevState: string | undefined, formData: Form
       await resendSignUpCode({
         username: String(formData.get('email')),
       });
-      redirectLink = '/auth/confirm';
+      redirectLink = '/auth/verify';
     }
   } catch (error) {
     return getErrorMessage(error);
@@ -80,7 +80,6 @@ export async function handleSignIn(prevState: string | undefined, formData: Form
 
 export async function handleSignOut() {
   try {
-    console.log('Signing out');
     await signOut();
   } catch (error) {
     console.log(getErrorMessage(error));
