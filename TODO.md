@@ -2,10 +2,11 @@ X Add authentication middleware - https://www.youtube.com/watch?v=Y3o4or23V-0
 X Style Auth pages
 X Style verify email
 
+- Add navbar - https://github.com/Siumauricio/nextui-dashboard-template?tab=readme-ov-file
+- Sidebar improvements - https://github.com/Siumauricio/nextui-dashboard-template?tab=readme-ov-file
+- Add manage profile
+- Add reset password - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
+- Add resend verification email
 - Build landing page
-- Add navbar
 - Deploy to AWS
 - Make sidebar responsive - https://www.youtube.com/watch?v=FYBC3TjRULo
-- Auth features
-  - Forgot password
-  - Resend verification email
