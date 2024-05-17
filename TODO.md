@@ -2,6 +2,10 @@ X Add authentication middleware - https://www.youtube.com/watch?v=Y3o4or23V-0
 X Style Auth pages
 X Style verify email
 
+- nextjs_template branch
+
+  - Add unprotected landing page without navbar/sidebar
+
 - Add navbar - https://github.com/Siumauricio/nextui-dashboard-template?tab=readme-ov-file
 - Sidebar improvements - https://github.com/Siumauricio/nextui-dashboard-template?tab=readme-ov-file
 - Add manage profile

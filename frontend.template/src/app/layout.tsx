@@ -14,8 +14,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='en'>
       <body className={clsx('font-sans antialiased', fontSans.className)}>
-        <ConfigureAmplifyClientSide />
-        <Providers>{children}</Providers>
+        <Providers>
+          <ConfigureAmplifyClientSide />
+          {children}
+        </Providers>
       </body>
     </html>
   );
