@@ -88,5 +88,5 @@ export async function handleSignOut() {
 
   // NOTE: redirect can only be used in a Client Component through a Server Action
   // https://nextjs.org/docs/app/api-reference/functions/redirect#client-component
-  nextRedirect('/auth/login');
+  nextRedirect('/');
 }
