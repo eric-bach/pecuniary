@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { fontSans } from '@/config/fonts';
 import clsx from 'clsx';
 import { Providers } from './providers';
+import ConfigureAmplifyClientSide from './amplify-cognito-config';
 
 export const metadata: Metadata = {
   title: 'Next.js',
@@ -13,7 +14,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='en'>
       <body className={clsx('font-sans antialiased', fontSans.className)}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <ConfigureAmplifyClientSide />
+          {children}
+        </Providers>
       </body>
     </html>
   );
