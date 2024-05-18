@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
+import ConfigureAmplifyClientSide from '../amplify-cognito-config';
 
 export const metadata: Metadata = {
   title: 'Next.js',
@@ -7,5 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <div className='flex justify-center items-center h-screen'>{children}</div>;
+  return (
+    <div className='flex justify-center items-center h-screen'>
+      {/* <ConfigureAmplifyClientSide /> */}
+      {children}
+    </div>
+  );
 }
