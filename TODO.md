@@ -6,8 +6,7 @@ X Style verify email
   X Add unprotected landing page without navbar/sidebar
   X Build out landing page
   X Clean out route names (make components/home components/dashboard so app/home can be there)
-
-- Add manage profile - YouTube
+  X Add update password
 - Add reset password - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
 - Clean up dashboard template
 - Deploy to AWS (SST)

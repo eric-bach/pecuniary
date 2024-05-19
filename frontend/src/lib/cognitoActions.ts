@@ -1,5 +1,15 @@
 import { redirect } from 'next/navigation';
-import { signUp, confirmSignUp, signIn, signOut, resendSignUpCode, autoSignIn } from 'aws-amplify/auth';
+import {
+  signUp,
+  confirmSignUp,
+  signIn,
+  signOut,
+  resendSignUpCode,
+  autoSignIn,
+  updateUserAttribute,
+  UpdateUserAttributeOutput,
+  updatePassword,
+} from 'aws-amplify/auth';
 import { getErrorMessage } from '@/utils/get-error-message';
 import { nextRedirect } from '@/utils/amplify-server-utils';
 
@@ -87,4 +97,71 @@ export async function handleSignOut() {
   // NOTE: redirect can only be used in a Client Component through a Server Action
   // https://nextjs.org/docs/app/api-reference/functions/redirect#client-component
   nextRedirect('/');
+}
+
+export async function handleUpdateUserAttribute(prevState: string, formData: FormData) {
+  let attributeKey = 'given_name';
+  let attributeValue;
+  let currentAttributeValue;
+
+  if (formData.get('email')) {
+    attributeKey = 'email';
+    attributeValue = formData.get('email');
+    currentAttributeValue = formData.get('current_email');
+  } else {
+    attributeValue = formData.get('name');
+    currentAttributeValue = formData.get('current_name');
+  }
+
+  console.log('AttributeValue', attributeValue);
+
+  if (attributeValue === currentAttributeValue) {
+    return '';
+  }
+
+  try {
+    const output = await updateUserAttribute({
+      userAttribute: {
+        attributeKey: String(attributeKey),
+        value: String(attributeValue),
+      },
+    });
+    return handleUpdateUserAttributeNextSteps(output);
+  } catch (error) {
+    console.log(error);
+    return 'error';
+  }
+}
+
+function handleUpdateUserAttributeNextSteps(output: UpdateUserAttributeOutput) {
+  const { nextStep } = output;
+
+  switch (nextStep.updateAttributeStep) {
+    case 'CONFIRM_ATTRIBUTE_WITH_CODE':
+      const codeDeliveryDetails = nextStep.codeDeliveryDetails;
+      return `Confirmation code was sent to ${codeDeliveryDetails?.deliveryMedium}.`;
+    case 'DONE':
+      return 'success';
+  }
+}
+
+export async function handleUpdatePassword(prevState: 'success' | 'error' | undefined, formData: FormData) {
+  const currentPassword = formData.get('current_password');
+  const newPassword = formData.get('new_password');
+
+  if (currentPassword === newPassword) {
+    return;
+  }
+
+  try {
+    await updatePassword({
+      oldPassword: String(currentPassword),
+      newPassword: String(newPassword),
+    });
+  } catch (error) {
+    console.log(error);
+    return 'error';
+  }
+
+  return 'success';
 }

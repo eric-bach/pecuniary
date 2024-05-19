@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardFooter, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { TriangleAlertIcon } from 'lucide-react';
 
 export default function LoginForm() {
   const [errorMessage, dispatch] = useFormState(handleSignIn, undefined);
@@ -32,6 +33,16 @@ export default function LoginForm() {
               </a>
             </div>
           </div>
+
+          <div className='flex h-8 items-end space-x-1' aria-live='polite' aria-atomic='true'>
+            {errorMessage && (
+              <>
+                <TriangleAlertIcon className='h-5 w-5 text-red-500' />
+                <p className='text-sm text-red-500'>{errorMessage}</p>
+              </>
+            )}
+          </div>
+
           <div className='space-y-2'>
             <p className='mt-10 text-center text-sm text-gray-500'>
               Not a member?{' '}
@@ -41,6 +52,7 @@ export default function LoginForm() {
             </p>
           </div>
         </CardContent>
+
         <CardFooter>
           <Button type='submit' className='w-full bg-indigo-500 hover:bg-indigo-600 transition-colors'>
             Sign in
