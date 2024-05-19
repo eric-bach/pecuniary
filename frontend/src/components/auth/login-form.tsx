@@ -28,20 +28,20 @@ export default function LoginForm() {
             <Input id='password' name='password' required type='password' />
 
             <div className='text-sm text-right'>
-              <a href='/auth/forgot-password' className='text-indigo-600 hover:text-indigo-500'>
+              <a href='/auth/reset-password' className='text-indigo-600 hover:text-indigo-500'>
                 Forgot your password?
               </a>
             </div>
           </div>
 
-          <div className='flex h-8 items-end space-x-1' aria-live='polite' aria-atomic='true'>
-            {errorMessage && (
+          {errorMessage && (
+            <div className='flex h-8 items-end space-x-1' aria-live='polite' aria-atomic='true'>
               <>
                 <TriangleAlertIcon className='h-5 w-5 text-red-500' />
                 <p className='text-sm text-red-500'>{errorMessage}</p>
               </>
-            )}
-          </div>
+            </div>
+          )}
 
           <div className='space-y-2'>
             <p className='mt-10 text-center text-sm text-gray-500'>

@@ -9,6 +9,8 @@ import {
   updateUserAttribute,
   UpdateUserAttributeOutput,
   updatePassword,
+  resetPassword,
+  confirmResetPassword,
 } from 'aws-amplify/auth';
 import { getErrorMessage } from '@/utils/get-error-message';
 import { nextRedirect } from '@/utils/amplify-server-utils';
@@ -164,4 +166,26 @@ export async function handleUpdatePassword(prevState: 'success' | 'error' | unde
   }
 
   return 'success';
+}
+
+export async function handleResetPassword(prevState: string | undefined, formData: FormData) {
+  try {
+    await resetPassword({ username: String(formData.get('email')) });
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+  redirect('/auth/reset-password/confirm');
+}
+
+export async function handleConfirmResetPassword(prevState: string | undefined, formData: FormData) {
+  try {
+    await confirmResetPassword({
+      username: String(formData.get('email')),
+      confirmationCode: String(formData.get('code')),
+      newPassword: String(formData.get('password')),
+    });
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+  redirect('/auth/login');
 }
