@@ -49,6 +49,7 @@ yarn-error.log*
 # local env files
 .env
 .env*.local
+!.env.example
 
 # vercel
 .vercel
@@ -57,4 +58,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-amplifyconfiguration.json
+# Tailwind
+!tailwind.config.js
+!next.config.js
+!postcss.config.js
