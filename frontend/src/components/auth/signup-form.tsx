@@ -36,7 +36,7 @@ export default function SignUpForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-3'>
+    <form onSubmit={handleSubmit} className='space-y-3 min-w-[400px]'>
       <Card>
         <CardHeader>
           <CardTitle className='text-2xl'>Sign up</CardTitle>
@@ -73,7 +73,7 @@ export default function SignUpForm() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button type='submit' className='w-full hover:bg-blue-500 transition-colors'>
+          <Button type='submit' className='w-full bg-indigo-500 hover:bg-indigo-600 transition-colors'>
             Create account
           </Button>
         </CardFooter>

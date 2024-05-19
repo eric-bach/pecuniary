@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Feature = () => {
+export default function Feature() {
   return (
     <section className='text-gray-600 body-font'>
       <div className='container px-5 py-24 mx-auto'>
@@ -130,4 +130,4 @@ export const Feature = () => {
       </div>
     </section>
   );
-};
+}

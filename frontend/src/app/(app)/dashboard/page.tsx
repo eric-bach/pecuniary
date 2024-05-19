@@ -1,5 +1,5 @@
 import React from 'react';
-import { Content } from '@/components/home/content';
+import { Content } from '@/components/dashboard/content';
 
 const dashboard = () => {
   return <Content />;

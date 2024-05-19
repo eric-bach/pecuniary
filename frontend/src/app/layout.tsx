@@ -1,9 +1,10 @@
-import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { fontSans } from '@/config/fonts';
 import clsx from 'clsx';
 import { Providers } from './providers';
 import ConfigureAmplifyClientSide from './amplify-cognito-config';
+
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Next.js',
