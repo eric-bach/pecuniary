@@ -11,7 +11,7 @@ export default function LoginForm() {
   const [errorMessage, dispatch] = useFormState(handleSignIn, undefined);
 
   return (
-    <form action={dispatch} className='space-y-6'>
+    <form action={dispatch} className='space-y-6 min-w-[400px]'>
       <Card>
         <CardHeader>
           <CardTitle className='text-2xl'>Login</CardTitle>
@@ -42,7 +42,7 @@ export default function LoginForm() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button type='submit' className='w-full hover:bg-blue-500 transition-colors'>
+          <Button type='submit' className='w-full bg-indigo-500 hover:bg-indigo-600 transition-colors'>
             Sign in
           </Button>
         </CardFooter>
