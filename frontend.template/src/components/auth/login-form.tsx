@@ -42,7 +42,7 @@ export default function LoginForm() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button type='submit' className='w-full hover:bg-blue-500 transition-colors'>
+          <Button type='submit' className='w-full bg-indigo-500 hover:bg-indigo-600 transition-colors'>
             Sign in
           </Button>
         </CardFooter>
