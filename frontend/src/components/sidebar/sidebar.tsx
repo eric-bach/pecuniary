@@ -19,6 +19,7 @@ import { FilterIcon } from '../icons/sidebar/filter-icon';
 import { useSidebarContext } from '../layout/layout-context';
 import { ChangeLogIcon } from '../icons/sidebar/changelog-icon';
 import { usePathname } from 'next/navigation';
+import { UserIcon } from 'lucide-react';
 
 export const SidebarWrapper = () => {
   const pathname = usePathname();
@@ -39,9 +40,9 @@ export const SidebarWrapper = () => {
           <div className={Sidebar.Body()}>
             <SidebarItem title='Home' icon={<HomeIcon />} isActive={pathname === '/dashboard'} href='/dashboard' />
             <SidebarMenu title='Main Menu'>
-              <SidebarItem isActive={pathname === '/accounts'} title='Accounts' icon={<AccountsIcon />} href='accounts' />
+              <CollapseItems icon={<AccountsIcon />} items={['Banks Accounts', 'Credit Cards', 'Loans']} title='Balances' />
               <SidebarItem isActive={pathname === '/investments'} title='Investments' icon={<PaymentsIcon />} />
-              <CollapseItems icon={<BalanceIcon />} items={['Banks Accounts', 'Credit Cards', 'Loans']} title='Balances' />
+              <SidebarItem isActive={pathname === '/contacts'} title='Contacts' icon={<UserIcon />} href='contacts' />
               <SidebarItem isActive={pathname === '/customers'} title='Customers' icon={<CustomersIcon />} />
               <SidebarItem isActive={pathname === '/products'} title='Products' icon={<ProductsIcon />} />
               <SidebarItem isActive={pathname === '/reports'} title='Reports' icon={<ReportsIcon />} />

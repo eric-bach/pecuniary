@@ -1,8 +1,8 @@
 import React from 'react';
-import { Accounts } from '@/components/accounts';
+import { Contacts } from '@/components/contacts';
 
 const accounts = () => {
-  return <Accounts />;
+  return <Contacts />;
 };
 
 export default accounts;

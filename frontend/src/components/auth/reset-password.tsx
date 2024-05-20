@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { useFormState, useFormStatus } from 'react-dom';
 import { handleResetPassword } from '@/lib/cognitoActions';
-import { AtSignIcon, CircleCheckIcon, TriangleAlertIcon } from 'lucide-react';
+import { CircleCheckIcon, TriangleAlertIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardDescription, CardTitle, CardFooter } from '../ui/card';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -24,7 +24,6 @@ export default function ResetPasswordFrom() {
             Email
           </Label>
           <Input id='email' type='email' name='email' placeholder='Enter your email address' required />
-          <AtSignIcon className='pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900' />
         </CardContent>
 
         {errorMessage && (

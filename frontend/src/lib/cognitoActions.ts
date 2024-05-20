@@ -32,18 +32,19 @@ export async function handleSignUp(prevState: string | undefined, formData: Form
   } catch (error) {
     return getErrorMessage(error);
   }
-  redirect('/auth/verify');
+  redirect('/auth/verify?email=' + encodeURIComponent(String(formData.get('email'))));
 }
 
-export async function handleSendEmailVerificationCode(prevState: { message: string; errorMessage: string }, formData: FormData) {
+export async function handleSendEmailVerification(prevState: { message: string; errorMessage: string }, formData: FormData) {
   let currentState;
   try {
+    // Sends verificaiton email (despite the funciton name saying 'code')
     await resendSignUpCode({
       username: String(formData.get('email')),
     });
     currentState = {
       ...prevState,
-      message: 'Code sent successfully',
+      message: 'Verification email sent successfully',
     };
   } catch (error) {
     currentState = {
@@ -53,20 +54,6 @@ export async function handleSendEmailVerificationCode(prevState: { message: stri
   }
 
   return currentState;
-}
-
-export async function handleConfirmSignUp(prevState: string | undefined, formData: FormData) {
-  try {
-    const { isSignUpComplete, nextStep } = await confirmSignUp({
-      username: String(formData.get('email')),
-      confirmationCode: String(formData.get('code')),
-    });
-
-    autoSignIn();
-  } catch (error) {
-    return getErrorMessage(error);
-  }
-  redirect('/auth/login');
 }
 
 export async function handleSignIn(prevState: string | undefined, formData: FormData) {
@@ -85,6 +72,7 @@ export async function handleSignIn(prevState: string | undefined, formData: Form
   } catch (error) {
     return getErrorMessage(error);
   }
+
   nextRedirect(redirectLink);
 }
 
@@ -99,52 +87,6 @@ export async function handleSignOut() {
   // NOTE: redirect can only be used in a Client Component through a Server Action
   // https://nextjs.org/docs/app/api-reference/functions/redirect#client-component
   nextRedirect('/');
-}
-
-export async function handleUpdateUserAttribute(prevState: string, formData: FormData) {
-  let attributeKey = 'given_name';
-  let attributeValue;
-  let currentAttributeValue;
-
-  if (formData.get('email')) {
-    attributeKey = 'email';
-    attributeValue = formData.get('email');
-    currentAttributeValue = formData.get('current_email');
-  } else {
-    attributeValue = formData.get('name');
-    currentAttributeValue = formData.get('current_name');
-  }
-
-  console.log('AttributeValue', attributeValue);
-
-  if (attributeValue === currentAttributeValue) {
-    return '';
-  }
-
-  try {
-    const output = await updateUserAttribute({
-      userAttribute: {
-        attributeKey: String(attributeKey),
-        value: String(attributeValue),
-      },
-    });
-    return handleUpdateUserAttributeNextSteps(output);
-  } catch (error) {
-    console.log(error);
-    return 'error';
-  }
-}
-
-function handleUpdateUserAttributeNextSteps(output: UpdateUserAttributeOutput) {
-  const { nextStep } = output;
-
-  switch (nextStep.updateAttributeStep) {
-    case 'CONFIRM_ATTRIBUTE_WITH_CODE':
-      const codeDeliveryDetails = nextStep.codeDeliveryDetails;
-      return `Confirmation code was sent to ${codeDeliveryDetails?.deliveryMedium}.`;
-    case 'DONE':
-      return 'success';
-  }
 }
 
 export async function handleUpdatePassword(prevState: 'success' | 'error' | undefined, formData: FormData) {

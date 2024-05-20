@@ -8,6 +8,6 @@ X Style verify email
   X Clean out route names (make components/home components/dashboard so app/home can be there)
   X Add update password
   X Add reset password - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
+  X Add resend verification email
 - Clean up dashboard template
 - Deploy to AWS (SST)
-- Add resend verification email
