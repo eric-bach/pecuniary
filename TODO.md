@@ -10,10 +10,10 @@ X Style verify email
   X Add reset password - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
   X Add resend verification email
   X Clean up dashboard template
-- Look at adding Authenticator component - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
+  X Call AppSync APIs
 - Fix github actions
 - Deploy to AWS
   - AWS Amplify Console - ttps://medium.com/@stk.devtest/a-beginners-guide-to-hosting-next-js-14-on-aws-amplify-db455631d56b
   - SST v2 CDK - https://docs.sst.dev/start/nextjs
   - SST v3 ION
-- Call AppSync APIs
+- (optional) Switch to using Amplify UI Authenticator component - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
