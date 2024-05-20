@@ -12,7 +12,7 @@ export const UserDropdown = () => {
         </DropdownTrigger>
       </NavbarItem>
       <DropdownMenu aria-label='User menu actions' onAction={(actionKey) => console.log({ actionKey })}>
-        <DropdownItem key='profile' className='flex flex-col justify-start w-full items-start'>
+        <DropdownItem key='user' className='flex flex-col justify-start w-full items-start'>
           <p>Signed in as</p>
           <p>zoey@example.com</p>
         </DropdownItem>
