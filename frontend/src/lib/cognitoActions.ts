@@ -1,19 +1,7 @@
 import { redirect } from 'next/navigation';
-import {
-  signUp,
-  confirmSignUp,
-  signIn,
-  signOut,
-  resendSignUpCode,
-  autoSignIn,
-  updateUserAttribute,
-  UpdateUserAttributeOutput,
-  updatePassword,
-  resetPassword,
-  confirmResetPassword,
-} from 'aws-amplify/auth';
-import { getErrorMessage } from '@/utils/get-error-message';
-import { nextRedirect } from '@/utils/amplify-server-utils';
+import { signUp, signIn, signOut, resendSignUpCode, updatePassword, resetPassword, confirmResetPassword } from 'aws-amplify/auth';
+import { getErrorMessage } from '@/utils/getErrorMessage';
+import { nextRedirect } from '@/utils/nextServerUtils';
 
 export async function handleSignUp(prevState: string | undefined, formData: FormData) {
   try {
