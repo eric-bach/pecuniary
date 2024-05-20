@@ -9,5 +9,5 @@ X Style verify email
   X Add update password
   X Add reset password - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
   X Add resend verification email
-- Clean up dashboard template
+  X Clean up dashboard template
 - Deploy to AWS (SST)
