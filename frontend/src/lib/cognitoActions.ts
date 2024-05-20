@@ -1,5 +1,17 @@
 import { redirect } from 'next/navigation';
-import { signUp, confirmSignUp, signIn, signOut, resendSignUpCode, autoSignIn } from 'aws-amplify/auth';
+import {
+  signUp,
+  confirmSignUp,
+  signIn,
+  signOut,
+  resendSignUpCode,
+  autoSignIn,
+  updateUserAttribute,
+  UpdateUserAttributeOutput,
+  updatePassword,
+  resetPassword,
+  confirmResetPassword,
+} from 'aws-amplify/auth';
 import { getErrorMessage } from '@/utils/get-error-message';
 import { nextRedirect } from '@/utils/amplify-server-utils';
 
@@ -20,18 +32,19 @@ export async function handleSignUp(prevState: string | undefined, formData: Form
   } catch (error) {
     return getErrorMessage(error);
   }
-  redirect('/auth/verify');
+  redirect('/auth/verify?email=' + encodeURIComponent(String(formData.get('email'))));
 }
 
-export async function handleSendEmailVerificationCode(prevState: { message: string; errorMessage: string }, formData: FormData) {
+export async function handleSendEmailVerification(prevState: { message: string; errorMessage: string }, formData: FormData) {
   let currentState;
   try {
+    // Sends verificaiton email (despite the funciton name saying 'code')
     await resendSignUpCode({
       username: String(formData.get('email')),
     });
     currentState = {
       ...prevState,
-      message: 'Code sent successfully',
+      message: 'Verification email sent successfully',
     };
   } catch (error) {
     currentState = {
@@ -43,24 +56,9 @@ export async function handleSendEmailVerificationCode(prevState: { message: stri
   return currentState;
 }
 
-export async function handleConfirmSignUp(prevState: string | undefined, formData: FormData) {
-  try {
-    const { isSignUpComplete, nextStep } = await confirmSignUp({
-      username: String(formData.get('email')),
-      confirmationCode: String(formData.get('code')),
-    });
-
-    autoSignIn();
-  } catch (error) {
-    return getErrorMessage(error);
-  }
-  redirect('/auth/login');
-}
-
 export async function handleSignIn(prevState: string | undefined, formData: FormData) {
   let redirectLink = '/dashboard';
   try {
-    console.log(formData.get('email'));
     const { isSignedIn, nextStep } = await signIn({
       username: String(formData.get('email')),
       password: String(formData.get('password')),
@@ -75,7 +73,7 @@ export async function handleSignIn(prevState: string | undefined, formData: Form
     return getErrorMessage(error);
   }
 
-  redirect(redirectLink);
+  nextRedirect(redirectLink);
 }
 
 export async function handleSignOut() {
@@ -88,5 +86,48 @@ export async function handleSignOut() {
 
   // NOTE: redirect can only be used in a Client Component through a Server Action
   // https://nextjs.org/docs/app/api-reference/functions/redirect#client-component
-  nextRedirect('/auth/login');
+  nextRedirect('/');
+}
+
+export async function handleUpdatePassword(prevState: 'success' | 'error' | undefined, formData: FormData) {
+  const currentPassword = formData.get('current_password');
+  const newPassword = formData.get('new_password');
+
+  if (currentPassword === newPassword) {
+    return;
+  }
+
+  try {
+    await updatePassword({
+      oldPassword: String(currentPassword),
+      newPassword: String(newPassword),
+    });
+  } catch (error) {
+    console.log(error);
+    return 'error';
+  }
+
+  return 'success';
+}
+
+export async function handleResetPassword(prevState: string | undefined, formData: FormData) {
+  try {
+    await resetPassword({ username: String(formData.get('email')) });
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+  redirect('/auth/reset-password/confirm');
+}
+
+export async function handleConfirmResetPassword(prevState: string | undefined, formData: FormData) {
+  try {
+    await confirmResetPassword({
+      username: String(formData.get('email')),
+      confirmationCode: String(formData.get('code')),
+      newPassword: String(formData.get('password')),
+    });
+  } catch (error) {
+    return getErrorMessage(error);
+  }
+  redirect('/auth/login');
 }

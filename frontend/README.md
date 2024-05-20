@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# NextJS and NextUI Dashboard Template Starter
 
-## Getting Started
+You can deploy here directly to vercel [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/Siumauricio/nextui-dashboard-template)
 
-First, run the development server:
+
+V1 Version Stitches https://v1-nextui-dashboard-template.vercel.app/
+V1 Code: https://github.com/Siumauricio/nextui-dashboard-template/tree/v1
+
+This is a template for NextJS and NextUI.
+
+[NextJS](https://nextjs.org/)
+[NextUI](https://nextui.org/)
+
+You can see the demo here: https://nextui-dashboard-template.vercel.app/
+For improve this template, you can create a pull request or open an issue here [Issues](https://github.com/Siumauricio/nextui-dashboard-template/issues) or [Pull Request](
+    https://github.com/Siumauricio/nextui-dashboard-template/pulls)
+
+### Dark Mode
+![Dashboard Dark Mode](./public/dark.png)
+
+### Light Mode
+![Dashboard Light Mode](./public/light.png)
+
+
+- Dark Mode Support
+- Full Responsive
+- Home Page with Charts
+- Accounts Page
+- More pages coming soon...
+
+```
+├── components
+│   ├── accounts            # Accounts components
+│   ├── charts              # Charts components
+│   ├── breadcrumb          # component
+|   ├── home                # Home components
+|   ├── layout              # Layout components
+|   ├── navbar              # Navbar components
+|   ├── sidebar             # Sidebar components
+|   ├── table               # Table components
+|   ├── styles              # Some reusable components
+|   ├── icons               # Icons
+|   ├── hooks               # Hooks
+├── app                     # Documentation files
+│   ├── accounts            # Accounts route
+|       ├── page.tsx        # Accounts page
+│   ├── page.tsx            # Entry point for the app
+│   ├── layout.tsx          # Layout applied to all application pages
+│   ├── providers.tsx       # Theme provider
+│   ├── more...             # Soon
+└──
+```
+
+## For Run
+
+Install dependencies
+
+
+```bash
+npm install
+```
+
+Start the server
+
+
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Now you can visit https://localhost:3000 in your browser.
