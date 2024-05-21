@@ -9,8 +9,8 @@
   "scripts": {
     "build": "tsc",
     "build-appsync": "ts-node ./helpers/build-appsync.ts",
-    "build-backend": "find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' -exec echo '🚧 Building {}' ; -execdir sh -c 'npm install' ;",
-    "build-frontend": "echo '🚧 Building ../frontend' && npm install --prefix ../frontend",
+    "build-backend": "find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' -exec echo '🚧 Building {}' ; -execdir sh -c 'npm run build' ;",
+    "build-frontend": "echo '🚧 Building ../frontend' && npm run build --prefix ../frontend",
     "cdk": "cdk",
     "cdk-clear-context": "npm run cdk -- context --clear",
     "clean-install-backend": "find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' -exec echo '💾 Installing dependencies for {}' ; -execdir sh -c 'npm ci' ;",

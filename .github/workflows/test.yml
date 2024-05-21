@@ -103,8 +103,23 @@ jobs:
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
         working-directory: infrastructure
 
+      - name: 🚧 Build Backend
+        run: |
+          npm run codegen
+          npm run build-appsync
+          find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
+          while IFS= read -r file; do
+            echo "🚧 Building $file"
+            cd "$(dirname "$file")"
+            npm run build
+            cd - >/dev/null
+          done
+        working-directory: infrastructure
+
       - name: 🚀 Deploy Backend
-        run: npm run deploy-backend-dev
+        run: |
+          echo "🚀 Deploying backend dev"
+          npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never
         working-directory: infrastructure
 
       # - name: 🚀 Deploy Frontend
