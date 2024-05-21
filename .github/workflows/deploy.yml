@@ -66,8 +66,27 @@ jobs:
           echo NEXT_PUBLIC_APPSYNC_REGION=${{ secrets.REGION }} >> .env
         working-directory: frontend
 
+      # - name: 🚀 Deploy Backend
+      #   run: npm run deploy-backend-prod
+      #   working-directory: infrastructure
+
+      - name: 🚧 Build Backend
+        run: |
+          npm run codegen
+          npm run build-appsync
+          find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
+          while IFS= read -r file; do
+            echo "🚧 Building $file"
+            cd "$(dirname "$file")"
+            npm run build
+            cd - >/dev/null
+          done
+        working-directory: infrastructure
+
       - name: 🚀 Deploy Backend
-        run: npm run deploy-backend-prod
+        run: |
+          echo "🚀 Deploying backend prod"
+          npm run cdk -- deploy --all -c stage=backend -c env=prod --require-approval=never
         working-directory: infrastructure
 
       # - name: 🚀 Deploy Frontend
