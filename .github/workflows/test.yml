@@ -96,7 +96,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
 
       - name: ⬇️ Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ⚒️ Setup Node
         uses: actions/setup-node@v4
@@ -143,10 +143,14 @@ jobs:
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
         working-directory: infrastructure
 
-      - name: 🚧 Build Backend
+      - name: 🚧 Build AppSync
         run: |
           npm run codegen
           npm run build-appsync
+        working-directory: infrastructure
+
+      - name: 🚧 Build Backend
+        run: |
           find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
           while IFS= read -r file; do
             echo "🚧 Building $file"

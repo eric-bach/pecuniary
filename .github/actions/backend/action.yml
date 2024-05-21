@@ -19,11 +19,6 @@ runs:
       working-directory: infrastructure
       shell: bash
 
-    # - name: 📥 Install Backend
-    #   run: npm run clean-install-backend
-    #   working-directory: infrastructure
-    #   shell: bash
-
     - name: 📥 Install Backend
       run: |
         find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |

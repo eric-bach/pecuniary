@@ -50,14 +50,7 @@ jobs:
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
-      - name: 🗒️ Create .env
-        run: |
-          touch .env
-          echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
-          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-        working-directory: infrastructure
-
-      - name: 🗒️ Create .env
+      - name: 🗒️ Create Frontend .env
         run: |
           touch .env
           echo NEXT_PUBLIC_USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> .env
@@ -66,14 +59,25 @@ jobs:
           echo NEXT_PUBLIC_APPSYNC_REGION=${{ secrets.REGION }} >> .env
         working-directory: frontend
 
-      # - name: 🚀 Deploy Backend
-      #   run: npm run deploy-backend-prod
-      #   working-directory: infrastructure
+      - name: 🏗 Build Frontend
+        run: npm run build-frontend
+        working-directory: infrastructure
 
-      - name: 🚧 Build Backend
+      - name: 🗒️ Create Infrastructure .env
+        run: |
+          touch .env
+          echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
+          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
+        working-directory: infrastructure
+
+      - name: 🚧 Build AppSync
         run: |
           npm run codegen
           npm run build-appsync
+        working-directory: infrastructure
+
+      - name: 🚧 Build Backend
+        run: |
           find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
           while IFS= read -r file; do
             echo "🚧 Building $file"

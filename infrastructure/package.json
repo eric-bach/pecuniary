@@ -14,18 +14,15 @@
     "cdk": "cdk",
     "cdk-clear-context": "npm run cdk -- context --clear",
     "codegen": "graphql-codegen",
-    "deploy": "npm run deploy-backend-dev -- --profile bach-dev",
-    "deploy-backend-dev": "npm run codegen && npm run build-appsync && npm run build-backend && echo '🚀 Deploying backend dev' && npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never",
-    "deploy-backend-prod": "npm run codegen && npm run build-appsync && npm run build-backend && echo '🚀 Deploying backend prod' && npm run cdk -- deploy --all -c stage=backend -c env=prod --require-approval=never",
-    "deploy-frontend-dev": "DEPENDS ON SST -- ALSO UPDATE deploy and deploy-prod scripts",
-    "deploy-frontend-prod": "DEPENDS ON SST -- ALSO UPDATE deploy and deploy-prod scripts",
+    "deploy": "npm run deploy-backend",
+    "deploy-full": "npm run install-backend && npm run install-frontend && npm run deploy",
+    "deploy-backend": "npm run codegen && npm run build-appsync && npm run build-backend && echo '🚀 Deploying backend dev' && npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never --profile bach-dev",
+    "deploy-frontend": "DEPENDS ON SST -- ALSO UPDATE deploy and deploy-prod scripts",
     "install-backend": "find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' -exec echo '💾 Installing dependencies for {}' ; -execdir sh -c 'npm install' ;",
     "install-frontend": "echo 💾 Installing dependencies for ../frontend/package.json && npm install --prefix ../frontend",
     "seed": "npm run build && ts-node ./helpers/seed.ts",
     "test": "npm run build && jest --watchAll=false --coverage",
-    "watch": "tsc -w",
-    "z-clean-install-backend": "find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' -exec echo '💾 Installing dependencies for {}' ; -execdir sh -c 'npm ci' ;",
-    "z-clean-install-frontend": "echo 💾 Installing dependencies for ../frontend/package.json && npm ci --prefix ../frontend"
+    "watch": "tsc -w"
   },
   "devDependencies": {
     "@aws-appsync/eslint-plugin": "^1.2.1",
