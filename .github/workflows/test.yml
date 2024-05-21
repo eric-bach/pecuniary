@@ -36,6 +36,11 @@ jobs:
       - name: 📥 Install Backend and Sources
         uses: ./.github/actions/backend
 
+      - name: 🚧 Build AppSync
+        run: |
+          npm run codegen
+          npm run build-appsync
+
       - name: 🔭 Run CDK Unit Tests
         run: npm run test
         working-directory: infrastructure
