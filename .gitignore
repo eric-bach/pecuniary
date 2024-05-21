@@ -22,6 +22,7 @@ aws-exports.js
 
 cypress.*.json
 **/cypress/videos/
+**/coverage/
 
 # dependencies
 /.pnp

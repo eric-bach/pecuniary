@@ -50,7 +50,7 @@ export const SidebarWrapper = () => {
 
             <SidebarMenu title='Configuration'>
               <SidebarItem isActive={pathname === '/products'} title='Categories' icon={<ProductsIcon />} />
-              <SidebarItem isActive={pathname === '/products'} title='Payees' icon={<CustomersIcon />} />
+              <SidebarItem isActive={pathname === '/contacts'} title='Payees' href='contacts' icon={<CustomersIcon />} />
               <SidebarItem isActive={pathname === '/changelog'} title='Changelog' icon={<ChangeLogIcon />} />
               <SidebarItem isActive={pathname === '/settings'} title='Settings' icon={<SettingsIcon />} />
             </SidebarMenu>

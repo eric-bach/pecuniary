@@ -17,12 +17,12 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ⚒️ Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20
 
       - name: 👀 Env
         run: |
@@ -44,6 +44,7 @@ jobs:
   deploy-dev:
     name: Deploy Dev
     runs-on: ubuntu-latest
+    environment: dev
     needs: [unit-tests]
     permissions:
       actions: write
@@ -58,12 +59,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: ⚒️ Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20
 
       - name: 🔑 Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_DEV }}
           aws-region: us-east-1
@@ -83,16 +84,13 @@ jobs:
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
-      - name: 🗒️ Create aws-exports.js
+      - name: 🗒️ Create .env
         run: |
-          touch aws-exports.js
-          echo const awsmobile = { aws_project_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_cognito_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_user_pools_id: \'${{secrets.COGNITO_USERPOOL_ID_DEV}}\', aws_user_pools_web_client_id: \'${{ secrets.COGNITO_WEB_CLIENT_ID_DEV }}\', mandatorySignIn: true, aws_appsync_graphqlEndpoint: \'${{ secrets.APPSYNC_ENDPOINT_DEV }}\', aws_appsync_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_appsync_authenticationType: \'AMAZON_COGNITO_USER_POOLS\' } >> aws-exports.js
-          echo export default awsmobile >> aws-exports.js
-        working-directory: frontend/app
-
-      - name: 🗒️ Create constants.ts
-        run: |
-          touch constants.ts
+          touch .env
+          echo NEXT_PUBLIC_USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> .env
+          echo NEXT_PUBLIC_USER_POOL_CLIENT_ID=${{ secrets.USER_POOL_CLIENT_ID }} >> .env
+          echo NEXT_PUBLIC_APPSYNC_API_ENDPOINT=${{ secrets.APPSYNC_API_ENDPOINT }} >> .env
+          echo NEXT_PUBLIC_APPSYNC_REGION=${{ secrets.REGION }} >> .env
         working-directory: frontend
 
       - name: 🏗 Build Frontend
@@ -109,9 +107,9 @@ jobs:
         run: npm run deploy dev
         working-directory: infrastructure
 
-      - name: 🚀 Deploy Frontend
-        run: npx sst deploy --stage dev
-        working-directory: frontend
+      # - name: 🚀 Deploy Frontend
+      #   run: npx sst deploy --stage dev
+      #   working-directory: frontend
 
   integration-tests:
     name: Integration Tests
@@ -120,12 +118,12 @@ jobs:
 
     steps:
       - name: ⬇️ Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ⚒️ Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20
 
       - name: 👀 Env
         run: |
