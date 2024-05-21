@@ -11,6 +11,7 @@ jobs:
   deploy-prod:
     name: Deploy Prod
     runs-on: ubuntu-latest
+    environment: prod
     permissions:
       actions: write
       contents: read
@@ -21,17 +22,17 @@ jobs:
         uses: styfle/cancel-workflow-action@0.11.0
 
       - name: ⬇️ Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ⚒️ Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20
 
       - name: 🔑 Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_PROD }}
+          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
           aws-region: us-east-1
 
       - name: 👀 Env
@@ -52,26 +53,23 @@ jobs:
       - name: 🗒️ Create .env
         run: |
           touch .env
+          echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
         working-directory: infrastructure
 
-      - name: 🗒️ Create aws-exports.js
+      - name: 🗒️ Create .env
         run: |
-          touch aws-exports.js
-          echo const awsmobile = { aws_project_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_cognito_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_user_pools_id: \'${{secrets.COGNITO_USERPOOL_ID_PROD}}\', aws_user_pools_web_client_id: \'${{ secrets.COGNITO_WEB_CLIENT_ID_PROD }}\', mandatorySignIn: true, aws_appsync_graphqlEndpoint: \'${{ secrets.APPSYNC_ENDPOINT_PROD }}\', aws_appsync_region: \'${{ secrets.CDK_DEFAULT_REGION }}\', aws_appsync_authenticationType: \'AMAZON_COGNITO_USER_POOLS\' } >> aws-exports.js
-          echo export default awsmobile >> aws-exports.js
-        working-directory: frontend/app
-
-      - name: 🗒️ Create prod.config
-        run: |
-          touch prod.config
-          echo { \"certificateArn\": \"${{ secrets.CERTIFICATE_ARN }}\", \"hostedZoneId\": \"${{ secrets.HOSTED_ZONE_ID }}\", \"hostedZoneName\": \"${{ secrets.HOSTED_ZONE_NAME }}\" } >> prod.config
+          touch .env
+          echo NEXT_PUBLIC_USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> .env
+          echo NEXT_PUBLIC_USER_POOL_CLIENT_ID=${{ secrets.USER_POOL_CLIENT_ID }} >> .env
+          echo NEXT_PUBLIC_APPSYNC_API_ENDPOINT=${{ secrets.APPSYNC_API_ENDPOINT }} >> .env
+          echo NEXT_PUBLIC_APPSYNC_REGION=${{ secrets.REGION }} >> .env
         working-directory: frontend
 
       - name: 🚀 Deploy Backend
         run: npm run deploy prod
         working-directory: infrastructure
 
-      - name: 🚀 Deploy Frontend
-        run: npx sst deploy --stage prod
-        working-directory: frontend
+      # - name: 🚀 Deploy Frontend
+      #   run: npx sst deploy --stage prod
+      #   working-directory: frontend
