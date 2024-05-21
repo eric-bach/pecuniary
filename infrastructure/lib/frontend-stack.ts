@@ -117,7 +117,7 @@ export class FrontendStack extends Stack {
 
     // S3 bucket deployment
     new BucketDeployment(this, `${props.appName}ContainerWebsiteDeployment`, {
-      sources: [Source.asset('../frontend/dist')],
+      sources: [Source.asset('../frontend/.next')],
       destinationBucket: hostingBucket,
       retainOnDelete: false,
       contentLanguage: 'en',
