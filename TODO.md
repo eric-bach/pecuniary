@@ -11,7 +11,7 @@ X Add resend verification email
 X Clean up dashboard template
 X Call AppSync APIs
 
-- Fix github actions
+- Fix github actions -
 - Deploy to AWS
   - AWS Amplify Console - ttps://medium.com/@stk.devtest/a-beginners-guide-to-hosting-next-js-14-on-aws-amplify-db455631d56b
   - SST v2 CDK - https://docs.sst.dev/start/nextjs
