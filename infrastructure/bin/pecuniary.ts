@@ -54,12 +54,12 @@ switch (stage) {
   }
 
   case 'frontend': {
-    new FrontendStack(app, `${APP_NAME}-frontend-${envName}`, {
-      ...baseProps,
-      params: {
-        certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
-      },
-    });
+    // new FrontendStack(app, `${APP_NAME}-frontend-${envName}`, {
+    //   ...baseProps,
+    //   params: {
+    //     certificateArn: process.env.CERTIFICATE_ARN ?? 'not_an_arn',
+    //   },
+    // });
 
     break;
   }
