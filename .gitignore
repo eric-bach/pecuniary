@@ -22,14 +22,11 @@ aws-exports.js
 
 cypress.*.json
 **/cypress/videos/
-**/coverage/
+/infrastructure/coverage
 
 # dependencies
 /.pnp
 .pnp.js
-
-# testing
-/coverage
 
 # next.js
 .next/
