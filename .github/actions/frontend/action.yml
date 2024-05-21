@@ -28,6 +28,8 @@ runs:
 
     - name: 📥 Install Frontend
       if: steps.frontend-cache.outputs.cache-hit != 'true'
-      run: npm run clean-install-frontend
+      run: |
+        echo "💾 Installing dependencies for ../frontend/package.json"
+        npm ci --prefix ../frontend
       working-directory: infrastructure
       shell: bash

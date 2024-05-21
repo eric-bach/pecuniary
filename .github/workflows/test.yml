@@ -33,19 +33,53 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      - name: 📥  Install Backend and Sources
+      - name: 📥 Install Backend and Sources
         uses: ./.github/actions/backend
 
-      # Currently failing
-      # - name: 🔭 Run CDK Unit Tests
-      #   run: npm run test
+      - name: 🔭 Run CDK Unit Tests
+        run: npm run test
+        working-directory: infrastructure
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout Code
+        uses: actions/checkout@v4
+
+      - name: ⚒️ Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 👀 Env
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Git ref:    ${{ github.ref }}"
+          echo "GH actor:   ${{ github.actor }}"
+          echo "SHA:        ${{ github.sha }}"
+          VER=`node --version`; echo "Node ver:   $VER"
+          VER=`npm --version`; echo "npm ver:    $VER"
+
+      # Should not need to deploy to run tests
+      # - name: 📥 Install CDK Dependencies
+      #   run: npm install
       #   working-directory: infrastructure
+
+      - name: 📥 Install Frontend
+        uses: ./.github/actions/frontend
+
+      # TODO Once there are Cypress frontend tests
+      # - name: Run Cypress Frontend Tests
+      #   run: npx cypress run --env username=${{ secrets.CYPRESS_USERNAME }},password=${{ secrets.CYPRESS_PASSWORD }}
+      #   working-directory: frontend
 
   deploy-dev:
     name: Deploy Dev
     runs-on: ubuntu-latest
     environment: dev
-    needs: [unit-tests]
+    needs: [unit-tests, integration-tests]
     permissions:
       actions: write
       contents: read
@@ -122,42 +156,7 @@ jobs:
           npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never
         working-directory: infrastructure
 
+      # TODO Once SST setup to deploy frontend
       # - name: 🚀 Deploy Frontend
       #   run: npx sst deploy --stage dev
-      #   working-directory: frontend
-
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    needs: [unit-tests]
-
-    steps:
-      - name: ⬇️ Checkout Code
-        uses: actions/checkout@v4
-
-      - name: ⚒️ Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: 👀 Env
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Git ref:    ${{ github.ref }}"
-          echo "GH actor:   ${{ github.actor }}"
-          echo "SHA:        ${{ github.sha }}"
-          VER=`node --version`; echo "Node ver:   $VER"
-          VER=`npm --version`; echo "npm ver:    $VER"
-
-      - name: 📥 Install CDK Dependencies
-        run: npm install
-        working-directory: infrastructure
-
-      - name: 📥 Install Frontend
-        uses: ./.github/actions/frontend
-
-      # TODO Deploy backend and frontend
-
-      # - name: Run Cypress Frontend Tests
-      #   run: npx cypress run --env username=${{ secrets.CYPRESS_USERNAME }},password=${{ secrets.CYPRESS_PASSWORD }}
       #   working-directory: frontend

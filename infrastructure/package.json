@@ -13,8 +13,6 @@
     "build-frontend": "echo '🚧 Building ../frontend' && npm run build --prefix ../frontend",
     "cdk": "cdk",
     "cdk-clear-context": "npm run cdk -- context --clear",
-    "clean-install-backend": "find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' -exec echo '💾 Installing dependencies for {}' ; -execdir sh -c 'npm ci' ;",
-    "clean-install-frontend": "echo 💾 Installing dependencies for ../frontend/package.json && npm ci --prefix ../frontend",
     "codegen": "graphql-codegen",
     "deploy": "npm run deploy-backend-dev -- --profile bach-dev",
     "deploy-backend-dev": "npm run codegen && npm run build-appsync && npm run build-backend && echo '🚀 Deploying backend dev' && npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never",
@@ -25,7 +23,9 @@
     "install-frontend": "echo 💾 Installing dependencies for ../frontend/package.json && npm install --prefix ../frontend",
     "seed": "npm run build && ts-node ./helpers/seed.ts",
     "test": "npm run build && jest --watchAll=false --coverage",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "z-clean-install-backend": "find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' -exec echo '💾 Installing dependencies for {}' ; -execdir sh -c 'npm ci' ;",
+    "z-clean-install-frontend": "echo 💾 Installing dependencies for ../frontend/package.json && npm ci --prefix ../frontend"
   },
   "devDependencies": {
     "@aws-appsync/eslint-plugin": "^1.2.1",
