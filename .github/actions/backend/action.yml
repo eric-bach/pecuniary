@@ -8,7 +8,7 @@ runs:
   steps:
     - name: 🔒 Cache CDK Dependencies
       id: cdk-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: infrastructure/node_modules
         key: infrastructure-${{ hashFiles('infrastructure/package-lock.json') }}
@@ -20,6 +20,6 @@ runs:
       shell: bash
 
     - name: 📥 Install Backend
-      run: npm run cinstall-backend
+      run: npm run clean-install-backend
       working-directory: infrastructure
       shell: bash

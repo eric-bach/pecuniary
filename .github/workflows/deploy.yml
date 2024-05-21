@@ -67,7 +67,7 @@ jobs:
         working-directory: frontend
 
       - name: 🚀 Deploy Backend
-        run: npm run deploy prod
+        run: npm run deploy-backend-prod
         working-directory: infrastructure
 
       # - name: 🚀 Deploy Frontend
