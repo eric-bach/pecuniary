@@ -19,7 +19,19 @@ runs:
       working-directory: infrastructure
       shell: bash
 
+    # - name: 📥 Install Backend
+    #   run: npm run clean-install-backend
+    #   working-directory: infrastructure
+    #   shell: bash
+
     - name: 📥 Install Backend
-      run: npm run clean-install-backend
+      run: |
+        find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
+        while IFS= read -r file; do
+          echo "💾 Installing dependencies for $file"
+          cd "$(dirname "$file")"
+          npm ci
+          cd - >/dev/null
+        done
       working-directory: infrastructure
       shell: bash
