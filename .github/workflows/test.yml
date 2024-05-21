@@ -84,7 +84,7 @@ jobs:
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
-      - name: 🗒️ Create .env
+      - name: 🗒️ Create Frontend .env
         run: |
           touch .env
           echo NEXT_PUBLIC_USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> .env
@@ -97,7 +97,7 @@ jobs:
         run: npm run build-frontend
         working-directory: infrastructure
 
-      - name: 🗒️ Create .env
+      - name: 🗒️ Create Infrastructure .env
         run: |
           touch .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
@@ -129,7 +129,7 @@ jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
-    needs: [deploy-dev]
+    needs: [unit-tests]
 
     steps:
       - name: ⬇️ Checkout Code
@@ -160,4 +160,4 @@ jobs:
 
       # - name: Run Cypress Frontend Tests
       #   run: npx cypress run --env username=${{ secrets.CYPRESS_USERNAME }},password=${{ secrets.CYPRESS_PASSWORD }}
-      #   working-directory: frontend/container
+      #   working-directory: frontend
