@@ -72,7 +72,6 @@ jobs:
 
       - name: 🚧 Build AppSync
         run: |
-          npm run codegen
           npm run build-appsync
         working-directory: infrastructure
 

@@ -12,6 +12,8 @@ X Clean up dashboard template
 X Call AppSync APIs
 X Fix github actions
 
+- Update packages
+- Update to codegen 5
 - Deploy to AWS
   - AWS Amplify Console - ttps://medium.com/@stk.devtest/a-beginners-guide-to-hosting-next-js-14-on-aws-amplify-db455631d56b
   - SST v2 CDK - https://docs.sst.dev/start/nextjs
@@ -19,7 +21,6 @@ X Fix github actions
 - Update package.json scripts
   - package.json: Build deploy-frontend script
   - package.json: Update deploy to include deploy-frontend
-- Update to codegen 5
 - (optional) Switch to using Amplify UI Authenticator component - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
 
 ##### References
