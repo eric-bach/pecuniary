@@ -20,25 +20,46 @@ cdk.out
 .env*
 aws-exports.js
 
-# Remix
-!remix.config.js
-!remix.env.d.ts
-!plugin-remix.js
-**/.cache
-**/public/build
-**/frontend*/server
-
-# SST
-/frontend/.cache
-/frontend/.sst
-/frontend/build
-/frontend/prod.config
-!frontend/sst-env.d.ts
-
-!.eslintrc.js
-!webpack.*.js
-!jest.config.js
-!.env.example
-
 cypress.*.json
 **/cypress/videos/
+**/coverage/
+
+# dependencies
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env*.local
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Tailwind
+!tailwind.config.js
+!next.config.js
+!postcss.config.js

@@ -1,58 +1,71 @@
-# Welcome to Remix!
+# NextJS and NextUI Dashboard Template Starter
 
-- [Remix Docs](https://remix.run/docs)
+You can deploy here directly to vercel [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/Siumauricio/nextui-dashboard-template)
 
-## Development
 
-From your terminal:
+V1 Version Stitches https://v1-nextui-dashboard-template.vercel.app/
+V1 Code: https://github.com/Siumauricio/nextui-dashboard-template/tree/v1
 
-```sh
+This is a template for NextJS and NextUI.
+
+[NextJS](https://nextjs.org/)
+[NextUI](https://nextui.org/)
+
+You can see the demo here: https://nextui-dashboard-template.vercel.app/
+For improve this template, you can create a pull request or open an issue here [Issues](https://github.com/Siumauricio/nextui-dashboard-template/issues) or [Pull Request](
+    https://github.com/Siumauricio/nextui-dashboard-template/pulls)
+
+### Dark Mode
+![Dashboard Dark Mode](./public/dark.png)
+
+### Light Mode
+![Dashboard Light Mode](./public/light.png)
+
+
+- Dark Mode Support
+- Full Responsive
+- Home Page with Charts
+- Accounts Page
+- More pages coming soon...
+
+```
+├── components
+│   ├── accounts            # Accounts components
+│   ├── charts              # Charts components
+│   ├── breadcrumb          # component
+|   ├── home                # Home components
+|   ├── layout              # Layout components
+|   ├── navbar              # Navbar components
+|   ├── sidebar             # Sidebar components
+|   ├── table               # Table components
+|   ├── styles              # Some reusable components
+|   ├── icons               # Icons
+|   ├── hooks               # Hooks
+├── app                     # Documentation files
+│   ├── accounts            # Accounts route
+|       ├── page.tsx        # Accounts page
+│   ├── page.tsx            # Entry point for the app
+│   ├── layout.tsx          # Layout applied to all application pages
+│   ├── providers.tsx       # Theme provider
+│   ├── more...             # Soon
+└──
+```
+
+## For Run
+
+Install dependencies
+
+
+```bash
+npm install
+```
+
+Start the server
+
+
+
+```bash
 npm run dev
 ```
 
-This starts your app in development mode, rebuilding assets on file changes.
-
-## Deployment
-
-First, build your app for production:
-
-```sh
-npm run build
-```
-
-Then run the app in production mode:
-
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `remix build`
-
-- `build/`
-- `public/build/`
-
-### Using a Template
-
-When you ran `npx create-remix@latest` there were a few choices for hosting. You can run that again to create a new project, then copy over relevant code/assets from your current app to the new project that's pre-configured for your target server.
-
-Most importantly, this means everything in the `app/` directory, but if you've further customized your current application outside of there it may also include:
-
-- Any assets you've added/updated in `public/`
-- Any updated versions of root files such as `.eslintrc.js`, etc.
-
-```sh
-cd ..
-# create a new project, and pick a pre-configured host
-npx create-remix@latest
-cd my-new-remix-app
-# remove the new project's app (not the old one!)
-rm -rf app
-# copy your app over
-cp -R ../my-old-remix-app/app app
-```
+Now you can visit https://localhost:3000 in your browser.
