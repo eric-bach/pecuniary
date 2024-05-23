@@ -8,7 +8,7 @@ runs:
   steps:
     - name: 🔒 Cache CDK Dependencies
       id: cdk-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: infrastructure/node_modules
         key: infrastructure-${{ hashFiles('infrastructure/package-lock.json') }}
@@ -21,13 +21,15 @@ runs:
 
     - name: 🔒 Cache Frontend
       id: frontend-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: frontend/node_modules
         key: frontend-${{ hashFiles('frontend/package-lock.json') }}
 
     - name: 📥 Install Frontend
       if: steps.frontend-cache.outputs.cache-hit != 'true'
-      run: npm run cinstall-frontend
+      run: |
+        echo "💾 Installing dependencies for ../frontend/package.json"
+        npm ci --prefix ../frontend
       working-directory: infrastructure
       shell: bash

@@ -6,15 +6,20 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { handleSendEmailVerification } from '@/lib/cognitoActions';
-import { Input } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import { TriangleAlertIcon } from 'lucide-react';
+import { Suspense } from 'react';
+import { Input } from '../ui/input';
+
+function Search() {
+  const params = useSearchParams();
+  const email = params.get('email') ?? '';
+
+  return <Input id='email' type='hidden' name='email' defaultValue={email} />;
+}
 
 export default function VerifyForm() {
   const [result, dispatch] = useFormState(handleSendEmailVerification, { message: '', errorMessage: '' });
-
-  const params = useSearchParams();
-  const email = params.get('email') ?? '';
 
   return (
     <form action={dispatch} className='space-y-3 min-w-[400px]'>
@@ -31,11 +36,13 @@ export default function VerifyForm() {
           </div>
           <div className='space-y-2'>
             <div>
-              <Input id='email' type='hidden' name='email' defaultValue={email} />
+              <Suspense>
+                <Search />
+              </Suspense>
             </div>
-            <p className='mt-4 text-center text-sm text-gray-500'>
+            <p className='mt-4 text-center text-sm'>
               Didn&#39;t receive an email?
-              <Button type='submit' variant='ghost' className='font-semibold hover:bg-transparent text-indigo-600 hover:text-indigo-600'>
+              <Button type='submit' className='font-semibold bg-transparent hover:bg-transparent text-indigo-600'>
                 Resend
               </Button>
             </p>

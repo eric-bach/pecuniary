@@ -8,7 +8,7 @@ runs:
   steps:
     - name: 🔒 Cache CDK Dependencies
       id: cdk-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: infrastructure/node_modules
         key: infrastructure-${{ hashFiles('infrastructure/package-lock.json') }}
@@ -20,6 +20,13 @@ runs:
       shell: bash
 
     - name: 📥 Install Backend
-      run: npm run cinstall-backend
+      run: |
+        find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
+        while IFS= read -r file; do
+          echo "💾 Installing dependencies for $file"
+          cd "$(dirname "$file")"
+          npm ci
+          cd - >/dev/null
+        done
       working-directory: infrastructure
       shell: bash

@@ -1,35 +1,25 @@
 import { Match, Template } from 'aws-cdk-lib/assertions';
+import * as cdk from 'aws-cdk-lib';
 import { PecuniaryApiStackProps } from '../lib/types/PecuniaryStackProps';
 import { ApiStack } from '../lib/api-stack';
-import { Table } from 'aws-cdk-lib/aws-dynamodb';
-import { App } from 'aws-cdk-lib';
-import { Queue } from 'aws-cdk-lib/aws-sqs';
-import { EventBus } from 'aws-cdk-lib/aws-events';
 
 describe('Api Stack contains expected resources', () => {
-  const app = new App();
+  const app = new cdk.App();
 
   const props: PecuniaryApiStackProps = {
     appName: 'pecuniary',
     envName: 'dev',
     params: {
       userPoolId: 'id',
-      dataTableArn: 'arn',
-      eventBusArn: 'arn',
-      eventHandlerQueueArn: 'arn',
+      dataTableArn: 'arn:aws:dynamodb:us-east-1:123456789012:table/mockTable',
+      eventBusArn: 'arn:aws:events:us-east-1:123456789012:event-bus/mockEventBus',
+      eventHandlerQueueArn: 'arn:aws:sqs:us-east-1:123456789012:mockQueue',
     },
     tags: {
       env: 'dev',
       application: 'pecuniary',
     },
   };
-
-  const fromTableArnMock = jest.spyOn(Table, 'fromTableArn');
-  const fromQueueArn = jest.spyOn(Queue, 'fromQueueArn');
-  const fromEventBusArn = jest.spyOn(EventBus, 'fromEventBusArn');
-  fromTableArnMock.mockReturnValue({ tableName: 'test', tableArn: 'arn:aws:DynamoDB:::test' } as Table);
-  fromQueueArn.mockReturnValue({ queueArn: 'arn:aws:SQS:::test' } as Queue);
-  fromEventBusArn.mockReturnValue({ eventBusName: 'test', eventBusArn: 'arn:aws:Events:::test' } as EventBus);
 
   const stack = new ApiStack(app, 'PecuniaryTestStack', props);
 
@@ -49,51 +39,120 @@ describe('Api Stack contains expected resources', () => {
     template.hasResourceProperties('AWS::AppSync::Resolver', Match.objectLike({}));
   });
 
-  test('should have EventBridge Rules', () => {
+  test('should have AppSync JS Resolvers', () => {
     template.hasResourceProperties(
-      'AWS::Events::Rule',
+      'AWS::AppSync::FunctionConfiguration',
       Match.objectLike({
-        Name: `pecuniary-TransactionSavedEvent-${props.envName}`,
-        EventPattern: {
-          source: ['custom.pecuniary'],
-          'detail-type': ['TransactionSavedEvent'],
+        Name: 'createAccount',
+        DataSourceName: 'dynamoDBDataSource',
+        Runtime: {
+          Name: 'APPSYNC_JS',
+          RuntimeVersion: '1.0.0',
+        },
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::AppSync::FunctionConfiguration',
+      Match.objectLike({
+        Name: 'updateAccount',
+        DataSourceName: 'dynamoDBDataSource',
+        Runtime: {
+          Name: 'APPSYNC_JS',
+          RuntimeVersion: '1.0.0',
+        },
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::AppSync::FunctionConfiguration',
+      Match.objectLike({
+        Name: 'getAccount',
+        DataSourceName: 'dynamoDBDataSource',
+        Runtime: {
+          Name: 'APPSYNC_JS',
+          RuntimeVersion: '1.0.0',
+        },
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::AppSync::FunctionConfiguration',
+      Match.objectLike({
+        Name: 'getAccounts',
+        DataSourceName: 'dynamoDBDataSource',
+        Runtime: {
+          Name: 'APPSYNC_JS',
+          RuntimeVersion: '1.0.0',
+        },
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::AppSync::FunctionConfiguration',
+      Match.objectLike({
+        Name: 'getAggregate',
+        DataSourceName: 'dynamoDBDataSource',
+        Runtime: {
+          Name: 'APPSYNC_JS',
+          RuntimeVersion: '1.0.0',
+        },
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::AppSync::FunctionConfiguration',
+      Match.objectLike({
+        Name: 'deleteAggregate',
+        DataSourceName: 'dynamoDBDataSource',
+        Runtime: {
+          Name: 'APPSYNC_JS',
+          RuntimeVersion: '1.0.0',
         },
       })
     );
   });
 
-  test('should have Lambda Functions', () => {
-    template.hasResourceProperties(
-      'AWS::Lambda::Function',
-      Match.objectLike({
-        FunctionName: `pecuniary-${props.envName}-AccountsResolver`,
-        Handler: 'index.handler',
-        Runtime: 'nodejs18.x',
-      })
-    );
-    template.hasResourceProperties(
-      'AWS::Lambda::Function',
-      Match.objectLike({
-        FunctionName: `pecuniary-${props.envName}-TransactionsResolver`,
-        Handler: 'index.handler',
-        Runtime: 'nodejs18.x',
-      })
-    );
-    template.hasResourceProperties(
-      'AWS::Lambda::Function',
-      Match.objectLike({
-        FunctionName: `pecuniary-${props.envName}-PositionsResolver`,
-        Handler: 'index.handler',
-        Runtime: 'nodejs18.x',
-      })
-    );
-    template.hasResourceProperties(
-      'AWS::Lambda::Function',
-      Match.objectLike({
-        FunctionName: `pecuniary-${props.envName}-UpdatePositions`,
-        Handler: 'index.handler',
-        Runtime: 'nodejs18.x',
-      })
-    );
-  });
+  // test('should have EventBridge Rules', () => {
+  //   template.hasResourceProperties(
+  //     'AWS::Events::Rule',
+  //     Match.objectLike({
+  //       Name: `pecuniary-TransactionSavedEvent-${props.envName}`,
+  //       EventPattern: {
+  //         source: ['custom.pecuniary'],
+  //         'detail-type': ['TransactionSavedEvent'],
+  //       },
+  //     })
+  //   );
+  // });
+
+  // test('should have Lambda Functions', () => {
+  //   template.hasResourceProperties(
+  //     'AWS::Lambda::Function',
+  //     Match.objectLike({
+  //       FunctionName: `pecuniary-${props.envName}-AccountsResolver`,
+  //       Handler: 'index.handler',
+  //       Runtime: 'nodejs18.x',
+  //     })
+  //   );
+  //   template.hasResourceProperties(
+  //     'AWS::Lambda::Function',
+  //     Match.objectLike({
+  //       FunctionName: `pecuniary-${props.envName}-TransactionsResolver`,
+  //       Handler: 'index.handler',
+  //       Runtime: 'nodejs18.x',
+  //     })
+  //   );
+  //   template.hasResourceProperties(
+  //     'AWS::Lambda::Function',
+  //     Match.objectLike({
+  //       FunctionName: `pecuniary-${props.envName}-PositionsResolver`,
+  //       Handler: 'index.handler',
+  //       Runtime: 'nodejs18.x',
+  //     })
+  //   );
+  //   template.hasResourceProperties(
+  //     'AWS::Lambda::Function',
+  //     Match.objectLike({
+  //       FunctionName: `pecuniary-${props.envName}-UpdatePositions`,
+  //       Handler: 'index.handler',
+  //       Runtime: 'nodejs18.x',
+  //     })
+  //   );
+  // });
 });

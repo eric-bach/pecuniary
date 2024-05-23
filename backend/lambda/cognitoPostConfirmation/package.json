@@ -1,5 +1,5 @@
 {
-  "name": "cognitoHandler",
+  "name": "cognito-post-confirmation",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -13,9 +13,8 @@
     "aws-lambda": "^1.0.7"
   },
   "devDependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.347.1",
-    "@types/aws-lambda": "^8.10.116",
-    "@types/node": "^18.7.18",
-    "esbuild": "^0.15.7"
+    "@aws-sdk/client-cognito-identity-provider": "^3.577.0",
+    "@types/aws-lambda": "^8.10.138",
+    "@types/node": "^20.12.12"
   }
 }

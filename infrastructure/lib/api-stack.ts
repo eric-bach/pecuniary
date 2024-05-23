@@ -20,18 +20,18 @@ import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
+const dotenv = require('dotenv');
+import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
-import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
-
-const dotenv = require('dotenv');
 dotenv.config();
 
 export class ApiStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryApiStackProps) {
     super(scope, id, props);
 
-    const REGION = Stack.of(this).region;
+    // const REGION = Stack.of(this).region;
+
     const userPool = UserPool.fromUserPoolId(this, 'userPool', props.params.userPoolId);
     const dataTable = Table.fromTableArn(this, 'table', props.params.dataTableArn);
     const eventHandlerQueue = Queue.fromQueueArn(this, 'eventHandlerQueue', props.params.eventHandlerQueueArn);
