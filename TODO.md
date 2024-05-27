@@ -12,12 +12,13 @@ X Clean up dashboard template
 X Call AppSync APIs
 X Fix github actions
 X Update packages
+X Deploy to AWS Amplify
+X Update to codegen 5
 
-- Deploy to AWS
-- Update to codegen 5 and generate queries - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
-- Update package.json scripts
-  - package.json: Build deploy-frontend script
-  - package.json: Update deploy to include deploy-frontend
+- Build graphql queries/mutations
+- Add environment variables to AppSync JS Resolvers/DynamoDB table
+- Add Powertools for Lambda logging
+- Build dashboard
 - (optional) Switch to using Amplify UI Authenticator component - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
 
 ##### References

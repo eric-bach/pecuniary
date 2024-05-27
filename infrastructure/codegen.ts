@@ -5,16 +5,16 @@ const config: CodegenConfig = {
   schema: [
     'graphql/schema.graphql',
     `
-scalar AWSDate
-scalar AWSTime
-scalar AWSDateTime
-scalar AWSTimestamp
-scalar AWSEmail
-scalar AWSJSON
-scalar AWSURL
-scalar AWSPhone
-scalar AWSIPAddress
-`,
+      scalar AWSDate
+      scalar AWSTime
+      scalar AWSDateTime
+      scalar AWSTimestamp
+      scalar AWSEmail
+      scalar AWSJSON
+      scalar AWSURL
+      scalar AWSPhone
+      scalar AWSIPAddress
+    `,
   ],
   config: {
     scalars: {
@@ -30,8 +30,8 @@ scalar AWSIPAddress
     },
   },
   generates: {
-    'graphql/types/appsync.ts': {
-      plugins: ['typescript'],
+    'graphql/api/codegen/appsync.ts': {
+      plugins: ['typescript', 'typescript-operations'],
     },
   },
 };
