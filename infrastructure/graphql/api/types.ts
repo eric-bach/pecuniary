@@ -13,5 +13,5 @@ export type GetAccountsQueryVariables = {
 };
 
 export type GetAccountsQuery = {
-  getAccounts: Account[];
+  getAccounts: [Account];
 };

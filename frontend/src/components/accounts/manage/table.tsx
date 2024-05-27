@@ -8,12 +8,10 @@ export interface TableData {
     name: string;
     uid: string;
   }[];
-  accounts: Account[];
+  accounts: [Account];
 }
 
 export const TableWrapper = (data: TableData) => {
-  console.log(data);
-
   return (
     <div className=' w-full flex flex-col gap-4'>
       <Table aria-label='Example table with custom cells'>
@@ -24,8 +22,16 @@ export const TableWrapper = (data: TableData) => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={data.accounts}>
-          {/* {(item) => <TableRow>{(columnKey) => <TableCell>{RenderCell({ account: item, columnKey: columnKey })}</TableCell>}</TableRow>} */}
+        <TableBody>
+          {data.accounts.map((account) => (
+            <TableRow key={account.accountId}>
+              {data.columns.map((column) => (
+                <TableCell key={column.uid}>
+                  <RenderCell account={account} columnKey={column.uid} />
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>

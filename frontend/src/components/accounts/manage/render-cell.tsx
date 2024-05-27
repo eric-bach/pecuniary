@@ -6,15 +6,15 @@ import { EyeIcon } from '@/components/icons/table/eye-icon';
 import { Account } from '../../../../../infrastructure/graphql/api/codegen/appsync';
 
 interface Props {
-  //account: (typeof Account)[number];
-  account: any;
+  account: Account;
   columnKey: string | React.Key;
 }
 
-export const RenderCell = ({ account, columnKey }: Props) => {
+export const RenderCell = (data: Props) => {
   // @ts-ignore
-  const cellValue = user[columnKey];
-  switch (columnKey) {
+  const cellValue = data.account[data.columnKey];
+
+  switch (data.columnKey) {
     case 'name':
       return (
         <User
@@ -23,46 +23,54 @@ export const RenderCell = ({ account, columnKey }: Props) => {
           }}
           name={cellValue}
         >
-          {account.email}
+          {data.account.name}
         </User>
       );
-    case 'role':
+    case 'type':
       return (
         <div>
           <div>
             <span>{cellValue}</span>
           </div>
           <div>
-            <span>{account.team}</span>
+            <span>{data.account.entity}</span>
           </div>
         </div>
       );
-    case 'status':
+    case 'createdAt':
       return (
-        <Chip size='sm' variant='flat' color={cellValue === 'active' ? 'success' : cellValue === 'paused' ? 'danger' : 'warning'}>
-          <span className='capitalize text-xs'>{cellValue}</span>
-        </Chip>
+        <div>
+          <div>
+            <span>{cellValue}</span>
+          </div>
+        </div>
       );
+    // case 'status':
+    //   return (
+    //     <Chip size='sm' variant='flat' color={cellValue === 'active' ? 'success' : cellValue === 'paused' ? 'danger' : 'warning'}>
+    //       <span className='capitalize text-xs'>{cellValue}</span>
+    //     </Chip>
+    //   );
 
     case 'actions':
       return (
         <div className='flex items-center gap-4 '>
           <div>
             <Tooltip content='Details'>
-              <button onClick={() => console.log('View user', account.id)}>
+              <button onClick={() => console.log('View account', data.account.accountId)}>
                 <EyeIcon size={20} fill='#979797' />
               </button>
             </Tooltip>
           </div>
           <div>
-            <Tooltip content='Edit user' color='secondary'>
-              <button onClick={() => console.log('Edit user', account.id)}>
+            <Tooltip content='Edit account' color='secondary'>
+              <button onClick={() => console.log('Edit account', data.account.accountId)}>
                 <EditIcon size={20} fill='#979797' />
               </button>
             </Tooltip>
           </div>
           <div>
-            <Tooltip content='Delete user' color='danger' onClick={() => console.log('Delete user', account.id)}>
+            <Tooltip content='Delete account' color='danger' onClick={() => console.log('Delete account', data.account.accountId)}>
               <button>
                 <DeleteIcon size={20} fill='#FF0080' />
               </button>

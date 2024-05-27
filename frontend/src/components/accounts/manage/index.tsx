@@ -9,7 +9,11 @@ import { TableData, TableWrapper } from './table';
 import { AddAccount } from './add-account';
 import { Account } from '../../../../../infrastructure/graphql/api/codegen/appsync';
 
-export const ManageAccounts = (accounts: Account[]) => {
+interface ManageAccountsProps {
+  accounts: [Account];
+}
+
+export const ManageAccounts: React.FC<ManageAccountsProps> = ({ accounts }) => {
   const tableData: TableData = {
     columns: [
       { name: 'Name', uid: 'name' },
@@ -19,9 +23,6 @@ export const ManageAccounts = (accounts: Account[]) => {
     accounts,
   };
 
-  console.log(accounts);
-
-  // return <div>Hello </div>;
   return (
     <div className='my-14 lg:px-6 max-w-[95rem] mx-auto w-full flex flex-col gap-4'>
       <ul className='flex'>
