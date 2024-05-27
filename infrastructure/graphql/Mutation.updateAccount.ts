@@ -1,5 +1,5 @@
 import { AppSyncIdentityCognito, Context, DynamoDBUpdateItemRequest, util } from '@aws-appsync/utils';
-import { Account, MutationUpdateAccountArgs } from './types/appsync';
+import { Account, MutationUpdateAccountArgs } from './api/codegen/appsync';
 
 export function request(ctx: Context<MutationUpdateAccountArgs>): DynamoDBUpdateItemRequest {
   console.log('🔔 UpdateAccount Request: ', ctx);

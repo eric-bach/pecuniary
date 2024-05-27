@@ -1,5 +1,5 @@
 import { AppSyncIdentityCognito, Context, DynamoDBQueryRequest, util } from '@aws-appsync/utils';
-import { Account, QueryGetAccountArgs } from './types/appsync';
+import { Account, QueryGetAccountArgs } from './api/codegen/appsync';
 
 export function request(ctx: Context<QueryGetAccountArgs>): DynamoDBQueryRequest {
   console.log('🔔 GetAccount Request: ', ctx);
