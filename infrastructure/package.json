@@ -30,7 +30,6 @@
     "@aws-sdk/client-dynamodb": "^3.577.0",
     "@aws-sdk/util-dynamodb": "^3.577.0",
     "@graphql-codegen/cli": "5.0.2",
-    "@graphql-codegen/client-preset": "4.2.6",
     "@graphql-codegen/typescript": "^4.0.7",
     "@graphql-codegen/typescript-operations": "^4.2.1",
     "@swc/core": "^1.5.7",
@@ -50,6 +49,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.4",
     "aws-cdk-lib": "^2.142.1",
     "constructs": "^10.3.0",
     "esbuild": "^0.21.3",

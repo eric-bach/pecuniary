@@ -54,7 +54,7 @@ export const RenderCell = (data: Props) => {
 
     case 'actions':
       return (
-        <div className='flex items-center gap-4 '>
+        <div className='flex items-center gap-4'>
           <div>
             <Tooltip content='Details'>
               <button onClick={() => console.log('View account', data.account.accountId)}>
