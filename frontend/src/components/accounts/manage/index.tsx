@@ -19,6 +19,8 @@ export const ManageAccounts: React.FC<ManageAccountsProps> = ({ accounts }) => {
       { name: 'Name', uid: 'name' },
       { name: 'Type', uid: 'type' },
       { name: 'Created At', uid: 'createdAt' },
+      { name: 'Status', uid: 'status' },
+      { name: 'Actions', uid: 'actions' },
     ],
     accounts,
   };

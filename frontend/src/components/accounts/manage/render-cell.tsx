@@ -45,13 +45,13 @@ export const RenderCell = (data: Props) => {
           </div>
         </div>
       );
-    // case 'status':
-    //   return (
-    //     <Chip size='sm' variant='flat' color={cellValue === 'active' ? 'success' : cellValue === 'paused' ? 'danger' : 'warning'}>
-    //       <span className='capitalize text-xs'>{cellValue}</span>
-    //     </Chip>
-    //   );
-
+    case 'status':
+      return (
+        // <Chip size='sm' variant='flat' color={cellValue === 'active' ? 'success' : cellValue === 'paused' ? 'danger' : 'warning'}>
+        <Chip size='sm' variant='flat' color='success'>
+          <span className='capitalize text-xs'>Active</span>
+        </Chip>
+      );
     case 'actions':
       return (
         <div className='flex items-center gap-4'>

@@ -15,8 +15,12 @@ X Update packages
 X Deploy to AWS Amplify
 X Update to codegen 5
 
-... Add graphql operations type generation
-... Build graphql queries/mutations
+- Build accounts page
+
+  - Add actions to edit, delete account
+  - Build create action modal
+    ... Add graphql operations type generation
+    ... Build graphql queries/mutations
 
 - Add environment variables to AppSync JS Resolvers/DynamoDB table
 - Add Powertools for Lambda logging
