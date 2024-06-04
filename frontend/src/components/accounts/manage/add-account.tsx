@@ -1,41 +1,46 @@
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
-import React from 'react';
+import React, { FormEvent } from 'react';
+import { create } from './create-account';
 
 export const AddAccount = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const createAccount = () => {
-    console.log('Created Account');
-  };
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    console.log('Creating Account');
+
+    await create({ name: formData.get('name')?.toString() || '', type: formData.get('type')?.toString() || '' });
+  }
 
   return (
     <div>
-      <>
-        <Button onPress={onOpen} color='primary'>
-          Add Account
-        </Button>
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center'>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className='flex flex-col gap-1'>Add Account</ModalHeader>
-                <ModalBody>
-                  <Input label='Name' variant='bordered' />
-                  <Input label='Type' variant='bordered' />
-                </ModalBody>
-                <ModalFooter>
-                  <Button color='danger' variant='flat' onClick={onClose}>
-                    Close
-                  </Button>
-                  <Button color='primary' onPress={createAccount}>
-                    Add Account
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      </>
+      <Button onPress={onOpen} color='primary'>
+        Add Account
+      </Button>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center'>
+        <ModalContent>
+          {(onClose) => (
+            <form onSubmit={onSubmit}>
+              <ModalHeader className='flex flex-col gap-1'>Add Account</ModalHeader>
+              <ModalBody>
+                <Input name='name' label='Name' variant='bordered' />
+                <Input name='type' label='Type' variant='bordered' />
+              </ModalBody>
+              <ModalFooter>
+                <Button color='danger' variant='flat' onClick={onClose}>
+                  Close
+                </Button>
+                <Button type='submit' color='primary'>
+                  Add Account
+                </Button>
+              </ModalFooter>
+            </form>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
