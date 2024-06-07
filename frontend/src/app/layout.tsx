@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en' suppressHydrationWarning>
       <body className={clsx('font-sans antialiased', fontSans.className)}>
         <Providers>
-          <ConfigureAmplifyClientSide />
+          {/* <ConfigureAmplifyClientSide /> */}
           {children}
         </Providers>
       </body>

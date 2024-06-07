@@ -27,26 +27,31 @@
 import { fetchAuthSession } from 'aws-amplify/auth/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { runWithAmplifyServerContext } from '@/utils/amplifyServerUtils';
+import { getServerSession } from 'next-auth';
+import { handler } from './app/api/auth/[...nextauth]/route';
 
 export async function middleware(request: NextRequest) {
-  const response = NextResponse.next();
+  // const response = NextResponse.next();
+  const response = await getServerSession(handler);
 
-  const authenticated = await runWithAmplifyServerContext({
-    nextServerContext: { request, response },
-    operation: async (contextSpec) => {
-      try {
-        const session = await fetchAuthSession(contextSpec);
-        return session.tokens !== undefined;
-      } catch (error) {
-        console.log('user not authenticated');
-        return false;
-      }
-    },
-  });
+  console.log('Response from middleware', response);
 
-  if (authenticated) {
-    return response;
-  }
+  // const authenticated = await runWithAmplifyServerContext({
+  //   nextServerContext: { request, response },
+  //   operation: async (contextSpec) => {
+  //     try {
+  //       const session = await fetchAuthSession(contextSpec);
+  //       return session.tokens !== undefined;
+  //     } catch (error) {
+  //       console.log('user not authenticated');
+  //       return false;
+  //     }
+  //   },
+  // });
+
+  // if (authenticated) {
+  //   return response;
+  // }
 
   return NextResponse.redirect(new URL('/auth/login', request.url));
 }
