@@ -85,30 +85,30 @@ export const RenderCell = (data: Props) => {
         <div className='flex items-center gap-4'>
           <div>
             <Tooltip content='Details'>
-              <button onClick={() => console.log('View account', data.account.accountId)}>
+              <Button isIconOnly variant='light' size='sm' onClick={() => console.log('View account', data.account.accountId)}>
                 <EyeIcon size={20} fill='#979797' />
-              </button>
+              </Button>
             </Tooltip>
           </div>
           <div>
             <Tooltip content='Edit account' color='secondary'>
-              <button onClick={() => console.log('Edit account', data.account.accountId)}>
+              <Button isIconOnly variant='light' size='sm' onClick={() => console.log('Edit account', data.account.accountId)}>
                 <EditIcon size={20} fill='#979797' />
-              </button>
+              </Button>
             </Tooltip>
           </div>
           <div>
             <Tooltip content='Delete account' color='danger'>
-              <button onClick={onOpen}>
+              <Button isIconOnly variant='light' size='sm' onClick={onOpen}>
                 <DeleteIcon size={20} fill='#FF0080' />
                 <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center'>
                   <ModalContent>
                     {(onClose) => (
                       <form onSubmit={onSubmit}>
-                        <ModalHeader className='flex flex-col gap-1'>Delete Account</ModalHeader>
+                        <ModalHeader className='flex flex-col gap-1'>Delete account &quot;{data.account.name}&quot;?</ModalHeader>
                         <ModalBody>
-                          Are you sure you want to delete this account?
-                          <Input type='text' name='confirm' onChange={(e) => handleChange(e)} placeholder='Type "delete" to confirm' />
+                          To confirm deletion, enter &apos;delete&apos; below
+                          <Input type='text' name='confirm' onChange={(e) => handleChange(e)} placeholder='Enter "delete" to confirm' />
                         </ModalBody>
                         <ModalFooter>
                           <Button color='default' variant='flat' onClick={onClose}>
@@ -122,7 +122,7 @@ export const RenderCell = (data: Props) => {
                     )}
                   </ModalContent>
                 </Modal>
-              </button>
+              </Button>
             </Tooltip>
           </div>
         </div>

@@ -20,7 +20,7 @@ X Update to codegen 5
 - Build accounts page
   X Add actions to create account
   X Add actions to delete account
-  - Add modal to confirm deletion of account
+  X Add modal to confirm deletion of account
   - Add modal to edit account
 - Add loading screens
 - Add environment variables to AppSync JS Resolvers/DynamoDB table
