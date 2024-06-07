@@ -1,6 +1,6 @@
 // This is manually created until we have a better way to generate this
 
-import { Account, CreateAccountInput } from './codegen/appsync';
+import { Account, Aggregates, CreateAccountInput } from './codegen/appsync';
 
 export type Query<InputType, OutputType> = string & {
   __generatedQueryInput: InputType;
@@ -22,4 +22,12 @@ export type CreateAccountsInputVariables = {
 
 export type CreateAccountMutation = {
   createAccount: Account;
+};
+
+export type DeleteAccountsInputVariables = {
+  accountId: String;
+};
+
+export type DeleteAccountMutation = {
+  deleteAccount: Aggregates;
 };

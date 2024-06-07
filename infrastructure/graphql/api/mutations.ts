@@ -1,20 +1,25 @@
-// import { CreateAccountMutation, CreateAccountMutationVariables } from './types';
+import { CreateAccountMutation, Query, CreateAccountsInputVariables, DeleteAccountsInputVariables, DeleteAccountMutation } from './types';
 
-// type Mutation<InputType, OutputType> = string & {
-//   __generatedMutationInput: InputType;
-//   __generatedMutationOutput: OutputType;
-// };
+export const createAccount = `mutation CreateAccount($input: CreateAccountInput!) {
+    createAccount(input: $input) { 
+      accountId
+      name
+      entity
+      type
+      createdAt
+      updatedAt
+    }
+  }` as Query<CreateAccountsInputVariables, CreateAccountMutation>;
 
-// export const createTodo = /* GraphQL */ `mutation CreateTodo($input: CreateTodoInput!) {
-//     createTodo(input: $input) {
-//       id
-//       title
-//       description
-//       isCompleted
-//       owner
-//       createdAt
-//       updatedAt
-//       __typename
-//     }
-//   }
-//   ` as Mutation<CreateAccountMutationVariables, CreateAccountMutation>;
+export const deleteAccount = `mutation DeleteAccount($accountId: String!) {
+    deleteAggregate(accountId: $accountId) { 
+      items {
+        accountId
+        name
+        entity
+        type
+        createdAt
+        updatedAt
+      }
+    }
+  }` as Query<DeleteAccountsInputVariables, DeleteAccountMutation>;

@@ -1,6 +1,17 @@
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
 import React, { FormEvent } from 'react';
-import { create } from './create-account';
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+  useDisclosure,
+} from '@nextui-org/react';
+import { createNewAccount } from './actions';
 
 export const AddAccount = () => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -9,13 +20,20 @@ export const AddAccount = () => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
+    const name = formData.get('name')?.toString() ?? '';
+    const type = formData.get('type')?.toString() ?? '';
 
-    const result = await create({ name: formData.get('name')?.toString() || '', type: formData.get('type')?.toString() || '' });
+    const result = await createNewAccount({ name, type });
 
     if (result) {
       onClose();
     }
   }
+
+  const types = [
+    { label: 'TFSA', value: 'TFSA' },
+    { label: 'RRSP', value: 'RRSP' },
+  ];
 
   return (
     <div>
@@ -29,7 +47,15 @@ export const AddAccount = () => {
               <ModalHeader className='flex flex-col gap-1'>Add Account</ModalHeader>
               <ModalBody>
                 <Input name='name' label='Name' variant='bordered' />
-                <Input name='type' label='Type' variant='bordered' />
+                <Select
+                  name='type'
+                  items={types}
+                  label='Account Type'
+                  placeholder='Select an account type'
+                  className='border border-gray-300 rounded-md p-2 mt-2'
+                >
+                  {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
+                </Select>
               </ModalBody>
               <ModalFooter>
                 <Button color='danger' variant='flat' onClick={onClose}>

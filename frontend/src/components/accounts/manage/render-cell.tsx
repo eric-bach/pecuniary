@@ -3,7 +3,8 @@ import React from 'react';
 import { DeleteIcon } from '@/components/icons/table/delete-icon';
 import { EditIcon } from '@/components/icons/table/edit-icon';
 import { EyeIcon } from '@/components/icons/table/eye-icon';
-import { Account } from '../../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../../infrastructure/graphql/api/codegen/appsync';
+import { deleteExistingAccount } from './actions';
 
 interface Props {
   account: Account;
@@ -13,6 +14,10 @@ interface Props {
 export const RenderCell = (data: Props) => {
   // @ts-ignore
   const cellValue = data.account[data.columnKey];
+
+  const deleteAccount = async () => {
+    await deleteExistingAccount(data.account.accountId);
+  };
 
   switch (data.columnKey) {
     case 'name':
@@ -70,8 +75,8 @@ export const RenderCell = (data: Props) => {
             </Tooltip>
           </div>
           <div>
-            <Tooltip content='Delete account' color='danger' onClick={() => console.log('Delete account', data.account.accountId)}>
-              <button>
+            <Tooltip content='Delete account' color='danger'>
+              <button onClick={() => deleteAccount()}>
                 <DeleteIcon size={20} fill='#FF0080' />
               </button>
             </Tooltip>
