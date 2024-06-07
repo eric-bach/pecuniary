@@ -1,3 +1,5 @@
+#### Tasks
+
 X Add authentication middleware - https://www.youtube.com/watch?v=Y3o4or23V-0
 X Style Auth pages
 X Style verify email
@@ -18,12 +20,16 @@ X Update to codegen 5
 - Build accounts page
   X Add actions to create account
   X Add actions to delete account
-  - Add confirmation to delete account
-  - Add actions to edit account
+  - Add modal to confirm deletion of account
+  - Add modal to edit account
 - Add environment variables to AppSync JS Resolvers/DynamoDB table
 - Add Powertools for Lambda logging
-- Build dashboard
-- (optional) Switch to using Amplify UI Authenticator component - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
+- Build dashboard to display account summaries
+
+#### Tech Debt
+
+- Switch to Next-Auth using CredentialsProvider - https://github.com/dango0812/nextauth-cognito/tree/main
+- Switch to using Amplify UI Authenticator component - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
 
 ##### References
 
