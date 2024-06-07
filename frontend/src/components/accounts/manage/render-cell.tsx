@@ -25,17 +25,26 @@ interface Props {
 
 export const RenderCell = (data: Props) => {
   const [confirm, setConfirm] = useState<string | undefined>();
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const deleteModal = useDisclosure();
+  const editModal = useDisclosure();
 
   // @ts-ignore
   const cellValue = data.account[data.columnKey];
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onEditSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    console.log('Edit');
+
+    deleteModal.onClose();
+  }
+
+  async function onDeleteSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     await deleteExistingAccount(data.account.accountId);
 
-    onClose();
+    deleteModal.onClose();
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,19 +101,37 @@ export const RenderCell = (data: Props) => {
           </div>
           <div>
             <Tooltip content='Edit account' color='secondary'>
-              <Button isIconOnly variant='light' size='sm' onClick={() => console.log('Edit account', data.account.accountId)}>
+              <Button isIconOnly variant='light' size='sm' onClick={editModal.onOpen}>
                 <EditIcon size={20} fill='#979797' />
+                <Modal isOpen={editModal.isOpen} onOpenChange={editModal.onOpenChange} placement='top-center'>
+                  <ModalContent>
+                    {(onClose) => (
+                      <form onSubmit={onEditSubmit}>
+                        <ModalHeader className='flex flex-col gap-1'>Edit account &quot;{data.account.name}&quot;?</ModalHeader>
+                        <ModalBody>Edit</ModalBody>
+                        <ModalFooter>
+                          <Button color='default' variant='flat' onClick={onClose}>
+                            Cancel
+                          </Button>
+                          <Button type='submit' color='primary'>
+                            Edit
+                          </Button>
+                        </ModalFooter>
+                      </form>
+                    )}
+                  </ModalContent>
+                </Modal>
               </Button>
             </Tooltip>
           </div>
           <div>
             <Tooltip content='Delete account' color='danger'>
-              <Button isIconOnly variant='light' size='sm' onClick={onOpen}>
+              <Button isIconOnly variant='light' size='sm' onClick={deleteModal.onOpen}>
                 <DeleteIcon size={20} fill='#FF0080' />
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center'>
+                <Modal isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange} placement='top-center'>
                   <ModalContent>
                     {(onClose) => (
-                      <form onSubmit={onSubmit}>
+                      <form onSubmit={onDeleteSubmit}>
                         <ModalHeader className='flex flex-col gap-1'>Delete account &quot;{data.account.name}&quot;?</ModalHeader>
                         <ModalBody>
                           To confirm deletion, enter &apos;delete&apos; below

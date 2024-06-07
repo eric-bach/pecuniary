@@ -22,6 +22,7 @@ X Update to codegen 5
   X Add actions to delete account
   X Add modal to confirm deletion of account
   - Add modal to edit account
+  - Add validations to add and edit account forms
 - Add loading screens
 - Add environment variables to AppSync JS Resolvers/DynamoDB table
 - Add Powertools for Lambda logging
