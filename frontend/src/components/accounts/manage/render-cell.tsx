@@ -1,5 +1,17 @@
-import { User, Tooltip, Chip } from '@nextui-org/react';
-import React from 'react';
+import {
+  User,
+  Tooltip,
+  Chip,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+  Button,
+  Input,
+} from '@nextui-org/react';
+import React, { FormEvent, useState } from 'react';
 import { DeleteIcon } from '@/components/icons/table/delete-icon';
 import { EditIcon } from '@/components/icons/table/edit-icon';
 import { EyeIcon } from '@/components/icons/table/eye-icon';
@@ -12,11 +24,22 @@ interface Props {
 }
 
 export const RenderCell = (data: Props) => {
+  const [confirm, setConfirm] = useState<string | undefined>();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
   // @ts-ignore
   const cellValue = data.account[data.columnKey];
 
-  const deleteAccount = async () => {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
     await deleteExistingAccount(data.account.accountId);
+
+    onClose();
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirm(event.target.value);
   };
 
   switch (data.columnKey) {
@@ -76,8 +99,29 @@ export const RenderCell = (data: Props) => {
           </div>
           <div>
             <Tooltip content='Delete account' color='danger'>
-              <button onClick={() => deleteAccount()}>
+              <button onClick={onOpen}>
                 <DeleteIcon size={20} fill='#FF0080' />
+                <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center'>
+                  <ModalContent>
+                    {(onClose) => (
+                      <form onSubmit={onSubmit}>
+                        <ModalHeader className='flex flex-col gap-1'>Delete Account</ModalHeader>
+                        <ModalBody>
+                          Are you sure you want to delete this account?
+                          <Input type='text' name='confirm' onChange={(e) => handleChange(e)} placeholder='Type "delete" to confirm' />
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button color='default' variant='flat' onClick={onClose}>
+                            Cancel
+                          </Button>
+                          <Button type='submit' color='danger' isDisabled={confirm !== 'delete'}>
+                            Delete
+                          </Button>
+                        </ModalFooter>
+                      </form>
+                    )}
+                  </ModalContent>
+                </Modal>
               </button>
             </Tooltip>
           </div>
