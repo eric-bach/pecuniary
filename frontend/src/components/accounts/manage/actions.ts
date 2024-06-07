@@ -2,6 +2,7 @@
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
 import { Account, Aggregates } from '@/../../../infrastructure/graphql/api/codegen/appsync';
 import { createAccount, deleteAccount } from '@/../../../infrastructure/graphql/api/mutations';
+import { revalidatePath } from 'next/cache';
 
 interface Props {
   name: string;
@@ -19,7 +20,7 @@ export async function createNewAccount({ name, type }: Props): Promise<Account> 
     },
   });
 
-  console.log('Created Account', data.createAccount);
+  revalidatePath('/accounts/manage');
 
   return data.createAccount;
 }
@@ -32,7 +33,7 @@ export async function deleteExistingAccount(accountId: String): Promise<Aggregat
     },
   });
 
-  console.log('Deleted Account', data.deleteAccount);
+  revalidatePath('/accounts/manage');
 
   return data.deleteAccount;
 }
