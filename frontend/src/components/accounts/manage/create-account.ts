@@ -2,6 +2,7 @@
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
 import { Account } from '../../../../../infrastructure/graphql/api/codegen/appsync';
 import { createAccount } from '../../../../../infrastructure/graphql/api/queries';
+import { revalidatePath } from 'next/cache';
 
 interface Props {
   name: string;
@@ -19,7 +20,7 @@ export async function create({ name, type }: Props): Promise<Account> {
     },
   });
 
-  console.log('Created Account', data.createAccount);
+  revalidatePath('/accounts/manage');
 
   return data.createAccount;
 }

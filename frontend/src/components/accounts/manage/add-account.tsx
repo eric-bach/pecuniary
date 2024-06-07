@@ -3,16 +3,18 @@ import React, { FormEvent } from 'react';
 import { create } from './create-account';
 
 export const AddAccount = () => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
 
-    console.log('Creating Account');
+    const result = await create({ name: formData.get('name')?.toString() || '', type: formData.get('type')?.toString() || '' });
 
-    await create({ name: formData.get('name')?.toString() || '', type: formData.get('type')?.toString() || '' });
+    if (result) {
+      onClose();
+    }
   }
 
   return (
