@@ -16,12 +16,10 @@ X Deploy to AWS Amplify
 X Update to codegen 5
 
 - Build accounts page
-
-  - Add actions to edit, delete account
-  - Build create action modal
-    ... Add graphql operations type generation
-    ... Build graphql queries/mutations
-
+  X Add actions to create account
+  X Add actions to delete account
+  - Add confirmation to delete account
+  - Add actions to edit account
 - Add environment variables to AppSync JS Resolvers/DynamoDB table
 - Add Powertools for Lambda logging
 - Build dashboard
