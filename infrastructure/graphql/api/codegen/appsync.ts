@@ -7,20 +7,20 @@ export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> =
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  AWSDate: { input: string; output: string };
-  AWSDateTime: { input: string; output: string };
-  AWSEmail: { input: string; output: string };
-  AWSIPAddress: { input: string; output: string };
-  AWSJSON: { input: string; output: string };
-  AWSPhone: { input: string; output: string };
-  AWSTime: { input: string; output: string };
-  AWSTimestamp: { input: number; output: number };
-  AWSURL: { input: string; output: string };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  AWSDate: { input: string; output: string; }
+  AWSDateTime: { input: string; output: string; }
+  AWSEmail: { input: string; output: string; }
+  AWSIPAddress: { input: string; output: string; }
+  AWSJSON: { input: string; output: string; }
+  AWSPhone: { input: string; output: string; }
+  AWSTime: { input: string; output: string; }
+  AWSTimestamp: { input: number; output: number; }
+  AWSURL: { input: string; output: string; }
 };
 
 export type Account = {
@@ -76,13 +76,16 @@ export type Mutation = {
   updateAccount?: Maybe<Account>;
 };
 
+
 export type MutationCreateAccountArgs = {
   input: CreateAccountInput;
 };
 
+
 export type MutationDeleteAggregateArgs = {
   accountId: Scalars['String']['input'];
 };
+
 
 export type MutationUpdateAccountArgs = {
   input: UpdateAccountInput;
@@ -95,9 +98,11 @@ export type Query = {
   getAggregate?: Maybe<Aggregates>;
 };
 
+
 export type QueryGetAccountArgs = {
   accountId: Scalars['String']['input'];
 };
+
 
 export type QueryGetAggregateArgs = {
   accountId: Scalars['String']['input'];

@@ -29,7 +29,6 @@ const config: CodegenConfig = {
       AWSIPAddress: 'string',
     },
   },
-  documents: 'graphql/**/*.graphql.ts',
   generates: {
     'graphql/api/codegen/appsync.ts': {
       plugins: ['typescript', 'typescript-operations'],
