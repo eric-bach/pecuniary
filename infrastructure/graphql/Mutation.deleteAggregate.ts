@@ -19,7 +19,8 @@ export function request(ctx: Context<string>): DynamoDBBatchDeleteItemRequest {
   return {
     operation: 'BatchDeleteItem',
     tables: {
-      'pecuniary-Data': data,
+      // 'pecuniary-Data': data,
+      [ctx.env.TABLE_NAME]: data,
     },
   };
 }
