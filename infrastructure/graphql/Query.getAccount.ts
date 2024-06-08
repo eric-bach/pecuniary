@@ -1,17 +1,17 @@
 import { AppSyncIdentityCognito, Context, DynamoDBQueryRequest, util } from '@aws-appsync/utils';
-import { Account, QueryGetAccountArgs } from './types/appsync';
+import { Account, QueryGetAccountArgs } from './api/codegen/appsync';
 
 export function request(ctx: Context<QueryGetAccountArgs>): DynamoDBQueryRequest {
   console.log('🔔 GetAccount Request: ', ctx);
 
-  const { accountId } = ctx.args;
+  const { accountId } = ctx.arguments;
 
   return {
     operation: 'Query',
     query: {
       expression: 'pk = :accountId',
       expressionValues: {
-        ':accountId': `acc${util.dynamodb.toDynamoDB(accountId)}`,
+        ':accountId': util.dynamodb.toDynamoDB(`acc#${accountId}`),
       },
     },
     filter: {

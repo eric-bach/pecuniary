@@ -36,11 +36,11 @@ export const SidebarWrapper = () => {
         <div className='flex flex-col justify-between h-full'>
           <div className={Sidebar.Body()}>
             <SidebarItem title='Home' icon={<HomeIcon />} isActive={pathname === '/dashboard'} href='/dashboard' />
-            <SidebarMenu title='Main Menu'>
+            <SidebarMenu title='Accounts'>
               <CollapseItems icon={<AccountsIcon />} items={['Checking', 'Credit Cards', 'Loans']} title='Banking' />
-              <SidebarItem isActive={pathname === '/investments'} title='Investments' icon={<PaymentsIcon />} />
+              <SidebarItem isActive={pathname === '/investments'} title='Investments' icon={<PaymentsIcon />} href='/investments' />
               <SidebarItem isActive={pathname === '/assets'} title='Property & Debt' icon={<CustomersIcon />} />
-              <SidebarItem isActive={pathname === '/accounts/manage'} title='Manage' icon={<SettingsIcon />} />
+              <SidebarItem isActive={pathname === '/accounts/manage'} title='Manage' icon={<SettingsIcon />} href='/accounts/manage' />
             </SidebarMenu>
 
             <SidebarMenu title='Analytics'>
@@ -50,7 +50,7 @@ export const SidebarWrapper = () => {
 
             <SidebarMenu title='Configuration'>
               <SidebarItem isActive={pathname === '/products'} title='Categories' icon={<ProductsIcon />} />
-              <SidebarItem isActive={pathname === '/contacts'} title='Payees' href='contacts' icon={<CustomersIcon />} />
+              <SidebarItem isActive={pathname === '/contacts'} title='Payees' href='/contacts' icon={<CustomersIcon />} />
               <SidebarItem isActive={pathname === '/changelog'} title='Changelog' icon={<ChangeLogIcon />} />
               <SidebarItem isActive={pathname === '/settings'} title='Settings' icon={<SettingsIcon />} />
             </SidebarMenu>
