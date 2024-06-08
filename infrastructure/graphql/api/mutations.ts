@@ -1,4 +1,12 @@
-import { CreateAccountMutation, Query, CreateAccountsInputVariables, DeleteAccountsInputVariables, DeleteAccountMutation } from './types';
+import {
+  CreateAccountMutation,
+  Query,
+  CreateAccountsInputVariables,
+  DeleteAccountsInputVariables,
+  DeleteAccountMutation,
+  UpdateAccountInputVariables,
+  UpdateAccountMutation,
+} from './types';
 
 export const createAccount = `mutation CreateAccount($input: CreateAccountInput!) {
     createAccount(input: $input) { 
@@ -10,6 +18,17 @@ export const createAccount = `mutation CreateAccount($input: CreateAccountInput!
       updatedAt
     }
   }` as Query<CreateAccountsInputVariables, CreateAccountMutation>;
+
+export const updateAccount = `mutation UpdateAccount($input: UpdateAccountInput!) {
+    updateAccount(input: $input) { 
+      accountId
+      name
+      entity
+      type
+      createdAt
+      updatedAt
+    }
+  }` as Query<UpdateAccountInputVariables, UpdateAccountMutation>;
 
 export const deleteAccount = `mutation DeleteAccount($accountId: String!) {
     deleteAggregate(accountId: $accountId) { 

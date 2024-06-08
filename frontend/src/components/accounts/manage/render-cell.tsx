@@ -10,33 +10,62 @@ import {
   useDisclosure,
   Button,
   Input,
+  Select,
+  SelectItem,
 } from '@nextui-org/react';
 import React, { FormEvent, useState } from 'react';
 import { DeleteIcon } from '@/components/icons/table/delete-icon';
 import { EditIcon } from '@/components/icons/table/edit-icon';
 import { EyeIcon } from '@/components/icons/table/eye-icon';
 import { Account } from '@/../../../infrastructure/graphql/api/codegen/appsync';
-import { deleteExistingAccount } from './actions';
+import { deleteExistingAccount, updateExistingAccount } from './actions';
 
 interface Props {
   account: Account;
   columnKey: string | React.Key;
 }
 
+const types = [
+  { label: 'TFSA', value: 'TFSA' },
+  { label: 'RRSP', value: 'RRSP' },
+];
+
 export const RenderCell = (data: Props) => {
   const [confirm, setConfirm] = useState<string | undefined>();
   const deleteModal = useDisclosure();
   const editModal = useDisclosure();
 
+  const [formData, setFormData] = useState({
+    name: data.account.name,
+    type: data.account.type,
+  });
+
   // @ts-ignore
   const cellValue = data.account[data.columnKey];
+
+  async function handleEditOpen() {
+    editModal.onOpen();
+  }
+
+  const handleEditChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   async function onEditSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    console.log('Edit');
+    const result = await updateExistingAccount({
+      pk: `acc#${data.account.accountId}`,
+      createdAt: data.account.createdAt,
+      name: formData.name,
+      type: formData.type,
+    });
 
-    deleteModal.onClose();
+    editModal.onClose();
   }
 
   async function onDeleteSubmit(event: FormEvent<HTMLFormElement>) {
@@ -47,7 +76,7 @@ export const RenderCell = (data: Props) => {
     deleteModal.onClose();
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDeleteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setConfirm(event.target.value);
   };
 
@@ -101,14 +130,37 @@ export const RenderCell = (data: Props) => {
           </div>
           <div>
             <Tooltip content='Edit account' color='secondary'>
-              <Button isIconOnly variant='light' size='sm' onClick={editModal.onOpen}>
+              <Button isIconOnly variant='light' size='sm' onClick={handleEditOpen}>
                 <EditIcon size={20} fill='#979797' />
                 <Modal isOpen={editModal.isOpen} onOpenChange={editModal.onOpenChange} placement='top-center'>
                   <ModalContent>
                     {(onClose) => (
                       <form onSubmit={onEditSubmit}>
                         <ModalHeader className='flex flex-col gap-1'>Edit account &quot;{data.account.name}&quot;?</ModalHeader>
-                        <ModalBody>Edit</ModalBody>
+                        <ModalBody>
+                          <Input
+                            name='name'
+                            label='Name'
+                            value={formData.name}
+                            onChange={handleEditChange}
+                            variant='bordered'
+                            // isInvalid={error?.find((e) => e.path[0] === 'name')?.message !== undefined}
+                            // errorMessage={error?.find((e) => e.path[0] === 'name')?.message}
+                          />
+                          <Select
+                            name='type'
+                            label='Account Type'
+                            items={types}
+                            value={formData.type}
+                            onChange={handleEditChange}
+                            placeholder='Select an account type'
+                            // isInvalid={error?.find((e) => e.path[0] === 'type')?.message !== undefined}
+                            // errorMessage={error?.find((e) => e.path[0] === 'type')?.message}
+                            className='border border-gray-300 rounded-md p-2 mt-2'
+                          >
+                            {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
+                          </Select>
+                        </ModalBody>
                         <ModalFooter>
                           <Button color='default' variant='flat' onClick={onClose}>
                             Cancel
@@ -135,7 +187,12 @@ export const RenderCell = (data: Props) => {
                         <ModalHeader className='flex flex-col gap-1'>Delete account &quot;{data.account.name}&quot;?</ModalHeader>
                         <ModalBody>
                           To confirm deletion, enter &apos;delete&apos; below
-                          <Input type='text' name='confirm' onChange={(e) => handleChange(e)} placeholder='Enter "delete" to confirm' />
+                          <Input
+                            type='text'
+                            name='confirm'
+                            onChange={(e) => handleDeleteChange(e)}
+                            placeholder='Enter "delete" to confirm'
+                          />
                         </ModalBody>
                         <ModalFooter>
                           <Button color='default' variant='flat' onClick={onClose}>
