@@ -47,6 +47,9 @@ export class ApiStack extends Stack {
         fieldLogLevel: FieldLogLevel.ALL,
       },
       schema: SchemaFile.fromAsset(path.join(__dirname, '../graphql/schema.graphql')),
+      environmentVariables: {
+        TABLE_NAME: dataTable.tableName,
+      },
       authorizationConfig: {
         defaultAuthorization: {
           authorizationType: AuthorizationType.USER_POOL,
