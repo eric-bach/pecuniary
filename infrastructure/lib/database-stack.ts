@@ -18,7 +18,7 @@ export class DatabaseStack extends Stack {
      ***/
 
     const dataTable = new Table(this, 'Data', {
-      tableName: `${props.appName}-Data`,
+      tableName: `${props.appName}-data-${props.envName}`,
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: 'pk',
