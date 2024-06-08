@@ -1,5 +1,5 @@
 import { Context, util, runtime, DynamoDBBatchDeleteItemRequest } from '@aws-appsync/utils';
-import { Aggregates } from './types/appsync';
+import { Aggregates } from './api/codegen/appsync';
 
 export function request(ctx: Context<string>): DynamoDBBatchDeleteItemRequest {
   console.log('🔔 DeleteAccount Request: ', ctx);

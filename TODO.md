@@ -1,3 +1,5 @@
+#### Tasks
+
 X Add authentication middleware - https://www.youtube.com/watch?v=Y3o4or23V-0
 X Style Auth pages
 X Style verify email
@@ -12,13 +14,20 @@ X Clean up dashboard template
 X Call AppSync APIs
 X Fix github actions
 X Update packages
+X Deploy to AWS Amplify
+X Update to codegen 5
+X Build accounts page
 
-- Deploy to AWS
-- Update to codegen 5 and generate queries - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
-- Update package.json scripts
-  - package.json: Build deploy-frontend script
-  - package.json: Update deploy to include deploy-frontend
-- (optional) Switch to using Amplify UI Authenticator component - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
+- Add environment variables to AppSync JS Resolvers/DynamoDB table
+- Add DynamoDB seeding - https://blog.serverlessadvocate.com/auto-populate-dynamodb-table-with-data-06856d8ff5e9
+- Add loading screens
+- Add Powertools for Lambda logging
+- Build dashboard to display account summaries
+
+#### Tech Debt
+
+- Switch to Next-Auth using CredentialsProvider - https://github.com/dango0812/nextauth-cognito/tree/main
+- Switch to using Amplify UI Authenticator component - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
 
 ##### References
 

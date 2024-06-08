@@ -1,5 +1,5 @@
 import { AppSyncIdentityCognito, Context, DynamoDBQueryRequest, util } from '@aws-appsync/utils';
-import { Aggregates, QueryGetAggregateArgs } from './types/appsync';
+import { Aggregates, QueryGetAggregateArgs } from './api/codegen/appsync';
 
 export function request(ctx: Context<QueryGetAggregateArgs>): DynamoDBQueryRequest {
   console.log('🔔 GetAggregate Request: ', ctx);

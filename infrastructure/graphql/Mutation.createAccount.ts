@@ -1,5 +1,5 @@
 import { AppSyncIdentityCognito, Context, DynamoDBPutItemRequest, util } from '@aws-appsync/utils';
-import { Account, MutationCreateAccountArgs } from './types/appsync';
+import { Account, MutationCreateAccountArgs } from './api/codegen/appsync';
 
 export function request(ctx: Context<MutationCreateAccountArgs>): DynamoDBPutItemRequest {
   console.log('🔔 CreateAccount Request: ', ctx);
