@@ -21,10 +21,11 @@ X Update to codegen 5
   X Add actions to create account
   X Add actions to delete account
   X Add modal to confirm deletion of account
+  X Add validations to add and edit account forms
   - Add modal to edit account
-  - Add validations to add and edit account forms
 - Add loading screens
 - Add environment variables to AppSync JS Resolvers/DynamoDB table
+- Add DynamoDB seeding - https://blog.serverlessadvocate.com/auto-populate-dynamodb-table-with-data-06856d8ff5e9
 - Add Powertools for Lambda logging
 - Build dashboard to display account summaries
 

@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useState } from 'react';
 import {
   Button,
   Input,
@@ -12,9 +12,16 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import { createNewAccount } from './actions';
+import { ZodIssue } from 'zod';
 
 export const AddAccount = () => {
+  const [error, setError] = useState<ZodIssue[]>();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+  function handleClose() {
+    setError(undefined);
+    onClose();
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -25,8 +32,12 @@ export const AddAccount = () => {
 
     const result = await createNewAccount({ name, type });
 
-    if (result) {
-      onClose();
+    console.log(result);
+
+    if (result instanceof Array) {
+      setError(result);
+    } else if (result) {
+      handleClose();
     }
   }
 
@@ -46,19 +57,27 @@ export const AddAccount = () => {
             <form onSubmit={onSubmit}>
               <ModalHeader className='flex flex-col gap-1'>Add Account</ModalHeader>
               <ModalBody>
-                <Input name='name' label='Name' variant='bordered' />
+                <Input
+                  name='name'
+                  label='Name'
+                  variant='bordered'
+                  isInvalid={error?.find((e) => e.path[0] === 'name')?.message !== undefined}
+                  errorMessage={error?.find((e) => e.path[0] === 'name')?.message}
+                />
                 <Select
                   name='type'
                   items={types}
                   label='Account Type'
                   placeholder='Select an account type'
+                  isInvalid={error?.find((e) => e.path[0] === 'type')?.message !== undefined}
+                  errorMessage={error?.find((e) => e.path[0] === 'type')?.message}
                   className='border border-gray-300 rounded-md p-2 mt-2'
                 >
                   {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
                 </Select>
               </ModalBody>
               <ModalFooter>
-                <Button color='danger' variant='flat' onClick={onClose}>
+                <Button color='danger' variant='flat' onClick={handleClose}>
                   Close
                 </Button>
                 <Button type='submit' color='primary'>
