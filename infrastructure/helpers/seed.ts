@@ -1,20 +1,21 @@
-import { DynamoDBClient, PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
+import { ConditionalCheckFailedException, DynamoDBClient, PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import * as fs from 'fs';
 
+const STACK_NAME = 'pecuniary-data-dev';
+
 async function seed() {
   try {
     // Get DynamoDB table name
-    const tableName = await getTableName('pecuniary-dev');
-    console.log('✅ Seed table: ', tableName);
+    const tableName = await getTableName(STACK_NAME);
+    console.log(' ✅ Verify table exists:', tableName);
 
     // Read items to see from data/seeds.json
     const data = getSeedData('./data/seeds.json');
-    console.log('✅ Seed data: ', data);
+    console.log(` ✅ Parsed seed data: ${data.length} objects`);
 
-    console.log('\n🚀 Starting to seed table...');
-
+    console.log('\n🚀 Seeding table...\n');
     // Seed each item in table
     data.map(async (item: any) => {
       await seedItem(tableName, item);
@@ -27,14 +28,12 @@ async function seed() {
 
 async function seedItem(tableName: string, item: any) {
   item.sk = item.sk + new Date().toISOString();
-  item.createdAt = new Date().toISOString();
   item.updatedAt = new Date().toISOString();
 
   const putItemCommandInput: PutItemCommandInput = {
     TableName: tableName,
-    // TODO Fix this error
-    //@ts-ignore
     Item: marshall(item),
+    ConditionExpression: 'attribute_not_exists(pk)',
   };
 
   await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
@@ -53,7 +52,7 @@ function getSeedData(file: string) {
 }
 
 async function getTableName(stackName: string): Promise<string> {
-  var tableName: string = 'pecuniary-dev-Data';
+  var tableName: string = 'pecuniary-data-dev';
 
   const client = new CloudFormationClient({});
   const command = new DescribeStacksCommand({ StackName: stackName });
@@ -74,12 +73,16 @@ async function dynamoDbCommand(command: any) {
   try {
     var client = new DynamoDBClient({});
 
-    console.debug(`🔔 Seeding item: ${JSON.stringify(command)}`);
+    console.debug(` 🔔 Seeding item: ${JSON.stringify(command.input.Item)}`);
     result = await client.send(command);
 
-    console.log(`🔔 DynamoDB result:${JSON.stringify(result)}`);
+    console.log(` ✔️  DynamoDB result:${JSON.stringify(result.$metadata)}`);
   } catch (error) {
-    console.error(`🛑 Error with DynamoDB command:\n`, error);
+    if (error instanceof ConditionalCheckFailedException) {
+      console.warn(` ✔️  Item already exists, skipping`);
+    } else {
+      console.error(`🛑 Error with DynamoDB command:\n`, error);
+    }
   }
 
   return result;

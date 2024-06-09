@@ -2,8 +2,11 @@ import * as path from 'path';
 import { Stack, CfnOutput, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { PolicyStatement, Effect, Role, ServicePrincipal, PolicyDocument } from 'aws-cdk-lib/aws-iam';
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
+import { Alarm, Metric, ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
+import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 import {
   Code,
   GraphqlApi,
@@ -20,22 +23,73 @@ import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
-const dotenv = require('dotenv');
 import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
+const dotenv = require('dotenv');
 dotenv.config();
 
 export class ApiStack extends Stack {
   constructor(scope: Construct, id: string, props: PecuniaryApiStackProps) {
     super(scope, id, props);
 
-    // const REGION = Stack.of(this).region;
-
     const userPool = UserPool.fromUserPoolId(this, 'userPool', props.params.userPoolId);
     const dataTable = Table.fromTableArn(this, 'table', props.params.dataTableArn);
-    const eventHandlerQueue = Queue.fromQueueArn(this, 'eventHandlerQueue', props.params.eventHandlerQueueArn);
-    const eventBus = EventBus.fromEventBusArn(this, 'eventBus', props.params.eventBusArn);
+
+    /***
+     *** AWS SQS - Dead letter Queues
+     ***/
+
+    // Event handler DLQ
+    const eventHandlerQueue = new Queue(this, 'EventHandlerQueue', {
+      queueName: `${props.appName}-eventHandler-DeadLetterQueue-${props.envName}`,
+    });
+
+    /***
+     *** AWS SNS - Topics
+     ***/
+
+    const eventHandlerTopic = new Topic(this, 'EventHandlerTopic', {
+      topicName: `${props.appName}-eventHandler-Topic-${props.envName}`,
+      displayName: 'Event Handler Topic',
+    });
+    if (props.params.dlqNotifications) {
+      eventHandlerTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
+    }
+
+    /***
+     *** AWS CloudWatch - Alarms
+     ***/
+
+    // Generic metric
+    const metric = new Metric({
+      namespace: 'AWS/SQS',
+      metricName: 'NumberOfMessagesSent',
+    });
+    // TODO Doesn't seem to work
+    metric.with({
+      statistic: 'Sum',
+      period: Duration.seconds(300),
+    });
+
+    const eventHandlerAlarm = new Alarm(this, 'EventHandlerAlarm', {
+      alarmName: `${props.appName}-eventHandler-Alarm-${props.envName}`,
+      alarmDescription: 'One or more failed EventHandler messages',
+      metric: metric,
+      datapointsToAlarm: 1,
+      evaluationPeriods: 2,
+      threshold: 1,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+    });
+    eventHandlerAlarm.addAlarmAction(new SnsAction(eventHandlerTopic));
+
+    /***
+     *** AWS EventBridge - Event Bus
+     ***/
+
+    // EventBus
+    const eventBus = new EventBus(this, 'PecuniaryEventBus', {
+      eventBusName: `${props.appName}-bus-${props.envName}`,
+    });
 
     /***
      *** AWS AppSync
@@ -425,6 +479,15 @@ export class ApiStack extends Stack {
     /***
      *** Outputs
      ***/
+
+    // Dead Letter Queues
+    new CfnOutput(this, 'EventHandlerQueueArn', {
+      value: eventHandlerQueue.queueArn,
+      exportName: `${props.appName}-${props.envName}-eventHandlerQueueArn`,
+    });
+
+    // SNS Topics
+    new CfnOutput(this, 'EventHandlerTopicArn', { value: eventHandlerTopic.topicArn });
 
     // AppSync API
     new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
