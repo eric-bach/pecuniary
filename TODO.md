@@ -19,13 +19,14 @@ X Update to codegen 5
 X Build accounts page
 X Add environment variables to AppSync JS Resolvers/DynamoDB table - https://docs.aws.amazon.com/appsync/latest/devguide/environment-variables.html
 X Fix DynamoDB seeding
+X Fix add/edit acocunt validation bugs
 
-- Fix bugs with adding account after validation error
-- Fix bugs with edit account not prepopulating type
-- Fix bugs no validation to edit account
+- Investigate frontend dashboard error in prod
 - Add loading screens
-- Add Powertools for Lambda logging
+- Add Powertools for Lambda logging to functions
+- Add more seed data tied to user
 - Build dashboard to display account summaries
+- Migrate rest of backend functions over
 
 #### Tech Debt
 

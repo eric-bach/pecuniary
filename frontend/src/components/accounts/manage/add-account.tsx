@@ -18,10 +18,21 @@ export const AddAccount = () => {
   const [error, setError] = useState<ZodIssue[]>();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
+  const [formData, setFormData] = useState({ name: '', type: '' });
+
   function handleClose() {
     setError(undefined);
     onClose();
   }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
+    setError(undefined);
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -61,6 +72,9 @@ export const AddAccount = () => {
                   name='name'
                   label='Name'
                   variant='bordered'
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder='Enter account name'
                   isInvalid={error?.find((e) => e.path[0] === 'name')?.message !== undefined}
                   errorMessage={error?.find((e) => e.path[0] === 'name')?.message}
                 />
@@ -68,10 +82,13 @@ export const AddAccount = () => {
                   name='type'
                   items={types}
                   label='Account Type'
+                  value={formData.type}
+                  onChange={handleChange}
                   placeholder='Select an account type'
                   isInvalid={error?.find((e) => e.path[0] === 'type')?.message !== undefined}
                   errorMessage={error?.find((e) => e.path[0] === 'type')?.message}
-                  className='border border-gray-300 rounded-md p-2 mt-2'
+                  variant='bordered'
+                  className='border-gray-300 rounded-md mt-2'
                 >
                   {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
                 </Select>

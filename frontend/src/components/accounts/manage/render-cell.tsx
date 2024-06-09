@@ -19,6 +19,7 @@ import { EditIcon } from '@/components/icons/table/edit-icon';
 import { EyeIcon } from '@/components/icons/table/eye-icon';
 import { Account } from '@/../../../infrastructure/graphql/api/codegen/appsync';
 import { deleteExistingAccount, updateExistingAccount } from './actions';
+import { ZodIssue } from 'zod';
 
 interface Props {
   account: Account;
@@ -32,6 +33,7 @@ const types = [
 
 export const RenderCell = (data: Props) => {
   const [confirm, setConfirm] = useState<string | undefined>();
+  const [error, setError] = useState<ZodIssue[]>();
   const deleteModal = useDisclosure();
   const editModal = useDisclosure();
 
@@ -47,8 +49,14 @@ export const RenderCell = (data: Props) => {
     editModal.onOpen();
   }
 
+  function handleEditClose() {
+    setError(undefined);
+    editModal.onClose();
+  }
+
   const handleEditChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
+    setError(undefined);
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -65,7 +73,11 @@ export const RenderCell = (data: Props) => {
       type: formData.type,
     });
 
-    editModal.onClose();
+    if (result instanceof Array) {
+      setError(result);
+    } else if (result) {
+      handleEditClose();
+    }
   }
 
   async function onDeleteSubmit(event: FormEvent<HTMLFormElement>) {
@@ -144,25 +156,27 @@ export const RenderCell = (data: Props) => {
                             value={formData.name}
                             onChange={handleEditChange}
                             variant='bordered'
-                            // isInvalid={error?.find((e) => e.path[0] === 'name')?.message !== undefined}
-                            // errorMessage={error?.find((e) => e.path[0] === 'name')?.message}
+                            isInvalid={error?.find((e) => e.path[0] === 'name')?.message !== undefined}
+                            errorMessage={error?.find((e) => e.path[0] === 'name')?.message}
                           />
                           <Select
                             name='type'
                             label='Account Type'
                             items={types}
                             value={formData.type}
+                            defaultSelectedKeys={[formData.type]}
                             onChange={handleEditChange}
                             placeholder='Select an account type'
-                            // isInvalid={error?.find((e) => e.path[0] === 'type')?.message !== undefined}
-                            // errorMessage={error?.find((e) => e.path[0] === 'type')?.message}
-                            className='border border-gray-300 rounded-md p-2 mt-2'
+                            isInvalid={error?.find((e) => e.path[0] === 'type')?.message !== undefined}
+                            errorMessage={error?.find((e) => e.path[0] === 'type')?.message}
+                            variant='bordered'
+                            className='border-gray-300 rounded-md mt-2'
                           >
                             {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
                           </Select>
                         </ModalBody>
                         <ModalFooter>
-                          <Button color='default' variant='flat' onClick={onClose}>
+                          <Button color='default' variant='flat' onClick={handleEditClose}>
                             Cancel
                           </Button>
                           <Button type='submit' color='primary'>
