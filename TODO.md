@@ -23,6 +23,7 @@ X Fix DynamoDB seeding
 - Fix bugs with adding account after validation error
 - Fix bugs with edit account not prepopulating type
 - Fix bugs no validation to edit account
+- Fix bug with prod frontend dashboard
 - Add loading screens
 - Add Powertools for Lambda logging
 - Build dashboard to display account summaries

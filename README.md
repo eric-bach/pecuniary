@@ -1,6 +1,6 @@
 <h1 align="center">
   <p align="center">
-    <img src="diagrams/icon.png" height="28" width="28" alt="icon">
+    <img src="references/diagrams/icon.png" height="28" width="28" alt="icon">
     Pecuniary
   </p>
 </h1>
