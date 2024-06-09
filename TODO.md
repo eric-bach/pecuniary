@@ -18,8 +18,8 @@ X Deploy to AWS Amplify
 X Update to codegen 5
 X Build accounts page
 X Add environment variables to AppSync JS Resolvers/DynamoDB table - https://docs.aws.amazon.com/appsync/latest/devguide/environment-variables.html
+X Fix DynamoDB seeding
 
-- Add DynamoDB seeding - https://blog.serverlessadvocate.com/auto-populate-dynamodb-table-with-data-06856d8ff5e9
 - Fix bugs with adding account after validation error
 - Fix bugs with edit account not prepopulating type
 - Fix bugs no validation to edit account

@@ -1,9 +1,9 @@
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import * as cdk from 'aws-cdk-lib';
-import { AuthStack } from '../lib/auth-stack';
 import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
+import { DataStack } from '../lib/data-stack';
 
-describe('Auth Stack contains expected resources', () => {
+describe('Data Stack contains expected resources', () => {
   const app = new cdk.App();
 
   const props: PecuniaryBaseStackProps = {
@@ -15,7 +15,7 @@ describe('Auth Stack contains expected resources', () => {
     },
   };
 
-  const stack = new AuthStack(app, 'PecuniaryTestStack', props);
+  const stack = new DataStack(app, 'PecuniaryTestStack', props);
 
   const template = Template.fromStack(stack);
 
@@ -31,6 +31,16 @@ describe('Auth Stack contains expected resources', () => {
         FunctionName: `pecuniary-${props.envName}-CognitoPostConfirmationTrigger`,
         Handler: 'index.handler',
         Runtime: 'nodejs18.x',
+      })
+    );
+  });
+
+  test('should have DynamoDB Table', () => {
+    template.hasResourceProperties(
+      'AWS::DynamoDB::Table',
+      Match.objectLike({
+        TableName: `pecuniary-data-dev`,
+        BillingMode: 'PAY_PER_REQUEST',
       })
     );
   });
