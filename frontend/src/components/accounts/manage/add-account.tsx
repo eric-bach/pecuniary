@@ -61,6 +61,7 @@ export const AddAccount = () => {
                   name='name'
                   label='Name'
                   variant='bordered'
+                  placeholder='Enter account name'
                   isInvalid={error?.find((e) => e.path[0] === 'name')?.message !== undefined}
                   errorMessage={error?.find((e) => e.path[0] === 'name')?.message}
                 />
@@ -71,7 +72,8 @@ export const AddAccount = () => {
                   placeholder='Select an account type'
                   isInvalid={error?.find((e) => e.path[0] === 'type')?.message !== undefined}
                   errorMessage={error?.find((e) => e.path[0] === 'type')?.message}
-                  className='border border-gray-300 rounded-md p-2 mt-2'
+                  variant='bordered'
+                  className='border-gray-300 rounded-md mt-2'
                 >
                   {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
                 </Select>
