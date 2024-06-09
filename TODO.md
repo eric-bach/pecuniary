@@ -21,7 +21,6 @@ X Add environment variables to AppSync JS Resolvers/DynamoDB table - https://doc
 X Fix DynamoDB seeding
 X Fix add/edit acocunt validation bugs
 
-- Investigate frontend dashboard error in prod
 - Add loading screens
 - Add Powertools for Lambda logging to functions
 - Add more seed data tied to user
