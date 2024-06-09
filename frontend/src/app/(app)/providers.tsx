@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { ThemeProviderProps } from 'next-themes/dist/types';
 import { Layout } from '@/components/layout/layout';
+import LoadingPage from '../loading';
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -9,5 +10,9 @@ export interface ProvidersProps {
 }
 
 export function Providers({ children, themeProps }: ProvidersProps) {
-  return <Layout>{children}</Layout>;
+  return (
+    <Layout>
+      <React.Suspense fallback={<LoadingPage />}>{children}</React.Suspense>
+    </Layout>
+  );
 }
