@@ -82,7 +82,7 @@ export const AddAccount = () => {
                   name='type'
                   items={types}
                   label='Account Type'
-                  value={FormData.type}
+                  value={formData.type}
                   onChange={handleChange}
                   placeholder='Select an account type'
                   isInvalid={error?.find((e) => e.path[0] === 'type')?.message !== undefined}
