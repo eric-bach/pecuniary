@@ -20,8 +20,8 @@ X Build accounts page
 X Add environment variables to AppSync JS Resolvers/DynamoDB table - https://docs.aws.amazon.com/appsync/latest/devguide/environment-variables.html
 X Fix DynamoDB seeding
 X Fix add/edit acocunt validation bugs
+X Add loading screens
 
-- Add loading screens
 - Add Powertools for Lambda logging to functions
 - Add more seed data tied to user
 - Build dashboard to display account summaries
