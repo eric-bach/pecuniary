@@ -10,7 +10,7 @@ export default function Hero() {
           </h1>
           <p className='mb-8 leading-relaxed'>
             Pecuniary makes it simple for you to track your accounts, investments, and spending all in one place. Get started today and take
-            control of your finances.
+            control of your finances..
           </p>
           <div className='flex justify-center'>
             <Link
