@@ -5,7 +5,7 @@ import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
 import { UpdateTransactionInput } from '../types/Transaction';
 
-async function updateTransaction(input: UpdateTransactionInput) {
+async function updateTransaction(userId: string, input: UpdateTransactionInput) {
   console.debug(`🕧 Update Transaction initialized`);
 
   const updateItemCommandInput: UpdateItemCommandInput = {
@@ -24,11 +24,12 @@ async function updateTransaction(input: UpdateTransactionInput) {
       ':price': input.price,
       ':commission': input.commission,
       ':updatedAt': new Date().toISOString(),
+      ':userId': { S: userId },
     }),
     ExpressionAttributeNames: {
       '#type': 'type',
     },
-    ReturnValues: 'ALL_NEW',
+    ConditionExpression: 'userId = :userId',
   };
   var updateResult = await dynamoDbCommand(new UpdateItemCommand(updateItemCommandInput));
 

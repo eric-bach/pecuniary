@@ -4,11 +4,11 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 const { getQuoteSummary } = require('./yahooFinance');
 
-import { CreateTransactionInput, TransactionReadModel } from '../types/Transaction';
+import { TransactionReadModel, CreateTransactionInputV2 } from '../types/Transaction';
 import { PositionReadModel } from '../types/Position';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
-exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>) => {
+exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInputV2>) => {
   const detail = parseEvent(event);
 
   // Get all transactions
@@ -22,7 +22,7 @@ exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>
 };
 
 // Returns all transactions for the symbol sorted in ascending order
-async function getTransactions(detail: CreateTransactionInput): Promise<TransactionReadModel[]> {
+async function getTransactions(detail: CreateTransactionInputV2): Promise<TransactionReadModel[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'aggregateId-gsi',
@@ -50,7 +50,7 @@ async function getTransactions(detail: CreateTransactionInput): Promise<Transact
   return [] as TransactionReadModel[];
 }
 
-async function getPosition(detail: CreateTransactionInput): Promise<PositionReadModel> {
+async function getPosition(detail: CreateTransactionInputV2): Promise<PositionReadModel> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'aggregateId-lsi',
@@ -107,7 +107,7 @@ function calculateAdjustedCostBase(transactions: TransactionReadModel[]) {
   return { shares, acb, bookValue };
 }
 
-async function savePosition(detail: CreateTransactionInput, shares: number, acb: number, bookValue: number) {
+async function savePosition(detail: CreateTransactionInputV2, shares: number, acb: number, bookValue: number) {
   // Get current position (if exists)
   const position = await getPosition(detail);
 
@@ -149,7 +149,7 @@ async function savePosition(detail: CreateTransactionInput, shares: number, acb:
   return {};
 }
 
-function parseEvent(event: EventBridgeEvent<string, CreateTransactionInput>): CreateTransactionInput {
+function parseEvent(event: EventBridgeEvent<string, CreateTransactionInputV2>): CreateTransactionInputV2 {
   const eventString: string = JSON.stringify(event);
 
   console.debug(`🕧 Received event: ${eventString}`);

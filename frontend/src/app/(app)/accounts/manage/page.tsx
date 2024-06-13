@@ -8,7 +8,7 @@ async function fetchAccounts(): Promise<[Account]> {
     query: getAccounts,
   });
 
-  return data.getAccounts;
+  return data.getAccounts.items as [Account];
 }
 
 export default async function Accounts() {

@@ -22,10 +22,18 @@ X Fix DynamoDB seeding
 X Fix add/edit acocunt validation bugs
 X Add loading screens
 
-- Add Powertools for Lambda logging to functions
+- Migrate rest of backend functions over
+
+  X getPositions
+
+  - Add updatePositions
+  - Update getAccounts and getTransactions to support limit
+  - Update Query.getAccounts to get positions as well
+  - Write actions may need to be regular Lambda integrations as they will be over 32KB when using EventBridge client
+  - Read actions can remain as JS Resolvers
+
 - Add more seed data tied to user
 - Build dashboard to display account summaries
-- Migrate rest of backend functions over
 
 #### Tech Debt
 

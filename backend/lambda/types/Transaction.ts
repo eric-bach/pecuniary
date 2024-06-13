@@ -1,3 +1,5 @@
+import { CreateTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+
 export type TransactionReadModel = {
   userId: string;
   sk: string;
@@ -13,7 +15,7 @@ export type TransactionReadModel = {
   commission: number;
 };
 
-export type CreateTransactionInput = {
+export type CreateTransactionInputV2 = {
   userId: string;
   aggregateId: string;
   type: string;
