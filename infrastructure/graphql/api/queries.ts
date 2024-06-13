@@ -1,4 +1,13 @@
-import { GetAccountQuery, GetAccountQueryVariables, GetAccountsQuery, GetAccountsQueryVariables, Query } from './types';
+import { QueryGetAccountsArgs } from './codegen/appsync';
+import {
+  GetAccountQuery,
+  GetAccountQueryVariables,
+  GetAccountsQuery,
+  GetAccountsQueryVariables,
+  GetTransactionsQuery,
+  GetTransactionsQueryVariables,
+  Query,
+} from './types';
 
 export const getAccount = `query GetAccount($accountId: String!) {
   getAccount(accountId: $accountId) { 
@@ -11,13 +20,35 @@ export const getAccount = `query GetAccount($accountId: String!) {
   }
 }` as Query<GetAccountQueryVariables, GetAccountQuery>;
 
-export const getAccounts = `query GetAccounts {
-  getAccounts { 
-    accountId
-    name
-    entity
-    type
-    createdAt
-    updatedAt
+export const getAccounts = `query GetAccounts($lastEvaluatedKey: String) {
+  getAccounts(lastEvaluatedKey: $lastEvaluatedKey) { 
+    items {
+      accountId
+      name
+      entity
+      type
+      createdAt
+      updatedAt
+    }
+    nextToken
   }
-}` as Query<GetAccountsQueryVariables, GetAccountsQuery>;
+}` as Query<QueryGetAccountsArgs, GetAccountsQuery>;
+
+export const getTransactions = `query GetTransactions($accountId: String!, $lastEvaluatedKey: String) {
+  getTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
+    items {
+      pk
+      accountId
+      entity
+      type
+      transactionDate
+      symbol
+      shares
+      price 
+      commission
+      createdAt
+      updatedAt
+    }
+    nextToken
+  }
+}` as Query<GetTransactionsQueryVariables, GetTransactionsQuery>;
