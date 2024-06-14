@@ -299,15 +299,8 @@ export class ApiStack extends Stack {
     transactionsReolverFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
-        actions: ['dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
+        actions: ['dynamodb:Query', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
         resources: [dataTable.tableArn],
-      })
-    );
-    transactionsReolverFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
       })
     );
     transactionsReolverFunction.addToRolePolicy(

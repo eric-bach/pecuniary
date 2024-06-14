@@ -47,6 +47,35 @@ query GetTransactions {
     }
   }
 }
+
+mutation CreateAccount {
+  createAccount(input: {
+    name: "Test"
+    type: "TFSA"
+  })
+  {
+    pk
+    createdAt
+    name
+  }
+}
+
+mutation CreateTransaction {
+  createTransaction(createTransactionInput: {
+    accountId: "c9adaf33-ce44-46c5-8b56-78b9a606aac9"
+    transactionDate: "2024-06-14"
+    type: "BUY"
+    symbol: "NVDA"
+    shares: 10
+    price: 122.39
+    commission: 4.50
+  })
+  {
+    pk
+    createdAt
+    entity
+  }
+}
 ```
 
 # Version 3

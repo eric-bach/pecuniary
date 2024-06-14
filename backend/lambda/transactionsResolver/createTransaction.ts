@@ -26,10 +26,6 @@ async function createTransaction(userId: string, input: CreateTransactionInput) 
   const putItemCommandInput: PutItemCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     Item: marshall(item),
-    ConditionExpression: 'userId = :userId',
-    ExpressionAttributeValues: {
-      ':userId': { S: userId },
-    },
   };
   let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 

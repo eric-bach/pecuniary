@@ -5,7 +5,7 @@ async function publishEventAsync(detailType: string, input: any) {
     Entries: [
       {
         Source: 'custom.pecuniary',
-        EventBusName: process.env.EVENTBUS_PECUNIARY_NAME,
+        EventBusName: process.env.EVENTBUS_NAME,
         DetailType: detailType,
         Detail: JSON.stringify(input),
       },

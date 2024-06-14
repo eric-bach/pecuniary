@@ -24,7 +24,9 @@ X Add loading screens
 
 - Migrate rest of backend functions over
   Verify all APIs work (mutations)
+- Sort and categorize Accounts in UI
 
+- Add transactions to Account
 - Add more seed data tied to user
 - Build dashboard to display account summaries
 

@@ -125,7 +125,7 @@ export type MutationCreateAccountArgs = {
 
 
 export type MutationCreateTransactionArgs = {
-  input: CreateTransactionInput;
+  createTransactionInput: CreateTransactionInput;
 };
 
 
@@ -135,7 +135,7 @@ export type MutationDeleteAggregateArgs = {
 
 
 export type MutationDeleteTransactionArgs = {
-  input: DeleteTransactionInput;
+  deleteTransactionInput: DeleteTransactionInput;
 };
 
 
@@ -145,7 +145,7 @@ export type MutationUpdateAccountArgs = {
 
 
 export type MutationUpdateTransactionArgs = {
-  input: UpdateTransactionInput;
+  updateTransactionInput: UpdateTransactionInput;
 };
 
 export type Position = {
