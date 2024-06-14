@@ -16,6 +16,14 @@ interface Props2 {
   createdAt: string;
 }
 
+export const AccountTypes = [
+  { label: 'TFSA', value: 'TFSA' },
+  { label: 'RRSP', value: 'RRSP' },
+  { label: 'Non Registered', value: 'Non Registered' },
+  { label: 'LIRA', value: 'LIRA' },
+  { label: 'Crypto', value: 'Crypto' },
+];
+
 const schema = z.object({
   name: z.string().min(1, 'Name cannot be blank'),
   type: z.string().refine((value: string) => value === 'TFSA' || value === 'RRSP', 'Type must be either TFSA or RRSP'),

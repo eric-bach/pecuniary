@@ -22,10 +22,16 @@ X Fix DynamoDB seeding
 X Fix add/edit acocunt validation bugs
 X Add loading screens
 
-- Add Powertools for Lambda logging to functions
-- Add more seed data tied to user
-- Build dashboard to display account summaries
 - Migrate rest of backend functions over
+
+- Add more seed data tied to user
+  - Build script to generate transaction data from Quicken export
+    - Export Quicken
+    - Put into CSV (manually)
+    - Write script to parse CSV
+    - Maintain CSV
+- Build lambda process to re-generate positions and point-in-time networth for an account
+- Build dashboard to display account summaries
 
 #### Tech Debt
 
