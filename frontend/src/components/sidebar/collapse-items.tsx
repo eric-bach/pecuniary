@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 import { ChevronUpIcon } from '../icons/sidebar/chevron-up-icon';
 import { Accordion, AccordionItem } from '@nextui-org/react';
