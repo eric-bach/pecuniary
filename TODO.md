@@ -21,12 +21,11 @@ X Add environment variables to AppSync JS Resolvers/DynamoDB table - https://doc
 X Fix DynamoDB seeding
 X Fix add/edit acocunt validation bugs
 X Add loading screens
+X Migrate rest of backend functions over
 
-- Migrate rest of backend functions over
-  Verify all APIs work (mutations)
 - Sort and categorize Accounts in UI
-
-- Add transactions to Account
+- Build ability to add transactions to an Account
+- Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
 - Build dashboard to display account summaries
 
