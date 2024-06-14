@@ -326,18 +326,14 @@ export class ApiStack extends Stack {
       typeName: 'Mutation',
       fieldName: 'createTransaction',
     });
-    // transactionsResolverDataSource.createResolver('updateTransactionResolver', {
-    //   typeName: 'Mutation',
-    //   fieldName: 'updateTransaction',
-    // });
-    // transactionsResolverDataSource.createResolver('deleteTransactionResolver', {
-    //   typeName: 'Mutation',
-    //   fieldName: 'deleteTransaction',
-    // });
-    // transactionsResolverDataSource.createResolver('getTransactionResolver', {
-    //   typeName: 'Query',
-    //   fieldName: 'getTransactions',
-    // });
+    transactionsResolverDataSource.createResolver('updateTransactionResolver', {
+      typeName: 'Mutation',
+      fieldName: 'updateTransaction',
+    });
+    transactionsResolverDataSource.createResolver('deleteTransactionResolver', {
+      typeName: 'Mutation',
+      fieldName: 'deleteTransaction',
+    });
 
     /***
      *** AWS Lambda - Event Handlers
@@ -428,19 +424,16 @@ export class ApiStack extends Stack {
 
     // EventBridge
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
-    // new CfnOutput(this, 'TransactionSavedEventRuleArn', {
-    //   value: transactionSavedEventRule.ruleArn,
-    // });
+    new CfnOutput(this, 'TransactionSavedEventRuleArn', {
+      value: transactionSavedEventRule.ruleArn,
+    });
 
-    // // Lambda functions
-    // new CfnOutput(this, 'AccountResolverFunctionArn', {
-    //   value: accountsResolverFunction.functionArn,
-    // });
-    // new CfnOutput(this, 'TransactionsResolverFunctionArn', {
-    //   value: transactionsReolverFunction.functionArn,
-    // });
-    // new CfnOutput(this, 'UpdatePositionsFunctionArn', {
-    //   value: updatePositionsFunction.functionArn,
-    // });
+    // Lambda functions
+    new CfnOutput(this, 'TransactionsResolverFunctionArn', {
+      value: transactionsReolverFunction.functionArn,
+    });
+    new CfnOutput(this, 'UpdatePositionsFunctionArn', {
+      value: updatePositionsFunction.functionArn,
+    });
   }
 }

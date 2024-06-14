@@ -25,8 +25,8 @@ X Add loading screens
 - Migrate rest of backend functions over
 
   X getPositions
+  X Add updatePositions
 
-  - Add updatePositions
   - Update getAccounts and getTransactions to support limit
   - Update Query.getAccounts to get positions as well
   - Write actions may need to be regular Lambda integrations as they will be over 32KB when using EventBridge client

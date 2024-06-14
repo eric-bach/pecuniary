@@ -35,7 +35,7 @@ async function createTransaction(userId: string, input: CreateTransactionInput) 
 
   if (result.$metadata.httpStatusCode === 200) {
     // Publish event to update positions
-    await publishEventAsync('TransactionSavedEvent', input);
+    await publishEventAsync('TransactionSavedEvent', { ...input, userId: userId });
 
     console.log(`✅ Saved Transaction: ${JSON.stringify({ result: result, item: item })}`);
     return item;

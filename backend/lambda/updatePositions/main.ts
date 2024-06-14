@@ -4,9 +4,14 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 const { getQuoteSummary } = require('./yahooFinance');
 
-import { TransactionReadModel, CreateTransactionInputV2 } from '../types/Transaction';
+import { TransactionReadModel } from '../types/Transaction';
 import { PositionReadModel } from '../types/Position';
+import { CreateTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
+
+type CreateTransactionInputV2 = {
+  userId: string;
+} & CreateTransactionInput;
 
 exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInputV2>) => {
   const detail = parseEvent(event);
@@ -25,12 +30,12 @@ exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInputV
 async function getTransactions(detail: CreateTransactionInputV2): Promise<TransactionReadModel[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'aggregateId-gsi',
+    IndexName: 'accountId-gsi',
     ScanIndexForward: true,
-    KeyConditionExpression: 'aggregateId = :v1',
+    KeyConditionExpression: 'accountId = :v1',
     FilterExpression: 'userId = :v2 AND entity = :v3 AND symbol = :v4',
     ExpressionAttributeValues: {
-      ':v1': { S: detail.aggregateId },
+      ':v1': { S: detail.accountId },
       ':v2': { S: detail.userId },
       ':v3': { S: 'transaction' },
       ':v4': { S: detail.symbol },
@@ -53,12 +58,12 @@ async function getTransactions(detail: CreateTransactionInputV2): Promise<Transa
 async function getPosition(detail: CreateTransactionInputV2): Promise<PositionReadModel> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'aggregateId-lsi',
-    KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
-    FilterExpression: 'entity = :v3 AND symbol = :v4',
+    IndexName: 'accountId-gsi',
+    KeyConditionExpression: 'asccountId = :v1',
+    FilterExpression: 'userId = :v1 AND entity = :v3 AND symbol = :v4',
     ExpressionAttributeValues: {
-      ':v1': { S: detail.userId },
-      ':v2': { S: detail.aggregateId },
+      ':v1': { S: detail.accountId },
+      ':v2': { S: detail.userId },
       ':v3': { S: 'position' },
       ':v4': { S: detail.symbol },
     },
@@ -122,7 +127,7 @@ async function savePosition(detail: CreateTransactionInputV2, shares: number, ac
     sk: position ? position.sk : 'ACCPOS#' + new Date().toISOString(),
     createdAt: position ? position.createdAt : new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    aggregateId: detail.aggregateId,
+    accountId: detail.accountId,
     entity: 'position',
     symbol: quote.symbol,
     description: quote.description,
