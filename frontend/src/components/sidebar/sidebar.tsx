@@ -20,6 +20,7 @@ import { useSidebarContext } from '../layout/layout-context';
 import { ChangeLogIcon } from '../icons/sidebar/changelog-icon';
 import { usePathname } from 'next/navigation';
 import { fetchAccounts } from './actions';
+import { CreditCardIcon } from '../icons/sidebar/credit-card-icon';
 
 export const SidebarWrapper = () => {
   const pathname = usePathname();
@@ -64,9 +65,9 @@ export const SidebarWrapper = () => {
                 <SidebarItem title='Banking' icon={<AccountsIcon />} />
               )}
               {creditCards.length > 0 ? (
-                <CollapseItems icon={<PaymentsIcon />} items={creditCards} title='Credit Cards' />
+                <CollapseItems icon={<CreditCardIcon />} items={creditCards} title='Credit Cards' />
               ) : (
-                <SidebarItem title='Credit Cards' icon={<PaymentsIcon />} />
+                <SidebarItem title='Credit Cards' icon={<CreditCardIcon />} />
               )}
               {investments.length > 0 ? (
                 <CollapseItems icon={<PaymentsIcon />} items={investments} title='Investments' />

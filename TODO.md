@@ -28,6 +28,8 @@ X Migrate rest of backend functions over
   X Group and display accounts by category
   Add link to each accounts page
   Add pagination to accounts list
+
+- User HeroIcons SVG instead of Lucide
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
