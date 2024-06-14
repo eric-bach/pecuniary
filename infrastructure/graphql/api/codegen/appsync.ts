@@ -193,12 +193,13 @@ export type QueryGetAggregateArgs = {
 
 
 export type QueryGetPositionsArgs = {
-  aggregateId: Scalars['String']['input'];
+  accountId: Scalars['String']['input'];
+  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryGetTransactionsArgs = {
-  aggregateId: Scalars['String']['input'];
+  accountId: Scalars['String']['input'];
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
 

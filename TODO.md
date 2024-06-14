@@ -23,14 +23,7 @@ X Fix add/edit acocunt validation bugs
 X Add loading screens
 
 - Migrate rest of backend functions over
-
-  X getPositions
-  X Add updatePositions
-
-  - Update getAccounts and getTransactions to support limit
-  - Update Query.getAccounts to get positions as well
-  - Write actions may need to be regular Lambda integrations as they will be over 32KB when using EventBridge client
-  - Read actions can remain as JS Resolvers
+  Verify all APIs work (mutations)
 
 - Add more seed data tied to user
 - Build dashboard to display account summaries

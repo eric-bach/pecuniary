@@ -1,3 +1,54 @@
+# Version 4
+
+```
+query GetAccount {
+  getAccount(accountId: "82cc37b7-ef61-4f4b-8670-d7bffbc35c09") {
+    pk
+    createdAt
+  }
+}
+
+query GetAccounts {
+  getAccounts {
+    items {
+      pk
+      createdAt
+      name
+    }
+    nextToken
+  }
+}
+
+query GetAggregate {
+  getAggregate(accountId: "878a7ab5-8d34-46b3-8c31-5c80509a691b") {
+    items {
+      pk
+      createdAt
+      name
+    }
+  }
+}
+
+query GetPositions {
+  getPositions(accountId: "878a7ab5-8d34-46b3-8c31-5c80509a691b") {
+    items {
+      pk
+      createdAt
+    }
+  }
+}
+
+query GetTransactions {
+  getTransactions(accountId: "878a7ab5-8d34-46b3-8c31-5c80509a691b") {
+    items {
+      pk
+      createdAt
+      symbol
+    }
+  }
+}
+```
+
 # Version 3
 
 ```

@@ -16,9 +16,9 @@ export function request(ctx: Context): DynamoDBQueryRequest {
     },
     nextToken: ctx.arguments.lastEvaluatedKey,
     filter: {
-      expression: 'aggregateId = :aggregateId AND userId = :userId',
+      expression: 'accountId = :accountId AND userId = :userId',
       expressionValues: {
-        ':aggregateId': util.dynamodb.toDynamoDB(ctx.args.aggregateId),
+        ':accountId': util.dynamodb.toDynamoDB(ctx.args.accountId),
         ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       },
     },

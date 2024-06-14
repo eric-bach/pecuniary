@@ -139,9 +139,8 @@ type Query {
   getAccounts(lastEvaluatedKey: String): GetAccountsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAggregate(accountId: String!, type: String): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
 
-  getTransactions(aggregateId: String!, lastEvaluatedKey: String): GetTransactionsResponse
-    @aws_cognito_user_pools(cognito_groups: ["Users"])
-  getPositions(aggregateId: String!): GetPositionsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getTransactions(accountId: String!, lastEvaluatedKey: String): GetTransactionsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getPositions(accountId: String!, lastEvaluatedKey: String): GetPositionsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {

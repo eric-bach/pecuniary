@@ -6,18 +6,19 @@ export function request(ctx: Context): DynamoDBQueryRequest {
 
   return {
     operation: 'Query',
-    index: 'entity-gsi',
+    index: 'userId-gsi',
     query: {
-      expression: 'entity = :entity',
-      expressionValues: {
-        ':entity': util.dynamodb.toDynamoDB('account'),
-      },
-    },
-    nextToken: ctx.arguments.lastEvaluatedKey,
-    filter: {
       expression: 'userId = :userId',
       expressionValues: {
         ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
+      },
+    },
+    limit: 10,
+    nextToken: ctx.arguments.lastEvaluatedKey,
+    filter: {
+      expression: 'entity = :entity',
+      expressionValues: {
+        ':entity': util.dynamodb.toDynamoDB('account'),
       },
     },
   };

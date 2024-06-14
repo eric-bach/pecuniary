@@ -13,8 +13,8 @@ export function request(ctx: Context): DynamoDBQueryRequest {
         ':accountId': util.dynamodb.toDynamoDB(ctx.args.accountId),
       },
     },
-    nextToken: ctx.args.lastEvaluatedKey,
     limit: 10,
+    nextToken: ctx.args.lastEvaluatedKey,
     filter: {
       expression: 'userId = :userId AND entity = :entity',
       expressionValues: {
