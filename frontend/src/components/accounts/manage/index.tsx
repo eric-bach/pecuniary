@@ -17,6 +17,7 @@ export const ManageAccounts: React.FC<ManageAccountsProps> = ({ accounts }) => {
   const tableData: TableData = {
     columns: [
       { name: 'Name', uid: 'name' },
+      { name: 'Category', uid: 'category' },
       { name: 'Type', uid: 'type' },
       { name: 'Created At', uid: 'createdAt' },
       { name: 'Status', uid: 'status' },

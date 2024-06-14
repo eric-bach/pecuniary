@@ -26,6 +26,7 @@ export type Scalars = {
 export type Account = {
   __typename?: 'Account';
   accountId: Scalars['ID']['output'];
+  category: Scalars['String']['output'];
   createdAt: Scalars['String']['output'];
   entity: Scalars['String']['output'];
   name: Scalars['String']['output'];
@@ -41,6 +42,7 @@ export type Aggregates = {
 };
 
 export type CreateAccountInput = {
+  category: Scalars['String']['input'];
   name: Scalars['String']['input'];
   type: Scalars['String']['input'];
 };
@@ -61,6 +63,7 @@ export type Data = {
   accountId: Scalars['ID']['output'];
   amount?: Maybe<Scalars['Float']['output']>;
   bookValue?: Maybe<Scalars['Float']['output']>;
+  category: Scalars['String']['output'];
   commission?: Maybe<Scalars['Float']['output']>;
   createdAt: Scalars['String']['output'];
   currency?: Maybe<Scalars['String']['output']>;
@@ -220,6 +223,7 @@ export type Transaction = {
 };
 
 export type UpdateAccountInput = {
+  category: Scalars['String']['input'];
   createdAt: Scalars['String']['input'];
   name: Scalars['String']['input'];
   pk: Scalars['ID']['input'];

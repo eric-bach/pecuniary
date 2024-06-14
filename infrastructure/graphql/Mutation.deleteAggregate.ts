@@ -4,7 +4,7 @@ import { Aggregates } from './api/codegen/appsync';
 export function request(ctx: Context<string>): DynamoDBBatchDeleteItemRequest {
   console.log('🔔 DeleteAccount Request: ', ctx);
 
-  const aggregates = ctx.prev.result;
+  const aggregates = ctx.prev.result.items;
 
   // Early Return if no records to delete
   if (aggregates.length === 0) {
@@ -32,7 +32,7 @@ export function response(ctx: Context<string>): Aggregates {
     util.error(ctx.error.message, ctx.error.type, ctx.result);
   }
 
-  return { items: ctx.prev.result };
+  return ctx.prev.result;
   // const deleted = ctx.result.data['pecuniary-Data'];
   // return { deleted };
 }

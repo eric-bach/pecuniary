@@ -11,13 +11,14 @@ export function request(ctx: Context<MutationUpdateAccountArgs>): DynamoDBUpdate
       createdAt: util.dynamodb.toDynamoDB(ctx.args.input.createdAt),
     },
     update: {
-      expression: 'SET #name = :name, #type = :type, updatedAt = :updatedAt',
+      expression: 'SET #name = :name, category = :category, #type = :type, updatedAt = :updatedAt',
       expressionNames: {
         '#name': 'name',
         '#type': 'type',
       },
       expressionValues: {
         ':type': util.dynamodb.toDynamoDB(ctx.args.input.type),
+        ':category': util.dynamodb.toDynamoDB(ctx.args.input.category),
         ':name': util.dynamodb.toDynamoDB(ctx.args.input.name),
         ':updatedAt': util.dynamodb.toDynamoDB(util.time.nowISO8601()),
       },

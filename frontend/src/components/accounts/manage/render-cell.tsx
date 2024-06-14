@@ -31,6 +31,13 @@ const types = [
   { label: 'RRSP', value: 'RRSP' },
 ];
 
+const categories = [
+  { label: 'Banking', value: 'Banking' },
+  { label: 'Credit Card', value: 'Credit Card' },
+  { label: 'Investment', value: 'Investment' },
+  { label: 'Asset', value: 'Asset' },
+];
+
 export const RenderCell = (data: Props) => {
   const [confirm, setConfirm] = useState<string | undefined>();
   const [error, setError] = useState<ZodIssue[]>();
@@ -39,6 +46,7 @@ export const RenderCell = (data: Props) => {
 
   const [formData, setFormData] = useState({
     name: data.account.name,
+    category: data.account.category,
     type: data.account.type,
   });
 
@@ -70,6 +78,7 @@ export const RenderCell = (data: Props) => {
       pk: `acc#${data.account.accountId}`,
       createdAt: data.account.createdAt,
       name: formData.name,
+      category: formData.category,
       type: formData.type,
     });
 
@@ -103,6 +112,14 @@ export const RenderCell = (data: Props) => {
         >
           {data.account.name}
         </User>
+      );
+    case 'category':
+      return (
+        <div>
+          <div>
+            <span>{cellValue}</span>
+          </div>
+        </div>
       );
     case 'type':
       return (
@@ -159,6 +176,21 @@ export const RenderCell = (data: Props) => {
                             isInvalid={error?.find((e) => e.path[0] === 'name')?.message !== undefined}
                             errorMessage={error?.find((e) => e.path[0] === 'name')?.message}
                           />
+                          <Select
+                            name='category'
+                            label='Account Category'
+                            items={categories}
+                            value={formData.category}
+                            defaultSelectedKeys={[formData.category]}
+                            onChange={handleEditChange}
+                            placeholder='Select an account category'
+                            isInvalid={error?.find((e) => e.path[0] === 'category')?.message !== undefined}
+                            errorMessage={error?.find((e) => e.path[0] === 'category')?.message}
+                            variant='bordered'
+                            className='border-gray-300 rounded-md mt-2'
+                          >
+                            {(categories) => <SelectItem key={categories.label}>{categories.label}</SelectItem>}
+                          </Select>
                           <Select
                             name='type'
                             label='Account Type'

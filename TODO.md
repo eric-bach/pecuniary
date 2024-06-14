@@ -24,6 +24,9 @@ X Add loading screens
 X Migrate rest of backend functions over
 
 - Sort and categorize Accounts in UI
+  X Add ability to add category
+  Group and display accounts by category
+  Add pagination to accounts list
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user

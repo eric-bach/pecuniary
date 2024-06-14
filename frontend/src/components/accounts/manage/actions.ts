@@ -8,6 +8,7 @@ import { ZodIssue, z } from 'zod';
 
 interface Props {
   name: string;
+  category: string;
   type: string;
 }
 
@@ -18,6 +19,12 @@ interface Props2 {
 
 const schema = z.object({
   name: z.string().min(1, 'Name cannot be blank'),
+  category: z
+    .string()
+    .refine(
+      (value: string) => value === 'Banking' || value === 'Credit Card' || value === 'Investment' || value === 'Asset',
+      'Category is not a valid type'
+    ),
   type: z.string().refine((value: string) => value === 'TFSA' || value === 'RRSP', 'Type must be either TFSA or RRSP'),
 });
 
@@ -32,9 +39,10 @@ export async function getExistingAccount(accountId: string): Promise<Account> {
   return data.getAccount;
 }
 
-export async function createNewAccount({ name, type }: Props): Promise<Account | ZodIssue[]> {
+export async function createNewAccount({ name, category, type }: Props): Promise<Account | ZodIssue[]> {
   const validation = schema.safeParse({
     name,
+    category,
     type,
   });
 
@@ -47,6 +55,7 @@ export async function createNewAccount({ name, type }: Props): Promise<Account |
     variables: {
       input: {
         name,
+        category,
         type,
       },
     },
@@ -57,9 +66,10 @@ export async function createNewAccount({ name, type }: Props): Promise<Account |
   return data.createAccount;
 }
 
-export async function updateExistingAccount({ pk, createdAt, name, type }: Props & Props2): Promise<Account | ZodIssue[]> {
+export async function updateExistingAccount({ pk, createdAt, name, category, type }: Props & Props2): Promise<Account | ZodIssue[]> {
   const validation = schema.safeParse({
     name,
+    category,
     type,
   });
 
@@ -74,6 +84,7 @@ export async function updateExistingAccount({ pk, createdAt, name, type }: Props
         pk,
         createdAt,
         name,
+        category,
         type,
       },
     },

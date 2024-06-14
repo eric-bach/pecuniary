@@ -8,6 +8,8 @@ async function fetchAccounts(): Promise<[Account]> {
     query: getAccounts,
   });
 
+  console.log('THIS IS DATA', data);
+
   return data.getAccounts.items as [Account];
 }
 
