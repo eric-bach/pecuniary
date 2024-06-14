@@ -20,16 +20,12 @@ import { EyeIcon } from '@/components/icons/table/eye-icon';
 import { Account } from '@/../../../infrastructure/graphql/api/codegen/appsync';
 import { deleteExistingAccount, updateExistingAccount } from './actions';
 import { ZodIssue } from 'zod';
+import { AccountTypes } from './actions';
 
 interface Props {
   account: Account;
   columnKey: string | React.Key;
 }
-
-const types = [
-  { label: 'TFSA', value: 'TFSA' },
-  { label: 'RRSP', value: 'RRSP' },
-];
 
 export const RenderCell = (data: Props) => {
   const [confirm, setConfirm] = useState<string | undefined>();
@@ -162,7 +158,7 @@ export const RenderCell = (data: Props) => {
                           <Select
                             name='type'
                             label='Account Type'
-                            items={types}
+                            items={AccountTypes}
                             value={formData.type}
                             defaultSelectedKeys={[formData.type]}
                             onChange={handleEditChange}
@@ -172,7 +168,7 @@ export const RenderCell = (data: Props) => {
                             variant='bordered'
                             className='border-gray-300 rounded-md mt-2'
                           >
-                            {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
+                            {(AccountTypes) => <SelectItem key={AccountTypes.label}>{AccountTypes.label}</SelectItem>}
                           </Select>
                         </ModalBody>
                         <ModalFooter>

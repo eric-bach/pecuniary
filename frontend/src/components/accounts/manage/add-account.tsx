@@ -13,6 +13,7 @@ import {
 } from '@nextui-org/react';
 import { createNewAccount } from './actions';
 import { ZodIssue } from 'zod';
+import { AccountTypes } from './actions';
 
 export const AddAccount = () => {
   const [error, setError] = useState<ZodIssue[]>();
@@ -52,11 +53,6 @@ export const AddAccount = () => {
     }
   }
 
-  const types = [
-    { label: 'TFSA', value: 'TFSA' },
-    { label: 'RRSP', value: 'RRSP' },
-  ];
-
   return (
     <div>
       <Button onPress={onOpen} color='primary'>
@@ -80,7 +76,7 @@ export const AddAccount = () => {
                 />
                 <Select
                   name='type'
-                  items={types}
+                  items={AccountTypes}
                   label='Account Type'
                   value={formData.type}
                   onChange={handleChange}
@@ -90,7 +86,7 @@ export const AddAccount = () => {
                   variant='bordered'
                   className='border-gray-300 rounded-md mt-2'
                 >
-                  {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
+                  {(AccountTypes) => <SelectItem key={AccountTypes.label}>{AccountTypes.label}</SelectItem>}
                 </Select>
               </ModalBody>
               <ModalFooter>
