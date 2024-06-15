@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import { Sidebar } from './sidebar.styles';
 import { Avatar, Tooltip } from '@nextui-org/react';
 import { CompaniesDropdown } from './companies-dropdown';
@@ -10,17 +12,53 @@ import { ProductsIcon } from '../icons/sidebar/products-icon';
 import { ReportsIcon } from '../icons/sidebar/reports-icon';
 import { ViewIcon } from '../icons/sidebar/view-icon';
 import { SettingsIcon } from '../icons/sidebar/settings-icon';
-import { CollapseItems } from './collapse-items';
+import { CollapseItems, Item } from './collapse-items';
 import { SidebarItem } from './sidebar-item';
 import { SidebarMenu } from './sidebar-menu';
 import { FilterIcon } from '../icons/sidebar/filter-icon';
 import { useSidebarContext } from '../layout/layout-context';
 import { ChangeLogIcon } from '../icons/sidebar/changelog-icon';
 import { usePathname } from 'next/navigation';
+import { fetchAccounts } from './actions';
+import { CreditCardIcon } from '../icons/sidebar/credit-card-icon';
 
 export const SidebarWrapper = () => {
   const pathname = usePathname();
   const { collapsed, setCollapsed } = useSidebarContext();
+
+  const [banking, setBanking] = React.useState<Item[]>([]);
+  const [creditCards, setCreditCards] = React.useState<Item[]>([]);
+  const [investments, setInvestments] = React.useState<Item[]>([]);
+  const [assets, setAssets] = React.useState<Item[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const accounts = await fetchAccounts();
+
+      setBanking(
+        accounts
+          .filter((account) => account.category.toLowerCase() === 'banking')
+          .map((account) => ({ id: account.accountId, name: account.name }))
+      );
+      setCreditCards(
+        accounts
+          .filter((account) => account.category.toLowerCase() === 'credit card')
+          .map((account) => ({ id: account.accountId, name: account.name }))
+      );
+      setInvestments(
+        accounts
+          .filter((account) => account.category.toLowerCase() === 'investment')
+          .map((account) => ({ id: account.accountId, name: account.name }))
+      );
+      setAssets(
+        accounts
+          .filter((account) => account.category.toLowerCase() === 'asset')
+          .map((account) => ({ id: account.accountId, name: account.name }))
+      );
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <aside className='h-screen z-[20] sticky top-0'>
@@ -37,9 +75,26 @@ export const SidebarWrapper = () => {
           <div className={Sidebar.Body()}>
             <SidebarItem title='Home' icon={<HomeIcon />} isActive={pathname === '/dashboard'} href='/dashboard' />
             <SidebarMenu title='Accounts'>
-              <CollapseItems icon={<AccountsIcon />} items={['Checking', 'Credit Cards', 'Loans']} title='Banking' />
-              <SidebarItem isActive={pathname === '/investments'} title='Investments' icon={<PaymentsIcon />} href='/investments' />
-              <SidebarItem isActive={pathname === '/assets'} title='Property & Debt' icon={<CustomersIcon />} />
+              {banking.length > 0 ? (
+                <CollapseItems icon={<AccountsIcon />} items={banking} title='Banking' />
+              ) : (
+                <SidebarItem title='Banking' icon={<AccountsIcon />} />
+              )}
+              {creditCards.length > 0 ? (
+                <CollapseItems icon={<CreditCardIcon />} items={creditCards} title='Credit Cards' />
+              ) : (
+                <SidebarItem title='Credit Cards' icon={<CreditCardIcon />} />
+              )}
+              {investments.length > 0 ? (
+                <CollapseItems icon={<PaymentsIcon />} items={investments} title='Investments' />
+              ) : (
+                <SidebarItem title='Investments' icon={<PaymentsIcon />} />
+              )}
+              {assets.length > 0 ? (
+                <CollapseItems icon={<CustomersIcon />} items={assets} title='Property & Debt' />
+              ) : (
+                <SidebarItem title='Property & Debt' icon={<CustomersIcon />} />
+              )}
               <SidebarItem isActive={pathname === '/accounts/manage'} title='Manage' icon={<SettingsIcon />} href='/accounts/manage' />
             </SidebarMenu>
 

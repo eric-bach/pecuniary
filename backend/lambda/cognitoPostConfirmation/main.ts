@@ -6,10 +6,6 @@ import {
 import { Handler, PostConfirmationTriggerEvent, Context, Callback } from 'aws-lambda';
 
 export const handler: Handler = async (event: PostConfirmationTriggerEvent, _context: Context, callback: Callback): Promise<void> => {
-  console.log('EVENT  1:', event);
-  console.log('CONTEXT :', _context);
-  console.log('CALLBACK :', callback);
-
   const { userPoolId, userName } = event;
 
   await adminAddUserToGroup({
@@ -45,7 +41,7 @@ export async function adminAddUserToGroup({
   username: string;
   groupName: string;
 }) {
-  const client = new CognitoIdentityProviderClient({ region: 'us-east-1' });
+  const client = new CognitoIdentityProviderClient();
 
   const params: AdminAddUserToGroupCommandInput = {
     GroupName: groupName,

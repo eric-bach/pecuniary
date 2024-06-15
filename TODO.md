@@ -21,11 +21,19 @@ X Add environment variables to AppSync JS Resolvers/DynamoDB table - https://doc
 X Fix DynamoDB seeding
 X Fix add/edit acocunt validation bugs
 X Add loading screens
+X Migrate rest of backend functions over
 
-- Add Powertools for Lambda logging to functions
+- Sort and categorize Accounts in UI
+  X Add ability to add category
+  X Group and display accounts by category
+  Add link to each accounts page
+  Add pagination to accounts list
+
+- User HeroIcons SVG instead of Lucide
+- Build ability to add transactions to an Account
+- Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
 - Build dashboard to display account summaries
-- Migrate rest of backend functions over
 
 #### Tech Debt
 

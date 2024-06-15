@@ -1,3 +1,83 @@
+# Version 4
+
+```
+query GetAccount {
+  getAccount(accountId: "82cc37b7-ef61-4f4b-8670-d7bffbc35c09") {
+    pk
+    createdAt
+  }
+}
+
+query GetAccounts {
+  getAccounts {
+    items {
+      pk
+      createdAt
+      name
+    }
+    nextToken
+  }
+}
+
+query GetAggregate {
+  getAggregate(accountId: "878a7ab5-8d34-46b3-8c31-5c80509a691b") {
+    items {
+      pk
+      createdAt
+      name
+    }
+  }
+}
+
+query GetPositions {
+  getPositions(accountId: "878a7ab5-8d34-46b3-8c31-5c80509a691b") {
+    items {
+      pk
+      createdAt
+    }
+  }
+}
+
+query GetTransactions {
+  getTransactions(accountId: "878a7ab5-8d34-46b3-8c31-5c80509a691b") {
+    items {
+      pk
+      createdAt
+      symbol
+    }
+  }
+}
+
+mutation CreateAccount {
+  createAccount(input: {
+    name: "Test"
+    type: "TFSA"
+  })
+  {
+    pk
+    createdAt
+    name
+  }
+}
+
+mutation CreateTransaction {
+  createTransaction(createTransactionInput: {
+    accountId: "c9adaf33-ce44-46c5-8b56-78b9a606aac9"
+    transactionDate: "2024-06-14"
+    type: "BUY"
+    symbol: "NVDA"
+    shares: 10
+    price: 122.39
+    commission: 4.50
+  })
+  {
+    pk
+    createdAt
+    entity
+  }
+}
+```
+
 # Version 3
 
 ```

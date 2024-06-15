@@ -18,7 +18,7 @@ export const AddAccount = () => {
   const [error, setError] = useState<ZodIssue[]>();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  const [formData, setFormData] = useState({ name: '', type: '' });
+  const [formData, setFormData] = useState({ name: '', category: '', type: '' });
 
   function handleClose() {
     setError(undefined);
@@ -39,9 +39,10 @@ export const AddAccount = () => {
 
     const formData = new FormData(event.currentTarget);
     const name = formData.get('name')?.toString() ?? '';
+    const category = formData.get('category')?.toString() ?? '';
     const type = formData.get('type')?.toString() ?? '';
 
-    const result = await createNewAccount({ name, type });
+    const result = await createNewAccount({ name, category, type });
 
     console.log(result);
 
@@ -55,6 +56,13 @@ export const AddAccount = () => {
   const types = [
     { label: 'TFSA', value: 'TFSA' },
     { label: 'RRSP', value: 'RRSP' },
+  ];
+
+  const categories = [
+    { label: 'Banking', value: 'Banking' },
+    { label: 'Credit Card', value: 'Credit Card' },
+    { label: 'Investment', value: 'Investment' },
+    { label: 'Asset', value: 'Asset' },
   ];
 
   return (
@@ -78,6 +86,20 @@ export const AddAccount = () => {
                   isInvalid={error?.find((e) => e.path[0] === 'name')?.message !== undefined}
                   errorMessage={error?.find((e) => e.path[0] === 'name')?.message}
                 />
+                <Select
+                  name='category'
+                  items={categories}
+                  label='Account Category'
+                  value={formData.category}
+                  onChange={handleChange}
+                  placeholder='Select an account category'
+                  isInvalid={error?.find((e) => e.path[0] === 'category')?.message !== undefined}
+                  errorMessage={error?.find((e) => e.path[0] === 'category')?.message}
+                  variant='bordered'
+                  className='border-gray-300 rounded-md mt-2'
+                >
+                  {(categories) => <SelectItem key={categories.label}>{categories.label}</SelectItem>}
+                </Select>
                 <Select
                   name='type'
                   items={types}
