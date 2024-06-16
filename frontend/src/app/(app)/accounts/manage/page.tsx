@@ -13,7 +13,7 @@ async function fetchAccounts(): Promise<[Account]> {
 
 export default async function Accounts() {
   const accounts = await fetchAccounts();
-  console.log(accounts);
+  // console.log(accounts);
 
   return <ManageAccounts accounts={accounts} />;
 }
