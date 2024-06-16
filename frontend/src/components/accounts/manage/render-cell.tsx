@@ -18,8 +18,10 @@ import { DeleteIcon } from '@/components/icons/table/delete-icon';
 import { EditIcon } from '@/components/icons/table/edit-icon';
 import { EyeIcon } from '@/components/icons/table/eye-icon';
 import { Account } from '@/../../../infrastructure/graphql/api/codegen/appsync';
-import { deleteExistingAccount, updateExistingAccount } from './actions';
+import { updateExistingAccount } from './actions';
 import { ZodIssue } from 'zod';
+import { useFormState } from 'react-dom';
+import * as actions from '@/actions';
 
 interface Props {
   account: Account;
@@ -41,6 +43,9 @@ const categories = [
 export const RenderCell = (data: Props) => {
   const [confirm, setConfirm] = useState<string | undefined>();
   const [error, setError] = useState<ZodIssue[]>();
+
+  const [deleteFormState, deleteAction] = useFormState(actions.deleteExistingAccount, { errors: {} });
+
   const deleteModal = useDisclosure();
   const editModal = useDisclosure();
 
@@ -87,14 +92,6 @@ export const RenderCell = (data: Props) => {
     } else if (result) {
       handleEditClose();
     }
-  }
-
-  async function onDeleteSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    await deleteExistingAccount(data.account.accountId);
-
-    deleteModal.onClose();
   }
 
   const handleDeleteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -229,7 +226,7 @@ export const RenderCell = (data: Props) => {
                 <Modal isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange} placement='top-center'>
                   <ModalContent>
                     {(onClose) => (
-                      <form onSubmit={onDeleteSubmit}>
+                      <form action={deleteAction}>
                         <ModalHeader className='flex flex-col gap-1'>Delete account &quot;{data.account.name}&quot;?</ModalHeader>
                         <ModalBody>
                           To confirm deletion, enter &apos;delete&apos; below
@@ -239,6 +236,7 @@ export const RenderCell = (data: Props) => {
                             onChange={(e) => handleDeleteChange(e)}
                             placeholder='Enter "delete" to confirm'
                           />
+                          <input type='hidden' name='accountId' value={data.account.accountId} />
                         </ModalBody>
                         <ModalFooter>
                           <Button color='default' variant='flat' onClick={onClose}>

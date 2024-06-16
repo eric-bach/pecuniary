@@ -1,8 +1,8 @@
 'use server';
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
-import { Account, Aggregates } from '@/../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../../infrastructure/graphql/api/codegen/appsync';
 import { getAccount } from '@/../../../infrastructure/graphql/api/queries';
-import { deleteAccount, updateAccount } from '@/../../../infrastructure/graphql/api/mutations';
+import { updateAccount } from '@/../../../infrastructure/graphql/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { ZodIssue, z } from 'zod';
 
@@ -66,17 +66,4 @@ export async function updateExistingAccount({ pk, createdAt, name, category, typ
   revalidatePath('/accounts/manage');
 
   return data.updateAccount;
-}
-
-export async function deleteExistingAccount(accountId: String): Promise<Aggregates> {
-  const { data } = await cookieBasedClient.graphql({
-    query: deleteAccount,
-    variables: {
-      accountId,
-    },
-  });
-
-  revalidatePath('/accounts/manage');
-
-  return data.deleteAccount;
 }
