@@ -26,8 +26,10 @@ X Migrate rest of backend functions over
 - Sort and categorize Accounts in UI
   X Add ability to add category
   X Group and display accounts by category
-  Add link to each accounts page
-  Add pagination to accounts list
+
+  - Switch zod implementation to course implementation
+    Add link to each accounts page
+    Add pagination to accounts list
 
 - User HeroIcons SVG instead of Lucide
 - Build ability to add transactions to an Account
