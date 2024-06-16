@@ -1,7 +1,13 @@
 'use server';
 
-export default async function AccountsPage({ params }: any) {
-  const { id } = params;
+interface AccountsPageProps {
+  params: {
+    accountId: string;
+  };
+}
 
-  return <p>Account: {id}</p>;
+export default async function AccountsPage({ params }: AccountsPageProps) {
+  const { accountId } = params;
+
+  return <p>Account: {accountId}</p>;
 }
