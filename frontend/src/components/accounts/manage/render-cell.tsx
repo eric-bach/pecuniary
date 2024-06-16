@@ -13,13 +13,13 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
-import React, { FormEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { DeleteIcon } from '@/components/icons/table/delete-icon';
 import { EditIcon } from '@/components/icons/table/edit-icon';
 import { EyeIcon } from '@/components/icons/table/eye-icon';
 import { Account } from '@/../../../infrastructure/graphql/api/codegen/appsync';
-import { deleteExistingAccount, updateExistingAccount } from './actions';
-import { ZodIssue } from 'zod';
+import { useFormState } from 'react-dom';
+import * as actions from '@/actions';
 
 interface Props {
   account: Account;
@@ -40,62 +40,13 @@ const categories = [
 
 export const RenderCell = (data: Props) => {
   const [confirm, setConfirm] = useState<string | undefined>();
-  const [error, setError] = useState<ZodIssue[]>();
-  const deleteModal = useDisclosure();
   const editModal = useDisclosure();
-
-  const [formData, setFormData] = useState({
-    name: data.account.name,
-    category: data.account.category,
-    type: data.account.type,
-  });
+  const deleteModal = useDisclosure();
+  const [editFormState, editAction] = useFormState(actions.editExistingAccount, { errors: {} });
+  const [deleteFormState, deleteAction] = useFormState(actions.deleteExistingAccount, { errors: {} });
 
   // @ts-ignore
   const cellValue = data.account[data.columnKey];
-
-  async function handleEditOpen() {
-    editModal.onOpen();
-  }
-
-  function handleEditClose() {
-    setError(undefined);
-    editModal.onClose();
-  }
-
-  const handleEditChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = event.target;
-    setError(undefined);
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  async function onEditSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const result = await updateExistingAccount({
-      pk: `acc#${data.account.accountId}`,
-      createdAt: data.account.createdAt,
-      name: formData.name,
-      category: formData.category,
-      type: formData.type,
-    });
-
-    if (result instanceof Array) {
-      setError(result);
-    } else if (result) {
-      handleEditClose();
-    }
-  }
-
-  async function onDeleteSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    await deleteExistingAccount(data.account.accountId);
-
-    deleteModal.onClose();
-  }
 
   const handleDeleteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setConfirm(event.target.value);
@@ -159,33 +110,30 @@ export const RenderCell = (data: Props) => {
           </div>
           <div>
             <Tooltip content='Edit account' color='secondary'>
-              <Button isIconOnly variant='light' size='sm' onClick={handleEditOpen}>
+              <Button isIconOnly variant='light' size='sm' onClick={editModal.onOpen}>
                 <EditIcon size={20} fill='#979797' />
                 <Modal isOpen={editModal.isOpen} onOpenChange={editModal.onOpenChange} placement='top-center'>
                   <ModalContent>
                     {(onClose) => (
-                      <form onSubmit={onEditSubmit}>
+                      <form action={editAction}>
                         <ModalHeader className='flex flex-col gap-1'>Edit account &quot;{data.account.name}&quot;?</ModalHeader>
                         <ModalBody>
                           <Input
-                            name='name'
                             label='Name'
-                            value={formData.name}
-                            onChange={handleEditChange}
+                            name='name'
+                            defaultValue={data.account.name}
                             variant='bordered'
-                            isInvalid={error?.find((e) => e.path[0] === 'name')?.message !== undefined}
-                            errorMessage={error?.find((e) => e.path[0] === 'name')?.message}
+                            isInvalid={!!editFormState.errors.name}
+                            errorMessage={editFormState.errors.name?.join(', ')}
                           />
                           <Select
-                            name='category'
                             label='Account Category'
+                            name='category'
                             items={categories}
-                            value={formData.category}
-                            defaultSelectedKeys={[formData.category]}
-                            onChange={handleEditChange}
+                            defaultSelectedKeys={[data.account.category]}
                             placeholder='Select an account category'
-                            isInvalid={error?.find((e) => e.path[0] === 'category')?.message !== undefined}
-                            errorMessage={error?.find((e) => e.path[0] === 'category')?.message}
+                            isInvalid={!!editFormState.errors.category}
+                            errorMessage={editFormState.errors.category?.join(', ')}
                             variant='bordered'
                             className='border-gray-300 rounded-md mt-2'
                           >
@@ -195,20 +143,20 @@ export const RenderCell = (data: Props) => {
                             name='type'
                             label='Account Type'
                             items={types}
-                            value={formData.type}
-                            defaultSelectedKeys={[formData.type]}
-                            onChange={handleEditChange}
+                            defaultSelectedKeys={[data.account.type]}
                             placeholder='Select an account type'
-                            isInvalid={error?.find((e) => e.path[0] === 'type')?.message !== undefined}
-                            errorMessage={error?.find((e) => e.path[0] === 'type')?.message}
+                            isInvalid={!!editFormState.errors.type}
+                            errorMessage={editFormState.errors.type?.join(', ')}
                             variant='bordered'
                             className='border-gray-300 rounded-md mt-2'
                           >
                             {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
                           </Select>
+                          <input type='hidden' name='accountId' value={data.account.accountId} />
+                          <input type='hidden' name='createdAt' value={data.account.createdAt} />
                         </ModalBody>
                         <ModalFooter>
-                          <Button color='default' variant='flat' onClick={handleEditClose}>
+                          <Button color='default' variant='flat' onClick={editModal.onClose}>
                             Cancel
                           </Button>
                           <Button type='submit' color='primary'>
@@ -229,7 +177,7 @@ export const RenderCell = (data: Props) => {
                 <Modal isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange} placement='top-center'>
                   <ModalContent>
                     {(onClose) => (
-                      <form onSubmit={onDeleteSubmit}>
+                      <form action={deleteAction}>
                         <ModalHeader className='flex flex-col gap-1'>Delete account &quot;{data.account.name}&quot;?</ModalHeader>
                         <ModalBody>
                           To confirm deletion, enter &apos;delete&apos; below
@@ -239,6 +187,7 @@ export const RenderCell = (data: Props) => {
                             onChange={(e) => handleDeleteChange(e)}
                             placeholder='Enter "delete" to confirm'
                           />
+                          <input type='hidden' name='accountId' value={data.account.accountId} />
                         </ModalBody>
                         <ModalFooter>
                           <Button color='default' variant='flat' onClick={onClose}>
