@@ -13,6 +13,7 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import * as actions from '@/actions/index';
+import FormButton from '@/components/common/form-button';
 
 export const AddAccount = () => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -84,9 +85,7 @@ export const AddAccount = () => {
                 <Button color='danger' variant='flat' onClick={handleClose}>
                   Close
                 </Button>
-                <Button type='submit' color='primary'>
-                  Add Account
-                </Button>
+                <FormButton>Add Account</FormButton>
               </ModalFooter>
             </form>
           )}
