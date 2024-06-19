@@ -13,7 +13,8 @@ export function request(ctx: Context): DynamoDBQueryRequest {
         ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       },
     },
-    limit: 10,
+    // TODO: Do not limit until pagination is implemented
+    //limit: 10,
     nextToken: ctx.arguments.lastEvaluatedKey,
     filter: {
       expression: 'entity = :entity',

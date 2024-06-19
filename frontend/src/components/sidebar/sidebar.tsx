@@ -19,7 +19,7 @@ import { FilterIcon } from '../icons/sidebar/filter-icon';
 import { useSidebarContext } from '../layout/layout-context';
 import { ChangeLogIcon } from '../icons/sidebar/changelog-icon';
 import { usePathname } from 'next/navigation';
-import { fetchAccounts } from './actions';
+import { fetchAccounts } from '../../actions/index';
 import { CreditCardIcon } from '../icons/sidebar/credit-card-icon';
 
 export const SidebarWrapper = () => {
@@ -63,11 +63,7 @@ export const SidebarWrapper = () => {
   return (
     <aside className='h-screen z-[20] sticky top-0'>
       {collapsed ? <div className={Sidebar.Overlay()} onClick={setCollapsed} /> : null}
-      <div
-        className={Sidebar({
-          collapsed: collapsed,
-        })}
-      >
+      <div className={Sidebar({ collapsed: collapsed })}>
         <div className={Sidebar.Header()}>
           <CompaniesDropdown />
         </div>
