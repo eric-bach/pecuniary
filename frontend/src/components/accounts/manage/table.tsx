@@ -1,4 +1,4 @@
-import { Link, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
 import React from 'react';
 import { RenderCell } from './render-cell';
 import { Account } from '../../../../../infrastructure/graphql/api/codegen/appsync';

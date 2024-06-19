@@ -22,13 +22,7 @@ X Fix DynamoDB seeding
 X Fix add/edit acocunt validation bugs
 X Add loading screens
 X Migrate rest of backend functions over
-
-- Sort and categorize Accounts in UI
-  X Add ability to add category
-  X Group and display accounts by category
-  X Switch zod implementation to course implementation
-  Add link to each accounts page
-  Add pagination to accounts list
+X Sort and categorize Accounts in UI
 
 - User HeroIcons SVG instead of Lucide
 - Build ability to add transactions to an Account
