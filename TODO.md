@@ -22,7 +22,9 @@ X Fix DynamoDB seeding
 X Fix add/edit acocunt validation bugs
 X Add loading screens
 X Migrate rest of backend functions over
-X Sort and categorize Accounts in UI
+
+- Sort and categorize Accounts in UI
+  GetAccount in Account Slug route
 
 - User HeroIcons SVG instead of Lucide
 - Build ability to add transactions to an Account
