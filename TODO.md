@@ -22,12 +22,9 @@ X Fix DynamoDB seeding
 X Fix add/edit acocunt validation bugs
 X Add loading screens
 X Migrate rest of backend functions over
-
 X Sort and categorize Accounts in UI
-X GetAccount in Account Slug route
 
 - User HeroIcons SVG instead of Lucide
-
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
