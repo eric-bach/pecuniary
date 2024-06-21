@@ -24,7 +24,15 @@ X Add loading screens
 X Migrate rest of backend functions over
 X Sort and categorize Accounts in UI
 
-- User HeroIcons SVG instead of Lucide
+- Switch to shadcn dashboard?
+  https://github.com/Kiranism/next-shadcn-dashboard-starter?tab=readme-ov-file
+
+  https://github.com/bradtraversy/traversypress-ui
+  https://github.com/horizon-ui/horizon-tailwind-react-nextjs
+  https://github.com/sachidumaleesha/shadcn-dashboard
+
+  - User HeroIcons SVG instead of Lucide
+
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
