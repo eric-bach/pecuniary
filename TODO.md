@@ -25,13 +25,10 @@ X Migrate rest of backend functions over
 X Sort and categorize Accounts in UI
 
 - Switch to shadcn dashboard?
-  https://github.com/Kiranism/next-shadcn-dashboard-starter?tab=readme-ov-file
-
   https://github.com/bradtraversy/traversypress-ui
-  https://github.com/horizon-ui/horizon-tailwind-react-nextjs
+  https://github.com/Kiranism/next-shadcn-dashboard-starter?tab=readme-ov-file
   https://github.com/sachidumaleesha/shadcn-dashboard
-
-  - User HeroIcons SVG instead of Lucide
+  https://github.com/horizon-ui/horizon-tailwind-react-nextjs
 
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
