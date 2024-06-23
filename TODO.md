@@ -30,7 +30,7 @@ X Sort and categorize Accounts in UI
   https://github.com/sachidumaleesha/shadcn-dashboard
   https://github.com/horizon-ui/horizon-tailwind-react-nextjs
   Add Auth
-  Fix sidebar collapse
+  Fix sidebar collapse - https://www.youtube.com/watch?v=0QPXqRifh-c&list=WL&index=8
   Add actions
   Remove posts
   Add submenus
