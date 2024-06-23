@@ -3,7 +3,7 @@ import DashboardCard from '@/components/dashboard/dashboard-card';
 import PostsTable from '@/components/posts/posts-table';
 import { Folder, MessageCircle, Newspaper, User } from 'lucide-react';
 
-export default function Home() {
+export default function Dashboard() {
   return (
     <>
       <div className='flex flex-col md:flex-row justify-between gap-5 mb-5'>
