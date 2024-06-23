@@ -12,16 +12,16 @@ export const NavItems = () => {
   return [
     {
       name: 'Home',
-      href: '/',
+      href: '/dashboard',
       icon: <Home size={20} />,
-      active: pathname === '/',
+      active: pathname === '/dashboard',
       position: 'top',
     },
     {
-      name: 'Profile',
-      href: '/profile',
+      name: 'Posts',
+      href: '/posts',
       icon: <User size={20} />,
-      active: isNavItemActive(pathname, '/profile'),
+      active: isNavItemActive(pathname, '/posts'),
       position: 'top',
     },
     {

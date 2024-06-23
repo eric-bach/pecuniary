@@ -7,7 +7,7 @@ import { Sun } from 'lucide-react';
 export default function Navbar() {
   return (
     <div className='supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur'>
-      <nav className='flex h-12 items-center justify-between px-5'>
+      <nav className='flex h-12 items-center justify-between px-4'>
         <div className='flex items-center'>
           <Link href='/dashboard' className='flex items-center'>
             <svg
@@ -22,7 +22,7 @@ export default function Navbar() {
             >
               <path d='M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3' />
             </svg>
-            <span className='ml-2'>Pecuniary</span>
+            <span>Pecuniary</span>
           </Link>
         </div>
         {/* <div className={cn('block lg:!hidden')}>
