@@ -29,6 +29,11 @@ X Sort and categorize Accounts in UI
   https://github.com/Kiranism/next-shadcn-dashboard-starter?tab=readme-ov-file
   https://github.com/sachidumaleesha/shadcn-dashboard
   https://github.com/horizon-ui/horizon-tailwind-react-nextjs
+  Add Auth
+  Fix sidebar collapse
+  Add actions
+  Remove posts
+  Add submenus
 
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
