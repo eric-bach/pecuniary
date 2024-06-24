@@ -34,6 +34,9 @@ X Sort and categorize Accounts in UI
   X Add heading/subheadings to sidebar
   X Add actions
   X Add submenus
+  Add account
+  Delete account
+  Edit account
   Remove posts
 
 - Build ability to add transactions to an Account
