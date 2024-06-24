@@ -1,16 +1,23 @@
 'use client';
 
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { NavItems } from './sidebar2-config';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ClipboardList, Component, Database, Home, Settings, Users, Wallet } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export default function SideNav() {
   const navItems = NavItems();
+
+  const pathname = usePathname();
+
+  function isNavItemActive(pathname: string, nav: string) {
+    return pathname.includes(nav);
+  }
 
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
     // Get the sidebar state from localStorage
@@ -43,45 +50,24 @@ export default function SideNav() {
         <aside className='flex h-full flex-col w-full break-words px-3 overflow-x-hidden columns-1'>
           {/* Top */}
           <div className='mt-20 relative pb-2'>
-            <div className='flex flex-col space-y-1'>
-              {navItems.map((item, idx) => {
-                if (item.position === 'top') {
-                  return (
-                    <Fragment key={idx}>
-                      <div className='space-y-1'>
-                        <SideNavItem
-                          label={item.name}
-                          icon={item.icon}
-                          path={item.href}
-                          active={item.active}
-                          isSidebarExpanded={isSidebarExpanded}
-                        />
-                      </div>
-                    </Fragment>
-                  );
-                }
-              })}
-            </div>
+            <SideNavItem label='Home' icon={<Home size={20} />} path='/dashboard' isSidebarExpanded={isSidebarExpanded} />
+
+            <div className='text-xs font-normal pb-1 mt-5'>Accounts</div>
+            <SideNavItem label='TFSA Account' icon={<Home size={20} />} path='/accounts/1' isSidebarExpanded={isSidebarExpanded} />
+            <SideNavItem label='RRSP Account' icon={<Home size={20} />} path='/accounts/2' isSidebarExpanded={isSidebarExpanded} />
+
+            <div className='text-xs font-normal pb-1 mt-5'>Analytics</div>
+            <SideNavItem label='Reports' icon={<ClipboardList size={20} />} path='/reports' isSidebarExpanded={isSidebarExpanded} />
+            <SideNavItem label='Queries' icon={<Database size={20} />} path='/queries' isSidebarExpanded={isSidebarExpanded} />
+
+            <div className='text-xs font-normal pb-1 mt-5'>Configuration</div>
+            <SideNavItem label='Categories' icon={<Component size={20} />} path='/categories' isSidebarExpanded={isSidebarExpanded} />
+            <SideNavItem label='Payees' icon={<Users size={20} />} path='/payees' isSidebarExpanded={isSidebarExpanded} />
           </div>
+
           {/* Bottom */}
           <div className='sticky bottom-0  mt-auto whitespace-nowrap mb-4 transition duration-200 block'>
-            {navItems.map((item, idx) => {
-              if (item.position === 'bottom') {
-                return (
-                  <Fragment key={idx}>
-                    <div className='space-y-1'>
-                      <SideNavItem
-                        label={item.name}
-                        icon={item.icon}
-                        path={item.href}
-                        active={item.active}
-                        isSidebarExpanded={isSidebarExpanded}
-                      />
-                    </div>
-                  </Fragment>
-                );
-              }
-            })}
+            <SideNavItem label='Settings' icon={<Settings size={20} />} path={'/settings'} isSidebarExpanded={isSidebarExpanded} />
           </div>
         </aside>
         <div className='mt-[calc(calc(90vh)-40px)] relative'>
@@ -102,45 +88,53 @@ export const SideNavItem: React.FC<{
   label: string;
   icon: any;
   path: string;
-  active: boolean;
   isSidebarExpanded: boolean;
-}> = ({ label, icon, path, active, isSidebarExpanded }) => {
+}> = ({ label, icon, path, isSidebarExpanded }) => {
+  const pathname = usePathname();
+  const active = pathname === path;
+
   return (
     <>
       {isSidebarExpanded ? (
-        <Link
-          href={path}
-          className={`h-full relative flex items-center whitespace-nowrap rounded-md ${
-            active
-              ? 'font-base text-sm bg-neutral-200 shadow-sm text-neutral-700 dark:bg-neutral-800 dark:text-white'
-              : 'hover:bg-neutral-200  hover:text-neutral-700 text-neutral-500 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white'
-          }`}
-        >
-          <div className='relative font-base text-sm py-1.5 px-2 flex flex-row items-center space-x-2 rounded-md duration-100'>
-            {icon}
-            <span>{label}</span>
+        <div className='flex flex-col space-y-1'>
+          <div className='space-y-1'>
+            <Link
+              href={path}
+              className={`h-full relative flex items-center whitespace-nowrap rounded-md ${
+                active
+                  ? 'font-base text-sm bg-accent shadow-sm text-slate-800 dark:bg-slate-800 dark:text-white'
+                  : 'hover:bg-accent hover:text-neutral-700 text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white'
+              }`}
+            >
+              <div className='relative font-base text-sm py-1.5 px-2 flex flex-row items-center space-x-2 rounded-md duration-100'>
+                {icon}
+                <span>{label}</span>
+              </div>
+            </Link>
           </div>
-        </Link>
+        </div>
       ) : (
-        <TooltipProvider delayDuration={70}>
-          <Tooltip>
-            <TooltipTrigger>
-              <Link
-                href={path}
-                className={`h-full relative flex items-center whitespace-nowrap rounded-md ${
-                  active
-                    ? 'font-base text-sm  bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-white'
-                    : 'hover:bg-neutral-200 hover:text-neutral-700 text-neutral-500 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white'
-                }`}
-              >
-                <div className='relative font-base text-sm p-2 flex flex-row items-center space-x-2 rounded-md duration-100'>{icon}</div>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side='left' className='px-3 py-1.5 text-xs' sideOffset={10}>
-              <span>{label}</span>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className='space-y-1'>
+          <TooltipProvider delayDuration={70}>
+            <Tooltip>
+              <TooltipTrigger>
+                <Link
+                  href={path}
+                  className={`h-full relative flex items-center whitespace-nowrap rounded-md ${
+                    active
+                      ? 'font-base text-sm  bg-accent text-slate-800 dark:bg-slate-800 dark:text-white'
+                      : 'hover:bg-accent hover:text-slate-700 text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white'
+                  }`}
+                >
+                  <div className='relative font-base text-sm p-2 flex flex-row items-center space-x-2 rounded-md duration-100'>{icon}</div>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side='left' className='px-3 py-1.5 text-xs' sideOffset={10}>
+                <span>{label}</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       )}
     </>
   );
