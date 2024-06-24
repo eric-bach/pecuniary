@@ -31,10 +31,10 @@ X Sort and categorize Accounts in UI
   https://github.com/horizon-ui/horizon-tailwind-react-nextjs
   X Add Auth
   X Fix sidebar collapse - https://www.youtube.com/watch?v=0QPXqRifh-c&list=WL&index=8
-  Add heading/subheadings to sidebar
-  Add actions
+  X Add heading/subheadings to sidebar
+  X Add actions
+  X Add submenus
   Remove posts
-  Add submenus
 
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions

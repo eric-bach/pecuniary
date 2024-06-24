@@ -92,7 +92,7 @@ export default function Sidebar() {
                 isSidebarExpanded={isSidebarExpanded}
               />
             ))}
-            {assets.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
+            {banking.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
             <div className='text-xs font-normal pb-1 mt-5'>Credit Cards</div>
             {creditCards.map((item) => (
@@ -135,8 +135,9 @@ export default function Sidebar() {
             <SidebarItem label='Queries' icon={<Database size={20} />} path='/queries' isSidebarExpanded={isSidebarExpanded} />
 
             <div className='text-xs font-normal pb-1 mt-5'>Configuration</div>
-            <SidebarItem label='Categories' icon={<Component size={20} />} path='/categories' isSidebarExpanded={isSidebarExpanded} />
+            <SidebarItem label='Accounts' icon={<Component size={20} />} path='/accounts' isSidebarExpanded={isSidebarExpanded} />
             <SidebarItem label='Payees' icon={<Users size={20} />} path='/payees' isSidebarExpanded={isSidebarExpanded} />
+            <SidebarItem label='Categories' icon={<Component size={20} />} path='/categories' isSidebarExpanded={isSidebarExpanded} />
           </div>
 
           {/* Bottom */}
