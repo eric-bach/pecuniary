@@ -6,8 +6,19 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ClipboardList, Component, Database, Home, Settings, Users, Wallet } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { fetchAccounts } from '../../actions/index';
+
+export interface Item {
+  id: string;
+  name: string;
+}
 
 export default function Sidebar() {
+  const [banking, setBanking] = useState<Item[]>([]);
+  const [creditCards, setCreditCards] = useState<Item[]>([]);
+  const [investments, setInvestments] = useState<Item[]>([]);
+  const [assets, setAssets] = useState<Item[]>([]);
+
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
     // Get the sidebar state from localStorage
     const saved = window.localStorage.getItem('sidebarExpanded');
@@ -22,6 +33,36 @@ export default function Sidebar() {
   useEffect(() => {
     window.localStorage.setItem('sidebarExpanded', JSON.stringify(isSidebarExpanded));
   }, [isSidebarExpanded]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const accounts = await fetchAccounts();
+      console.log(accounts);
+
+      setBanking(
+        accounts
+          .filter((account) => account.category.toLowerCase() === 'banking')
+          .map((account) => ({ id: account.accountId, name: account.name }))
+      );
+      setCreditCards(
+        accounts
+          .filter((account) => account.category.toLowerCase() === 'credit card')
+          .map((account) => ({ id: account.accountId, name: account.name }))
+      );
+      setInvestments(
+        accounts
+          .filter((account) => account.category.toLowerCase() === 'investment')
+          .map((account) => ({ id: account.accountId, name: account.name }))
+      );
+      setAssets(
+        accounts
+          .filter((account) => account.category.toLowerCase() === 'asset')
+          .map((account) => ({ id: account.accountId, name: account.name }))
+      );
+    }
+
+    fetchData();
+  }, []);
 
   // Toggle the sidebar state
   const toggleSidebar = () => {
@@ -41,9 +82,53 @@ export default function Sidebar() {
           <div className='mt-20 relative pb-2'>
             <SidebarItem label='Home' icon={<Home size={20} />} path='/dashboard' isSidebarExpanded={isSidebarExpanded} />
 
-            <div className='text-xs font-normal pb-1 mt-5'>Accounts</div>
-            <SidebarItem label='TFSA Account' icon={<Home size={20} />} path='/accounts/1' isSidebarExpanded={isSidebarExpanded} />
-            <SidebarItem label='RRSP Account' icon={<Home size={20} />} path='/accounts/2' isSidebarExpanded={isSidebarExpanded} />
+            <div className='text-xs font-normal pb-1 mt-5'>Banking</div>
+            {banking.map((item) => (
+              <SidebarItem
+                key={item.id}
+                label={item.name}
+                icon={<Wallet size={20} />}
+                path={`/accounts/${item.id}`}
+                isSidebarExpanded={isSidebarExpanded}
+              />
+            ))}
+            {assets.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
+
+            <div className='text-xs font-normal pb-1 mt-5'>Credit Cards</div>
+            {creditCards.map((item) => (
+              <SidebarItem
+                key={item.id}
+                label={item.name}
+                icon={<Wallet size={20} />}
+                path={`/accounts/${item.id}`}
+                isSidebarExpanded={isSidebarExpanded}
+              />
+            ))}
+            {creditCards.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
+
+            <div className='text-xs font-normal pb-1 mt-5'>Investments</div>
+            {investments.map((item) => (
+              <SidebarItem
+                key={item.id}
+                label={item.name}
+                icon={<Wallet size={20} />}
+                path={`/accounts/${item.id}`}
+                isSidebarExpanded={isSidebarExpanded}
+              />
+            ))}
+            {investments.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
+
+            <div className='text-xs font-normal pb-1 mt-5'>Assets</div>
+            {assets.map((item) => (
+              <SidebarItem
+                key={item.id}
+                label={item.name}
+                icon={<Wallet size={20} />}
+                path={`/accounts/${item.id}`}
+                isSidebarExpanded={isSidebarExpanded}
+              />
+            ))}
+            {assets.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
             <div className='text-xs font-normal pb-1 mt-5'>Analytics</div>
             <SidebarItem label='Reports' icon={<ClipboardList size={20} />} path='/reports' isSidebarExpanded={isSidebarExpanded} />
