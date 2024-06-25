@@ -34,6 +34,7 @@ X Sort and categorize Accounts in UI
   X Add heading/subheadings to sidebar
   X Add actions
   X Add submenus
+  Shadcn examples - https://github.com/shadcn-ui/ui
   Add account
   Delete account
   Edit account
