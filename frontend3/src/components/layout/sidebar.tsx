@@ -37,7 +37,7 @@ export default function Sidebar() {
   useEffect(() => {
     async function fetchData() {
       const accounts = await fetchAccounts();
-      console.log(accounts);
+      console.log('Sidebar Accounts', accounts);
 
       setBanking(
         accounts

@@ -24,23 +24,13 @@ X Add loading screens
 X Migrate rest of backend functions over
 X Sort and categorize Accounts in UI
 
-- Switch to shadcn dashboard?
-  https://github.com/bradtraversy/traversypress-ui
-  https://github.com/Kiranism/next-shadcn-dashboard-starter?tab=readme-ov-file
-  https://github.com/sachidumaleesha/shadcn-dashboard
-  https://github.com/horizon-ui/horizon-tailwind-react-nextjs
-  X Add Auth
-  X Fix sidebar collapse - https://www.youtube.com/watch?v=0QPXqRifh-c&list=WL&index=8
-  X Add heading/subheadings to sidebar
-  X Add actions
-  X Add submenus
-  Shadcn examples - https://github.com/shadcn-ui/ui
-  Add account
-  Add account is not refreshing sidebar
+- Switch to shadcn dashboard
+  X Add account
   Delete account
   Edit account
   Remove posts
 
+- Bugs - Add account doesn't update sidebar
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
@@ -53,8 +43,16 @@ X Sort and categorize Accounts in UI
 
 ##### References
 
+- Shadcn UI examples
+- https://github.com/shadcn-ui/ui
 - Auth
   - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
   - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
 - Dashboard Template
-  - https://github.com/Siumauricio/nextui-dashboard-template?tab=readme-ov-file
+  - Shadcn
+    - https://github.com/bradtraversy/traversypress-ui
+    - https://github.com/Kiranism/next-shadcn-dashboard-starter?tab=readme-ov-file
+    - https://github.com/sachidumaleesha/shadcn-dashboard
+    - https://github.com/horizon-ui/horizon-tailwind-react-nextjs
+  - NextUI
+    - https://github.com/Siumauricio/nextui-dashboard-template?tab=readme-ov-file
