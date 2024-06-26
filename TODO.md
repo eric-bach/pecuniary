@@ -36,6 +36,7 @@ X Sort and categorize Accounts in UI
   X Add submenus
   Shadcn examples - https://github.com/shadcn-ui/ui
   Add account
+  Add account is not refreshing sidebar
   Delete account
   Edit account
   Remove posts

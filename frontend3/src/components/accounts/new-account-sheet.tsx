@@ -5,12 +5,18 @@ import * as z from 'zod';
 import { schema } from './account-form';
 import AccountForm from './account-form';
 import { useNewAccount } from '@/hooks/use-new-account';
+import { createNewAccount } from '@/actions';
 
 const NewAccountSheet = () => {
   const { isOpen, onClose } = useNewAccount();
 
-  const onSubmit = (values: z.infer<typeof schema>) => {
-    console.log({ values });
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    console.log('Account Sheet values', { values });
+
+    const result = await createNewAccount(values);
+
+    console.log('Account Sheet result', { result });
+
     onClose();
   };
 
@@ -21,7 +27,7 @@ const NewAccountSheet = () => {
           <SheetTitle>Create Account</SheetTitle>
           <SheetDescription>Add a new account</SheetDescription>
         </SheetHeader>
-        <AccountForm onSubmit={onSubmit} disabled={false} defaultValues={{ name: '' }} />
+        <AccountForm onSubmit={onSubmit} disabled={false} defaultValues={{ name: '', category: '', type: '' }} />
       </SheetContent>
     </Sheet>
   );

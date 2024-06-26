@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { createAccount } from '../../../infrastructure/graphql/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { CreateAccountInput } from '../../../infrastructure/graphql/api/codegen/appsync';
 
 const schema = z.object({
   name: z.string().min(1, 'Name cannot be blank'),
@@ -26,11 +27,11 @@ interface CreateAccountFormState {
   };
 }
 
-export async function createNewAccount(formState: CreateAccountFormState, formData: FormData): Promise<CreateAccountFormState> {
+export async function createNewAccount({ name, category, type }: CreateAccountInput): Promise<CreateAccountFormState> {
   const result = schema.safeParse({
-    name: formData.get('name'),
-    category: formData.get('category'),
-    type: formData.get('type'),
+    name,
+    category,
+    type,
   });
 
   if (!result.success) {
@@ -57,6 +58,6 @@ export async function createNewAccount(formState: CreateAccountFormState, formDa
     }
   }
 
-  revalidatePath('/accounts/manage');
-  redirect('/accounts/manage');
+  revalidatePath('/accounts');
+  redirect('/accounts');
 }
