@@ -7,14 +7,14 @@ import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, ClipboardList, Component, Database, Home, Settings, Users, Wallet } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { fetchAccounts } from '../../actions/index';
+import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
 
 export interface Item {
   id: string;
   name: string;
 }
 
-export default function Sidebar() {
-  const [banking, setBanking] = useState<Item[]>([]);
+export default function Sidebar({ accounts }: { accounts: [Account] }) {
   const [creditCards, setCreditCards] = useState<Item[]>([]);
   const [investments, setInvestments] = useState<Item[]>([]);
   const [assets, setAssets] = useState<Item[]>([]);
@@ -34,35 +34,41 @@ export default function Sidebar() {
     window.localStorage.setItem('sidebarExpanded', JSON.stringify(isSidebarExpanded));
   }, [isSidebarExpanded]);
 
-  useEffect(() => {
-    async function fetchData() {
-      const accounts = await fetchAccounts();
-      console.log('Sidebar Accounts', accounts);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const accounts = await fetchAccounts();
+  //     console.log('Sidebar Accounts', accounts);
 
-      setBanking(
-        accounts
-          .filter((account) => account.category.toLowerCase() === 'banking')
-          .map((account) => ({ id: account.accountId, name: account.name }))
-      );
-      setCreditCards(
-        accounts
-          .filter((account) => account.category.toLowerCase() === 'credit card')
-          .map((account) => ({ id: account.accountId, name: account.name }))
-      );
-      setInvestments(
-        accounts
-          .filter((account) => account.category.toLowerCase() === 'investment')
-          .map((account) => ({ id: account.accountId, name: account.name }))
-      );
-      setAssets(
-        accounts
-          .filter((account) => account.category.toLowerCase() === 'asset')
-          .map((account) => ({ id: account.accountId, name: account.name }))
-      );
-    }
+  //     setBanking(
+  //       accounts
+  //         .filter((account) => account.category.toLowerCase() === 'banking')
+  //         .map((account) => ({ id: account.accountId, name: account.name }))
+  //     );
+  //     setCreditCards(
+  //       accounts
+  //         .filter((account) => account.category.toLowerCase() === 'credit card')
+  //         .map((account) => ({ id: account.accountId, name: account.name }))
+  //     );
+  //     setInvestments(
+  //       accounts
+  //         .filter((account) => account.category.toLowerCase() === 'investment')
+  //         .map((account) => ({ id: account.accountId, name: account.name }))
+  //     );
+  //     setAssets(
+  //       accounts
+  //         .filter((account) => account.category.toLowerCase() === 'asset')
+  //         .map((account) => ({ id: account.accountId, name: account.name }))
+  //     );
+  //   }
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
+
+  console.log(accounts);
+
+  let banking = accounts
+    .filter((account) => account.category.toLowerCase() === 'banking')
+    .map((account) => ({ id: account.accountId, name: account.name }));
 
   // Toggle the sidebar state
   const toggleSidebar = () => {

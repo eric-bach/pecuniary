@@ -58,6 +58,6 @@ export async function createNewAccount({ name, category, type }: CreateAccountIn
     }
   }
 
-  revalidatePath('/accounts');
+  revalidatePath('/', 'layout');
   redirect('/accounts');
 }
