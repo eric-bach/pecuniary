@@ -30,7 +30,6 @@ X Sort and categorize Accounts in UI
   Edit account
   Remove posts
 
-- Bugs - Add account doesn't update sidebar
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
