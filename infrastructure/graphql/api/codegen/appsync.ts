@@ -223,10 +223,10 @@ export type Transaction = {
 };
 
 export type UpdateAccountInput = {
+  accountId: Scalars['ID']['input'];
   category: Scalars['String']['input'];
   createdAt: Scalars['String']['input'];
   name: Scalars['String']['input'];
-  pk: Scalars['ID']['input'];
   type: Scalars['String']['input'];
 };
 

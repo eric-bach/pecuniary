@@ -31,7 +31,7 @@ input CreateAccountInput {
 
 # UpdateAccount
 input UpdateAccountInput {
-  pk: ID!
+  accountId: ID!
   createdAt: String!
   category: String!
   type: String!

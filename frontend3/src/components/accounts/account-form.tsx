@@ -23,6 +23,8 @@ export const schema = z.object({
       (value: string) => value === 'Non Registered' || value === 'TFSA' || value === 'RRSP' || value === 'LIRA' || value === 'Crypto',
       'Type is not a valid type'
     ),
+  accountId: z.string().optional(),
+  createdAt: z.string().optional(),
 });
 
 type Props = {

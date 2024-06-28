@@ -10,6 +10,7 @@ import { Delete, Edit, Eye, View } from 'lucide-react';
 import { Tooltip, TooltipTrigger } from '../ui/tooltip';
 import { TooltipContent, TooltipProvider } from '@radix-ui/react-tooltip';
 import { useRouter } from 'next/navigation';
+import EditAccountSheet from './edit-account-sheet';
 
 interface ManageAccountsProps {
   accounts: [Account];
@@ -65,12 +66,7 @@ const ManageAccounts = ({ accounts }: ManageAccountsProps) => {
                     <TooltipContent>View Account</TooltipContent>
                   </Tooltip>
                   <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant='outline' size='icon' onClick={() => console.log('Edit account')} className='mr-2'>
-                        <Edit size={20} />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Edit Account</TooltipContent>
+                    <EditAccountSheet account={account} />
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>

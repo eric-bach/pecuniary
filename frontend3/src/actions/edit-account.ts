@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { updateAccount } from '../../../infrastructure/graphql/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { create } from 'domain';
+import { UpdateAccountInput } from '../../../infrastructure/graphql/api/codegen/appsync';
 
 const schema = z.object({
   name: z.string().min(1, 'Name cannot be blank'),
@@ -31,13 +31,19 @@ interface EditAccountFormState {
   };
 }
 
-export async function editExistingAccount(formState: EditAccountFormState, formData: FormData): Promise<EditAccountFormState> {
+export async function editExistingAccount({
+  accountId,
+  createdAt,
+  name,
+  category,
+  type,
+}: UpdateAccountInput): Promise<EditAccountFormState> {
   const result = schema.safeParse({
-    name: formData.get('name'),
-    category: formData.get('category'),
-    type: formData.get('type'),
-    accountId: formData.get('accountId'),
-    createdAt: formData.get('createdAt'),
+    name,
+    category,
+    type,
+    accountId,
+    createdAt,
   });
 
   if (!result.success) {
@@ -50,7 +56,7 @@ export async function editExistingAccount(formState: EditAccountFormState, formD
       query: updateAccount,
       variables: {
         input: {
-          pk: `acc#${result.data.accountId}`,
+          accountId: result.data.accountId,
           createdAt: result.data.createdAt,
           name: result.data.name,
           category: result.data.category,
@@ -66,6 +72,6 @@ export async function editExistingAccount(formState: EditAccountFormState, formD
     }
   }
 
-  revalidatePath('/accounts/manage');
-  redirect('/accounts/manage');
+  revalidatePath('/', 'layout');
+  redirect('/accounts');
 }
