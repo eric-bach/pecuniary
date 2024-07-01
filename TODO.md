@@ -23,12 +23,10 @@ X Fix add/edit acocunt validation bugs
 X Add loading screens
 X Migrate rest of backend functions over
 X Sort and categorize Accounts in UI
+X Switch to shadcn dashboard
 
-- Switch to shadcn dashboard
-  X Add account
-  Delete account
-  Edit account
-  Remove posts
+- Refactor/Clean up components
+- Fix conditional requirements on Type for Accounts
 
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions

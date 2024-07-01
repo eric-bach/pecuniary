@@ -3,27 +3,24 @@ import { signUp, signIn, signOut, resendSignUpCode, updatePassword, resetPasswor
 import { getErrorMessage } from '@/utils/getErrorMessage';
 import { nextRedirect } from '@/utils/nextServerUtils';
 
-// export async function handleSignUp(prevState: string | undefined, formData: FormData) {
-export async function handleSignUp(prevState: string | undefined, { email, password }: { email: string; password: string }) {
+export async function handleSignUp(prevState: string | undefined, formData: FormData) {
   try {
     const { isSignUpComplete, userId, nextStep } = await signUp({
-      username: email, //String(formData.get('email')),
-      password: password, //String(formData.get('password')),
+      username: String(formData.get('email')),
+      password: String(formData.get('password')),
       options: {
         userAttributes: {
-          email: email, //String(formData.get('email')),
-          // name: String(formData.get('name')),
+          email: String(formData.get('email')),
+          name: String(formData.get('name')),
         },
         // optional
         autoSignIn: true,
       },
     });
   } catch (error) {
-    console.log(error);
     return getErrorMessage(error);
   }
-  //redirect('/auth/verify?email=' + encodeURIComponent(String(formData.get('email'))));
-  nextRedirect('/auth/verify?email=' + encodeURIComponent(email));
+  redirect('/auth/verify?email=' + encodeURIComponent(String(formData.get('email'))));
 }
 
 export async function handleSendEmailVerification(prevState: { message: string; errorMessage: string }, formData: FormData) {
@@ -47,17 +44,16 @@ export async function handleSendEmailVerification(prevState: { message: string; 
   return currentState;
 }
 
-// export async function handleSignIn(prevState: string | undefined, formData: FormData) {
-export async function handleSignIn(prevState: string | undefined, { email, password }: { email: string; password: string }) {
+export async function handleSignIn(prevState: string | undefined, formData: FormData) {
   let redirectLink = '/dashboard';
   try {
     const { isSignedIn, nextStep } = await signIn({
-      username: email, // String(formData.get('email')),
-      password: password, //String(formData.get('password')),
+      username: String(formData.get('email')),
+      password: String(formData.get('password')),
     });
     if (nextStep.signInStep === 'CONFIRM_SIGN_UP') {
       await resendSignUpCode({
-        username: email, //String(formData.get('email')),
+        username: String(formData.get('email')),
       });
       redirectLink = '/auth/verify';
     }

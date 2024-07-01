@@ -1,7 +1,5 @@
 import VerifyForm from '@/components/auth/verify-form';
 
-const Verify = () => {
+export default function Confirm() {
   return <VerifyForm />;
-};
-
-export default Verify;
+}

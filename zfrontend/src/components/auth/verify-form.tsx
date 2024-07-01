@@ -22,7 +22,7 @@ export default function VerifyForm() {
   const [result, dispatch] = useFormState(handleSendEmailVerification, { message: '', errorMessage: '' });
 
   return (
-    <form action={dispatch} className='space-y-3 min-w-[400px] max-w-[540px]'>
+    <form action={dispatch} className='space-y-3 min-w-[400px]'>
       <Card>
         <CardHeader>
           <CardTitle className='text-2xl'>Verify Email</CardTitle>
@@ -42,7 +42,7 @@ export default function VerifyForm() {
             </div>
             <p className='mt-4 text-center text-sm'>
               Didn&#39;t receive an email?
-              <Button type='submit' className='font-semibold bg-transparent hover:bg-transparent text-slate-600'>
+              <Button type='submit' className='font-semibold bg-transparent hover:bg-transparent text-indigo-600'>
                 Resend
               </Button>
             </p>
@@ -61,8 +61,8 @@ export default function VerifyForm() {
         </CardContent>
         <CardFooter>
           <Link
-            href='/dashboard'
-            className={cn(buttonVariants({ variant: 'default' }), 'w-full bg-slate-800 hover:bg-slate-600 transition-colors')}
+            href='/'
+            className={cn(buttonVariants({ variant: 'default' }), 'w-full bg-indigo-500 hover:bg-indigo-600 transition-colors')}
           >
             Sign In
           </Link>

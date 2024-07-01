@@ -1,11 +1,10 @@
-import type { NextPage } from 'next';
-import Header from '@/components/home/header';
-import Hero from '@/components/home/hero';
-import Footer from '@/components/home/footer';
-import Feature from '@/components/home/feature';
-import Testimonial from '@/components/home/testimonial';
+import Feature from '@/components/layout-home/feature';
+import Footer from '@/components/layout-home/footer';
+import Header from '@/components/layout-home/header';
+import Hero from '@/components/layout-home/hero';
+import Testimonial from '@/components/layout-home/testimonial';
 
-const Home: NextPage = () => {
+const Home = () => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header />
