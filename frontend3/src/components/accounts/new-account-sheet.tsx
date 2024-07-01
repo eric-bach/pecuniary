@@ -23,7 +23,11 @@ const NewAccountSheet = () => {
           <SheetDescription>Add a new account</SheetDescription>
         </SheetHeader>
 
-        <AccountForm onSubmit={onSubmit} disabled={false} defaultValues={{ name: '', category: '', type: '' }} />
+        <AccountForm
+          onSubmit={onSubmit}
+          disabled={false}
+          defaultValues={{ accountId: '', name: '', category: '', type: '', createdAt: '' }}
+        />
       </SheetContent>
     </Sheet>
   );

@@ -16,13 +16,14 @@ const ManageAccounts = ({ accounts }: ManageAccountsProps) => {
   const newAccount = useNewAccount();
 
   return (
-    <div className='mx-auto -mt-6 w-full max-w-screen-2xl pb-10'>
+    <div className='mx-auto w-full max-w-screen-2xl pb-10'>
       <Card className='border-none drop-shadow-sm'>
         <CardHeader className='gap-y-2 lg:flex-row lg:items-center lg:justify-between'>
           <CardTitle className='text-xl-line-clamp-1'>Accounts</CardTitle>
 
           <Button size='sm' onClick={newAccount.onOpen}>
-            <Plus className='size-4 mr-2' /> Add New
+            <Plus className='size-4 mr-2' />
+            Add New
           </Button>
         </CardHeader>
 

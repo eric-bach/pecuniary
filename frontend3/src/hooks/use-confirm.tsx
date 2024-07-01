@@ -2,8 +2,10 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 export const useConfirm = (title: string, message: string): [() => JSX.Element, () => Promise<unknown>] => {
+  const [deleteConfirm, setDeleteConfirm] = useState<string>('');
   const [promise, setPromise] = useState<{
     resolve: (value: boolean) => void;
   } | null>(null);
@@ -13,7 +15,10 @@ export const useConfirm = (title: string, message: string): [() => JSX.Element, 
       setPromise({ resolve });
     });
 
-  const handleClose = () => setPromise(null);
+  const handleClose = () => {
+    setPromise(null);
+    setDeleteConfirm('');
+  };
 
   const handleConfirm = () => {
     promise?.resolve(true);
@@ -25,6 +30,10 @@ export const useConfirm = (title: string, message: string): [() => JSX.Element, 
     handleClose();
   };
 
+  const handleInputChange = (event: any) => {
+    setDeleteConfirm(event.target.value);
+  };
+
   const ConfirmationDialog = () => (
     <Dialog open={promise !== null} onOpenChange={handleCancel}>
       <DialogContent>
@@ -33,11 +42,15 @@ export const useConfirm = (title: string, message: string): [() => JSX.Element, 
           <DialogDescription>{message}</DialogDescription>
         </DialogHeader>
 
+        <Input type='text' value={deleteConfirm} onChange={handleInputChange} placeholder='Enter "delete" to confirm' />
+
         <DialogFooter className='pt-2'>
           <Button onClick={handleCancel} variant='outline'>
             Cancel
           </Button>
-          <Button onClick={handleConfirm}>Confirm</Button>
+          <Button onClick={handleConfirm} disabled={deleteConfirm !== 'delete'}>
+            Confirm
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

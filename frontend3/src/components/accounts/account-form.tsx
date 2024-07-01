@@ -12,18 +12,16 @@ import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync'
 
 export const schema = z.object({
   name: z.string().min(1, 'Account name is required'),
-  category: z
-    .string()
-    .refine(
-      (value: string) => value === 'Banking' || value === 'Credit Card' || value === 'Investment' || value === 'Asset',
-      'Category is not a valid type'
-    ),
-  type: z
-    .string()
-    .refine(
-      (value: string) => value === 'Non Registered' || value === 'TFSA' || value === 'RRSP' || value === 'LIRA' || value === 'Crypto',
-      'Type is not a valid type'
-    ),
+  category: z.string(),
+  // .refine(
+  //   (value: string) => value === 'Banking' || value === 'Credit Card' || value === 'Investment' || value === 'Asset',
+  //   'Category is not a valid type'
+  // ),
+  type: z.string(),
+  // .refine(
+  //   (value: string) => value === 'Non Registered' || value === 'TFSA' || value === 'RRSP' || value === 'LIRA' || value === 'Crypto',
+  //   'Type is not a valid type'
+  // ),
   accountId: z.string().optional(),
   createdAt: z.string().optional(),
 });

@@ -14,9 +14,16 @@ const EditAccountSheet = () => {
   const onSubmit = async (values: z.infer<typeof schema>) => {
     console.log('Account Sheet values', { values });
 
-    // TODO Fix this
-    // @ts-ignore
-    const result = await editExistingAccount(values);
+    // TODO Fix this type error
+    const data = {
+      accountId: values.accountId!,
+      name: values.name,
+      category: values.category,
+      type: values.type,
+      createdAt: values.createdAt!,
+    };
+
+    const result = await editExistingAccount(data);
     console.log('Edit Account Sheet result', { result });
 
     onClose();

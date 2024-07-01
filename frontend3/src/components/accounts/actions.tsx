@@ -4,9 +4,11 @@ import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useOpenAccount } from '@/hooks/use-open-account';
-import { useConfirm } from '@/hooks/use-confirm';
 import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
 import { deleteExistingAccount } from '@/actions';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useState } from 'react';
+import { Input } from '../ui/input';
 
 type ActionsProps = {
   account: Account;
@@ -15,19 +17,52 @@ type ActionsProps = {
 export const Actions = ({ account }: ActionsProps) => {
   const { onOpen } = useOpenAccount();
 
-  const [ConfirmDialog, confirm] = useConfirm('Are you sure?', 'You are about to delete this account.');
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string>('');
 
-  const handleDelete = async () => {
-    const ok = await confirm();
+  const handleClose = () => {
+    setOpen(false);
+    setDeleteConfirm('');
+  };
 
-    if (ok) {
-      await deleteExistingAccount(account.accountId);
-    }
+  const handleConfirm = async () => {
+    await deleteExistingAccount(account.accountId);
+
+    handleClose();
+  };
+
+  const handleCancel = () => {
+    handleClose();
+  };
+
+  const handleInputChange = (event: any) => {
+    setDeleteConfirm(event.target.value);
+  };
+
+  const handleDelete = () => {
+    setOpen(true);
   };
 
   return (
     <>
-      <ConfirmDialog />
+      <Dialog open={isOpen} onOpenChange={handleCancel}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you sure you want to delete this account?</DialogTitle>
+            <DialogDescription>To confirm deletion, enter "delete" below</DialogDescription>
+          </DialogHeader>
+          <Input type='text' value={deleteConfirm} onChange={handleInputChange} placeholder='Enter "delete" to confirm' />
+          <DialogFooter className='pt-2'>
+            <Button onClick={handleCancel} variant='outline'>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirm} disabled={deleteConfirm !== 'delete'}>
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='size-8 p-0'>
