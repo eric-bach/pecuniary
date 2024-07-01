@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
 
 interface DisplayAccountProps {
   account: Account;

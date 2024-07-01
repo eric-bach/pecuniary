@@ -61,5 +61,6 @@ export const config = {
      * - favicon.ico (favicon file)
      */
     '/dashboard',
+    '/accounts',
   ],
 };

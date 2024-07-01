@@ -2,8 +2,8 @@
 
 import { useMountedState } from 'react-use';
 
-import EditAccountSheet from '@/components/accounts/edit-account-sheet';
-import NewAccountSheet from '@/components/accounts/new-account-sheet';
+import EditAccountSheet from '@/features/accounts/edit-account-sheet';
+import NewAccountSheet from '@/features/accounts/new-account-sheet';
 
 export const SheetProvider = () => {
   const isMounted = useMountedState();

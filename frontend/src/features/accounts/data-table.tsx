@@ -18,7 +18,6 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useConfirm } from '@/hooks/use-confirm';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -29,7 +28,6 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, disabled }: DataTableProps<TData, TValue>) {
-  const [ConfirmDialog, confirm] = useConfirm('Are you sure?', 'You are about to perform a bulk delete.');
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
@@ -53,7 +51,7 @@ export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, d
 
   return (
     <div>
-      <ConfirmDialog />
+      {/* <ConfirmDialog /> */}
 
       <div className='flex items-center py-4'>
         <Input

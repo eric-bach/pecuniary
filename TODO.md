@@ -25,8 +25,8 @@ X Migrate rest of backend functions over
 X Sort and categorize Accounts in UI
 X Switch to shadcn dashboard
 
-- Refactor/Clean up components
 - Fix conditional requirements on Type for Accounts
+- Add ability to delete multiple Accounts
 
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions

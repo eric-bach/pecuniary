@@ -4,11 +4,11 @@ import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useOpenAccount } from '@/hooks/use-open-account';
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
 import { deleteExistingAccount } from '@/actions';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';
-import { Input } from '../ui/input';
+import { Input } from '@/components/ui/input';
 
 type ActionsProps = {
   account: Account;

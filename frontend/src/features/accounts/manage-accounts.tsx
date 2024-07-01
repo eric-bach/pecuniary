@@ -1,10 +1,10 @@
 'use client';
 
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
 import { Button } from '@/components/ui/button';
 import { useNewAccount } from '@/hooks/use-new-account';
-import { DataTable } from '@/components/accounts/data-table';
-import { columns } from '@/components/accounts/columns';
+import { DataTable } from '@/features/accounts/data-table';
+import { columns } from '@/features/accounts/columns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus } from 'lucide-react';
 

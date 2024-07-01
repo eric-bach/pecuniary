@@ -1,8 +1,8 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
-import { Actions } from './actions';
+import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { Actions } from '@/features/accounts/actions';
 
 export const columns: ColumnDef<Account>[] = [
   {

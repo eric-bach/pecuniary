@@ -1,7 +1,7 @@
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import ManageAccounts from '@/features/accounts/manage-accounts';
 import { getAccounts } from '@/../../infrastructure/graphql/api/queries';
-import ManageAccounts from '@/components/accounts/manage-accounts';
-import { Account } from '../../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
 
 async function fetchAccounts(): Promise<[Account]> {
   const { data } = await cookieBasedClient.graphql({

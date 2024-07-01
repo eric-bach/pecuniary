@@ -1,6 +1,6 @@
 'use client';
 
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '../ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import AccountForm from './account-form';
 import * as z from 'zod';
 import { schema } from './account-form';

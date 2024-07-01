@@ -9,7 +9,7 @@ import { handleSendEmailVerification } from '@/lib/cognitoActions';
 import { useSearchParams } from 'next/navigation';
 import { TriangleAlertIcon } from 'lucide-react';
 import { Suspense } from 'react';
-import { Input } from '../ui/input';
+import { Input } from '../../components/ui/input';
 
 function Search() {
   const params = useSearchParams();

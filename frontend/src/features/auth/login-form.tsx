@@ -58,7 +58,7 @@ const LoginForm = () => {
               name='password'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='uppercase text-xs font-bold text-zinc-500 dark:text-white'>Password</FormLabel>
+                  <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Password</FormLabel>
                   <FormControl>
                     <Input
                       className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
