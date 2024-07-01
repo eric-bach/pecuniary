@@ -11,12 +11,7 @@ const NewAccountSheet = () => {
   const { isOpen, onClose } = useNewAccount();
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
-    console.log('Account Sheet values', { values });
-
-    const result = await createNewAccount(values);
-
-    console.log('Account Sheet result', { result });
-
+    await createNewAccount(values);
     onClose();
   };
 
@@ -27,6 +22,7 @@ const NewAccountSheet = () => {
           <SheetTitle>Create Account</SheetTitle>
           <SheetDescription>Add a new account</SheetDescription>
         </SheetHeader>
+
         <AccountForm onSubmit={onSubmit} disabled={false} defaultValues={{ name: '', category: '', type: '' }} />
       </SheetContent>
     </Sheet>

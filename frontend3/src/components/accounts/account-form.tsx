@@ -8,6 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Trash } from 'lucide-react';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
 
 export const schema = z.object({
   name: z.string().min(1, 'Account name is required'),
@@ -28,14 +29,14 @@ export const schema = z.object({
 });
 
 type Props = {
-  id?: string;
+  account?: Account;
   defaultValues?: z.infer<typeof schema>;
   onSubmit: (values: z.infer<typeof schema>) => void;
   onDelete?: () => void;
   disabled?: boolean;
 };
 
-const AccountForm = ({ id, defaultValues, onSubmit, onDelete, disabled }: Props) => {
+const AccountForm = ({ account, defaultValues, onSubmit, onDelete, disabled }: Props) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -123,9 +124,9 @@ const AccountForm = ({ id, defaultValues, onSubmit, onDelete, disabled }: Props)
           )}
         />
         <Button className='w-full' disabled={disabled}>
-          {id ? 'Save changes' : 'Create account'}
+          {account ? 'Save changes' : 'Create account'}
         </Button>
-        {!!id && (
+        {!!account && (
           <Button type='button' disabled={disabled} onClick={handleDelete} className='w-full' variant='outline'>
             <Trash size={4} className='size-4 mr-2' />
             Delete Account
