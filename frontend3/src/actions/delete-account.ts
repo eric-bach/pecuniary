@@ -12,12 +12,12 @@ interface DeleteAccountFormState {
   };
 }
 
-export async function deleteExistingAccount(formState: DeleteAccountFormState, formData: FormData): Promise<DeleteAccountFormState> {
+export async function deleteExistingAccount(accountId: string): Promise<DeleteAccountFormState> {
   try {
     await cookieBasedClient.graphql({
       query: deleteAccount,
       variables: {
-        accountId: formData.get('accountId') as string,
+        accountId,
       },
     });
   } catch (err: unknown) {
@@ -28,6 +28,6 @@ export async function deleteExistingAccount(formState: DeleteAccountFormState, f
     }
   }
 
-  revalidatePath('/accounts/manage');
-  redirect('/accounts/manage');
+  revalidatePath('/', 'layout');
+  redirect('/accounts');
 }
