@@ -23,8 +23,16 @@ X Fix add/edit acocunt validation bugs
 X Add loading screens
 X Migrate rest of backend functions over
 X Sort and categorize Accounts in UI
+X Switch to shadcn dashboard
+X Fix conditional zod validations for Account schema
+X Add Toast for Account actions
 
-- User HeroIcons SVG instead of Lucide
+- Add ability to delete multiple Accounts - data-table.tsx
+
+  - Create AppSync API to delete multiple accounts
+  - Add types and server actions to delete multiple accounts
+  - Update data-table.tsx to call server action
+
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
@@ -37,8 +45,16 @@ X Sort and categorize Accounts in UI
 
 ##### References
 
+- Shadcn UI examples
+- https://github.com/shadcn-ui/ui
 - Auth
   - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
   - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
 - Dashboard Template
-  - https://github.com/Siumauricio/nextui-dashboard-template?tab=readme-ov-file
+  - Shadcn
+    - https://github.com/bradtraversy/traversypress-ui
+    - https://github.com/Kiranism/next-shadcn-dashboard-starter?tab=readme-ov-file
+    - https://github.com/sachidumaleesha/shadcn-dashboard
+    - https://github.com/horizon-ui/horizon-tailwind-react-nextjs
+  - NextUI
+    - https://github.com/Siumauricio/nextui-dashboard-template?tab=readme-ov-file

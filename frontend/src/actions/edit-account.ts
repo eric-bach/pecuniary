@@ -1,24 +1,11 @@
 'use server';
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
-import { z } from 'zod';
 import { updateAccount } from '../../../infrastructure/graphql/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { create } from 'domain';
-
-const schema = z.object({
-  name: z.string().min(1, 'Name cannot be blank'),
-  category: z
-    .string()
-    .refine(
-      (value: string) => value === 'Banking' || value === 'Credit Card' || value === 'Investment' || value === 'Asset',
-      'Category is not a valid type'
-    ),
-  type: z.string().refine((value: string) => value === 'TFSA' || value === 'RRSP', 'Type must be either TFSA or RRSP'),
-  accountId: z.string(),
-  createdAt: z.string(),
-});
+import { UpdateAccountInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { schema } from '@/types/account';
 
 interface EditAccountFormState {
   errors: {
@@ -31,13 +18,19 @@ interface EditAccountFormState {
   };
 }
 
-export async function editExistingAccount(formState: EditAccountFormState, formData: FormData): Promise<EditAccountFormState> {
+export async function editExistingAccount({
+  accountId,
+  createdAt,
+  name,
+  category,
+  type,
+}: UpdateAccountInput): Promise<EditAccountFormState> {
   const result = schema.safeParse({
-    name: formData.get('name'),
-    category: formData.get('category'),
-    type: formData.get('type'),
-    accountId: formData.get('accountId'),
-    createdAt: formData.get('createdAt'),
+    name,
+    category,
+    type,
+    accountId,
+    createdAt,
   });
 
   if (!result.success) {
@@ -50,8 +43,8 @@ export async function editExistingAccount(formState: EditAccountFormState, formD
       query: updateAccount,
       variables: {
         input: {
-          pk: `acc#${result.data.accountId}`,
-          createdAt: result.data.createdAt,
+          accountId: result.data.accountId!,
+          createdAt: result.data.createdAt!,
           name: result.data.name,
           category: result.data.category,
           type: result.data.type,
@@ -66,6 +59,6 @@ export async function editExistingAccount(formState: EditAccountFormState, formD
     }
   }
 
-  revalidatePath('/accounts/manage');
-  redirect('/accounts/manage');
+  revalidatePath('/', 'layout');
+  redirect('/accounts');
 }
