@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import NextTopLoader from 'nextjs-toploader';
 
 import ConfigureAmplifyClientSide from './amplify-cognito-config';
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <NextThemesProvider attribute='class' defaultTheme='light' enableSystem={true} storageKey='dashboard-theme'>
           <ConfigureAmplifyClientSide />
+          <NextTopLoader />
           {children}
           <Toaster />
         </NextThemesProvider>
