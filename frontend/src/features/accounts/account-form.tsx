@@ -8,23 +8,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Trash } from 'lucide-react';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
-
-export const schema = z.object({
-  name: z.string().min(1, 'Account name is required'),
-  category: z.string(),
-  // .refine(
-  //   (value: string) => value === 'Banking' || value === 'Credit Card' || value === 'Investment' || value === 'Asset',
-  //   'Category is not a valid type'
-  // ),
-  type: z.string(),
-  // .refine(
-  //   (value: string) => value === 'Non Registered' || value === 'TFSA' || value === 'RRSP' || value === 'LIRA' || value === 'Crypto',
-  //   'Type is not a valid type'
-  // ),
-  accountId: z.string().optional(),
-  createdAt: z.string().optional(),
-});
+import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { useEffect, useState } from 'react';
+import { assetTypes, bankingTypes, categories, creditCardTypes, investmentTypes, schema } from '@/types/account';
 
 type Props = {
   account?: Account;
@@ -35,18 +21,37 @@ type Props = {
 };
 
 const AccountForm = ({ account, defaultValues, onSubmit, onDelete, disabled }: Props) => {
+  const [selectOptions, setSelectOptions] = useState<string[]>([]);
+
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues,
   });
 
   const handleSubmit = (data: z.infer<typeof schema>) => {
+    console.log('Submitting', data);
     onSubmit(data);
   };
 
   const handleDelete = () => {
     onDelete?.();
   };
+
+  const categoryWatch = form.watch('category');
+
+  useEffect(() => {
+    if (categoryWatch === 'Investment') {
+      setSelectOptions(investmentTypes);
+    } else if (categoryWatch === 'Banking') {
+      setSelectOptions(bankingTypes);
+    } else if (categoryWatch === 'Credit Card') {
+      setSelectOptions(creditCardTypes);
+      form.setValue('type', 'Credit');
+    } else if (categoryWatch === 'Asset') {
+      setSelectOptions(assetTypes);
+      form.setValue('type', 'Property');
+    }
+  }, [categoryWatch]);
 
   return (
     <Form {...form}>
@@ -83,10 +88,11 @@ const AccountForm = ({ account, defaultValues, onSubmit, onDelete, disabled }: P
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Category</SelectLabel>
-                    <SelectItem value='Banking'>Banking</SelectItem>
-                    <SelectItem value='Credit Card'>Credit Card</SelectItem>
-                    <SelectItem value='Investment'>Investment</SelectItem>
-                    <SelectItem value='Asset'>Asset</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -100,7 +106,7 @@ const AccountForm = ({ account, defaultValues, onSubmit, onDelete, disabled }: P
           render={({ field }) => (
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Account Type</FormLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select value={field.value} onValueChange={field.onChange} disabled={!categoryWatch}>
                 <FormControl>
                   <SelectTrigger className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'>
                     <SelectValue placeholder='Account type' />
@@ -109,11 +115,11 @@ const AccountForm = ({ account, defaultValues, onSubmit, onDelete, disabled }: P
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Type</SelectLabel>
-                    <SelectItem value='Non Registered'>Non Registered</SelectItem>
-                    <SelectItem value='TFSA'>TFSA</SelectItem>
-                    <SelectItem value='RRSP'>RRSP</SelectItem>
-                    <SelectItem value='LIRA'>LIRA</SelectItem>
-                    <SelectItem value='Crypto'>Crypto</SelectItem>
+                    {selectOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>

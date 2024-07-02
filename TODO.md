@@ -26,6 +26,7 @@ X Sort and categorize Accounts in UI
 X Switch to shadcn dashboard
 
 - Fix conditional requirements on Type for Accounts
+- Add Toast for Account CRUD actions
 - Add ability to delete multiple Accounts
 
 - Build ability to add transactions to an Account

@@ -1,22 +1,11 @@
 'use server';
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
-import { z } from 'zod';
-import { createAccount } from '../../../infrastructure/graphql/api/mutations';
+import { createAccount } from '@/../../infrastructure/graphql/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { CreateAccountInput } from '../../../infrastructure/graphql/api/codegen/appsync';
-
-const schema = z.object({
-  name: z.string().min(1, 'Name cannot be blank'),
-  category: z
-    .string()
-    .refine(
-      (value: string) => value === 'Banking' || value === 'Credit Card' || value === 'Investment' || value === 'Asset',
-      'Category is not a valid type'
-    ),
-  type: z.string().refine((value: string) => value === 'TFSA' || value === 'RRSP', 'Type must be either TFSA or RRSP'),
-});
+import { CreateAccountInput } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { schema } from '@/types/account';
 
 interface CreateAccountFormState {
   errors: {
@@ -33,6 +22,8 @@ export async function createNewAccount({ name, category, type }: CreateAccountIn
     category,
     type,
   });
+
+  console.log('Create Account Result', result);
 
   if (!result.success) {
     return { errors: result.error.flatten().fieldErrors };

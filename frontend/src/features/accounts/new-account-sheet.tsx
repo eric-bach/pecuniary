@@ -2,10 +2,10 @@
 
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import * as z from 'zod';
-import { schema } from './account-form';
 import AccountForm from './account-form';
 import { useNewAccount } from '@/hooks/use-new-account';
 import { createNewAccount } from '@/actions';
+import { schema } from '@/types/account';
 
 const NewAccountSheet = () => {
   const { isOpen, onClose } = useNewAccount();

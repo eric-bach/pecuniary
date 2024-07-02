@@ -3,12 +3,11 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import AccountForm from './account-form';
 import * as z from 'zod';
-import { schema } from './account-form';
 import { editExistingAccount } from '@/actions';
 import { useOpenAccount } from '@/hooks/use-open-account';
+import { schema } from '@/types/account';
 
 const EditAccountSheet = () => {
-  // const [isLoading, setLoading] = useState(true);
   const { isOpen, onClose, account } = useOpenAccount();
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
