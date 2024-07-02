@@ -51,7 +51,7 @@ const AccountForm = ({ account, defaultValues, onSubmit, onDelete, disabled }: P
       setSelectOptions(assetTypes);
       form.setValue('type', 'Property');
     }
-  }, [categoryWatch]);
+  }, [categoryWatch, form]);
 
   return (
     <Form {...form}>

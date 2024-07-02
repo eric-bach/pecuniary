@@ -20,6 +20,8 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
+import { deleteExistingAccount } from '@/actions';
+import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -27,6 +29,10 @@ interface DataTableProps<TData, TValue> {
   filterKey: string;
   onDelete: (rows: Row<TData>[]) => void;
   disabled?: boolean;
+}
+
+function isAccount(obj: any): obj is Account {
+  return typeof obj === 'object' && obj !== null && typeof obj.accountId === 'string';
 }
 
 export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, disabled }: DataTableProps<TData, TValue>) {
@@ -45,10 +51,17 @@ export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, d
   };
 
   const handleConfirm = async () => {
-    // TODO Delete each account
-    //await deleteExistingAccount(account.accountId);
+    table.getFilteredSelectedRowModel().rows.forEach(async (row) => {
+      if (isAccount(row.original)) {
+        await deleteExistingAccount((row.original as Account).accountId);
+      } else {
+        // TODO Handle other types here
+      }
+    });
 
     handleClose();
+
+    table.resetRowSelection();
 
     toast({
       title: 'Success!',
@@ -90,7 +103,7 @@ export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, d
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Are you sure you want to delete {table.getFilteredSelectedRowModel().rows.length} accounts?</DialogTitle>
-            <DialogDescription>To confirm deletion, enter "delete" below</DialogDescription>
+            <DialogDescription>To confirm deletion, enter &quot;delete&quot; below</DialogDescription>
           </DialogHeader>
           <Input type='text' value={deleteConfirm} onChange={handleInputChange} placeholder='Enter "delete" to confirm' />
           <DialogFooter className='pt-2'>

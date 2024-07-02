@@ -53,7 +53,7 @@ export const Actions = ({ account }: ActionsProps) => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Are you sure you want to delete this account?</DialogTitle>
-            <DialogDescription>To confirm deletion, enter "delete" below</DialogDescription>
+            <DialogDescription>To confirm deletion, enter &quot;delete&quot; below</DialogDescription>
           </DialogHeader>
           <Input type='text' value={deleteConfirm} onChange={handleInputChange} placeholder='Enter "delete" to confirm' />
           <DialogFooter className='pt-2'>
