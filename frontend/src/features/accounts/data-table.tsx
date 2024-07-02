@@ -18,6 +18,8 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useToast } from '@/components/ui/use-toast';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -28,9 +30,42 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, disabled }: DataTableProps<TData, TValue>) {
+  const [isOpen, setOpen] = React.useState<boolean>(false);
+  const [deleteConfirm, setDeleteConfirm] = React.useState<string>('');
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const { toast } = useToast();
+
+  const handleClose = () => {
+    setOpen(false);
+    setDeleteConfirm('');
+  };
+
+  const handleConfirm = async () => {
+    // TODO Delete each account
+    //await deleteExistingAccount(account.accountId);
+
+    handleClose();
+
+    toast({
+      title: 'Success!',
+      description:
+        table.getFilteredSelectedRowModel().rows.length > 1
+          ? `${table.getFilteredSelectedRowModel().rows.length} Accounts successfully deleted`
+          : 'Account successfully deleted',
+    });
+  };
+
+  const handleCancel = () => {
+    handleClose();
+  };
+
+  const handleInputChange = (event: any) => {
+    setDeleteConfirm(event.target.value);
+  };
 
   const table = useReactTable({
     data,
@@ -51,7 +86,23 @@ export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, d
 
   return (
     <div>
-      {/* <ConfirmDialog /> */}
+      <Dialog open={isOpen} onOpenChange={handleCancel}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you sure you want to delete {table.getFilteredSelectedRowModel().rows.length} accounts?</DialogTitle>
+            <DialogDescription>To confirm deletion, enter "delete" below</DialogDescription>
+          </DialogHeader>
+          <Input type='text' value={deleteConfirm} onChange={handleInputChange} placeholder='Enter "delete" to confirm' />
+          <DialogFooter className='pt-2'>
+            <Button onClick={handleCancel} variant='outline'>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirm} disabled={deleteConfirm !== 'delete'}>
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className='flex items-center py-4'>
         <Input
@@ -62,20 +113,7 @@ export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, d
         />
 
         {table.getFilteredSelectedRowModel().rows.length > 0 && (
-          <Button
-            disabled={disabled}
-            size='sm'
-            variant='outline'
-            className='ml-auto text-xs font-normal'
-            onClick={async () => {
-              const ok = await confirm();
-
-              if (ok) {
-                onDelete(table.getFilteredSelectedRowModel().rows);
-                table.resetRowSelection();
-              }
-            }}
-          >
+          <Button disabled={disabled} size='sm' variant='outline' className='ml-auto text-xs font-normal' onClick={() => setOpen(true)}>
             <Trash className='mr-2 size-4' />
             Delete ({table.getFilteredSelectedRowModel().rows.length})
           </Button>

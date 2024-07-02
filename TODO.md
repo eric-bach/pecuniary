@@ -27,7 +27,11 @@ X Switch to shadcn dashboard
 X Fix conditional zod validations for Account schema
 X Add Toast for Account actions
 
-- Add ability to delete multiple Accounts
+- Add ability to delete multiple Accounts - data-table.tsx
+
+  - Create AppSync API to delete multiple accounts
+  - Add types and server actions to delete multiple accounts
+  - Update data-table.tsx to call server action
 
 - Build ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
