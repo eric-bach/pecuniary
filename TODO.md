@@ -24,9 +24,9 @@ X Add loading screens
 X Migrate rest of backend functions over
 X Sort and categorize Accounts in UI
 X Switch to shadcn dashboard
+X Fix conditional zod validations for Account schema
 
-- Fix conditional requirements on Type for Accounts
-- Add Toast for Account CRUD actions
+- Add Toast for Account actions
 - Add ability to delete multiple Accounts
 
 - Build ability to add transactions to an Account
