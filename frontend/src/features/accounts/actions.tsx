@@ -1,6 +1,6 @@
 'use client';
 
-import { Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { Edit, MoreHorizontal, Trash, View } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useOpenAccount } from '@/hooks/use-open-account';
@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 type ActionsProps = {
   account: Account;
@@ -17,6 +18,7 @@ type ActionsProps = {
 
 export const Actions = ({ account }: ActionsProps) => {
   const { toast } = useToast();
+  const router = useRouter();
   const { onOpen } = useOpenAccount();
 
   const [isOpen, setOpen] = useState<boolean>(false);
@@ -75,6 +77,10 @@ export const Actions = ({ account }: ActionsProps) => {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align='end'>
+          <DropdownMenuItem onClick={() => router.push(`/accounts/${account.accountId}`)}>
+            <View className='mr-2 size-4' />
+            View
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onOpen(account)}>
             <Edit className='mr-2 size-4' />
             Edit

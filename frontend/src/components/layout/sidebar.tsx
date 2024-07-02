@@ -4,7 +4,21 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, ClipboardList, Component, Database, Home, Settings, Users, Wallet } from 'lucide-react';
+import {
+  BookUser,
+  CandlestickChart,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  CreditCard,
+  Database,
+  Home,
+  HousePlus,
+  Settings,
+  SquareMenu,
+  Users,
+  Wallet,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
 
@@ -60,62 +74,40 @@ export default function Sidebar({ accounts }: { accounts: [Account] }) {
           <div className='mt-20 relative pb-2'>
             <SidebarItem label='Home' icon={<Home size={20} />} path='/dashboard' isSidebarExpanded={isSidebarExpanded} />
 
-            <div className='text-xs font-normal pb-1 mt-5'>Banking</div>
-            {banking.map((item) => (
-              <SidebarItem
-                key={item.id}
-                label={item.name}
-                icon={<Wallet size={20} />}
-                path={`/accounts/${item.id}`}
-                isSidebarExpanded={isSidebarExpanded}
-              />
-            ))}
-            {banking.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
+            <SidebarMenuItem label='Banking' collapsedLabel='Bank' isSidebarExpanded={isSidebarExpanded} />
+            <SidebarItems items={banking} icon={<Wallet size={20} />} rootPath='/accounts' isSidebarExpanded={isSidebarExpanded} />
+            {isSidebarExpanded && banking.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
-            <div className='text-xs font-normal pb-1 mt-5'>Credit Cards</div>
-            {creditCards.map((item) => (
-              <SidebarItem
-                key={item.id}
-                label={item.name}
-                icon={<Wallet size={20} />}
-                path={`/accounts/${item.id}`}
-                isSidebarExpanded={isSidebarExpanded}
-              />
-            ))}
-            {creditCards.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
+            <SidebarMenuItem label='Credit Cards' collapsedLabel='Cards' isSidebarExpanded={isSidebarExpanded} />
+            <SidebarItems
+              items={creditCards}
+              icon={<CreditCard size={20} />}
+              rootPath={`/accounts`}
+              isSidebarExpanded={isSidebarExpanded}
+            />
+            {isSidebarExpanded && creditCards.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
-            <div className='text-xs font-normal pb-1 mt-5'>Investments</div>
-            {investments.map((item) => (
-              <SidebarItem
-                key={item.id}
-                label={item.name}
-                icon={<Wallet size={20} />}
-                path={`/accounts/${item.id}`}
-                isSidebarExpanded={isSidebarExpanded}
-              />
-            ))}
-            {investments.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
+            <SidebarMenuItem label='Investments' collapsedLabel='Invest' isSidebarExpanded={isSidebarExpanded} />
+            <SidebarItems
+              items={investments}
+              icon={<CandlestickChart size={20} />}
+              rootPath='/accounts'
+              isSidebarExpanded={isSidebarExpanded}
+            />
+            {isSidebarExpanded && investments.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
-            <div className='text-xs font-normal pb-1 mt-5'>Assets</div>
-            {assets.map((item) => (
-              <SidebarItem
-                key={item.id}
-                label={item.name}
-                icon={<Wallet size={20} />}
-                path={`/accounts/${item.id}`}
-                isSidebarExpanded={isSidebarExpanded}
-              />
-            ))}
-            {assets.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
+            <SidebarMenuItem label='Assets' collapsedLabel='Asset' isSidebarExpanded={isSidebarExpanded} />
+            <SidebarItems items={assets} icon={<HousePlus size={20} />} rootPath='/accounts' isSidebarExpanded={isSidebarExpanded} />
+            {isSidebarExpanded && assets.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
-            <div className='text-xs font-normal pb-1 mt-5'>Analytics</div>
+            <SidebarMenuItem label='Analytics' collapsedLabel='Report' isSidebarExpanded={isSidebarExpanded} />
             <SidebarItem label='Reports' icon={<ClipboardList size={20} />} path='/reports' isSidebarExpanded={isSidebarExpanded} />
             <SidebarItem label='Queries' icon={<Database size={20} />} path='/queries' isSidebarExpanded={isSidebarExpanded} />
 
-            <div className='text-xs font-normal pb-1 mt-5'>Configuration</div>
-            <SidebarItem label='Accounts' icon={<Component size={20} />} path='/accounts' isSidebarExpanded={isSidebarExpanded} />
+            <SidebarMenuItem label='Configuration' collapsedLabel='Config' isSidebarExpanded={isSidebarExpanded} />
+            <SidebarItem label='Accounts' icon={<BookUser size={20} />} path='/accounts' isSidebarExpanded={isSidebarExpanded} />
             <SidebarItem label='Payees' icon={<Users size={20} />} path='/payees' isSidebarExpanded={isSidebarExpanded} />
-            <SidebarItem label='Categories' icon={<Component size={20} />} path='/categories' isSidebarExpanded={isSidebarExpanded} />
+            <SidebarItem label='Categories' icon={<SquareMenu size={20} />} path='/categories' isSidebarExpanded={isSidebarExpanded} />
           </div>
 
           {/* Bottom */}
@@ -136,6 +128,37 @@ export default function Sidebar({ accounts }: { accounts: [Account] }) {
     </div>
   );
 }
+
+export const SidebarMenuItem: React.FC<{ label: string; collapsedLabel: string; isSidebarExpanded: boolean }> = ({
+  label,
+  collapsedLabel,
+  isSidebarExpanded,
+}) => {
+  return (
+    <>
+      {isSidebarExpanded ? (
+        <div className='text-xs font-normal pb-1 mt-5'>{label}</div>
+      ) : (
+        <div className='text-xs font-normal pb-1 mt-5'>{collapsedLabel}</div>
+      )}
+    </>
+  );
+};
+
+export const SidebarItems: React.FC<{
+  items: Item[];
+  icon: any;
+  rootPath: string;
+  isSidebarExpanded: boolean;
+}> = ({ items, icon, rootPath, isSidebarExpanded }) => {
+  return (
+    <>
+      {items.map((i) => {
+        return <SidebarItem key={i.id} label={i.name} icon={icon} path={`${rootPath}/${i.id}`} isSidebarExpanded={isSidebarExpanded} />;
+      })}
+    </>
+  );
+};
 
 export const SidebarItem: React.FC<{
   label: string;
