@@ -1,5 +1,6 @@
 import Navbar from '@/components/layout/navbar';
 import SidebarWrapper from '@/components/layout/sidebar-wrapper';
+import { Toaster } from '@/components/ui/toaster';
 import { SheetProvider } from '@/providers/sheet-provider';
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
@@ -12,6 +13,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           <div className='flex-1 space-y-4 p-4 pt-6 md:p-8'>
             <SheetProvider />
             {children}
+            <Toaster />
           </div>
         </main>
       </div>

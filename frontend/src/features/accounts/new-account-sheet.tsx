@@ -6,13 +6,17 @@ import AccountForm from './account-form';
 import { useNewAccount } from '@/hooks/use-new-account';
 import { createNewAccount } from '@/actions';
 import { schema } from '@/types/account';
+import { useToast } from '@/components/ui/use-toast';
 
 const NewAccountSheet = () => {
+  const { toast } = useToast();
   const { isOpen, onClose } = useNewAccount();
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     await createNewAccount(values);
     onClose();
+
+    toast({ title: 'Success!', description: 'Account was successfully created' });
   };
 
   return (

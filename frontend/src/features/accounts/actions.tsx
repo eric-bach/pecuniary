@@ -9,12 +9,14 @@ import { deleteExistingAccount } from '@/actions';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 
 type ActionsProps = {
   account: Account;
 };
 
 export const Actions = ({ account }: ActionsProps) => {
+  const { toast } = useToast();
   const { onOpen } = useOpenAccount();
 
   const [isOpen, setOpen] = useState<boolean>(false);
@@ -29,6 +31,8 @@ export const Actions = ({ account }: ActionsProps) => {
     await deleteExistingAccount(account.accountId);
 
     handleClose();
+
+    toast({ title: 'Success!', description: 'Account was successfully deleted' });
   };
 
   const handleCancel = () => {

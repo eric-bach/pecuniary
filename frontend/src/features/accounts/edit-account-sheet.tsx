@@ -6,8 +6,10 @@ import * as z from 'zod';
 import { editExistingAccount } from '@/actions';
 import { useOpenAccount } from '@/hooks/use-open-account';
 import { schema } from '@/types/account';
+import { useToast } from '@/components/ui/use-toast';
 
 const EditAccountSheet = () => {
+  const { toast } = useToast();
   const { isOpen, onClose, account } = useOpenAccount();
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
@@ -26,6 +28,8 @@ const EditAccountSheet = () => {
     console.log('Edit Account Sheet result', { result });
 
     onClose();
+
+    toast({ title: 'Success!', description: 'Account was successfully updated' });
   };
 
   // function getAccount(id: string, callback: (account: Account) => void): void {
