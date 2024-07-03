@@ -16,6 +16,7 @@ export function request(ctx: Context<MutationCreateAccountArgs>): DynamoDBPutIte
       userId: util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       entity: util.dynamodb.toDynamoDB('account'),
       accountId: util.dynamodb.toDynamoDB(accountId),
+      category: util.dynamodb.toDynamoDB(ctx.args.input.category),
       type: util.dynamodb.toDynamoDB(ctx.args.input.type),
       name: util.dynamodb.toDynamoDB(ctx.args.input.name),
       updatedAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),

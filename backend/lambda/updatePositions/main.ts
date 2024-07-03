@@ -4,11 +4,16 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 const { getQuoteSummary } = require('./yahooFinance');
 
-import { CreateTransactionInput, TransactionReadModel } from '../types/Transaction';
+import { TransactionReadModel } from '../types/Transaction';
 import { PositionReadModel } from '../types/Position';
+import { CreateTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
-exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>) => {
+type CreateTransactionInputV2 = {
+  userId: string;
+} & CreateTransactionInput;
+
+exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInputV2>) => {
   const detail = parseEvent(event);
 
   // Get all transactions
@@ -22,15 +27,15 @@ exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInput>
 };
 
 // Returns all transactions for the symbol sorted in ascending order
-async function getTransactions(detail: CreateTransactionInput): Promise<TransactionReadModel[]> {
+async function getTransactions(detail: CreateTransactionInputV2): Promise<TransactionReadModel[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'aggregateId-gsi',
+    IndexName: 'accountId-gsi',
     ScanIndexForward: true,
-    KeyConditionExpression: 'aggregateId = :v1',
+    KeyConditionExpression: 'accountId = :v1',
     FilterExpression: 'userId = :v2 AND entity = :v3 AND symbol = :v4',
     ExpressionAttributeValues: {
-      ':v1': { S: detail.aggregateId },
+      ':v1': { S: detail.accountId },
       ':v2': { S: detail.userId },
       ':v3': { S: 'transaction' },
       ':v4': { S: detail.symbol },
@@ -50,15 +55,15 @@ async function getTransactions(detail: CreateTransactionInput): Promise<Transact
   return [] as TransactionReadModel[];
 }
 
-async function getPosition(detail: CreateTransactionInput): Promise<PositionReadModel> {
+async function getPosition(detail: CreateTransactionInputV2): Promise<PositionReadModel> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'aggregateId-lsi',
-    KeyConditionExpression: 'userId = :v1 AND aggregateId = :v2',
-    FilterExpression: 'entity = :v3 AND symbol = :v4',
+    IndexName: 'accountId-gsi',
+    KeyConditionExpression: 'asccountId = :v1',
+    FilterExpression: 'userId = :v1 AND entity = :v3 AND symbol = :v4',
     ExpressionAttributeValues: {
-      ':v1': { S: detail.userId },
-      ':v2': { S: detail.aggregateId },
+      ':v1': { S: detail.accountId },
+      ':v2': { S: detail.userId },
       ':v3': { S: 'position' },
       ':v4': { S: detail.symbol },
     },
@@ -107,7 +112,7 @@ function calculateAdjustedCostBase(transactions: TransactionReadModel[]) {
   return { shares, acb, bookValue };
 }
 
-async function savePosition(detail: CreateTransactionInput, shares: number, acb: number, bookValue: number) {
+async function savePosition(detail: CreateTransactionInputV2, shares: number, acb: number, bookValue: number) {
   // Get current position (if exists)
   const position = await getPosition(detail);
 
@@ -122,7 +127,7 @@ async function savePosition(detail: CreateTransactionInput, shares: number, acb:
     sk: position ? position.sk : 'ACCPOS#' + new Date().toISOString(),
     createdAt: position ? position.createdAt : new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    aggregateId: detail.aggregateId,
+    accountId: detail.accountId,
     entity: 'position',
     symbol: quote.symbol,
     description: quote.description,
@@ -149,7 +154,7 @@ async function savePosition(detail: CreateTransactionInput, shares: number, acb:
   return {};
 }
 
-function parseEvent(event: EventBridgeEvent<string, CreateTransactionInput>): CreateTransactionInput {
+function parseEvent(event: EventBridgeEvent<string, CreateTransactionInputV2>): CreateTransactionInputV2 {
   const eventString: string = JSON.stringify(event);
 
   console.debug(`🕧 Received event: ${eventString}`);

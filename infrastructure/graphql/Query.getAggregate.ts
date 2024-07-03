@@ -42,5 +42,5 @@ export function response(ctx: Context<QueryGetAggregateArgs>): Aggregates {
     util.error(ctx.error.message, ctx.error.type, ctx.result);
   }
 
-  return ctx.result.items;
+  return ctx.result;
 }

@@ -13,6 +13,7 @@ export const createAccount = `mutation CreateAccount($input: CreateAccountInput!
       accountId
       name
       entity
+      category
       type
       createdAt
       updatedAt

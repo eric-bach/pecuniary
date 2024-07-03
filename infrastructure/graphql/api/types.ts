@@ -1,6 +1,13 @@
 // This is manually created until we have a better way to generate this
 
-import { Account, Aggregates, CreateAccountInput, UpdateAccountInput } from './codegen/appsync';
+import {
+  Account,
+  Aggregates,
+  CreateAccountInput,
+  GetAccountsResponse,
+  GetTransactionsResponse,
+  UpdateAccountInput,
+} from './codegen/appsync';
 
 export type Query<InputType, OutputType> = string & {
   __generatedQueryInput: InputType;
@@ -16,12 +23,21 @@ export type GetAccountQuery = {
 };
 
 export type GetAccountsQueryVariables = {
+  lastEvaluatedKey: String;
   limit?: number | null;
-  nextToken?: string | null;
 };
 
 export type GetAccountsQuery = {
-  getAccounts: [Account];
+  getAccounts: GetAccountsResponse;
+};
+
+export type GetTransactionsQueryVariables = {
+  accountId: String;
+  lastEvaluatedKey: String;
+};
+
+export type GetTransactionsQuery = {
+  getTransactions: GetTransactionsResponse;
 };
 
 export type CreateAccountsInputVariables = {

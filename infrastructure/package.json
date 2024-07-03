@@ -28,6 +28,7 @@
     "@aws-appsync/utils": "^1.8.0",
     "@aws-sdk/client-cloudformation": "^3.577.0",
     "@aws-sdk/client-dynamodb": "^3.577.0",
+    "@aws-sdk/client-eventbridge": "^3.577.0",
     "@aws-sdk/util-dynamodb": "^3.577.0",
     "@graphql-codegen/cli": "5.0.2",
     "@graphql-codegen/typescript": "^4.0.7",

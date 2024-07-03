@@ -1,33 +1,36 @@
 import { AppSyncIdentityCognito, Context, DynamoDBQueryRequest, util } from '@aws-appsync/utils';
-import { Account } from './api/codegen/appsync';
+import { GetAccountsResponse } from './api/codegen/appsync';
 
 export function request(ctx: Context): DynamoDBQueryRequest {
   console.log('🔔 GetAccounts Request: ', ctx);
 
   return {
     operation: 'Query',
-    index: 'entity-gsi',
+    index: 'userId-gsi',
     query: {
-      expression: 'entity = :entity',
-      expressionValues: {
-        ':entity': util.dynamodb.toDynamoDB('account'),
-      },
-    },
-    filter: {
       expression: 'userId = :userId',
       expressionValues: {
         ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       },
     },
+    // TODO: Do not limit until pagination is implemented
+    //limit: 10,
+    nextToken: ctx.arguments.lastEvaluatedKey,
+    filter: {
+      expression: 'entity = :entity',
+      expressionValues: {
+        ':entity': util.dynamodb.toDynamoDB('account'),
+      },
+    },
   };
 }
 
-export function response(ctx: Context): Account[] {
+export function response(ctx: Context): GetAccountsResponse {
   console.log('🔔 GetAccounts Response: ', ctx);
 
   if (ctx.error) {
     util.error(ctx.error.message, ctx.error.type, ctx.result);
   }
 
-  return ctx.result.items;
+  return ctx.result;
 }
