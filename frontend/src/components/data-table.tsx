@@ -21,7 +21,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { deleteExistingAccount } from '@/actions';
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

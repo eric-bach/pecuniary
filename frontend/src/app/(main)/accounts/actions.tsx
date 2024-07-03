@@ -1,6 +1,6 @@
 'use client';
 
-import { Edit, MoreHorizontal, Trash, View } from 'lucide-react';
+import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useOpenAccount } from '@/hooks/use-open-account';
@@ -78,7 +78,7 @@ export const Actions = ({ account }: ActionsProps) => {
 
         <DropdownMenuContent align='end'>
           <DropdownMenuItem onClick={() => router.push(`/accounts/${account.accountId}`)}>
-            <View className='mr-2 size-4' />
+            <Eye className='mr-2 size-4' />
             View
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onOpen(account)}>

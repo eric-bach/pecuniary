@@ -7,13 +7,16 @@ import { editExistingAccount } from '@/actions';
 import { useOpenAccount } from '@/hooks/use-open-account';
 import { schema } from '@/types/account';
 import { useToast } from '@/components/ui/use-toast';
+import { useState } from 'react';
 
 const EditAccountSheet = () => {
   const { toast } = useToast();
   const { isOpen, onClose, account } = useOpenAccount();
+  const [isPending, setIsPending] = useState(false);
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
-    console.log('Account Sheet values', { values });
+    setIsPending(true);
+    // console.log('Account Sheet values', { values });
 
     // TODO Fix this type error
     const data = {
@@ -25,9 +28,10 @@ const EditAccountSheet = () => {
     };
 
     const result = await editExistingAccount(data);
-    console.log('Edit Account Sheet result', { result });
+    // console.log('Edit Account Sheet result', { result });
 
     onClose();
+    setIsPending(false);
 
     toast({ title: 'Success!', description: 'Account was successfully updated' });
   };
@@ -68,7 +72,7 @@ const EditAccountSheet = () => {
             <SheetDescription>Edit account</SheetDescription>
           </SheetHeader>
 
-          <AccountForm account={account} onSubmit={onSubmit} disabled={false} defaultValues={account} />
+          <AccountForm account={account} onSubmit={onSubmit} disabled={isPending} defaultValues={account} />
         </SheetContent>
       </Sheet>
     </>

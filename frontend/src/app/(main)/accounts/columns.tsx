@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
-import { Actions } from '@/features/accounts/actions';
+import { Actions } from '@/app/(main)/accounts/actions';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export const columns: ColumnDef<Account>[] = [

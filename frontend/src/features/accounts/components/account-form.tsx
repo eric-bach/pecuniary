@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Trash } from 'lucide-react';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
 import { useEffect, useState } from 'react';
@@ -16,11 +15,10 @@ type Props = {
   account?: Account;
   defaultValues?: z.infer<typeof schema>;
   onSubmit: (values: z.infer<typeof schema>) => void;
-  onDelete?: () => void;
   disabled?: boolean;
 };
 
-const AccountForm = ({ account, defaultValues, onSubmit, onDelete, disabled }: Props) => {
+const AccountForm = ({ account, defaultValues, onSubmit, disabled }: Props) => {
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof schema>>({
@@ -31,10 +29,6 @@ const AccountForm = ({ account, defaultValues, onSubmit, onDelete, disabled }: P
   const handleSubmit = (data: z.infer<typeof schema>) => {
     console.log('Submitting', data);
     onSubmit(data);
-  };
-
-  const handleDelete = () => {
-    onDelete?.();
   };
 
   const categoryWatch = form.watch('category');
@@ -130,12 +124,6 @@ const AccountForm = ({ account, defaultValues, onSubmit, onDelete, disabled }: P
         <Button className='w-full' disabled={disabled}>
           {account ? 'Save changes' : 'Create account'}
         </Button>
-        {!!account && (
-          <Button type='button' disabled={disabled} onClick={handleDelete} className='w-full' variant='outline'>
-            <Trash size={4} className='size-4 mr-2' />
-            Delete Account
-          </Button>
-        )}
       </form>
     </Form>
   );

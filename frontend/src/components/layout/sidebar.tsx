@@ -76,7 +76,6 @@ export default function Sidebar({ accounts }: { accounts: [Account] }) {
 
             <SidebarMenuItem label='Banking' collapsedLabel='Bank' isSidebarExpanded={isSidebarExpanded} />
             <SidebarItems items={banking} icon={<Wallet size={20} />} rootPath='/accounts' isSidebarExpanded={isSidebarExpanded} />
-            {isSidebarExpanded && banking.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
             <SidebarMenuItem label='Credit Cards' collapsedLabel='Cards' isSidebarExpanded={isSidebarExpanded} />
             <SidebarItems
@@ -85,7 +84,6 @@ export default function Sidebar({ accounts }: { accounts: [Account] }) {
               rootPath={`/accounts`}
               isSidebarExpanded={isSidebarExpanded}
             />
-            {isSidebarExpanded && creditCards.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
             <SidebarMenuItem label='Investments' collapsedLabel='Invest' isSidebarExpanded={isSidebarExpanded} />
             <SidebarItems
@@ -94,11 +92,9 @@ export default function Sidebar({ accounts }: { accounts: [Account] }) {
               rootPath='/accounts'
               isSidebarExpanded={isSidebarExpanded}
             />
-            {isSidebarExpanded && investments.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
             <SidebarMenuItem label='Assets' collapsedLabel='Asset' isSidebarExpanded={isSidebarExpanded} />
             <SidebarItems items={assets} icon={<HousePlus size={20} />} rootPath='/accounts' isSidebarExpanded={isSidebarExpanded} />
-            {isSidebarExpanded && assets.length < 1 && <div className='text-xs font-light m-2'>No Accounts</div>}
 
             <SidebarMenuItem label='Analytics' collapsedLabel='Report' isSidebarExpanded={isSidebarExpanded} />
             <SidebarItem label='Reports' icon={<ClipboardList size={20} />} path='/reports' isSidebarExpanded={isSidebarExpanded} />
@@ -153,9 +149,13 @@ export const SidebarItems: React.FC<{
 }> = ({ items, icon, rootPath, isSidebarExpanded }) => {
   return (
     <>
-      {items.map((i) => {
-        return <SidebarItem key={i.id} label={i.name} icon={icon} path={`${rootPath}/${i.id}`} isSidebarExpanded={isSidebarExpanded} />;
-      })}
+      {items.length > 0 ? (
+        items.map((i) => {
+          return <SidebarItem key={i.id} label={i.name} icon={icon} path={`${rootPath}/${i.id}`} isSidebarExpanded={isSidebarExpanded} />;
+        })
+      ) : (
+        <>{isSidebarExpanded ? <div className='text-xs font-light m-2'>No Accounts</div> : <></>}</>
+      )}
     </>
   );
 };
