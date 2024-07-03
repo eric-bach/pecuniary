@@ -7,7 +7,7 @@ export function request(ctx: Context<MutationUpdateAccountArgs>): DynamoDBUpdate
   return {
     operation: 'UpdateItem',
     key: {
-      pk: util.dynamodb.toDynamoDB(ctx.args.input.pk),
+      pk: util.dynamodb.toDynamoDB(`acc#${ctx.args.input.accountId}`),
       createdAt: util.dynamodb.toDynamoDB(ctx.args.input.createdAt),
     },
     update: {

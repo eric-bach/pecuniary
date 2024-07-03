@@ -18,6 +18,7 @@ import {
   FunctionRuntime,
   AppsyncFunction,
   Resolver,
+  Definition,
 } from 'aws-cdk-lib/aws-appsync';
 import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
@@ -102,7 +103,7 @@ export class ApiStack extends Stack {
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
       },
-      schema: SchemaFile.fromAsset(path.join(__dirname, '../graphql/schema.graphql')),
+      definition: Definition.fromFile(path.join(__dirname, '../graphql/schema.graphql')),
       environmentVariables: {
         TABLE_NAME: dataTable.tableName,
         EVENTBUS_NAME: eventBus.eventBusName,
