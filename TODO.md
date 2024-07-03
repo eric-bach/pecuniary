@@ -28,8 +28,8 @@ X Fix conditional zod validations for Account schema
 X Add Toast for Account actions
 X Add ability to delete multiple Accounts - data-table.tsx
 X Add progress/loading transitions
+X Build mobile sidebar
 
-- Build mobile sidebar
 - Build dashboard to display account summaries
 - Build individual account page
 - Add ability to add transactions to an Account
