@@ -20,18 +20,20 @@
 </p>
 
 <p align="center">
-  An <strong>event-driven serverless microservices</strong> application built with <a href="https://nodejs.org">Node.js</a>
-  <br />
-   ⚠️ <strong>NOTE</strong> ⚠️ The Event Sourcing and CQRS version is no longer maintained.  Please see <a href="()https://github.com/eric-bach/pecuniary/tree/cqrs-v1">branch</a> and <a href="()https://github.com/eric-bach/pecuniary/blob/cqrs-v1/ARCHITECTURE.md">CQRS Architecture</a> for the last release.
+  An <strong>event-driven serverless microservices</strong> financial investment application built with <a href="https://nextjs.org">Next.js</a> and <a href="https://tailwindcss.com">Tailwind CSS</a> on <a href="https://aws.amazon.com">Amazon Web Services</a>
 </p>
+
+## Architecture
 
 ![Top Level](references/diagrams/toplevel.jpg)
 
-# Getting Started
+⚠️<strong>Note:</strong> the Event Sourcing and CQRS version is no longer maintained. Please see <a href="https://github.com/eric-bach/pecuniary/tree/cqrs-v1">branch</a> and <a href="https://github.com/eric-bach/pecuniary/blob/cqrs-v1/ARCHITECTURE.md">CQRS Architecture</a> for the last release.
+
+## Getting Started
 
 This quick start guide describes how to get the application running. An `AWS account` is required to deploy the infrastructure required for this project.
 
-## Configure the app
+### Configure the app
 
 1.  Clone the project
 
@@ -59,30 +61,13 @@ This quick start guide describes how to get the application running. An `AWS acc
     DLQ_NOTIFICATIONS - email address to send failed event message notifications to.
     ```
 
-5.  Copy the `./frontend/app/aws-exports.js.example` file to `./frontend/app/aws-exports.js` and fill in the parameter values from the CDK stack outputs in step 2:
+5.  Copy the `./frontend/.env.example` file to `./frontend/.env` and fill in the parameter values from the CDK stack outputs in step 2:
 
     ```
-    const awsmobile = {
-      aws_project_region: 'AWS_REGION',
-      aws_cognito_region: 'AWS_REGION',
-      aws_user_pools_id: 'USER_POOL_ID',
-      aws_user_pools_web_client_id: 'USER_POOL_CLIENT_ID',
-      mandatorySignIn: true,
-      aws_appsync_graphqlEndpoint: 'APPSYNC_ENDPOINT',
-      aws_appsync_region: 'AWS_REGION',
-      aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS',
-    };
-    export default awsmobile;
-    ```
-
-6.  Copy the `./frontend/prod.config.example` file to `./frontend/prod.config` and fill in the parameter values from existing Certificate and Route53 resources. If these do not exist from a prior app, create new instances.
-
-    ```
-    {
-      "certificateArn": "",
-      "hostedZoneId": "",
-      "hostedZoneName": ""
-    }
+    NEXT_PUBLIC_USER_POOL_ID=
+    NEXT_PUBLIC_USER_POOL_CLIENT_ID=
+    NEXT_PUBLIC_APPSYNC_API_ENDPOINT=
+    NEXT_PUBLIC_APPSYNC_REGION=
     ```
 
 ## Deploy the app
