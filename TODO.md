@@ -30,7 +30,8 @@ X Add ability to delete multiple Accounts - data-table.tsx
 X Add progress/loading transitions
 
 - Build dashboard to display account summaries
-- Build ability to add transactions to an Account
+- Build individual account page
+- Add ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
 
