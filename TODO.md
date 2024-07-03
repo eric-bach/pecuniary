@@ -34,6 +34,13 @@ X Add progress/loading transitions
 - Add ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
+  - Build script to generate transaction data from Quicken export
+    - Export Quicken
+    - Put into CSV (manually)
+    - Write script to parse CSV
+    - Maintain CSV
+- Build lambda process to re-generate positions and point-in-time networth for an account
+- Build dashboard to display account summaries
 
 #### Tech Debt
 
@@ -43,7 +50,7 @@ X Add progress/loading transitions
 ##### References
 
 - Shadcn UI examples
-- https://github.com/shadcn-ui/ui
+  - https://github.com/shadcn-ui/ui
 - Auth
   - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
   - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
