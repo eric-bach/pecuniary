@@ -7,15 +7,15 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Navbar />
-      <div className='flex h-screen overflow-hidden'>
-        <SidebarWrapper />
-        <main className='flex-1 overflow-hidden pt-16'>
-          <div className='flex-1 space-y-4 p-4 pt-6 md:p-8'>
+      <div className='flex flex-col h-screen'>
+        <div className='flex flex-1 overflow-hidden'>
+          <SidebarWrapper />
+          <main className='flex flex-1 overflow-y-auto space-y-4 p-4 pt-6 md:p-8'>
             <SheetProvider />
             {children}
             <Toaster />
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
     </>
   );

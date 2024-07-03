@@ -6,7 +6,7 @@ import Testimonial from '@/components/layout-home/testimonial';
 
 const Home = () => {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className='flex h-screen flex-col'>
       <Header />
       <main className='flex-grow'>
         <Hero />
