@@ -150,7 +150,7 @@ export const RenderCell = (data: Props) => {
                             variant='bordered'
                             className='border-gray-300 rounded-md mt-2'
                           >
-                            {(AccountTypes) => <SelectItem key={AccountTypes.label}>{AccountTypes.label}</SelectItem>}
+                            {(types) => <SelectItem key={types.label}>{types.label}</SelectItem>}
                           </Select>
                           <input type='hidden' name='accountId' value={data.account.accountId} />
                           <input type='hidden' name='createdAt' value={data.account.createdAt} />
