@@ -36,7 +36,7 @@ export default function Sidebar({ accounts }: SidebarProps) {
       <div
         className={cn(
           isSidebarExpanded ? 'w-[300px]' : 'w-[68px]',
-          'border-r transition-all duration-300 ease-in-out transform hidden sm:flex h-full mt-20 relative pb-2'
+          'border-r transition-all duration-300 ease-in-out transform hidden sm:flex h-full pt-20 relative pb-2'
         )}
       >
         <SidebarNavItems accounts={accounts} isMobileNav={false} isSidebarExpanded={isSidebarExpanded} toggleSidebar={toggleSidebar} />
