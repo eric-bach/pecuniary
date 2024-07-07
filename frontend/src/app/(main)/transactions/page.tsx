@@ -6,8 +6,6 @@ import InvestmentTransactionsList from '@/features/transactions/investment-trans
 const Transactions = async ({ accountId, accountCategory }: { accountId: string; accountCategory: string }) => {
   const transactions = await actions.fetchTransactions(accountId);
 
-  console.log(accountCategory);
-
   if (accountCategory === 'investment') {
     return <InvestmentTransactionsList accountId={accountId} transactions={transactions} />;
   }

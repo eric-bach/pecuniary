@@ -12,6 +12,7 @@ import { Select as CreatableSelect } from '@/components/select';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AmountInput } from '@/components/amount-input';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';
+import { Input } from '@/components/ui/input';
 
 type Props = {
   transaction?: Transaction;
@@ -51,6 +52,32 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-4 pt-4'>
+        <FormField
+          control={form.control}
+          name='accountId'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type='hidden' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name='createdAt'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type='hidden' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name='transactionDate'
@@ -156,23 +183,6 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
             </FormItem>
           )}
         />
-
-        {/* BANK TRANSACTION */}
-        {/*
-        transactionDate
-        payee
-        amount
-        category
-         */}
-
-        {/* INVESTMENT TRANSACTION */}
-        {/* 
-        transactionDate
-        symbol
-        type
-        shares
-        price
-        commission */}
 
         <Button className='w-full' disabled={disabled}>
           {transaction ? 'Save changes' : 'Create transaction'}

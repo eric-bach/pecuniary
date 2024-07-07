@@ -16,7 +16,7 @@ const NewInvestmentTransactionSheet = () => {
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setIsPending(true);
-    await createNewTransaction({
+    const result = await createNewTransaction({
       ...values,
       shares: parseFloat(values.shares),
       price: parseFloat(values.price),
@@ -24,6 +24,8 @@ const NewInvestmentTransactionSheet = () => {
       transactionDate: values.transactionDate.toDateString(),
     });
     onClose();
+
+    console.log('Transaction created', result);
 
     setIsPending(false);
     toast({ title: 'Success!', description: 'Transaction was successfully created' });
@@ -48,7 +50,7 @@ const NewInvestmentTransactionSheet = () => {
             shares: '',
             price: '',
             commission: '',
-            createdAt: '',
+            createdAt: new Date().toLocaleString(),
           }}
         />
       </SheetContent>

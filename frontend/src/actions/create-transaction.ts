@@ -51,14 +51,13 @@ export async function createNewTransaction({
       query: createTransaction,
       variables: {
         createTransactionInput: {
-          accountId: result.data.accountId,
-          // TODO Check this
-          transactionDate: result.data.transactionDate.toDateString(),
-          symbol: result.data.symbol,
-          type: result.data.type,
-          shares: result.data.shares,
-          price: result.data.price,
-          commission: result.data.commission,
+          accountId,
+          transactionDate,
+          symbol,
+          type,
+          shares,
+          price,
+          commission,
         },
       },
     });

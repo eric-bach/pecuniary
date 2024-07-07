@@ -22,7 +22,7 @@ export const columns: ColumnDef<Transaction>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'date',
+    accessorKey: 'transactionDate',
     header: 'Date',
   },
   {
