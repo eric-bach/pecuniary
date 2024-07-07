@@ -52,12 +52,18 @@ export async function editExistingTransaction({
       variables: {
         updateTransactionInput: {
           pk: `TRANS#${result.data.accountId}`,
+          // TODO Fix this
+          // @ts-ignore
           createdAt: result.data.createdAt,
+          // @ts-ignore
           transactionDate: result.data.transactionDate,
           symbol: result.data.symbol,
           type: result.data.type,
+          // @ts-ignore
           shares: result.data.shares,
+          // @ts-ignore
           price: result.data.price,
+          // @ts-ignore
           commission: result.data.commission,
         },
       },

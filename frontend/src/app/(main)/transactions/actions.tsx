@@ -11,7 +11,6 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
-import { TransactionType } from '@/hooks/use-new-transaction';
 
 type TransactionsProps = {
   transaction: Transaction;
@@ -20,7 +19,7 @@ type TransactionsProps = {
 export const Actions = ({ transaction }: TransactionsProps) => {
   const { toast } = useToast();
   const router = useRouter();
-  const { onOpen } = useOpenTransaction();
+  const { onBankingOpen, onInvestmentOpen } = useOpenTransaction();
 
   const [isOpen, setOpen] = useState<boolean>(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string>('');
@@ -50,15 +49,9 @@ export const Actions = ({ transaction }: TransactionsProps) => {
     setOpen(true);
   };
 
-  const getTransactionType = () => {
-    switch (transaction.type.toLowerCase()) {
-      case 'banking':
-        return TransactionType.BANKING;
-      case 'investment':
-        return TransactionType.INVESTMENT;
-      default:
-        return TransactionType.BANKING;
-    }
+  const handleOpen = () => {
+    if (transaction.type.toLowerCase() === 'banking') onBankingOpen(transaction);
+    else if (transaction.type.toLowerCase() === 'investment') onInvestmentOpen(transaction);
   };
 
   return (
@@ -93,7 +86,7 @@ export const Actions = ({ transaction }: TransactionsProps) => {
             <Eye className='mr-2 size-4' />
             View
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onOpen(getTransactionType(), transaction)}>
+          <DropdownMenuItem onClick={() => handleOpen()}>
             <Edit className='mr-2 size-4' />
             Edit
           </DropdownMenuItem>
