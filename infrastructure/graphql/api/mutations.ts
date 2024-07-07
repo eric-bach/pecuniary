@@ -61,7 +61,7 @@ export const createTransaction = `mutation CreateTransaction($createTransactionI
       accountId
       type
       transactionDate
-      sybmol
+      symbol
       shares
       price
       commission
@@ -78,7 +78,7 @@ export const updateTransaction = `mutation CreateTransaction($updateTransactionI
     accountId
     type
     transactionDate
-    sybmol
+    symbol
     shares
     price
     commission

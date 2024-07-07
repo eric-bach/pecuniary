@@ -67,19 +67,6 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
 
         <FormField
           control={form.control}
-          name='createdAt'
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input type='hidden' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
           name='transactionDate'
           render={({ field }) => (
             <FormItem>
@@ -106,7 +93,6 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
                   onChange={field.onChange}
                   //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
                   placeholder='Symbol'
-                  // {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -149,7 +135,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
             <FormItem>
               <FormLabel>Shares</FormLabel>
               <FormControl>
-                <AmountInput {...field} disabled={disabled} />
+                <AmountInput value={field.value} onChange={field.onChange} disabled={disabled} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -163,7 +149,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
             <FormItem>
               <FormLabel>Price</FormLabel>
               <FormControl>
-                <CurrencyAmountInput {...field} disabled={disabled} />
+                <CurrencyAmountInput value={field.value} onChange={field.onChange} disabled={disabled} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -177,7 +163,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
             <FormItem>
               <FormLabel>Commission</FormLabel>
               <FormControl>
-                <CurrencyAmountInput {...field} disabled={disabled} />
+                <CurrencyAmountInput value={field.value} onChange={field.onChange} disabled={disabled} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -50,7 +50,6 @@ const NewInvestmentTransactionSheet = () => {
             shares: '',
             price: '',
             commission: '',
-            createdAt: new Date().toLocaleString(),
           }}
         />
       </SheetContent>

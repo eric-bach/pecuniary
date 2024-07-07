@@ -23,20 +23,20 @@ interface CreateTransactionFormState {
 export async function createNewTransaction({
   accountId,
   transactionDate,
+  type,
   symbol,
   shares,
   price,
   commission,
-  type,
 }: CreateTransactionInput): Promise<CreateTransactionFormState> {
   const result = schema.safeParse({
     accountId,
-    transactionDate,
-    symbol,
+    transactionDate: new Date(transactionDate),
     type,
-    shares,
-    price,
-    commission,
+    symbol,
+    shares: shares.toString(),
+    price: price.toString(),
+    commission: commission.toString(),
   });
 
   console.log('Create Transaction Result', result);
@@ -52,7 +52,7 @@ export async function createNewTransaction({
       variables: {
         createTransactionInput: {
           accountId,
-          transactionDate,
+          transactionDate: new Date(transactionDate).toISOString().split('T')[0],
           symbol,
           type,
           shares,
@@ -62,6 +62,8 @@ export async function createNewTransaction({
       },
     });
   } catch (err: unknown) {
+    console.log(err);
+
     if (err instanceof Error) {
       return { errors: { _form: [err.message] } };
     } else {
@@ -70,5 +72,5 @@ export async function createNewTransaction({
   }
 
   revalidatePath('/', 'layout');
-  redirect('/accounts');
+  redirect(`/accounts/${accountId}`);
 }
