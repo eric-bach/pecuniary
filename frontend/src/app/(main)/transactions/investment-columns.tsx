@@ -5,7 +5,7 @@ import { Transaction } from '@/../../infrastructure/graphql/api/codegen/appsync'
 import { Actions } from '@/app/(main)/transactions/actions';
 import { Checkbox } from '@/components/ui/checkbox';
 
-export const columns: ColumnDef<Transaction>[] = [
+export const investmentColumns: ColumnDef<Transaction>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -26,16 +26,20 @@ export const columns: ColumnDef<Transaction>[] = [
     header: 'Date',
   },
   {
-    accessorKey: 'category',
-    header: 'Category',
+    accessorKey: 'symbol',
+    header: 'Symbol',
   },
   {
-    accessorKey: 'payee',
-    header: 'Payee',
+    accessorKey: 'shares',
+    header: 'Shres',
   },
   {
-    accessorKey: 'amount',
-    header: 'Amount',
+    accessorKey: 'price',
+    header: 'Price',
+  },
+  {
+    accessorKey: 'commission',
+    header: 'commission',
   },
   {
     accessorKey: 'updatedAt',

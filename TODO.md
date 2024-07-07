@@ -30,8 +30,12 @@ X Add ability to delete multiple Accounts - data-table.tsx
 X Add progress/loading transitions
 X Build mobile sidebar
 
-- Build individual account page
-- Add ability to add transactions to an Account
+- Build individual account page and ability to add transactions
+
+  - Support editing investment transactions
+  - Clean up/refactor investment transactions including data-table
+  - Add banking transactions
+
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user

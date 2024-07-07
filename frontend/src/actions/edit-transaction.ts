@@ -5,7 +5,7 @@ import { updateTransaction } from '../../../infrastructure/graphql/api/mutations
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { UpdateTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
-import { schema } from '@/types/transaction';
+import { investmentSchema } from '@/types/transaction';
 
 interface EditTransactionFormState {
   errors: {
@@ -30,7 +30,7 @@ export async function editExistingTransaction({
   commission,
   type,
 }: UpdateTransactionInput): Promise<EditTransactionFormState> {
-  const result = schema.safeParse({
+  const result = investmentSchema.safeParse({
     pk,
     createdAt,
     transactionDate,

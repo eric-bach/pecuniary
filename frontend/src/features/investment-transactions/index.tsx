@@ -2,19 +2,19 @@
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DataTable } from '@/components/data-table';
-import { columns } from '@/app/(main)/transactions/columns';
+import { investmentColumns } from '@/app/(main)/transactions/investment-columns';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Transaction } from '../../../../infrastructure/graphql/api/codegen/appsync';
-import { useNewInvestmentTransaction } from '@/hooks/use-new-investment-transaction';
+import { useNewTransaction } from '@/hooks/use-new-transaction';
 
-interface InvestmentTransactionsListProps {
+interface InvestmentTransactionsProps {
   accountId: string;
   transactions: [Transaction];
 }
 
-const InvestmentTransactionsList = ({ accountId, transactions }: InvestmentTransactionsListProps) => {
-  const newInvestmentTransaction = useNewInvestmentTransaction();
+const InvestmentTransactions = ({ accountId, transactions }: InvestmentTransactionsProps) => {
+  const newTransaction = useNewTransaction();
 
   return (
     <Card className='border-none drop-shadow-sm'>
@@ -22,17 +22,17 @@ const InvestmentTransactionsList = ({ accountId, transactions }: InvestmentTrans
         <div className='gap-y-2 flex justify-between'>
           <p>Date Filter</p>
 
-          <Button size='sm' onClick={() => newInvestmentTransaction.onOpen(accountId)}>
+          <Button size='sm' onClick={() => newTransaction.onInvestmentOpen(accountId)}>
             <Plus className='size-4 mr-2' />
             Add New
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        <DataTable filterKey='transactionDate' columns={columns} data={transactions} onDelete={(row) => console.log(row)} />
+        <DataTable filterKey='transactionDate' columns={investmentColumns} data={transactions} onDelete={(row) => console.log(row)} />
       </CardContent>
     </Card>
   );
 };
 
-export default InvestmentTransactionsList;
+export default InvestmentTransactions;

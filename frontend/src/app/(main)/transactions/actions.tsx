@@ -3,7 +3,7 @@
 import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
+import { useOpenTransaction } from '@/hooks/use-open-transaction';
 import { Transaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
 import { deleteExistingTransaction } from '@/actions';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
+import { TransactionType } from '@/hooks/use-new-transaction';
 
 type TransactionsProps = {
   transaction: Transaction;
@@ -19,7 +20,7 @@ type TransactionsProps = {
 export const Actions = ({ transaction }: TransactionsProps) => {
   const { toast } = useToast();
   const router = useRouter();
-  const { onOpen } = useOpenInvestmentTransaction();
+  const { onOpen } = useOpenTransaction();
 
   const [isOpen, setOpen] = useState<boolean>(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string>('');
@@ -47,6 +48,17 @@ export const Actions = ({ transaction }: TransactionsProps) => {
 
   const handleDelete = () => {
     setOpen(true);
+  };
+
+  const getTransactionType = () => {
+    switch (transaction.type.toLowerCase()) {
+      case 'banking':
+        return TransactionType.BANKING;
+      case 'investment':
+        return TransactionType.INVESTMENT;
+      default:
+        return TransactionType.BANKING;
+    }
   };
 
   return (
@@ -81,7 +93,7 @@ export const Actions = ({ transaction }: TransactionsProps) => {
             <Eye className='mr-2 size-4' />
             View
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onOpen(transaction)}>
+          <DropdownMenuItem onClick={() => onOpen(getTransactionType(), transaction)}>
             <Edit className='mr-2 size-4' />
             Edit
           </DropdownMenuItem>

@@ -5,7 +5,7 @@ import { createTransaction } from '@/../../infrastructure/graphql/api/mutations'
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { CreateTransactionInput } from '@/../../infrastructure/graphql/api/codegen/appsync';
-import { schema } from '@/types/transaction';
+import { investmentSchema } from '@/types/transaction';
 
 interface CreateTransactionFormState {
   errors: {
@@ -29,7 +29,7 @@ export async function createNewTransaction({
   price,
   commission,
 }: CreateTransactionInput): Promise<CreateTransactionFormState> {
-  const result = schema.safeParse({
+  const result = investmentSchema.safeParse({
     accountId,
     transactionDate: new Date(transactionDate),
     type,
