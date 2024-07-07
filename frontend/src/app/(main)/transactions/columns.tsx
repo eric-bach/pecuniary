@@ -1,11 +1,11 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
-import { Actions } from '@/app/(main)/accounts/actions';
+import { Transaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { Actions } from '@/app/(main)/transactions/actions';
 import { Checkbox } from '@/components/ui/checkbox';
 
-export const columns: ColumnDef<Account>[] = [
+export const columns: ColumnDef<Transaction>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -22,16 +22,20 @@ export const columns: ColumnDef<Account>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'name',
-    header: 'Name',
+    accessorKey: 'date',
+    header: 'Date',
   },
   {
     accessorKey: 'category',
     header: 'Category',
   },
   {
-    accessorKey: 'type',
-    header: 'Type',
+    accessorKey: 'payee',
+    header: 'Payee',
+  },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
   },
   {
     accessorKey: 'updatedAt',
@@ -45,7 +49,7 @@ export const columns: ColumnDef<Account>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      return <Actions account={row.original} />;
+      return <Actions transaction={row.original} />;
     },
   },
 ];

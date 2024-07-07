@@ -1,13 +1,5 @@
-import { QueryGetAccountsArgs } from './codegen/appsync';
-import {
-  GetAccountQuery,
-  GetAccountQueryVariables,
-  GetAccountsQuery,
-  GetAccountsQueryVariables,
-  GetTransactionsQuery,
-  GetTransactionsQueryVariables,
-  Query,
-} from './types';
+import { QueryGetAccountArgs, QueryGetAccountsArgs, QueryGetTransactionsArgs } from './codegen/appsync';
+import { GetAccountQuery, GetAccountsQuery, GetTransactionsQuery, Query } from './types';
 
 export const getAccount = `query GetAccount($accountId: String!) {
   getAccount(accountId: $accountId) { 
@@ -19,7 +11,7 @@ export const getAccount = `query GetAccount($accountId: String!) {
     createdAt
     updatedAt
   }
-}` as Query<GetAccountQueryVariables, GetAccountQuery>;
+}` as Query<QueryGetAccountArgs, GetAccountQuery>;
 
 export const getAccounts = `query GetAccounts($lastEvaluatedKey: String) {
   getAccounts(lastEvaluatedKey: $lastEvaluatedKey) { 
@@ -53,4 +45,4 @@ export const getTransactions = `query GetTransactions($accountId: String!, $last
     }
     nextToken
   }
-}` as Query<GetTransactionsQueryVariables, GetTransactionsQuery>;
+}` as Query<QueryGetTransactionsArgs, GetTransactionsQuery>;

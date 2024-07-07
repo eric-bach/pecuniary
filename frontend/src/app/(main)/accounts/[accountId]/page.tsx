@@ -2,6 +2,7 @@
 
 import DisplayAccount from '@/features/accounts';
 import * as actions from '@/actions';
+import Transactions from '../../transactions/page';
 
 interface AccountsPageProps {
   params: {
@@ -14,5 +15,12 @@ export default async function AccountsPage({ params }: AccountsPageProps) {
 
   const account = await actions.fetchAccount(accountId);
 
-  return <DisplayAccount account={account} />;
+  return (
+    <>
+      {/* Call a server component from a client component using children */}
+      <DisplayAccount account={account}>
+        <Transactions accountId={account.accountId} accountCategory={account.category.toLowerCase()} />
+      </DisplayAccount>
+    </>
+  );
 }
