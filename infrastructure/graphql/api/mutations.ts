@@ -24,7 +24,6 @@ export const createAccount = `mutation CreateAccount($input: CreateAccountInput!
     createAccount(input: $input) { 
       accountId
       name
-      entity
       category
       type
       createdAt
@@ -36,8 +35,8 @@ export const updateAccount = `mutation UpdateAccount($input: UpdateAccountInput!
     updateAccount(input: $input) { 
       accountId
       name
-      entity
       type
+      entity
       createdAt
       updatedAt
     }
@@ -48,8 +47,8 @@ export const deleteAccount = `mutation DeleteAccount($accountId: String!) {
       items {
         accountId
         name
-        entity
         type
+        entity
         createdAt
         updatedAt
       }
@@ -58,53 +57,33 @@ export const deleteAccount = `mutation DeleteAccount($accountId: String!) {
 
 export const createBankTransaction = `mutation CreateBankTransaction($input: CreateBankTransactionInput!) {
     createBankTransaction(input: $input) { 
-      pk
-      createdAt
-      entity
+      transactionId
       accountId
       transactionDate
       payee
       category
       amount
+      createdAt
       updatedAt
     }
   }` as Query<MutationCreateBankTransactionArgs, CreateBankTransactionMutation>;
 
 export const updateBankTransaction = `mutation UpdateBankTransaction($input: UpdateBankTransactionInput!) {
   updateBankTransaction(input: $input) { 
-    pk
-    createdAt
-    entity
+    transactionId
     accountId
     transactionDate
     payee
     category
     amount
+    createdAt
     updatedAt
   }
 }` as Query<MutationUpdateBankTransactionArgs, UpdateBankTransactionMutation>;
 
 export const createInvestmentTransaction = `mutation CreateInvestmentTransaction($input: CreateInvestmentTransactionInput!) {
-    createInvestmentTransaction(input: $input) { 
-      pk
-      createdAt
-      entity
-      accountId
-      type
-      transactionDate
-      symbol
-      shares
-      price
-      commission
-      updatedAt
-    }
-  }` as Query<MutationCreateInvestmentTransactionArgs, CreateInvestmentTransactionMutation>;
-
-export const updateInvestmentTransaction = `mutation UpdateInvestmentTransaction($input: UpdateInvestmentTransactionInput!) {
-  updateInvestmentTransaction(input: $input) { 
-    pk
-    createdAt
-    entity
+  createInvestmentTransaction(input: $input) { 
+    transactionId
     accountId
     transactionDate
     type
@@ -112,12 +91,29 @@ export const updateInvestmentTransaction = `mutation UpdateInvestmentTransaction
     shares
     price
     commission
+    createdAt
+    updatedAt
+  }
+}` as Query<MutationCreateInvestmentTransactionArgs, CreateInvestmentTransactionMutation>;
+
+export const updateInvestmentTransaction = `mutation UpdateInvestmentTransaction($input: UpdateInvestmentTransactionInput!) {
+  updateInvestmentTransaction(input: $input) { 
+    transactionId
+    accountId
+    transactionDate
+    type
+    symbol
+    shares
+    price
+    commission
+    createdAt
     updatedAt
   }
 }` as Query<MutationUpdateInvestmentTransactionArgs, UpdateInvestmentTransactionMutation>;
 
 export const deleteTransaction = `mutation DeleteTransaction($input: DeleteTransactionInput!) {
   deleteAggregate(deleteTransactionInput: $input) { 
-    aggregateId
+    pk
+    entity
   }
 }` as Query<MutationDeleteTransactionArgs, DeleteTransactionMutation>;

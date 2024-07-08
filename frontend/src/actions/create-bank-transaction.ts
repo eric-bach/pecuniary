@@ -5,7 +5,7 @@ import { createBankTransaction } from '@/../../infrastructure/graphql/api/mutati
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { CreateBankTransactionInput } from '@/../../infrastructure/graphql/api/codegen/appsync';
-import { investmentSchema } from '@/types/transaction';
+import { bankingSchema } from '@/types/transaction';
 
 interface CreateBankTransactionFormState {
   errors: {
@@ -22,16 +22,14 @@ interface CreateBankTransactionFormState {
 
 export async function createNewBankTransaction({
   accountId,
-  type,
   transactionDate,
   payee,
   category,
   amount,
 }: CreateBankTransactionInput): Promise<CreateBankTransactionFormState> {
-  const result = investmentSchema.safeParse({
+  const result = bankingSchema.safeParse({
     accountId,
     transactionDate: new Date(transactionDate),
-    type,
     payee,
     category,
     shares: amount.toString(),
@@ -50,7 +48,6 @@ export async function createNewBankTransaction({
       variables: {
         input: {
           accountId,
-          type,
           transactionDate: new Date(transactionDate).toISOString().split('T')[0],
           payee,
           category,

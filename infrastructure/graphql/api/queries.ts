@@ -10,7 +10,6 @@ export const getAccount = `query GetAccount($accountId: String!) {
   getAccount(accountId: $accountId) { 
     accountId
     name
-    entity
     category
     type
     createdAt
@@ -23,7 +22,6 @@ export const getAccounts = `query GetAccounts($lastEvaluatedKey: String) {
     items {
       accountId
       name
-      entity
       category
       type
       createdAt
@@ -37,8 +35,8 @@ export const getBankTransactions = `query GetBankTransactions($accountId: String
   getBankTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
     items {
       pk
+      transactionId
       accountId
-      entity
       transactionDate
       payee
       category
@@ -54,10 +52,10 @@ export const getInvestmentTransactions = `query GetBankTransactions($accountId: 
   getInvestmentTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
     items {
       pk
+      transactionId
       accountId
-      entity
-      type
       transactionDate
+      type
       symbol
       shares
       price 

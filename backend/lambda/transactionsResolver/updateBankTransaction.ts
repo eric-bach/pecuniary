@@ -20,8 +20,8 @@ async function updateBankTransaction(userId: string, input: UpdateBankTransactio
       ':payee': input.payee,
       ':category': input.category,
       ':amount': input.amount,
-      ':updatedAt': new Date().toISOString(),
       ':userId': { S: userId },
+      ':updatedAt': new Date().toISOString(),
     }),
     ConditionExpression: 'userId = :userId',
   };

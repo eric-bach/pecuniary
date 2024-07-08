@@ -51,7 +51,7 @@ export type BankTransaction = {
   payee: Scalars['String']['output'];
   pk: Scalars['ID']['output'];
   transactionDate: Scalars['AWSDate']['output'];
-  type: Scalars['String']['output'];
+  transactionId: Scalars['ID']['output'];
   updatedAt: Scalars['AWSDateTime']['output'];
   userId: Scalars['String']['output'];
 };
@@ -68,7 +68,6 @@ export type CreateBankTransactionInput = {
   category?: InputMaybe<Scalars['String']['input']>;
   payee: Scalars['String']['input'];
   transactionDate: Scalars['AWSDate']['input'];
-  type: Scalars['String']['input'];
 };
 
 export type CreateInvestmentTransactionInput = {
@@ -87,7 +86,7 @@ export type Data = {
   accountId: Scalars['ID']['output'];
   amount?: Maybe<Scalars['Float']['output']>;
   bookValue?: Maybe<Scalars['Float']['output']>;
-  category: Scalars['String']['output'];
+  category?: Maybe<Scalars['String']['output']>;
   commission?: Maybe<Scalars['Float']['output']>;
   createdAt: Scalars['String']['output'];
   currency?: Maybe<Scalars['String']['output']>;
@@ -151,6 +150,7 @@ export type InvestmentTransaction = {
   shares: Scalars['Float']['output'];
   symbol: Scalars['String']['output'];
   transactionDate: Scalars['AWSDate']['output'];
+  transactionId: Scalars['ID']['output'];
   type: Scalars['String']['output'];
   updatedAt: Scalars['AWSDateTime']['output'];
   userId: Scalars['String']['output'];
@@ -220,6 +220,7 @@ export type Position = {
   exchange: Scalars['String']['output'];
   marketValue: Scalars['Float']['output'];
   pk: Scalars['ID']['output'];
+  postiionId: Scalars['ID']['output'];
   shares: Scalars['Float']['output'];
   symbol: Scalars['String']['output'];
   updatedAt: Scalars['AWSDateTime']['output'];
@@ -285,7 +286,6 @@ export type UpdateBankTransactionInput = {
   payee: Scalars['String']['input'];
   pk: Scalars['String']['input'];
   transactionDate?: InputMaybe<Scalars['AWSDate']['input']>;
-  type: Scalars['String']['input'];
 };
 
 export type UpdateInvestmentTransactionInput = {

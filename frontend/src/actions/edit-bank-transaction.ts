@@ -5,7 +5,7 @@ import { updateBankTransaction } from '../../../infrastructure/graphql/api/mutat
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { UpdateBankTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
-import { investmentSchema } from '@/types/transaction';
+import { bankingSchema } from '@/types/transaction';
 
 interface EditBankTransactionFormState {
   errors: {
@@ -25,16 +25,14 @@ export async function editExistingBankTransaction({
   createdAt,
   transactionDate,
   payee,
-  type,
   category,
   amount,
 }: UpdateBankTransactionInput): Promise<EditBankTransactionFormState> {
-  const result = investmentSchema.safeParse({
+  const result = bankingSchema.safeParse({
     pk,
     createdAt,
     transactionDate,
     payee,
-    type,
     category,
     amount,
   });

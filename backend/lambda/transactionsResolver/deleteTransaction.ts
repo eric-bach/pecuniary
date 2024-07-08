@@ -16,10 +16,10 @@ async function deleteTransaction(input: DeleteTransactionInput) {
       pk: input.pk,
       createdAt: input.createdAt,
     }),
-    ConditionExpression: 'symbol = :v1',
-    ExpressionAttributeValues: {
-      ':v1': { S: input.symbol },
-    },
+    // ConditionExpression: 'symbol = :v1',
+    // ExpressionAttributeValues: {
+    //   ':v1': { S: input.symbol },
+    // },
   };
   let result = await dynamoDbCommand(new DeleteItemCommand(deleteItemCommandInput));
 

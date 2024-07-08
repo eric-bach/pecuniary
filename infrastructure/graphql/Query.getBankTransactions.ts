@@ -20,7 +20,7 @@ export function request(ctx: Context): DynamoDBQueryRequest {
       expression: 'userId = :userId AND entity = :entity',
       expressionValues: {
         ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
-        ':entity': util.dynamodb.toDynamoDB('transaction'),
+        ':entity': util.dynamodb.toDynamoDB('bank-transaction'),
       },
     },
   };

@@ -23,8 +23,8 @@ async function updateInvestmentTransaction(userId: string, input: UpdateInvestme
       ':shares': input.shares,
       ':price': input.price,
       ':commission': input.commission,
-      ':updatedAt': new Date().toISOString(),
       ':userId': { S: userId },
+      ':updatedAt': new Date().toISOString(),
     }),
     ExpressionAttributeNames: {
       '#type': 'type',

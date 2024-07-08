@@ -1,9 +1,9 @@
 import { PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
-
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
 import { BankTransaction, CreateBankTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { v4 as uuidv4 } from 'uuid';
 
 async function createBankTransaction(userId: string, input: CreateBankTransactionInput) {
   console.debug(`🕧 Create Bank Transaction initialized`);
@@ -11,13 +11,14 @@ async function createBankTransaction(userId: string, input: CreateBankTransactio
   var item: BankTransaction = {
     pk: `trans#${input.accountId}`,
     createdAt: new Date().toISOString(),
-    userId: userId,
-    entity: 'transaction',
+    entity: 'bank-transaction',
     accountId: input.accountId,
+    transactionId: uuidv4(),
     transactionDate: input.transactionDate,
     payee: input.payee,
     category: input.category,
     amount: input.amount,
+    userId: userId,
     updatedAt: new Date().toISOString(),
   };
 

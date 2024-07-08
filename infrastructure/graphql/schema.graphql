@@ -4,7 +4,7 @@ type Data {
   userId: String!
   accountId: ID!
   entity: String!
-  category: String!
+  category: String
   type: String
   name: String
   transactionDate: AWSDate
@@ -24,24 +24,23 @@ type Data {
 
 # CreateAccount
 input CreateAccountInput {
+  name: String!
   type: String!
   category: String!
-  name: String!
 }
 
 # UpdateAccount
 input UpdateAccountInput {
   accountId: ID!
   createdAt: String!
-  category: String!
-  type: String!
   name: String!
+  type: String!
+  category: String!
 }
 
 # CreateBankTransaction
 input CreateBankTransactionInput {
   accountId: ID!
-  type: String!
   transactionDate: AWSDate!
   payee: String!
   category: String
@@ -51,7 +50,6 @@ input CreateBankTransactionInput {
 input UpdateBankTransactionInput {
   pk: String!
   createdAt: String!
-  type: String!
   transactionDate: AWSDate
   payee: String!
   category: String
@@ -61,8 +59,8 @@ input UpdateBankTransactionInput {
 # CreateInvestmentTransaction
 input CreateInvestmentTransactionInput {
   accountId: ID!
-  type: String!
   transactionDate: AWSDate!
+  type: String!
   symbol: String!
   shares: Float!
   price: Float!
@@ -72,8 +70,8 @@ input CreateInvestmentTransactionInput {
 input UpdateInvestmentTransactionInput {
   pk: String!
   createdAt: String!
-  type: String!
   transactionDate: AWSDate!
+  type: String!
   symbol: String!
   shares: Float!
   price: Float!
@@ -107,29 +105,30 @@ type Account {
 type BankTransaction {
   pk: ID!
   createdAt: String!
-  userId: String!
   entity: String!
-  type: String!
   accountId: ID!
+  transactionId: ID!
   transactionDate: AWSDate!
   payee: String!
   category: String
   amount: Float!
+  userId: String!
   updatedAt: AWSDateTime!
 }
 
 type InvestmentTransaction {
   pk: ID!
   createdAt: String!
-  userId: String!
   entity: String!
   accountId: ID!
-  type: String!
+  transactionId: ID!
   transactionDate: AWSDate!
+  type: String!
   symbol: String!
   shares: Float!
   price: Float!
   commission: Float!
+  userId: String!
   updatedAt: AWSDateTime!
 }
 
@@ -137,9 +136,9 @@ type InvestmentTransaction {
 type Position {
   pk: ID!
   createdAt: String!
-  userId: String!
   entity: String!
   accountId: ID!
+  postiionId: ID!
   description: String!
   symbol: String!
   shares: Float!
@@ -148,6 +147,7 @@ type Position {
   bookValue: Float!
   marketValue: Float!
   acb: Float!
+  userId: String!
   updatedAt: AWSDateTime!
 }
 
