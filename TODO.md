@@ -32,10 +32,9 @@ X Build mobile sidebar
 
 - Build individual account page and ability to add transactions
 
-  - Update table schema doc
   - Support editing investment transactions
-  - Clean up/refactor investment transactions including data-table
-  - Add banking transactions
+  - Test
+  - Clean up data-table, actions, columns
 
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions
