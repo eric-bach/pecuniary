@@ -27,6 +27,8 @@ export async function createNewBankTransaction({
   category,
   amount,
 }: CreateBankTransactionInput): Promise<CreateBankTransactionFormState> {
+  console.log('createNewBankTransaction', { accountId, transactionDate, payee, category, amount });
+
   const result = bankingSchema.safeParse({
     accountId,
     transactionDate: new Date(transactionDate),

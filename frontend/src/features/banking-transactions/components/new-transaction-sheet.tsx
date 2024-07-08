@@ -17,11 +17,17 @@ const NewBankingTransactionSheet = () => {
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
     setIsPending(true);
 
-    const result = await createNewBankTransaction({
+    const data = {
       ...values,
       amount: parseFloat(values.amount),
       transactionDate: values.transactionDate.toDateString(),
-    });
+    };
+
+    console.log('data', data);
+
+    const result = await createNewBankTransaction(data);
+
+    console.log('result', result);
 
     onClose();
 

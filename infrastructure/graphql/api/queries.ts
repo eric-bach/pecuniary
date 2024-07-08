@@ -35,6 +35,8 @@ export const getBankTransactions = `query GetBankTransactions($accountId: String
   getBankTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
     items {
       pk
+      createdAt
+      entity
       transactionId
       accountId
       transactionDate
@@ -52,6 +54,8 @@ export const getInvestmentTransactions = `query GetBankTransactions($accountId: 
   getInvestmentTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
     items {
       pk
+      createdAt
+      entity
       transactionId
       accountId
       transactionDate

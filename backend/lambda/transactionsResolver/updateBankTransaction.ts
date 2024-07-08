@@ -8,6 +8,8 @@ import { UpdateBankTransactionInput } from '../../../infrastructure/graphql/api/
 async function updateBankTransaction(userId: string, input: UpdateBankTransactionInput) {
   console.debug(`🕧 Update Bank Transaction initialized`);
 
+  const updatedAt = new Date().toISOString();
+
   const updateItemCommandInput: UpdateItemCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({
@@ -20,8 +22,8 @@ async function updateBankTransaction(userId: string, input: UpdateBankTransactio
       ':payee': input.payee,
       ':category': input.category,
       ':amount': input.amount,
-      ':userId': { S: userId },
-      ':updatedAt': new Date().toISOString(),
+      ':userId': userId,
+      ':updatedAt': updatedAt,
     }),
     ConditionExpression: 'userId = :userId',
   };
@@ -31,8 +33,15 @@ async function updateBankTransaction(userId: string, input: UpdateBankTransactio
     // Publish event to update positions
     await publishEventAsync('TransactionSavedEvent', input);
 
-    console.log(`✅ Updated Transaction: {result: ${JSON.stringify(updateResult)}, item: ${unmarshall(updateResult.Attributes)}}`);
-    return unmarshall(updateResult.Attributes);
+    // console.log(`✅ Updated Transaction: {result: ${JSON.stringify(updateResult)}, item: ${unmarshall(updateResult.Attributes)}}`);
+    // return unmarshall(updateResult.Attributes);
+    console.log(`✅ Updated Transaction: {result: ${JSON.stringify(updateResult)}`);
+    return {
+      ...input,
+      transactionId: 'DUMMY',
+      accountId: input.pk.split('#')[1],
+      updatedAt,
+    };
   }
 
   console.log(`🛑 Could not update bank transaction\n`, updateResult);

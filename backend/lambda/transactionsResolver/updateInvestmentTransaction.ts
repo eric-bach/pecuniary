@@ -23,7 +23,7 @@ async function updateInvestmentTransaction(userId: string, input: UpdateInvestme
       ':shares': input.shares,
       ':price': input.price,
       ':commission': input.commission,
-      ':userId': { S: userId },
+      ':userId': userId,
       ':updatedAt': new Date().toISOString(),
     }),
     ExpressionAttributeNames: {
@@ -37,8 +37,10 @@ async function updateInvestmentTransaction(userId: string, input: UpdateInvestme
     // Publish event to update positions
     await publishEventAsync('TransactionSavedEvent', input);
 
-    console.log(`✅ Updated Transaction: {result: ${JSON.stringify(updateResult)}, item: ${unmarshall(updateResult.Attributes)}}`);
-    return unmarshall(updateResult.Attributes);
+    // console.log(`✅ Updated Transaction: {result: ${JSON.stringify(updateResult)}, item: ${unmarshall(updateResult.Attributes)}}`);
+    // return unmarshall(updateResult.Attributes);
+    console.log(`✅ Updated Transaction: {result: ${JSON.stringify(updateResult)}`);
+    return input;
   }
 
   console.log(`🛑 Could not update investment transaction\n`, updateResult);

@@ -50,7 +50,7 @@ input CreateBankTransactionInput {
 input UpdateBankTransactionInput {
   pk: String!
   createdAt: String!
-  transactionDate: AWSDate
+  transactionDate: AWSDate!
   payee: String!
   category: String
   amount: Float!

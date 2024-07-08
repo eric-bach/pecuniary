@@ -32,7 +32,8 @@ X Build mobile sidebar
 
 - Build individual account page and ability to add transactions
 
-  - Support editing bnak/investment transactions
+  - Support editing bank/investment transactions
+  - Make enture tranasction (transactionID) required field
 
 - Clean up data-table, actions, columns
 - Create symbol on add

@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const investmentSchema = z.object({
   accountId: z.string().min(1, 'Account Id is required'),
+  createdAt: z.string().optional(),
   transactionDate: z.date(),
   type: z.string().min(1, 'Type is required'),
   symbol: z.string().min(1, 'Symbol is required'),
@@ -11,9 +12,11 @@ export const investmentSchema = z.object({
 });
 
 export const bankingSchema = z.object({
+  // pk: z.string().optional(),
   accountId: z.string().min(1, 'Account Id is required'),
+  createdAt: z.string().optional(),
   transactionDate: z.date(),
-  category: z.string().min(1, 'Category is required'),
   payee: z.string().min(1, 'Payee is required'),
+  category: z.string().min(1, 'Category is required'),
   amount: z.string().min(1, 'Amount is required'),
 });

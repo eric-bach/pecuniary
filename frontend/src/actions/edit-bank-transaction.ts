@@ -28,13 +28,15 @@ export async function editExistingBankTransaction({
   category,
   amount,
 }: UpdateBankTransactionInput): Promise<EditBankTransactionFormState> {
+  console.log('editExistingBankTransaction', { createdAt, transactionDate, payee, category, amount });
+
   const result = bankingSchema.safeParse({
-    pk,
+    accountId: pk.split('#')[1],
     createdAt,
-    transactionDate,
+    transactionDate: new Date(transactionDate),
     payee,
     category,
-    amount,
+    amount: amount.toString(),
   });
 
   if (!result.success) {
@@ -47,20 +49,12 @@ export async function editExistingBankTransaction({
       query: updateBankTransaction,
       variables: {
         input: {
-          pk: `TRANS#${result.data.accountId}`,
-          // TODO Fix this
-          // @ts-ignore
-          createdAt: result.data.createdAt,
-          // @ts-ignore
-          transactionDate: result.data.transactionDate,
-          // @ts-ignore
-          type: result.data.type,
-          // @ts-ignore
+          pk: `trans#${result.data.accountId}`,
+          createdAt: result.data.createdAt!,
+          transactionDate: new Date(transactionDate).toISOString().split('T')[0],
           payee: result.data.payee,
-          // @ts-ignore
           category: result.data.category,
-          // @ts-ignore
-          amount: result.data.amount,
+          amount: parseFloat(result.data.amount),
         },
       },
     });
@@ -68,10 +62,11 @@ export async function editExistingBankTransaction({
     if (err instanceof Error) {
       return { errors: { _form: [err.message] } };
     } else {
+      console.log(err);
       return { errors: { _form: ['An unknown error occurred'] } };
     }
   }
 
   revalidatePath('/', 'layout');
-  redirect('/accounts');
+  redirect(`/accounts/${result.data.accountId}`);
 }

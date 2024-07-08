@@ -285,7 +285,7 @@ export type UpdateBankTransactionInput = {
   createdAt: Scalars['String']['input'];
   payee: Scalars['String']['input'];
   pk: Scalars['String']['input'];
-  transactionDate?: InputMaybe<Scalars['AWSDate']['input']>;
+  transactionDate: Scalars['AWSDate']['input'];
 };
 
 export type UpdateInvestmentTransactionInput = {
