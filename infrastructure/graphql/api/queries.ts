@@ -1,5 +1,10 @@
-import { QueryGetAccountArgs, QueryGetAccountsArgs, QueryGetTransactionsArgs } from './codegen/appsync';
-import { GetAccountQuery, GetAccountsQuery, GetTransactionsQuery, Query } from './types';
+import {
+  QueryGetAccountArgs,
+  QueryGetAccountsArgs,
+  QueryGetBankTransactionsArgs,
+  QueryGetInvestmentTransactionsArgs,
+} from './codegen/appsync';
+import { GetAccountQuery, GetAccountsQuery, GetBankTransactionsQuery, GetInvestmentTransactionsQuery, Query } from './types';
 
 export const getAccount = `query GetAccount($accountId: String!) {
   getAccount(accountId: $accountId) { 
@@ -28,8 +33,25 @@ export const getAccounts = `query GetAccounts($lastEvaluatedKey: String) {
   }
 }` as Query<QueryGetAccountsArgs, GetAccountsQuery>;
 
-export const getTransactions = `query GetTransactions($accountId: String!, $lastEvaluatedKey: String) {
-  getTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
+export const getBankTransactions = `query GetBankTransactions($accountId: String!, $lastEvaluatedKey: String) {
+  getBankTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
+    items {
+      pk
+      accountId
+      entity
+      transactionDate
+      payee
+      category
+      amount
+      createdAt
+      updatedAt
+    }
+    nextToken
+  }
+}` as Query<QueryGetBankTransactionsArgs, GetBankTransactionsQuery>;
+
+export const getInvestmentTransactions = `query GetBankTransactions($accountId: String!, $lastEvaluatedKey: String) {
+  getInvestmentTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
     items {
       pk
       accountId
@@ -45,4 +67,4 @@ export const getTransactions = `query GetTransactions($accountId: String!, $last
     }
     nextToken
   }
-}` as Query<QueryGetTransactionsArgs, GetTransactionsQuery>;
+}` as Query<QueryGetInvestmentTransactionsArgs, GetInvestmentTransactionsQuery>;

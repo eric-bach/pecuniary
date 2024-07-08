@@ -3,23 +3,21 @@ import { marshall } from '@aws-sdk/util-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
-import { CreateTransactionInput, Transaction } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction, CreateBankTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
 
-async function createTransaction(userId: string, input: CreateTransactionInput) {
-  console.debug(`🕧 Create Transaction initialized`);
+async function createBankTransaction(userId: string, input: CreateBankTransactionInput) {
+  console.debug(`🕧 Create Bank Transaction initialized`);
 
-  var item: Transaction = {
+  var item: BankTransaction = {
     pk: `trans#${input.accountId}`,
     createdAt: new Date().toISOString(),
     userId: userId,
     entity: 'transaction',
     accountId: input.accountId,
-    type: input.type,
     transactionDate: input.transactionDate,
-    symbol: input.symbol,
-    shares: input.shares,
-    price: input.price,
-    commission: input.commission,
+    payee: input.payee,
+    category: input.category,
+    amount: input.amount,
     updatedAt: new Date().toISOString(),
   };
 
@@ -37,8 +35,8 @@ async function createTransaction(userId: string, input: CreateTransactionInput) 
     return item;
   }
 
-  console.error(`🛑 Error saving Transaction:\n`, result);
+  console.error(`🛑 Error saving bank transaction:\n`, result);
   return {};
 }
 
-export default createTransaction;
+export default createBankTransaction;

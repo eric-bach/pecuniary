@@ -4,7 +4,7 @@ import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useOpenTransaction } from '@/hooks/use-open-transaction';
-import { Transaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction, InvestmentTransaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
 import { deleteExistingTransaction } from '@/actions';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';
@@ -13,7 +13,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 
 type TransactionsProps = {
-  transaction: Transaction;
+  transaction: BankTransaction | InvestmentTransaction;
 };
 
 export const Actions = ({ transaction }: TransactionsProps) => {
@@ -50,8 +50,11 @@ export const Actions = ({ transaction }: TransactionsProps) => {
   };
 
   const handleOpen = () => {
-    if (transaction.type.toLowerCase() === 'banking') onBankingOpen(transaction);
-    else if (transaction.type.toLowerCase() === 'investment') onInvestmentOpen(transaction);
+    if (transaction.type.toLowerCase() === 'banking') {
+      onBankingOpen(transaction as BankTransaction);
+    } else if (transaction.type.toLowerCase() === 'investment') {
+      onInvestmentOpen(transaction as InvestmentTransaction);
+    }
   };
 
   return (

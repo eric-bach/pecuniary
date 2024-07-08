@@ -38,8 +38,28 @@ input UpdateAccountInput {
   name: String!
 }
 
-# CreateTransaction
-input CreateTransactionInput {
+# CreateBankTransaction
+input CreateBankTransactionInput {
+  accountId: ID!
+  type: String!
+  transactionDate: AWSDate!
+  payee: String!
+  category: String
+  amount: Float!
+}
+
+input UpdateBankTransactionInput {
+  pk: String!
+  createdAt: String!
+  type: String!
+  transactionDate: AWSDate
+  payee: String!
+  category: String
+  amount: Float!
+}
+
+# CreateInvestmentTransaction
+input CreateInvestmentTransactionInput {
   accountId: ID!
   type: String!
   transactionDate: AWSDate!
@@ -49,7 +69,7 @@ input CreateTransactionInput {
   commission: Float!
 }
 
-input UpdateTransactionInput {
+input UpdateInvestmentTransactionInput {
   pk: String!
   createdAt: String!
   type: String!
@@ -63,7 +83,6 @@ input UpdateTransactionInput {
 input DeleteTransactionInput {
   pk: ID!
   createdAt: String!
-  symbol: String!
 }
 
 # Aggregate Response
@@ -84,8 +103,22 @@ type Account {
   updatedAt: AWSDateTime!
 }
 
-# Transaction entity
-type Transaction {
+#  Transaction entity
+type BankTransaction {
+  pk: ID!
+  createdAt: String!
+  userId: String!
+  entity: String!
+  type: String!
+  accountId: ID!
+  transactionDate: AWSDate!
+  payee: String!
+  category: String
+  amount: Float!
+  updatedAt: AWSDateTime!
+}
+
+type InvestmentTransaction {
   pk: ID!
   createdAt: String!
   userId: String!
@@ -123,8 +156,13 @@ type GetAccountsResponse {
   nextToken: String
 }
 
-type GetTransactionsResponse {
-  items: [Transaction]
+type GetBankTransactionsResponse {
+  items: [BankTransaction]
+  nextToken: String
+}
+
+type GetInvestmentTransactionsResponse {
+  items: [InvestmentTransaction]
   nextToken: String
 }
 
@@ -143,18 +181,24 @@ type Query {
   getAccounts(lastEvaluatedKey: String): GetAccountsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
   getAggregate(accountId: String!, type: String): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
 
-  getTransactions(accountId: String!, lastEvaluatedKey: String): GetTransactionsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getBankTransactions(accountId: String!, lastEvaluatedKey: String): GetBankTransactionsResponse
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getInvestmentTransactions(accountId: String!, lastEvaluatedKey: String): GetInvestmentTransactionsResponse
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPositions(accountId: String!, lastEvaluatedKey: String): GetPositionsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {
   createAccount(input: CreateAccountInput!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateAccount(input: UpdateAccountInput!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteAggregate(accountId: String!): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteAccount(accountId: String!): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
 
-  createTransaction(createTransactionInput: CreateTransactionInput!): Transaction @aws_cognito_user_pools(cognito_groups: ["Users"])
-  updateTransaction(updateTransactionInput: UpdateTransactionInput!): Transaction @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteTransaction(deleteTransactionInput: DeleteTransactionInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createBankTransaction(input: CreateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updateBankTransaction(input: UpdateBankTransactionInput!): InvestmentTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createInvestmentTransaction(input: CreateInvestmentTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updateInvestmentTransaction(input: UpdateInvestmentTransactionInput!): InvestmentTransaction
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteTransaction(input: DeleteTransactionInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 schema {

@@ -1,11 +1,11 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Transaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { InvestmentTransaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
 import { Actions } from '@/app/(main)/transactions/actions';
 import { Checkbox } from '@/components/ui/checkbox';
 
-export const investmentColumns: ColumnDef<Transaction>[] = [
+export const investmentColumns: ColumnDef<InvestmentTransaction>[] = [
   {
     id: 'select',
     header: ({ table }) => (

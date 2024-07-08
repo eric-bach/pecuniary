@@ -3,16 +3,16 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
-import { UpdateTransactionInput } from '../types/Transaction';
+import { UpdateInvestmentTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
 
-async function updateTransaction(userId: string, input: UpdateTransactionInput) {
-  console.debug(`🕧 Update Transaction initialized`);
+async function updateInvestmentTransaction(userId: string, input: UpdateInvestmentTransactionInput) {
+  console.debug(`🕧 Update Investment Transaction initialized`);
 
   const updateItemCommandInput: UpdateItemCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({
-      userId: input.userId,
-      sk: input.sk,
+      pk: input.pk,
+      createdAt: input.createdAt,
     }),
     UpdateExpression:
       'SET #type=:type, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt',
@@ -41,8 +41,8 @@ async function updateTransaction(userId: string, input: UpdateTransactionInput) 
     return unmarshall(updateResult.Attributes);
   }
 
-  console.log(`🛑 Could not update transaction\n`, updateResult);
+  console.log(`🛑 Could not update investment transaction\n`, updateResult);
   return {};
 }
 
-export default updateTransaction;
+export default updateInvestmentTransaction;

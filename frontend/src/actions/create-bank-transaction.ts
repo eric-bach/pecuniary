@@ -1,13 +1,13 @@
 'use server';
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
-import { createTransaction } from '@/../../infrastructure/graphql/api/mutations';
+import { createBankTransaction } from '@/../../infrastructure/graphql/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { CreateTransactionInput } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { CreateBankTransactionInput } from '@/../../infrastructure/graphql/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 
-interface CreateTransactionFormState {
+interface CreateBankTransactionFormState {
   errors: {
     accountId?: string[];
     transactionDate?: string[];
@@ -20,23 +20,21 @@ interface CreateTransactionFormState {
   };
 }
 
-export async function createNewTransaction({
+export async function createNewBankTransaction({
   accountId,
-  transactionDate,
   type,
-  symbol,
-  shares,
-  price,
-  commission,
-}: CreateTransactionInput): Promise<CreateTransactionFormState> {
+  transactionDate,
+  payee,
+  category,
+  amount,
+}: CreateBankTransactionInput): Promise<CreateBankTransactionFormState> {
   const result = investmentSchema.safeParse({
     accountId,
     transactionDate: new Date(transactionDate),
     type,
-    symbol,
-    shares: shares.toString(),
-    price: price.toString(),
-    commission: commission.toString(),
+    payee,
+    category,
+    shares: amount.toString(),
   });
 
   console.log('Create Transaction Result', result);
@@ -48,16 +46,15 @@ export async function createNewTransaction({
   let data;
   try {
     data = await cookieBasedClient.graphql({
-      query: createTransaction,
+      query: createBankTransaction,
       variables: {
-        createTransactionInput: {
+        input: {
           accountId,
-          transactionDate: new Date(transactionDate).toISOString().split('T')[0],
-          symbol,
           type,
-          shares,
-          price,
-          commission,
+          transactionDate: new Date(transactionDate).toISOString().split('T')[0],
+          payee,
+          category,
+          amount,
         },
       },
     });

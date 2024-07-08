@@ -5,12 +5,12 @@ import { DataTable } from '@/components/data-table';
 import { bankingColumns } from '@/app/(main)/transactions/banking-columns';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Transaction } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction } from '../../../../infrastructure/graphql/api/codegen/appsync';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
 
 interface BankingTransactionsProps {
   accountId: string;
-  transactions: [Transaction];
+  transactions: [BankTransaction];
 }
 
 const BankingTransactions = ({ accountId, transactions }: BankingTransactionsProps) => {

@@ -1,13 +1,13 @@
 'use server';
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
-import { updateTransaction } from '../../../infrastructure/graphql/api/mutations';
+import { updateBankTransaction } from '../../../infrastructure/graphql/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { UpdateTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { UpdateBankTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 
-interface EditTransactionFormState {
+interface EditBankTransactionFormState {
   errors: {
     accountId?: string[];
     transactionDate?: string[];
@@ -20,25 +20,23 @@ interface EditTransactionFormState {
   };
 }
 
-export async function editExistingTransaction({
+export async function editExistingBankTransaction({
   pk,
   createdAt,
   transactionDate,
-  symbol,
-  shares,
-  price,
-  commission,
+  payee,
   type,
-}: UpdateTransactionInput): Promise<EditTransactionFormState> {
+  category,
+  amount,
+}: UpdateBankTransactionInput): Promise<EditBankTransactionFormState> {
   const result = investmentSchema.safeParse({
     pk,
     createdAt,
     transactionDate,
-    symbol,
-    shares,
-    price,
-    commission,
+    payee,
     type,
+    category,
+    amount,
   });
 
   if (!result.success) {
@@ -48,23 +46,23 @@ export async function editExistingTransaction({
   let data;
   try {
     data = await cookieBasedClient.graphql({
-      query: updateTransaction,
+      query: updateBankTransaction,
       variables: {
-        updateTransactionInput: {
+        input: {
           pk: `TRANS#${result.data.accountId}`,
           // TODO Fix this
           // @ts-ignore
           createdAt: result.data.createdAt,
           // @ts-ignore
           transactionDate: result.data.transactionDate,
-          symbol: result.data.symbol,
+          // @ts-ignore
           type: result.data.type,
           // @ts-ignore
-          shares: result.data.shares,
+          payee: result.data.payee,
           // @ts-ignore
-          price: result.data.price,
+          category: result.data.category,
           // @ts-ignore
-          commission: result.data.commission,
+          amount: result.data.amount,
         },
       },
     });

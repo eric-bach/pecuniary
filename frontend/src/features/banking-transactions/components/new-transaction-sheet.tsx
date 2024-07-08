@@ -4,7 +4,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import * as z from 'zod';
 import TransactionForm from './transaction-form';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
-import { createNewTransaction } from '@/actions';
+import { createNewBankTransaction } from '@/actions';
 import { bankingSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
@@ -16,14 +16,13 @@ const NewBankingTransactionSheet = () => {
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
     setIsPending(true);
-    const result = await createNewTransaction({
+    const result = await createNewBankTransaction({
       ...values,
       // TODO Populate this
-      symbol: '',
+      payee: '',
+      category: '',
       type: '',
-      shares: 0,
-      price: 0,
-      commission: 0,
+      amount: 0,
       transactionDate: values.transactionDate.toDateString(),
     });
     onClose();
@@ -49,6 +48,7 @@ const NewBankingTransactionSheet = () => {
             accountId: accountId,
             transactionDate: new Date(),
             category: '',
+            type: '',
             payee: '',
             amount: '',
           }}

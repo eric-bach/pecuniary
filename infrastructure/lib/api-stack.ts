@@ -194,18 +194,25 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '../graphql/build/Query.getAggregate.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
-    const deleteAggregateFunction = new AppsyncFunction(this, 'deleteAggregateFunction', {
-      name: 'deleteAggregate',
+    const deleteAccountFunction = new AppsyncFunction(this, 'deleteAccountFunction', {
+      name: 'deleteAccount',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Mutation.deleteAggregate.js')),
+      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Mutation.deleteAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
-    const getTransactionsFunction = new AppsyncFunction(this, 'getTransactionsFunction', {
-      name: 'getTransactions',
+    const getBankTransactionsFunction = new AppsyncFunction(this, 'getBankTransactionsFunction', {
+      name: 'getBankTransactions',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Query.getTransactions.js')),
+      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Query.getBankTransactions.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const getInvestmentTransactionsFunction = new AppsyncFunction(this, 'getInvestmentTransactionsFunction', {
+      name: 'getInvestmentTransactions',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Query.getInvestmentTransactions.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
 
@@ -263,20 +270,28 @@ export class ApiStack extends Stack {
       pipelineConfig: [getAggregateFunction],
       code: passthrough,
     });
-    const deleteAggregateResolver = new Resolver(this, 'deleteAggregatesResolver', {
+    const deleteAccountResolver = new Resolver(this, 'deleteAccountResolver', {
       api: api,
       typeName: 'Mutation',
-      fieldName: 'deleteAggregate',
+      fieldName: 'deleteAccount',
       runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getAggregateFunction, deleteAggregateFunction],
+      pipelineConfig: [getAggregateFunction, deleteAccountFunction],
       code: passthrough,
     });
-    const getTransactionResolver = new Resolver(this, 'getTransactionsResolver', {
+    const getBankTransactionResolver = new Resolver(this, 'getBankTransactionsResolver', {
       api: api,
       typeName: 'Query',
-      fieldName: 'getTransactions',
+      fieldName: 'getBankTransactions',
       runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getTransactionsFunction],
+      pipelineConfig: [getBankTransactionsFunction],
+      code: passthrough,
+    });
+    const getInvestmentTransactionResolver = new Resolver(this, 'getInvestmentTransactionsResolver', {
+      api: api,
+      typeName: 'Query',
+      fieldName: 'getInvestmentTransactions',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [getInvestmentTransactionsFunction],
       code: passthrough,
     });
 
@@ -316,13 +331,21 @@ export class ApiStack extends Stack {
     });
 
     // Lambda Resolvers
-    transactionsResolverDataSource.createResolver('createTransactionResolver', {
+    transactionsResolverDataSource.createResolver('createBankTransactionResolver', {
       typeName: 'Mutation',
-      fieldName: 'createTransaction',
+      fieldName: 'createBankTransaction',
     });
-    transactionsResolverDataSource.createResolver('updateTransactionResolver', {
+    transactionsResolverDataSource.createResolver('updateBankTransactionResolver', {
       typeName: 'Mutation',
-      fieldName: 'updateTransaction',
+      fieldName: 'updateBankTransaction',
+    });
+    transactionsResolverDataSource.createResolver('createInvestmentTransactionResolver', {
+      typeName: 'Mutation',
+      fieldName: 'createInvestmentTransaction',
+    });
+    transactionsResolverDataSource.createResolver('updateInvestmentTransactionResolver', {
+      typeName: 'Mutation',
+      fieldName: 'updateInvestmentTransaction',
     });
     transactionsResolverDataSource.createResolver('deleteTransactionResolver', {
       typeName: 'Mutation',

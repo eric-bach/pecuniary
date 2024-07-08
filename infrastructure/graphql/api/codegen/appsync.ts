@@ -41,13 +41,37 @@ export type Aggregates = {
   items?: Maybe<Array<Maybe<Data>>>;
 };
 
+export type BankTransaction = {
+  __typename?: 'BankTransaction';
+  accountId: Scalars['ID']['output'];
+  amount: Scalars['Float']['output'];
+  category?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
+  entity: Scalars['String']['output'];
+  payee: Scalars['String']['output'];
+  pk: Scalars['ID']['output'];
+  transactionDate: Scalars['AWSDate']['output'];
+  type: Scalars['String']['output'];
+  updatedAt: Scalars['AWSDateTime']['output'];
+  userId: Scalars['String']['output'];
+};
+
 export type CreateAccountInput = {
   category: Scalars['String']['input'];
   name: Scalars['String']['input'];
   type: Scalars['String']['input'];
 };
 
-export type CreateTransactionInput = {
+export type CreateBankTransactionInput = {
+  accountId: Scalars['ID']['input'];
+  amount: Scalars['Float']['input'];
+  category?: InputMaybe<Scalars['String']['input']>;
+  payee: Scalars['String']['input'];
+  transactionDate: Scalars['AWSDate']['input'];
+  type: Scalars['String']['input'];
+};
+
+export type CreateInvestmentTransactionInput = {
   accountId: Scalars['ID']['input'];
   commission: Scalars['Float']['input'];
   price: Scalars['Float']['input'];
@@ -90,12 +114,23 @@ export type DeleteResponse = {
 export type DeleteTransactionInput = {
   createdAt: Scalars['String']['input'];
   pk: Scalars['ID']['input'];
-  symbol: Scalars['String']['input'];
 };
 
 export type GetAccountsResponse = {
   __typename?: 'GetAccountsResponse';
   items?: Maybe<Array<Maybe<Account>>>;
+  nextToken?: Maybe<Scalars['String']['output']>;
+};
+
+export type GetBankTransactionsResponse = {
+  __typename?: 'GetBankTransactionsResponse';
+  items?: Maybe<Array<Maybe<BankTransaction>>>;
+  nextToken?: Maybe<Scalars['String']['output']>;
+};
+
+export type GetInvestmentTransactionsResponse = {
+  __typename?: 'GetInvestmentTransactionsResponse';
+  items?: Maybe<Array<Maybe<InvestmentTransaction>>>;
   nextToken?: Maybe<Scalars['String']['output']>;
 };
 
@@ -105,20 +140,32 @@ export type GetPositionsResponse = {
   nextToken?: Maybe<Scalars['String']['output']>;
 };
 
-export type GetTransactionsResponse = {
-  __typename?: 'GetTransactionsResponse';
-  items?: Maybe<Array<Maybe<Transaction>>>;
-  nextToken?: Maybe<Scalars['String']['output']>;
+export type InvestmentTransaction = {
+  __typename?: 'InvestmentTransaction';
+  accountId: Scalars['ID']['output'];
+  commission: Scalars['Float']['output'];
+  createdAt: Scalars['String']['output'];
+  entity: Scalars['String']['output'];
+  pk: Scalars['ID']['output'];
+  price: Scalars['Float']['output'];
+  shares: Scalars['Float']['output'];
+  symbol: Scalars['String']['output'];
+  transactionDate: Scalars['AWSDate']['output'];
+  type: Scalars['String']['output'];
+  updatedAt: Scalars['AWSDateTime']['output'];
+  userId: Scalars['String']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   createAccount?: Maybe<Account>;
-  createTransaction?: Maybe<Transaction>;
-  deleteAggregate?: Maybe<Aggregates>;
+  createBankTransaction?: Maybe<BankTransaction>;
+  createInvestmentTransaction?: Maybe<BankTransaction>;
+  deleteAccount?: Maybe<Aggregates>;
   deleteTransaction?: Maybe<DeleteResponse>;
   updateAccount?: Maybe<Account>;
-  updateTransaction?: Maybe<Transaction>;
+  updateBankTransaction?: Maybe<InvestmentTransaction>;
+  updateInvestmentTransaction?: Maybe<InvestmentTransaction>;
 };
 
 
@@ -127,18 +174,23 @@ export type MutationCreateAccountArgs = {
 };
 
 
-export type MutationCreateTransactionArgs = {
-  createTransactionInput: CreateTransactionInput;
+export type MutationCreateBankTransactionArgs = {
+  input: CreateBankTransactionInput;
 };
 
 
-export type MutationDeleteAggregateArgs = {
+export type MutationCreateInvestmentTransactionArgs = {
+  input: CreateInvestmentTransactionInput;
+};
+
+
+export type MutationDeleteAccountArgs = {
   accountId: Scalars['String']['input'];
 };
 
 
 export type MutationDeleteTransactionArgs = {
-  deleteTransactionInput: DeleteTransactionInput;
+  input: DeleteTransactionInput;
 };
 
 
@@ -147,8 +199,13 @@ export type MutationUpdateAccountArgs = {
 };
 
 
-export type MutationUpdateTransactionArgs = {
-  updateTransactionInput: UpdateTransactionInput;
+export type MutationUpdateBankTransactionArgs = {
+  input: UpdateBankTransactionInput;
+};
+
+
+export type MutationUpdateInvestmentTransactionArgs = {
+  input: UpdateInvestmentTransactionInput;
 };
 
 export type Position = {
@@ -174,8 +231,9 @@ export type Query = {
   getAccount?: Maybe<Account>;
   getAccounts?: Maybe<GetAccountsResponse>;
   getAggregate?: Maybe<Aggregates>;
+  getBankTransactions?: Maybe<GetBankTransactionsResponse>;
+  getInvestmentTransactions?: Maybe<GetInvestmentTransactionsResponse>;
   getPositions?: Maybe<GetPositionsResponse>;
-  getTransactions?: Maybe<GetTransactionsResponse>;
 };
 
 
@@ -195,31 +253,21 @@ export type QueryGetAggregateArgs = {
 };
 
 
+export type QueryGetBankTransactionsArgs = {
+  accountId: Scalars['String']['input'];
+  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetInvestmentTransactionsArgs = {
+  accountId: Scalars['String']['input'];
+  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryGetPositionsArgs = {
   accountId: Scalars['String']['input'];
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryGetTransactionsArgs = {
-  accountId: Scalars['String']['input'];
-  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type Transaction = {
-  __typename?: 'Transaction';
-  accountId: Scalars['ID']['output'];
-  commission: Scalars['Float']['output'];
-  createdAt: Scalars['String']['output'];
-  entity: Scalars['String']['output'];
-  pk: Scalars['ID']['output'];
-  price: Scalars['Float']['output'];
-  shares: Scalars['Float']['output'];
-  symbol: Scalars['String']['output'];
-  transactionDate: Scalars['AWSDate']['output'];
-  type: Scalars['String']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
-  userId: Scalars['String']['output'];
 };
 
 export type UpdateAccountInput = {
@@ -230,7 +278,17 @@ export type UpdateAccountInput = {
   type: Scalars['String']['input'];
 };
 
-export type UpdateTransactionInput = {
+export type UpdateBankTransactionInput = {
+  amount: Scalars['Float']['input'];
+  category?: InputMaybe<Scalars['String']['input']>;
+  createdAt: Scalars['String']['input'];
+  payee: Scalars['String']['input'];
+  pk: Scalars['String']['input'];
+  transactionDate?: InputMaybe<Scalars['AWSDate']['input']>;
+  type: Scalars['String']['input'];
+};
+
+export type UpdateInvestmentTransactionInput = {
   commission: Scalars['Float']['input'];
   createdAt: Scalars['String']['input'];
   pk: Scalars['String']['input'];

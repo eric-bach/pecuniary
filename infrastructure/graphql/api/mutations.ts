@@ -1,10 +1,12 @@
 import {
   MutationCreateAccountArgs,
-  MutationCreateTransactionArgs,
-  MutationDeleteAggregateArgs,
+  MutationCreateBankTransactionArgs,
+  MutationCreateInvestmentTransactionArgs,
+  MutationDeleteAccountArgs,
   MutationDeleteTransactionArgs,
   MutationUpdateAccountArgs,
-  MutationUpdateTransactionArgs,
+  MutationUpdateBankTransactionArgs,
+  MutationUpdateInvestmentTransactionArgs,
 } from './codegen/appsync';
 import {
   CreateAccountMutation,
@@ -12,8 +14,10 @@ import {
   DeleteAccountMutation,
   UpdateAccountMutation,
   DeleteTransactionMutation,
-  CreateTransactionMutation,
-  UpdateTransactionMutation,
+  CreateBankTransactionMutation,
+  CreateInvestmentTransactionMutation,
+  UpdateBankTransactionMutation,
+  UpdateInvestmentTransactionMutation,
 } from './types';
 
 export const createAccount = `mutation CreateAccount($input: CreateAccountInput!) {
@@ -40,7 +44,7 @@ export const updateAccount = `mutation UpdateAccount($input: UpdateAccountInput!
   }` as Query<MutationUpdateAccountArgs, UpdateAccountMutation>;
 
 export const deleteAccount = `mutation DeleteAccount($accountId: String!) {
-    deleteAggregate(accountId: $accountId) { 
+    deleteAccount(accountId: $accountId) { 
       items {
         accountId
         name
@@ -50,13 +54,40 @@ export const deleteAccount = `mutation DeleteAccount($accountId: String!) {
         updatedAt
       }
     }
-  }` as Query<MutationDeleteAggregateArgs, DeleteAccountMutation>;
+  }` as Query<MutationDeleteAccountArgs, DeleteAccountMutation>;
 
-export const createTransaction = `mutation CreateTransaction($createTransactionInput: CreateTransactionInput!) {
-    createTransaction(createTransactionInput: $createTransactionInput) { 
+export const createBankTransaction = `mutation CreateBankTransaction($input: CreateBankTransactionInput!) {
+    createBankTransaction(input: $input) { 
       pk
       createdAt
-      userId
+      entity
+      accountId
+      transactionDate
+      payee
+      category
+      amount
+      updatedAt
+    }
+  }` as Query<MutationCreateBankTransactionArgs, CreateBankTransactionMutation>;
+
+export const updateBankTransaction = `mutation UpdateBankTransaction($input: UpdateBankTransactionInput!) {
+  updateBankTransaction(input: $input) { 
+    pk
+    createdAt
+    entity
+    accountId
+    transactionDate
+    payee
+    category
+    amount
+    updatedAt
+  }
+}` as Query<MutationUpdateBankTransactionArgs, UpdateBankTransactionMutation>;
+
+export const createInvestmentTransaction = `mutation CreateInvestmentTransaction($input: CreateInvestmentTransactionInput!) {
+    createInvestmentTransaction(input: $input) { 
+      pk
+      createdAt
       entity
       accountId
       type
@@ -67,27 +98,26 @@ export const createTransaction = `mutation CreateTransaction($createTransactionI
       commission
       updatedAt
     }
-  }` as Query<MutationCreateTransactionArgs, CreateTransactionMutation>;
+  }` as Query<MutationCreateInvestmentTransactionArgs, CreateInvestmentTransactionMutation>;
 
-export const updateTransaction = `mutation CreateTransaction($updateTransactionInput: UpdateTransactionInput!) {
-  updateTransaction(updateTransactionInput: $updateTransactionInput) { 
+export const updateInvestmentTransaction = `mutation UpdateInvestmentTransaction($input: UpdateInvestmentTransactionInput!) {
+  updateInvestmentTransaction(input: $input) { 
     pk
     createdAt
-    userId
     entity
     accountId
-    type
     transactionDate
+    type
     symbol
     shares
     price
     commission
     updatedAt
   }
-}` as Query<MutationUpdateTransactionArgs, UpdateTransactionMutation>;
+}` as Query<MutationUpdateInvestmentTransactionArgs, UpdateInvestmentTransactionMutation>;
 
-export const deleteTransaction = `mutation DeleteTransaction($deleteTransactionInput: DeleteTransactionInput!) {
-  deleteAggregate(deleteTransactionInput: $deleteTransactionInput) { 
+export const deleteTransaction = `mutation DeleteTransaction($input: DeleteTransactionInput!) {
+  deleteAggregate(deleteTransactionInput: $input) { 
     aggregateId
   }
 }` as Query<MutationDeleteTransactionArgs, DeleteTransactionMutation>;

@@ -4,7 +4,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import * as z from 'zod';
 import TransactionForm from './transaction-form';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
-import { createNewTransaction } from '@/actions';
+import { createNewInvestmentTransaction } from '@/actions';
 import { investmentSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
@@ -16,7 +16,7 @@ const NewInvestmentTransactionSheet = () => {
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
-    const result = await createNewTransaction({
+    const result = await createNewInvestmentTransaction({
       ...values,
       shares: parseFloat(values.shares),
       price: parseFloat(values.price),

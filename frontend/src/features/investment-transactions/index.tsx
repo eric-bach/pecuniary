@@ -5,12 +5,12 @@ import { DataTable } from '@/components/data-table';
 import { investmentColumns } from '@/app/(main)/transactions/investment-columns';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Transaction } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { InvestmentTransaction } from '../../../../infrastructure/graphql/api/codegen/appsync';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
 
 interface InvestmentTransactionsProps {
   accountId: string;
-  transactions: [Transaction];
+  transactions: [InvestmentTransaction];
 }
 
 const InvestmentTransactions = ({ accountId, transactions }: InvestmentTransactionsProps) => {

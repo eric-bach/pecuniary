@@ -3,14 +3,17 @@
 import * as actions from '@/actions';
 import BankingTransactions from '@/features/banking-transactions';
 import InvestmentTransactions from '@/features/investment-transactions/index';
+import { BankTransaction, InvestmentTransaction } from '../../../../../infrastructure/graphql/api/codegen/appsync';
 
 const Transactions = async ({ accountId, accountCategory }: { accountId: string; accountCategory: string }) => {
-  const transactions = await actions.fetchTransactions(accountId);
+  if (accountCategory === 'banking') {
+    const bankTransactions: [BankTransaction] = await actions.fetchBankTransactions(accountId);
 
-  if (accountCategory === 'investment') {
-    return <InvestmentTransactions accountId={accountId} transactions={transactions} />;
-  } else if (accountCategory === 'banking' || accountCategory === 'credit card') {
-    return <BankingTransactions accountId={accountId} transactions={transactions} />;
+    return <BankingTransactions accountId={accountId} transactions={bankTransactions as [BankTransaction]} />;
+  } else if (accountCategory === 'investment') {
+    const investmentTransactions: [InvestmentTransaction] = await actions.fetchInvestmentTransactions(accountId);
+
+    return <InvestmentTransactions accountId={accountId} transactions={investmentTransactions} />;
   }
 };
 

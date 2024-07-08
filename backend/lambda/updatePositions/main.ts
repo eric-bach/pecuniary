@@ -4,14 +4,14 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 const { getQuoteSummary } = require('./yahooFinance');
 
-import { TransactionReadModel } from '../types/Transaction';
 import { PositionReadModel } from '../types/Position';
-import { CreateTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { CreateInvestmentTransactionInput, InvestmentTransaction } from '../../../infrastructure/graphql/api/codegen/appsync';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
 type CreateTransactionInputV2 = {
   userId: string;
-} & CreateTransactionInput;
+  symbol: string;
+} & CreateInvestmentTransactionInput;
 
 exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInputV2>) => {
   const detail = parseEvent(event);
@@ -27,7 +27,7 @@ exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInputV
 };
 
 // Returns all transactions for the symbol sorted in ascending order
-async function getTransactions(detail: CreateTransactionInputV2): Promise<TransactionReadModel[]> {
+async function getTransactions(detail: CreateTransactionInputV2): Promise<InvestmentTransaction[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'accountId-gsi',
@@ -52,7 +52,7 @@ async function getTransactions(detail: CreateTransactionInputV2): Promise<Transa
   }
 
   console.log(`🛑 Could not find transactions: ${result}`);
-  return [] as TransactionReadModel[];
+  return [] as InvestmentTransaction[];
 }
 
 async function getPosition(detail: CreateTransactionInputV2): Promise<PositionReadModel> {
@@ -82,7 +82,7 @@ async function getPosition(detail: CreateTransactionInputV2): Promise<PositionRe
   return {} as PositionReadModel;
 }
 
-function calculateAdjustedCostBase(transactions: TransactionReadModel[]) {
+function calculateAdjustedCostBase(transactions: InvestmentTransaction[]) {
   var acb = 0;
   var shares = 0;
   var bookValue = 0;

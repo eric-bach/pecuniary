@@ -1,10 +1,10 @@
 const { DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
+import { DeleteTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
 import { DeleteItemCommandInput } from '@aws-sdk/client-dynamodb';
-import { DeleteTransactionInput } from '../types/Transaction';
 
 async function deleteTransaction(input: DeleteTransactionInput) {
   console.debug(`🕧 Delete Transaction initialized`);
@@ -13,9 +13,13 @@ async function deleteTransaction(input: DeleteTransactionInput) {
   const deleteItemCommandInput: DeleteItemCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({
-      userId: input.userId,
-      sk: input.sk,
+      pk: input.pk,
+      createdAt: input.createdAt,
     }),
+    ConditionExpression: 'symbol = :v1',
+    ExpressionAttributeValues: {
+      ':v1': { S: input.symbol },
+    },
   };
   let result = await dynamoDbCommand(new DeleteItemCommand(deleteItemCommandInput));
 

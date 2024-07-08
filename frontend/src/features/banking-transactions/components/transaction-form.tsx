@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Transaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
 import { bankingSchema } from '@/types/transaction';
 import { DatePicker } from '@/components/date-picker';
 import { Select as CreatableSelect } from '@/components/select';
@@ -13,7 +13,7 @@ import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
 
 type Props = {
-  transaction?: Transaction;
+  transaction?: BankTransaction;
   defaultValues?: z.infer<typeof bankingSchema>;
   onSubmit: (values: z.infer<typeof bankingSchema>) => void;
   disabled?: boolean;

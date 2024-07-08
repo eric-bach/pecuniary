@@ -4,7 +4,7 @@ import { cookieBasedClient } from '@/utils/amplifyServerUtils';
 import { deleteTransaction } from '../../../infrastructure/graphql/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { Transaction } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction, InvestmentTransaction } from '../../../infrastructure/graphql/api/codegen/appsync';
 
 interface DeleteTransactionFormState {
   errors: {
@@ -13,15 +13,14 @@ interface DeleteTransactionFormState {
   };
 }
 
-export async function deleteExistingTransaction(transaction: Transaction): Promise<DeleteTransactionFormState> {
+export async function deleteExistingTransaction(transaction: BankTransaction | InvestmentTransaction): Promise<DeleteTransactionFormState> {
   try {
     await cookieBasedClient.graphql({
       query: deleteTransaction,
       variables: {
-        deleteTransactionInput: {
+        input: {
           pk: transaction.pk,
           createdAt: transaction.createdAt,
-          symbol: transaction.symbol,
         },
       },
     });

@@ -1,14 +1,14 @@
 import { create } from 'zustand';
-import { Transaction } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction, InvestmentTransaction } from '../../../infrastructure/graphql/api/codegen/appsync';
 
 type OpenTransactionState = {
-  transaction?: Transaction;
+  transaction?: BankTransaction | InvestmentTransaction;
 
   isBankingOpen: boolean;
   isInvestmentOpen: boolean;
 
-  onBankingOpen: (transaction: Transaction) => void;
-  onInvestmentOpen: (transaction: Transaction) => void;
+  onBankingOpen: (transaction: BankTransaction) => void;
+  onInvestmentOpen: (transaction: InvestmentTransaction) => void;
   onClose: () => void;
 };
 
@@ -18,7 +18,7 @@ export const useOpenTransaction = create<OpenTransactionState>((set) => ({
   isBankingOpen: false,
   isInvestmentOpen: false,
 
-  onBankingOpen: (transaction: Transaction) => set({ isBankingOpen: true, isInvestmentOpen: false, transaction }),
-  onInvestmentOpen: (transaction: Transaction) => set({ isBankingOpen: false, isInvestmentOpen: true, transaction }),
+  onBankingOpen: (transaction: BankTransaction) => set({ isBankingOpen: true, isInvestmentOpen: false, transaction }),
+  onInvestmentOpen: (transaction: InvestmentTransaction) => set({ isBankingOpen: false, isInvestmentOpen: true, transaction }),
   onClose: () => set({ isBankingOpen: false, isInvestmentOpen: false, transaction: undefined }),
 }));

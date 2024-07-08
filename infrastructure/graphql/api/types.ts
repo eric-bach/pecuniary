@@ -1,6 +1,15 @@
 // This is manually created until we have a better way to generate this
 
-import { Account, Aggregates, DeleteResponse, GetAccountsResponse, GetTransactionsResponse, Transaction } from './codegen/appsync';
+import {
+  Account,
+  Aggregates,
+  BankTransaction,
+  DeleteResponse,
+  GetAccountsResponse,
+  GetBankTransactionsResponse,
+  GetInvestmentTransactionsResponse,
+  InvestmentTransaction,
+} from './codegen/appsync';
 
 export type Query<InputType, OutputType> = string & {
   __generatedQueryInput: InputType;
@@ -15,8 +24,12 @@ export type GetAccountsQuery = {
   getAccounts: GetAccountsResponse;
 };
 
-export type GetTransactionsQuery = {
-  getTransactions: GetTransactionsResponse;
+export type GetBankTransactionsQuery = {
+  getBankTransactions: GetBankTransactionsResponse;
+};
+
+export type GetInvestmentTransactionsQuery = {
+  getInvestmentTransactions: GetInvestmentTransactionsResponse;
 };
 
 export type CreateAccountMutation = {
@@ -31,12 +44,20 @@ export type DeleteAccountMutation = {
   deleteAccount: Aggregates;
 };
 
-export type CreateTransactionMutation = {
-  createTransaction: Transaction;
+export type CreateBankTransactionMutation = {
+  createBankTransaction: BankTransaction;
 };
 
-export type UpdateTransactionMutation = {
-  updateTransaction: Transaction;
+export type UpdateBankTransactionMutation = {
+  updateBankTransaction: BankTransaction;
+};
+
+export type CreateInvestmentTransactionMutation = {
+  createInvestmentTransaction: InvestmentTransaction;
+};
+
+export type UpdateInvestmentTransactionMutation = {
+  updateInvestmentTransaction: InvestmentTransaction;
 };
 
 export type DeleteTransactionMutation = {
