@@ -286,6 +286,7 @@ export type UpdateBankTransactionInput = {
   payee: Scalars['String']['input'];
   pk: Scalars['String']['input'];
   transactionDate: Scalars['AWSDate']['input'];
+  transactionId: Scalars['ID']['input'];
 };
 
 export type UpdateInvestmentTransactionInput = {
@@ -296,5 +297,6 @@ export type UpdateInvestmentTransactionInput = {
   shares: Scalars['Float']['input'];
   symbol: Scalars['String']['input'];
   transactionDate: Scalars['AWSDate']['input'];
+  transactionId: Scalars['ID']['input'];
   type: Scalars['String']['input'];
 };

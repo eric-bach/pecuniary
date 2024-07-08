@@ -37,8 +37,8 @@ export const getBankTransactions = `query GetBankTransactions($accountId: String
       pk
       createdAt
       entity
-      transactionId
       accountId
+      transactionId
       transactionDate
       payee
       category
@@ -56,8 +56,8 @@ export const getInvestmentTransactions = `query GetBankTransactions($accountId: 
       pk
       createdAt
       entity
-      transactionId
       accountId
+      transactionId
       transactionDate
       type
       symbol

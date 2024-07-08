@@ -50,6 +50,7 @@ input CreateBankTransactionInput {
 input UpdateBankTransactionInput {
   pk: String!
   createdAt: String!
+  transactionId: ID!
   transactionDate: AWSDate!
   payee: String!
   category: String
@@ -70,6 +71,7 @@ input CreateInvestmentTransactionInput {
 input UpdateInvestmentTransactionInput {
   pk: String!
   createdAt: String!
+  transactionId: ID!
   transactionDate: AWSDate!
   type: String!
   symbol: String!
