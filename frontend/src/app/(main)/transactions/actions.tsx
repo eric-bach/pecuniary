@@ -1,6 +1,6 @@
 'use client';
 
-import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
+import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useOpenTransaction } from '@/hooks/use-open-transaction';
@@ -8,9 +8,7 @@ import { BankTransaction, InvestmentTransaction } from '@/../../infrastructure/g
 import { deleteExistingTransaction } from '@/actions';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { useRouter } from 'next/navigation';
 
 type TransactionsProps = {
   transaction: BankTransaction | InvestmentTransaction;
@@ -18,15 +16,12 @@ type TransactionsProps = {
 
 export const Actions = ({ transaction }: TransactionsProps) => {
   const { toast } = useToast();
-  const router = useRouter();
   const { onBankingOpen, onInvestmentOpen } = useOpenTransaction();
 
   const [isOpen, setOpen] = useState<boolean>(false);
-  const [deleteConfirm, setDeleteConfirm] = useState<string>('');
 
   const handleClose = () => {
     setOpen(false);
-    setDeleteConfirm('');
   };
 
   const handleConfirm = async () => {
@@ -41,18 +36,14 @@ export const Actions = ({ transaction }: TransactionsProps) => {
     handleClose();
   };
 
-  const handleInputChange = (event: any) => {
-    setDeleteConfirm(event.target.value);
-  };
-
   const handleDelete = () => {
     setOpen(true);
   };
 
   const handleOpen = () => {
-    if (transaction.type.toLowerCase() === 'banking') {
+    if (transaction.entity === 'bank-transaction') {
       onBankingOpen(transaction as BankTransaction);
-    } else if (transaction.type.toLowerCase() === 'investment') {
+    } else if (transaction.entity === 'investment-transaction') {
       onInvestmentOpen(transaction as InvestmentTransaction);
     }
   };
@@ -65,14 +56,11 @@ export const Actions = ({ transaction }: TransactionsProps) => {
             <DialogTitle>Are you sure you want to delete this transaction?</DialogTitle>
             <DialogDescription>To confirm deletion, enter &quot;delete&quot; below</DialogDescription>
           </DialogHeader>
-          <Input type='text' value={deleteConfirm} onChange={handleInputChange} placeholder='Enter "delete" to confirm' />
           <DialogFooter className='pt-2'>
             <Button onClick={handleCancel} variant='outline'>
               Cancel
             </Button>
-            <Button onClick={handleConfirm} disabled={deleteConfirm !== 'delete'}>
-              Confirm
-            </Button>
+            <Button onClick={handleConfirm}>Confirm</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -85,10 +73,6 @@ export const Actions = ({ transaction }: TransactionsProps) => {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align='end'>
-          <DropdownMenuItem onClick={() => router.push(`/accounts/${transaction.accountId}`)}>
-            <Eye className='mr-2 size-4' />
-            View
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => handleOpen()}>
             <Edit className='mr-2 size-4' />
             Edit

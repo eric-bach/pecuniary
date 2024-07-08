@@ -112,8 +112,7 @@ export const updateInvestmentTransaction = `mutation UpdateInvestmentTransaction
 }` as Query<MutationUpdateInvestmentTransactionArgs, UpdateInvestmentTransactionMutation>;
 
 export const deleteTransaction = `mutation DeleteTransaction($input: DeleteTransactionInput!) {
-  deleteAggregate(deleteTransactionInput: $input) { 
-    pk
-    entity
+  deleteTransaction(input: $input) { 
+    aggregateId
   }
 }` as Query<MutationDeleteTransactionArgs, DeleteTransactionMutation>;

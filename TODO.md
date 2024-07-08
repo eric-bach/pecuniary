@@ -32,9 +32,9 @@ X Build mobile sidebar
 
 - Build individual account page and ability to add transactions
 
-  - Support editing investment transactions
-  - Clean up data-table, actions, columns
+  - Support editing bnak/investment transactions
 
+- Clean up data-table, actions, columns
 - Create symbol on add
 - Create payee/category on add
 - Create Position on InvestmentTransactionCreated

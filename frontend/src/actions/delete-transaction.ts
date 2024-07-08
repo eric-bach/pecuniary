@@ -14,6 +14,8 @@ interface DeleteTransactionFormState {
 }
 
 export async function deleteExistingTransaction(transaction: BankTransaction | InvestmentTransaction): Promise<DeleteTransactionFormState> {
+  console.log('deleteExistingTransaction', transaction);
+
   try {
     await cookieBasedClient.graphql({
       query: deleteTransaction,
@@ -33,5 +35,5 @@ export async function deleteExistingTransaction(transaction: BankTransaction | I
   }
 
   revalidatePath('/', 'layout');
-  redirect('/accounts');
+  redirect(`/accounts/${transaction.accountId}`);
 }
