@@ -11,6 +11,7 @@ const Transactions = async ({ accountId, accountCategory }: { accountId: string;
 
     return <BankingTransactions accountId={accountId} transactions={bankTransactions as [BankTransaction]} />;
   } else if (accountCategory === 'investment') {
+    console.log('Fetching investment transactions', accountId);
     const investmentTransactions: [InvestmentTransaction] = await actions.fetchInvestmentTransactions(accountId);
 
     return <InvestmentTransactions accountId={accountId} transactions={investmentTransactions} />;

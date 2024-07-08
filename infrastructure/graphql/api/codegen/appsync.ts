@@ -160,11 +160,11 @@ export type Mutation = {
   __typename?: 'Mutation';
   createAccount?: Maybe<Account>;
   createBankTransaction?: Maybe<BankTransaction>;
-  createInvestmentTransaction?: Maybe<BankTransaction>;
+  createInvestmentTransaction?: Maybe<InvestmentTransaction>;
   deleteAccount?: Maybe<Aggregates>;
   deleteTransaction?: Maybe<DeleteResponse>;
   updateAccount?: Maybe<Account>;
-  updateBankTransaction?: Maybe<InvestmentTransaction>;
+  updateBankTransaction?: Maybe<BankTransaction>;
   updateInvestmentTransaction?: Maybe<InvestmentTransaction>;
 };
 

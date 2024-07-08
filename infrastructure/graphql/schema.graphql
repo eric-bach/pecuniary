@@ -194,8 +194,9 @@ type Mutation {
   deleteAccount(accountId: String!): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   createBankTransaction(input: CreateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
-  updateBankTransaction(input: UpdateBankTransactionInput!): InvestmentTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
-  createInvestmentTransaction(input: CreateInvestmentTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updateBankTransaction(input: UpdateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createInvestmentTransaction(input: CreateInvestmentTransactionInput!): InvestmentTransaction
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateInvestmentTransaction(input: UpdateInvestmentTransactionInput!): InvestmentTransaction
     @aws_cognito_user_pools(cognito_groups: ["Users"])
   deleteTransaction(input: DeleteTransactionInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])

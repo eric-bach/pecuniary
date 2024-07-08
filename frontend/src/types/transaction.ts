@@ -13,7 +13,6 @@ export const investmentSchema = z.object({
 export const bankingSchema = z.object({
   accountId: z.string().min(1, 'Account Id is required'),
   transactionDate: z.date(),
-  type: z.string().min(1, 'Type is required'),
   category: z.string().min(1, 'Category is required'),
   payee: z.string().min(1, 'Payee is required'),
   amount: z.string().min(1, 'Amount is required'),

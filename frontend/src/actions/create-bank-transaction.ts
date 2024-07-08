@@ -32,7 +32,7 @@ export async function createNewBankTransaction({
     transactionDate: new Date(transactionDate),
     payee,
     category,
-    shares: amount.toString(),
+    amount: amount.toString(),
   });
 
   console.log('Create Transaction Result', result);

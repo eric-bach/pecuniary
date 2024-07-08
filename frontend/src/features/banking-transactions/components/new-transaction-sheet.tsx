@@ -16,15 +16,13 @@ const NewBankingTransactionSheet = () => {
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
     setIsPending(true);
+
     const result = await createNewBankTransaction({
       ...values,
-      // TODO Populate this
-      payee: '',
-      category: '',
-      type: '',
-      amount: 0,
+      amount: parseFloat(values.amount),
       transactionDate: values.transactionDate.toDateString(),
     });
+
     onClose();
 
     console.log('Transaction created', result);
@@ -48,7 +46,6 @@ const NewBankingTransactionSheet = () => {
             accountId: accountId,
             transactionDate: new Date(),
             category: '',
-            type: '',
             payee: '',
             amount: '',
           }}

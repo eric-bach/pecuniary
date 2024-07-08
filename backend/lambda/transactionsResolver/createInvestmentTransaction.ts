@@ -11,7 +11,7 @@ async function createTransaction(userId: string, input: CreateInvestmentTransact
   var item: InvestmentTransaction = {
     pk: `trans#${input.accountId}`,
     createdAt: new Date().toISOString(),
-    entity: 'transaction',
+    entity: 'investment-transaction',
     accountId: input.accountId,
     transactionId: uuidv4(),
     type: input.type,

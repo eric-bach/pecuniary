@@ -33,8 +33,12 @@ X Build mobile sidebar
 - Build individual account page and ability to add transactions
 
   - Support editing investment transactions
-  - Test
   - Clean up data-table, actions, columns
+
+- Create symbol on add
+- Create payee/category on add
+- Create Position on InvestmentTransactionCreated
+- Update Account on BankTransactionCreated and InvestmentTransactionCreated
 
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions
