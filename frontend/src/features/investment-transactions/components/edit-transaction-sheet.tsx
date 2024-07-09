@@ -3,37 +3,39 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import TransactionForm from './transaction-form';
 import * as z from 'zod';
-import { editExistingBankTransaction } from '@/actions';
-import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
-import { bankingSchema } from '@/types/transaction';
+import { editExistingInvestmentTransaction } from '@/actions';
+import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
+import { investmentSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
-import { BankTransaction } from '../../../../../infrastructure/graphql/api/codegen/appsync';
+import { InvestmentTransaction } from '../../../../../infrastructure/graphql/api/codegen/appsync';
 
-const EditBankTransactionSheet = () => {
+const EditInvestmentTransactionSheet = () => {
   const { toast } = useToast();
-  const { isOpen, onClose, transaction } = useOpenBankTransaction();
+  const { isOpen, onClose, transaction } = useOpenInvestmentTransaction();
   const [isPending, setIsPending] = useState(false);
 
-  const trans = transaction as BankTransaction;
+  const trans = transaction as InvestmentTransaction;
 
-  const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
+  const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
 
     // TODO Fix this type error
     const data = {
       ...values,
       pk: `trans#${values.accountId}`,
-      amount: parseFloat(values.amount),
       transactionId: values.transactionId!,
 
+      shares: parseFloat(values.shares),
+      price: parseFloat(values.price),
+      commission: parseFloat(values.commission),
       transactionDate: values.transactionDate.toDateString(),
       createdAt: values.createdAt!,
     };
 
     console.log('data', data);
 
-    const result = await editExistingBankTransaction(data);
+    const result = await editExistingInvestmentTransaction(data);
 
     console.log('result', result);
 
@@ -42,6 +44,8 @@ const EditBankTransactionSheet = () => {
 
     toast({ title: 'Success!', description: 'Transaction was successfully updated' });
   };
+
+  console.log(trans);
 
   return (
     <>
@@ -53,16 +57,18 @@ const EditBankTransactionSheet = () => {
           </SheetHeader>
 
           <TransactionForm
-            transaction={transaction as BankTransaction}
+            transaction={transaction as InvestmentTransaction}
             onSubmit={onSubmit}
             disabled={isPending}
             defaultValues={{
               accountId: trans?.accountId,
               transactionId: trans?.transactionId,
               transactionDate: trans ? new Date(trans.transactionDate) : new Date(),
-              payee: trans?.payee,
-              category: trans?.category!,
-              amount: trans?.amount.toString(),
+              type: trans?.type,
+              symbol: trans?.symbol,
+              shares: trans?.shares.toString(),
+              price: trans?.price.toString(),
+              commission: trans?.commission.toString(),
               createdAt: trans?.createdAt,
             }}
           />
@@ -72,4 +78,4 @@ const EditBankTransactionSheet = () => {
   );
 };
 
-export default EditBankTransactionSheet;
+export default EditInvestmentTransactionSheet;

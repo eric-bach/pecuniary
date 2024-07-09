@@ -3,7 +3,8 @@
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useOpenTransaction } from '@/hooks/use-open-transaction';
+import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
+import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
 import { BankTransaction, InvestmentTransaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
 import { deleteExistingTransaction } from '@/actions';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -16,7 +17,8 @@ type TransactionsProps = {
 
 export const Actions = ({ transaction }: TransactionsProps) => {
   const { toast } = useToast();
-  const { onBankingOpen, onInvestmentOpen } = useOpenTransaction();
+  const { onOpen: onBankingOpen } = useOpenBankTransaction();
+  const { onOpen: onInvestmentOpen } = useOpenInvestmentTransaction();
 
   const [isOpen, setOpen] = useState<boolean>(false);
 

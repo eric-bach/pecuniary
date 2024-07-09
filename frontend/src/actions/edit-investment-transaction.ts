@@ -23,6 +23,7 @@ interface EditInvestmentTransactionFormState {
 export async function editExistingInvestmentTransaction({
   pk,
   createdAt,
+  transactionId,
   transactionDate,
   symbol,
   shares,
@@ -32,12 +33,14 @@ export async function editExistingInvestmentTransaction({
 }: UpdateInvestmentTransactionInput): Promise<EditInvestmentTransactionFormState> {
   const result = investmentSchema.safeParse({
     pk,
+    accountId: pk.split('#')[1],
     createdAt,
-    transactionDate,
+    transactionId,
+    transactionDate: new Date(transactionDate),
     symbol,
-    shares,
-    price,
-    commission,
+    shares: shares.toString(),
+    price: price.toString(),
+    commission: commission.toString(),
     type,
   });
 
@@ -51,20 +54,15 @@ export async function editExistingInvestmentTransaction({
       query: updateInvestmentTransaction,
       variables: {
         input: {
-          pk: `TRANS#${result.data.accountId}`,
-          // TODO Fix this
-          // @ts-ignore
-          createdAt: result.data.createdAt,
-          // @ts-ignore
-          transactionDate: result.data.transactionDate,
-          symbol: result.data.symbol,
+          pk: `trans#${result.data.accountId}`,
+          createdAt: result.data.createdAt!,
+          transactionId: result.data.transactionId!,
+          transactionDate: new Date(transactionDate).toISOString().split('T')[0],
           type: result.data.type,
-          // @ts-ignore
-          shares: result.data.shares,
-          // @ts-ignore
-          price: result.data.price,
-          // @ts-ignore
-          commission: result.data.commission,
+          symbol: result.data.symbol,
+          shares: parseFloat(result.data.shares),
+          price: parseFloat(result.data.price),
+          commission: parseFloat(result.data.commission),
         },
       },
     });
@@ -77,5 +75,5 @@ export async function editExistingInvestmentTransaction({
   }
 
   revalidatePath('/', 'layout');
-  redirect('/accounts');
+  redirect(`/accounts/${result.data.accountId}`);
 }

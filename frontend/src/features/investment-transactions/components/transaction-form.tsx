@@ -67,6 +67,32 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
 
         <FormField
           control={form.control}
+          name='transactionId'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type='hidden' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name='createdAt'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type='hidden' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name='transactionDate'
           render={({ field }) => (
             <FormItem>
