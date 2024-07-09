@@ -30,6 +30,7 @@ X Add ability to delete multiple Accounts - data-table.tsx
 X Add progress/loading transitions
 X Build mobile sidebar
 
+- Combine backend and infrastructure folders
 - Clean up data-table, actions, columns
 - Create symbol on add
 - Create payee/category on add
