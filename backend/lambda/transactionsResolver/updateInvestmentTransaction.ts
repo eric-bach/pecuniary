@@ -33,7 +33,7 @@ async function updateInvestmentTransaction(userId: string, input: UpdateInvestme
     },
     ConditionExpression: 'userId = :userId',
   };
-  var updateResult = await dynamoDbCommand(new UpdateItemCommand(updateItemCommandInput));
+  const updateResult = await dynamoDbCommand(new UpdateItemCommand(updateItemCommandInput));
 
   if (updateResult.$metadata.httpStatusCode === 200) {
     // Publish event to update positions

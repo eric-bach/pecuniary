@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 async function createBankTransaction(userId: string, input: CreateBankTransactionInput) {
   console.debug(`🕧 Create Bank Transaction initialized`);
 
-  var item: BankTransaction = {
+  const item: BankTransaction = {
     pk: `trans#${input.accountId}`,
     createdAt: new Date().toISOString(),
     entity: 'bank-transaction',
@@ -26,7 +26,7 @@ async function createBankTransaction(userId: string, input: CreateBankTransactio
     TableName: process.env.DATA_TABLE_NAME,
     Item: marshall(item),
   };
-  let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
+  const result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
   if (result.$metadata.httpStatusCode === 200) {
     // Publish event to update positions
