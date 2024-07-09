@@ -30,11 +30,6 @@ X Add ability to delete multiple Accounts - data-table.tsx
 X Add progress/loading transitions
 X Build mobile sidebar
 
-- Build individual account page and ability to add transactions
-
-  - Support editing bank/investment transactions
-  - Make enture tranasction (transactionID) required field
-
 - Clean up data-table, actions, columns
 - Create symbol on add
 - Create payee/category on add
