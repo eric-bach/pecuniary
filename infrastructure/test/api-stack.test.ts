@@ -125,7 +125,7 @@ describe('Api Stack contains expected resources', () => {
     template.hasResourceProperties(
       'AWS::AppSync::FunctionConfiguration',
       Match.objectLike({
-        Name: 'deleteAggregate',
+        Name: 'deleteAccount',
         DataSourceName: 'dynamoDBDataSource',
         Runtime: {
           Name: 'APPSYNC_JS',

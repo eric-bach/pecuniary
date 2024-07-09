@@ -1,25 +1,24 @@
 import { PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
-
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
-import { CreateTransactionInput, Transaction } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction, CreateBankTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { v4 as uuidv4 } from 'uuid';
 
-async function createTransaction(userId: string, input: CreateTransactionInput) {
-  console.debug(`🕧 Create Transaction initialized`);
+async function createBankTransaction(userId: string, input: CreateBankTransactionInput) {
+  console.debug(`🕧 Create Bank Transaction initialized`);
 
-  var item: Transaction = {
+  const item: BankTransaction = {
     pk: `trans#${input.accountId}`,
     createdAt: new Date().toISOString(),
-    userId: userId,
-    entity: 'transaction',
+    entity: 'bank-transaction',
     accountId: input.accountId,
-    type: input.type,
+    transactionId: uuidv4(),
     transactionDate: input.transactionDate,
-    symbol: input.symbol,
-    shares: input.shares,
-    price: input.price,
-    commission: input.commission,
+    payee: input.payee,
+    category: input.category,
+    amount: input.amount,
+    userId: userId,
     updatedAt: new Date().toISOString(),
   };
 
@@ -27,7 +26,7 @@ async function createTransaction(userId: string, input: CreateTransactionInput) 
     TableName: process.env.DATA_TABLE_NAME,
     Item: marshall(item),
   };
-  let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
+  const result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
   if (result.$metadata.httpStatusCode === 200) {
     // Publish event to update positions
@@ -37,8 +36,8 @@ async function createTransaction(userId: string, input: CreateTransactionInput) 
     return item;
   }
 
-  console.error(`🛑 Error saving Transaction:\n`, result);
+  console.error(`🛑 Error saving bank transaction:\n`, result);
   return {};
 }
 
-export default createTransaction;
+export default createBankTransaction;

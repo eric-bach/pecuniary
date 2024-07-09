@@ -1,66 +1,22 @@
-import { CreateTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
-
-export type TransactionReadModel = {
-  userId: string;
-  sk: string;
-  createdAt: string;
-  updatedAt: string;
-  aggregateId: string;
-  entity: string;
-  type: string;
-  transactionDate: Date;
-  symbol: string;
-  shares: number;
-  price: number;
-  commission: number;
-};
-
-export type CreateTransactionInputV2 = {
-  userId: string;
-  aggregateId: string;
-  type: string;
-  transactionDate: Date;
-  symbol: string;
-  shares: number;
-  price: number;
-  commission: number;
-};
-
-export type UpdateTransactionInput = {
-  userId: string;
-  sk: string;
-  type: string;
-  transactionDate: string;
-  symbol: string;
-  shares: number;
-  price: number;
-  commission: number;
-};
-
-export type DeleteTransactionInput = {
-  userId: string;
-  sk: string;
-};
-
-export type LastEvaluatedKey = {
-  userId: string;
-  sk: string;
-  aggregateId: string;
-  transactionDate: string;
-};
+import {
+  CreateBankTransactionInput,
+  CreateInvestmentTransactionInput,
+  DeleteTransactionInput,
+  UpdateBankTransactionInput,
+  UpdateInvestmentTransactionInput,
+} from '../../../infrastructure/graphql/api/codegen/appsync';
 
 export type TransactionAppSyncEvent = {
   info: {
     fieldName: string;
   };
   arguments: {
-    userId: string; //getTransactions
-    aggregateId: string; //getTransactions
-    lastEvaluatedKey: LastEvaluatedKey; //getTransactions
-
-    createTransactionInput: CreateTransactionInput;
-    updateTransactionInput: UpdateTransactionInput;
-    deleteTransactionInput: DeleteTransactionInput;
+    input:
+      | CreateBankTransactionInput
+      | CreateInvestmentTransactionInput
+      | UpdateBankTransactionInput
+      | UpdateInvestmentTransactionInput
+      | DeleteTransactionInput;
   };
   identity: {
     username: string;

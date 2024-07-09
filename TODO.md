@@ -28,10 +28,16 @@ X Fix conditional zod validations for Account schema
 X Add Toast for Account actions
 X Add ability to delete multiple Accounts - data-table.tsx
 X Add progress/loading transitions
+X Build mobile sidebar
+
+- Combine backend and infrastructure folders
+- Clean up data-table, actions, columns
+- Create symbol on add
+- Create payee/category on add
+- Create Position on InvestmentTransactionCreated
+- Update Account on BankTransactionCreated and InvestmentTransactionCreated
 
 - Build dashboard to display account summaries
-- Build individual account page
-- Add ability to add transactions to an Account
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
 
@@ -42,8 +48,11 @@ X Add progress/loading transitions
 
 ##### References
 
+- Finance Dashboard
+  - https://appfinance.vercel.app/
+  - https://github.com/sanidhyy/finance-dashboard
 - Shadcn UI examples
-- https://github.com/shadcn-ui/ui
+  - https://github.com/shadcn-ui/ui
 - Auth
   - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
   - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end

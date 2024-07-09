@@ -5,19 +5,18 @@ import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
 
 interface DisplayAccountProps {
   account: Account;
+  children: React.ReactNode;
 }
 
-export default function DisplayAccount({ account }: DisplayAccountProps) {
-  console.log(account);
-
+export default function DisplayAccount({ children, account }: DisplayAccountProps) {
   return (
-    <div>
-      <h1>{account.name}</h1>
-      <div>
-        <p>{account.accountId}</p>
-        <p>{account.category}</p>
-        <p>{account.type}</p>
+    <div className='mx-auto w-full max-w-screen-2xl pb-10'>
+      <div className='flex flex-col space-y-1 5 p-6 gap-y-2 justify-between'>
+        <h3 className='text-2xl font-semibold leading-none tracking-tight text-xl-line-clamp-1'>{account.name}</h3>
+        <p className='text-sm text-muted-foreground'>{account.type}</p>
       </div>
+
+      {children}
     </div>
   );
 }

@@ -3,10 +3,12 @@
 import {
   Account,
   Aggregates,
-  CreateAccountInput,
+  BankTransaction,
+  DeleteResponse,
   GetAccountsResponse,
-  GetTransactionsResponse,
-  UpdateAccountInput,
+  GetBankTransactionsResponse,
+  GetInvestmentTransactionsResponse,
+  InvestmentTransaction,
 } from './codegen/appsync';
 
 export type Query<InputType, OutputType> = string & {
@@ -14,52 +16,50 @@ export type Query<InputType, OutputType> = string & {
   __generatedQueryOutput: OutputType;
 };
 
-export type GetAccountQueryVariables = {
-  accountId: String;
-};
-
 export type GetAccountQuery = {
   getAccount: Account;
-};
-
-export type GetAccountsQueryVariables = {
-  lastEvaluatedKey: String;
-  limit?: number | null;
 };
 
 export type GetAccountsQuery = {
   getAccounts: GetAccountsResponse;
 };
 
-export type GetTransactionsQueryVariables = {
-  accountId: String;
-  lastEvaluatedKey: String;
+export type GetBankTransactionsQuery = {
+  getBankTransactions: GetBankTransactionsResponse;
 };
 
-export type GetTransactionsQuery = {
-  getTransactions: GetTransactionsResponse;
-};
-
-export type CreateAccountsInputVariables = {
-  input: CreateAccountInput;
+export type GetInvestmentTransactionsQuery = {
+  getInvestmentTransactions: GetInvestmentTransactionsResponse;
 };
 
 export type CreateAccountMutation = {
   createAccount: Account;
 };
 
-export type UpdateAccountInputVariables = {
-  input: UpdateAccountInput;
-};
-
 export type UpdateAccountMutation = {
   updateAccount: Account;
 };
 
-export type DeleteAccountsInputVariables = {
-  accountId: String;
-};
-
 export type DeleteAccountMutation = {
   deleteAccount: Aggregates;
+};
+
+export type CreateBankTransactionMutation = {
+  createBankTransaction: BankTransaction;
+};
+
+export type UpdateBankTransactionMutation = {
+  updateBankTransaction: BankTransaction;
+};
+
+export type CreateInvestmentTransactionMutation = {
+  createInvestmentTransaction: InvestmentTransaction;
+};
+
+export type UpdateInvestmentTransactionMutation = {
+  updateInvestmentTransaction: InvestmentTransaction;
+};
+
+export type DeleteTransactionMutation = {
+  deleteTransaction: DeleteResponse;
 };

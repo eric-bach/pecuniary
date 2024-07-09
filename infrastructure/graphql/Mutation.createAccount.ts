@@ -13,12 +13,12 @@ export function request(ctx: Context<MutationCreateAccountArgs>): DynamoDBPutIte
       createdAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),
     },
     attributeValues: {
-      userId: util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       entity: util.dynamodb.toDynamoDB('account'),
       accountId: util.dynamodb.toDynamoDB(accountId),
       category: util.dynamodb.toDynamoDB(ctx.args.input.category),
       type: util.dynamodb.toDynamoDB(ctx.args.input.type),
       name: util.dynamodb.toDynamoDB(ctx.args.input.name),
+      userId: util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       updatedAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),
     },
   };

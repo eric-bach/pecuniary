@@ -17,9 +17,9 @@ export function request(ctx: Context<MutationUpdateAccountArgs>): DynamoDBUpdate
         '#type': 'type',
       },
       expressionValues: {
-        ':type': util.dynamodb.toDynamoDB(ctx.args.input.type),
-        ':category': util.dynamodb.toDynamoDB(ctx.args.input.category),
         ':name': util.dynamodb.toDynamoDB(ctx.args.input.name),
+        ':category': util.dynamodb.toDynamoDB(ctx.args.input.category),
+        ':type': util.dynamodb.toDynamoDB(ctx.args.input.type),
         ':updatedAt': util.dynamodb.toDynamoDB(util.time.nowISO8601()),
       },
     },

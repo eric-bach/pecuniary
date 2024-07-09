@@ -1,32 +1,27 @@
-import { QueryGetAccountsArgs } from './codegen/appsync';
 import {
-  GetAccountQuery,
-  GetAccountQueryVariables,
-  GetAccountsQuery,
-  GetAccountsQueryVariables,
-  GetTransactionsQuery,
-  GetTransactionsQueryVariables,
-  Query,
-} from './types';
+  QueryGetAccountArgs,
+  QueryGetAccountsArgs,
+  QueryGetBankTransactionsArgs,
+  QueryGetInvestmentTransactionsArgs,
+} from './codegen/appsync';
+import { GetAccountQuery, GetAccountsQuery, GetBankTransactionsQuery, GetInvestmentTransactionsQuery, Query } from './types';
 
 export const getAccount = `query GetAccount($accountId: String!) {
   getAccount(accountId: $accountId) { 
     accountId
     name
-    entity
     category
     type
     createdAt
     updatedAt
   }
-}` as Query<GetAccountQueryVariables, GetAccountQuery>;
+}` as Query<QueryGetAccountArgs, GetAccountQuery>;
 
 export const getAccounts = `query GetAccounts($lastEvaluatedKey: String) {
   getAccounts(lastEvaluatedKey: $lastEvaluatedKey) { 
     items {
       accountId
       name
-      entity
       category
       type
       createdAt
@@ -36,14 +31,35 @@ export const getAccounts = `query GetAccounts($lastEvaluatedKey: String) {
   }
 }` as Query<QueryGetAccountsArgs, GetAccountsQuery>;
 
-export const getTransactions = `query GetTransactions($accountId: String!, $lastEvaluatedKey: String) {
-  getTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
+export const getBankTransactions = `query GetBankTransactions($accountId: String!, $lastEvaluatedKey: String) {
+  getBankTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
     items {
       pk
-      accountId
+      createdAt
       entity
-      type
+      accountId
+      transactionId
       transactionDate
+      payee
+      category
+      amount
+      createdAt
+      updatedAt
+    }
+    nextToken
+  }
+}` as Query<QueryGetBankTransactionsArgs, GetBankTransactionsQuery>;
+
+export const getInvestmentTransactions = `query GetBankTransactions($accountId: String!, $lastEvaluatedKey: String) {
+  getInvestmentTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
+    items {
+      pk
+      createdAt
+      entity
+      accountId
+      transactionId
+      transactionDate
+      type
       symbol
       shares
       price 
@@ -53,4 +69,4 @@ export const getTransactions = `query GetTransactions($accountId: String!, $last
     }
     nextToken
   }
-}` as Query<GetTransactionsQueryVariables, GetTransactionsQuery>;
+}` as Query<QueryGetInvestmentTransactionsArgs, GetInvestmentTransactionsQuery>;
