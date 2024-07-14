@@ -63,17 +63,17 @@ jobs:
       #   run: npm run build-frontend
       #   working-directory: infrastructure
 
-      - name: 🗒️ Create Infrastructure .env
+      - name: 🗒️ Create Backend .env
         run: |
           touch .env
           echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🚧 Build Backend
         run: |
@@ -84,13 +84,13 @@ jobs:
             npm run build
             cd - >/dev/null
           done
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🚀 Deploy Backend
         run: |
           echo "🚀 Deploying backend prod"
           npm run cdk -- deploy --all -c stage=backend -c env=prod --require-approval=never
-        working-directory: infrastructure
+        working-directory: backend
 
       # - name: 🚀 Deploy Frontend
       #   run: npx sst deploy --stage prod

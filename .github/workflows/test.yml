@@ -39,11 +39,11 @@ jobs:
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🔭 Run CDK Unit Tests
         run: npm run test
-        working-directory: infrastructure
+        working-directory: backend
 
   integration-tests:
     name: Integration Tests
@@ -134,18 +134,18 @@ jobs:
 
       - name: 🏗 Build Frontend
         run: npm run build-frontend
-        working-directory: infrastructure
+        working-directory: backend
 
-      - name: 🗒️ Create Infrastructure .env
+      - name: 🗒️ Create Backend .env
         run: |
           touch .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🚧 Build Backend
         run: |
@@ -156,13 +156,13 @@ jobs:
             npm run build
             cd - >/dev/null
           done
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🚀 Deploy Backend
         run: |
           echo "🚀 Deploying backend dev"
           npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never
-        working-directory: infrastructure
+        working-directory: backend
 
       # TODO Once SST setup to deploy frontend
       # - name: 🚀 Deploy Frontend

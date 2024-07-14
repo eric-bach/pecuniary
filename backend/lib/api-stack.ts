@@ -103,7 +103,7 @@ export class ApiStack extends Stack {
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
       },
-      definition: Definition.fromFile(path.join(__dirname, '../graphql/schema.graphql')),
+      definition: Definition.fromFile(path.join(__dirname, '../src/appsync/schema.graphql')),
       environmentVariables: {
         TABLE_NAME: dataTable.tableName,
         EVENTBUS_NAME: eventBus.eventBusName,
@@ -163,56 +163,56 @@ export class ApiStack extends Stack {
       name: 'createAccount',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Mutation.createAccount.js')),
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const updateAccountFunction = new AppsyncFunction(this, 'updateAccountFunction', {
       name: 'updateAccount',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Mutation.updateAccount.js')),
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const getAccountFunction = new AppsyncFunction(this, 'getAccountFunction', {
       name: 'getAccount',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Query.getAccount.js')),
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const getAccountsFunction = new AppsyncFunction(this, 'getAccountsFunction', {
       name: 'getAccounts',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Query.getAccounts.js')),
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getAccounts.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const getAggregateFunction = new AppsyncFunction(this, 'getAggregateFunction', {
       name: 'getAggregate',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Query.getAggregate.js')),
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getAggregate.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const deleteAccountFunction = new AppsyncFunction(this, 'deleteAccountFunction', {
       name: 'deleteAccount',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Mutation.deleteAccount.js')),
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.deleteAccount.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const getBankTransactionsFunction = new AppsyncFunction(this, 'getBankTransactionsFunction', {
       name: 'getBankTransactions',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Query.getBankTransactions.js')),
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getBankTransactions.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const getInvestmentTransactionsFunction = new AppsyncFunction(this, 'getInvestmentTransactionsFunction', {
       name: 'getInvestmentTransactions',
       api: api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../graphql/build/Query.getInvestmentTransactions.js')),
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getInvestmentTransactions.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
 
@@ -304,7 +304,7 @@ export class ApiStack extends Stack {
       functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
       runtime: Runtime.NODEJS_20_X,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../../backend/lambda/transactionsResolver/main.ts'),
+      entry: path.resolve(__dirname, '../src/lambda/transactionsResolver/main.ts'),
       memorySize: 512,
       timeout: Duration.seconds(10),
       environment: {
@@ -360,7 +360,7 @@ export class ApiStack extends Stack {
       runtime: Runtime.NODEJS_18_X,
       functionName: `${props.appName}-${props.envName}-UpdatePositions`,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../../backend/lambda/updatePositions/main.ts'),
+      entry: path.resolve(__dirname, '../src/lambda/updatePositions/main.ts'),
       memorySize: 1024,
       timeout: Duration.seconds(10),
       environment: {

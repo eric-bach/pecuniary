@@ -30,7 +30,7 @@ const config: CodegenConfig = {
     },
   },
   generates: {
-    'graphql/api/codegen/appsync.ts': {
+    'src/appsync/api/codegen/appsync.ts': {
       plugins: ['typescript', 'typescript-operations'],
     },
   },

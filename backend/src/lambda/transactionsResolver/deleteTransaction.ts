@@ -1,7 +1,7 @@
 const { DeleteItemCommand } = require('@aws-sdk/client-dynamodb');
 const { marshall } = require('@aws-sdk/util-dynamodb');
 
-import { DeleteTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { DeleteTransactionInput } from '../../appsync/api/codegen/appsync';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
 import { DeleteItemCommandInput } from '@aws-sdk/client-dynamodb';

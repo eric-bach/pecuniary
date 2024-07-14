@@ -38,7 +38,7 @@ export class DataStack extends Stack {
       runtime: Runtime.NODEJS_18_X,
       functionName: `${props.appName}-${props.envName}-CognitoPostConfirmationTrigger`,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../../backend/lambda/cognitoPostConfirmation/main.ts'),
+      entry: path.resolve(__dirname, '../src/lambda/cognitoPostConfirmation/main.ts'),
       memorySize: 768,
       timeout: Duration.seconds(5),
       environment: {

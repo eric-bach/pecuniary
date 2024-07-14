@@ -3,10 +3,10 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
-import { UpdateInvestmentTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { UpdateBankTransactionInput } from '../../appsync/api/codegen/appsync';
 
-async function updateInvestmentTransaction(userId: string, input: UpdateInvestmentTransactionInput) {
-  console.debug(`🕧 Update Investment Transaction initialized`);
+async function updateBankTransaction(userId: string, input: UpdateBankTransactionInput) {
+  console.debug(`🕧 Update Bank Transaction initialized`);
 
   const updatedAt = new Date().toISOString();
 
@@ -16,21 +16,15 @@ async function updateInvestmentTransaction(userId: string, input: UpdateInvestme
       pk: input.pk,
       createdAt: input.createdAt,
     }),
-    UpdateExpression:
-      'SET #type=:type, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt',
+    UpdateExpression: 'SET transactionDate=:transactionDate, payee=:payee, category=:category, amount=:amount, updatedAt=:updatedAt',
     ExpressionAttributeValues: marshall({
-      ':type': input.type,
       ':transactionDate': input.transactionDate,
-      ':symbol': input.symbol,
-      ':shares': input.shares,
-      ':price': input.price,
-      ':commission': input.commission,
+      ':payee': input.payee,
+      ':category': input.category,
+      ':amount': input.amount,
       ':userId': userId,
       ':updatedAt': updatedAt,
     }),
-    ExpressionAttributeNames: {
-      '#type': 'type',
-    },
     ConditionExpression: 'userId = :userId',
   };
   const updateResult = await dynamoDbCommand(new UpdateItemCommand(updateItemCommandInput));
@@ -49,8 +43,8 @@ async function updateInvestmentTransaction(userId: string, input: UpdateInvestme
     };
   }
 
-  console.log(`🛑 Could not update investment transaction\n`, updateResult);
+  console.log(`🛑 Could not update bank transaction\n`, updateResult);
   return {};
 }
 
-export default updateInvestmentTransaction;
+export default updateBankTransaction;

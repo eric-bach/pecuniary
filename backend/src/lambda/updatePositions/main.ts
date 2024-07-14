@@ -5,7 +5,7 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 const { getQuoteSummary } = require('./yahooFinance');
 
 import { PositionReadModel } from '../types/Position';
-import { CreateInvestmentTransactionInput, InvestmentTransaction } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { CreateInvestmentTransactionInput, InvestmentTransaction } from '../../appsync/api/codegen/appsync';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
 type CreateTransactionInputV2 = {
