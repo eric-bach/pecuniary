@@ -21,7 +21,7 @@ runs:
 
     - name: 📥 Install Backend
       run: |
-        find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
+        find ./src/lambda -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
         while IFS= read -r file; do
           echo "💾 Installing dependencies for $file"
           cd "$(dirname "$file")"
