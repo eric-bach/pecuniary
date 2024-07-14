@@ -3,7 +3,7 @@ import { CodegenConfig } from '@graphql-codegen/cli';
 const config: CodegenConfig = {
   overwrite: true,
   schema: [
-    'graphql/schema.graphql',
+    'src/appsync/schema.graphql',
     `
       scalar AWSDate
       scalar AWSTime
