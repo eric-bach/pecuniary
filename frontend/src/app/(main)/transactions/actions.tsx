@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
 import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
-import { BankTransaction, InvestmentTransaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction, InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { deleteExistingTransaction } from '@/actions';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';

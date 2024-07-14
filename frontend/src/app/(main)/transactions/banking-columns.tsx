@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { BankTransaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { Actions } from '@/app/(main)/transactions/actions';
 import { Checkbox } from '@/components/ui/checkbox';
 

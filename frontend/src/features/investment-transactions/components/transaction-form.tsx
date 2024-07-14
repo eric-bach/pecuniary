@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { InvestmentTransaction } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 import { DatePicker } from '@/components/date-picker';
 import { Select as CreatableSelect } from '@/components/select';

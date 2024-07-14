@@ -5,7 +5,7 @@ import { DataTable } from '@/components/data-table';
 import { investmentColumns } from '@/app/(main)/transactions/investment-columns';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { InvestmentTransaction } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { InvestmentTransaction } from '../../../../backend/src/appsync/api/codegen/appsync';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
 
 interface InvestmentTransactionsProps {

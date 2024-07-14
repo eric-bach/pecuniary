@@ -5,7 +5,7 @@ import { DataTable } from '@/components/data-table';
 import { bankingColumns } from '@/app/(main)/transactions/banking-columns';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { BankTransaction } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction } from '../../../../backend/src/appsync/api/codegen/appsync';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
 
 interface BankingTransactionsProps {

@@ -6,7 +6,7 @@ import { ThemeToggler } from '../theme-toggler';
 import { Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SidebarMobile } from './sidebar-mobile';
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
 
 export default function Navbar({ accounts }: { accounts: [Account] }) {
   return (

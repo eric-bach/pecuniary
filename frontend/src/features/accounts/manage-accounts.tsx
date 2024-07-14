@@ -1,6 +1,6 @@
 'use client';
 
-import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { Button } from '@/components/ui/button';
 import { useNewAccount } from '@/hooks/use-new-account';
 import { DataTable } from '@/components/data-table';

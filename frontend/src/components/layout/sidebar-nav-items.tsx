@@ -16,7 +16,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
 
 export interface Item {
   id: string;

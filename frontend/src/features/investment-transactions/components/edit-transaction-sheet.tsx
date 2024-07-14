@@ -8,7 +8,7 @@ import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transa
 import { investmentSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
-import { InvestmentTransaction } from '../../../../../infrastructure/graphql/api/codegen/appsync';
+import { InvestmentTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 
 const EditInvestmentTransactionSheet = () => {
   const { toast } = useToast();
