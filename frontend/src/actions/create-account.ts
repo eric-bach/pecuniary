@@ -1,10 +1,10 @@
 'use server';
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
-import { createAccount } from '@/../../infrastructure/graphql/api/mutations';
+import { createAccount } from '@/../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { CreateAccountInput } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { CreateAccountInput } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { schema } from '@/types/account';
 
 interface CreateAccountFormState {

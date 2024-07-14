@@ -1,10 +1,10 @@
 'use server';
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
-import { createInvestmentTransaction } from '@/../../infrastructure/graphql/api/mutations';
+import { createInvestmentTransaction } from '@/../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { CreateInvestmentTransactionInput } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { CreateInvestmentTransactionInput } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 
 interface CreateInvestmentTransactionFormState {
