@@ -1,10 +1,10 @@
 'use server';
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
-import { updateBankTransaction } from '../../../infrastructure/graphql/api/mutations';
+import { updateBankTransaction } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { UpdateBankTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { UpdateBankTransactionInput } from '../../../backend/src/appsync/api/codegen/appsync';
 import { bankingSchema } from '@/types/transaction';
 
 interface EditBankTransactionFormState {

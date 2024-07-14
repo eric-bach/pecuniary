@@ -4,7 +4,7 @@ import {
   DeleteTransactionInput,
   UpdateBankTransactionInput,
   UpdateInvestmentTransactionInput,
-} from '../../../infrastructure/graphql/api/codegen/appsync';
+} from '../../appsync/api/codegen/appsync';
 
 export type TransactionAppSyncEvent = {
   info: {

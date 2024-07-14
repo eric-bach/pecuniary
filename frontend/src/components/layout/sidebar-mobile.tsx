@@ -3,7 +3,7 @@
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { MenuIcon } from 'lucide-react';
 import { useState } from 'react';
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
 import SidebarNavItems from './sidebar-nav-items';
 
 export interface Item {

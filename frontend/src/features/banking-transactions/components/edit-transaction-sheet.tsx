@@ -8,7 +8,7 @@ import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
 import { bankingSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
-import { BankTransaction } from '../../../../../infrastructure/graphql/api/codegen/appsync';
+import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 
 const EditBankTransactionSheet = () => {
   const { toast } = useToast();

@@ -3,7 +3,7 @@ import { CodegenConfig } from '@graphql-codegen/cli';
 const config: CodegenConfig = {
   overwrite: true,
   schema: [
-    'graphql/schema.graphql',
+    'src/appsync/schema.graphql',
     `
       scalar AWSDate
       scalar AWSTime
@@ -30,7 +30,7 @@ const config: CodegenConfig = {
     },
   },
   generates: {
-    'graphql/api/codegen/appsync.ts': {
+    'src/appsync/api/codegen/appsync.ts': {
       plugins: ['typescript', 'typescript-operations'],
     },
   },

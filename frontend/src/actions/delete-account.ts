@@ -1,7 +1,7 @@
 'use server';
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
-import { deleteAccount } from '../../../infrastructure/graphql/api/mutations';
+import { deleteAccount } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 

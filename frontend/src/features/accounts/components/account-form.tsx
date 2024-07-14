@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { useEffect, useState } from 'react';
 import { assetTypes, bankingTypes, categories, creditCardTypes, investmentTypes, schema } from '@/types/account';
 

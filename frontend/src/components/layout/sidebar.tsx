@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Account } from '../../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
 import SidebarNavItems from './sidebar-nav-items';
 
 interface SidebarProps {

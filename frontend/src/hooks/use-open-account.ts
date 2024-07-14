@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Account } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '../../../backend/src/appsync/api/codegen/appsync';
 
 type OpenAccountState = {
   account?: Account;

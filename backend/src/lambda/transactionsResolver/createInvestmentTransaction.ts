@@ -2,22 +2,24 @@ import { PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
-import { BankTransaction, CreateBankTransactionInput } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { CreateInvestmentTransactionInput, InvestmentTransaction } from '../../appsync/api/codegen/appsync';
 import { v4 as uuidv4 } from 'uuid';
 
-async function createBankTransaction(userId: string, input: CreateBankTransactionInput) {
-  console.debug(`🕧 Create Bank Transaction initialized`);
+async function createTransaction(userId: string, input: CreateInvestmentTransactionInput) {
+  console.debug(`🕧 Create Investment Transaction initialized`);
 
-  const item: BankTransaction = {
+  const item: InvestmentTransaction = {
     pk: `trans#${input.accountId}`,
     createdAt: new Date().toISOString(),
-    entity: 'bank-transaction',
+    entity: 'investment-transaction',
     accountId: input.accountId,
     transactionId: uuidv4(),
+    type: input.type,
     transactionDate: input.transactionDate,
-    payee: input.payee,
-    category: input.category,
-    amount: input.amount,
+    symbol: input.symbol,
+    shares: input.shares,
+    price: input.price,
+    commission: input.commission,
     userId: userId,
     updatedAt: new Date().toISOString(),
   };
@@ -36,8 +38,8 @@ async function createBankTransaction(userId: string, input: CreateBankTransactio
     return item;
   }
 
-  console.error(`🛑 Error saving bank transaction:\n`, result);
+  console.error(`🛑 Error saving investment transaction:\n`, result);
   return {};
 }
 
-export default createBankTransaction;
+export default createTransaction;

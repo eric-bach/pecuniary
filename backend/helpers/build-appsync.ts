@@ -7,7 +7,7 @@ const runCommand = (command: string, message: string = '') => {
 };
 
 const build = () => {
-  glob('graphql/*.ts', function (err: Error, files: string[]) {
+  glob('src/appsync/*.ts', function (err: Error, files: string[]) {
     if (err) {
       console.error('Error while expanding glob:', err);
       return;
@@ -15,7 +15,7 @@ const build = () => {
 
     files.map((f) => {
       runCommand(
-        `esbuild ${f} --bundle --sourcemap=inline --sources-content=false --platform=node --target=esnext --format=esm --external:@aws-appsync/utils --outdir=graphql/build`
+        `esbuild ${f} --bundle --sourcemap=inline --sources-content=false --platform=node --target=esnext --format=esm --external:@aws-appsync/utils --outdir=src/appsync/build`
       );
     });
   });

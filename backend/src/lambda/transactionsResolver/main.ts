@@ -11,7 +11,7 @@ import {
   DeleteTransactionInput,
   UpdateBankTransactionInput,
   UpdateInvestmentTransactionInput,
-} from '../../../infrastructure/graphql/api/codegen/appsync';
+} from '../../appsync/api/codegen/appsync';
 
 exports.handler = async (event: TransactionAppSyncEvent) => {
   console.debug(`🕧 AppSync event: ${JSON.stringify(event)}`);

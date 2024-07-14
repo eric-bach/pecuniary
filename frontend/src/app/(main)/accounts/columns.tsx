@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Account } from '@/../../infrastructure/graphql/api/codegen/appsync';
+import { Account } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { Actions } from '@/app/(main)/accounts/actions';
 import { Checkbox } from '@/components/ui/checkbox';
 

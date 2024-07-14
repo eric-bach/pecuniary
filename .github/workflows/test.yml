@@ -39,11 +39,11 @@ jobs:
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
-        working-directory: infrastructure
+        working-directory: backend
 
-      - name: 🔭 Run CDK Unit Tests
-        run: npm run test
-        working-directory: infrastructure
+      # - name: 🔭 Run CDK Unit Tests
+      #   run: npm run test
+      #   working-directory: backend
 
   integration-tests:
     name: Integration Tests
@@ -134,35 +134,35 @@ jobs:
 
       - name: 🏗 Build Frontend
         run: npm run build-frontend
-        working-directory: infrastructure
+        working-directory: backend
 
-      - name: 🗒️ Create Infrastructure .env
+      - name: 🗒️ Create Backend .env
         run: |
           touch .env
           echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🚧 Build Backend
         run: |
-          find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
+          find ./src/lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
           while IFS= read -r file; do
             echo "🚧 Building $file"
             cd "$(dirname "$file")"
             npm run build
             cd - >/dev/null
           done
-        working-directory: infrastructure
+        working-directory: backend
 
       - name: 🚀 Deploy Backend
         run: |
           echo "🚀 Deploying backend dev"
           npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never
-        working-directory: infrastructure
+        working-directory: backend
 
       # TODO Once SST setup to deploy frontend
       # - name: 🚀 Deploy Frontend

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { InvestmentTransaction } from '../../../infrastructure/graphql/api/codegen/appsync';
+import { InvestmentTransaction } from '../../../backend/src/appsync/api/codegen/appsync';
 
 type OpenInvestmentTransactionState = {
   transaction?: InvestmentTransaction;
