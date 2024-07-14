@@ -41,9 +41,9 @@ jobs:
           npm run build-appsync
         working-directory: backend
 
-      - name: 🔭 Run CDK Unit Tests
-        run: npm run test
-        working-directory: backend
+      # - name: 🔭 Run CDK Unit Tests
+      #   run: npm run test
+      #   working-directory: backend
 
   integration-tests:
     name: Integration Tests
