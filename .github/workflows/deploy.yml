@@ -77,7 +77,7 @@ jobs:
 
       - name: 🚧 Build Backend
         run: |
-          find ../backend -mindepth 3 -maxdepth 3 -type f -name 'package.json' |
+          find ./src/lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
           while IFS= read -r file; do
             echo "🚧 Building $file"
             cd "$(dirname "$file")"
