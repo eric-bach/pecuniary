@@ -10,7 +10,9 @@ import {
   GetBankTransactionsResponse,
   GetCategoriesResponse,
   GetInvestmentTransactionsResponse,
+  GetPayeesResponse,
   InvestmentTransaction,
+  Payee,
 } from './codegen/appsync';
 
 export type Query<InputType, OutputType> = string & {
@@ -72,4 +74,12 @@ export type CreateCategoryMutation = {
 
 export type GetCategoriesQuery = {
   getCategories: GetCategoriesResponse;
+};
+
+export type CreatePayeeMutation = {
+  createPayee: Payee;
+};
+
+export type GetPayeesQuery = {
+  getPayees: GetPayeesResponse;
 };

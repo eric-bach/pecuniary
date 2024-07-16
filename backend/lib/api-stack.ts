@@ -229,6 +229,20 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getCategories.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
+    const createPayeeFunction = new AppsyncFunction(this, 'createPayeeFunction', {
+      name: 'createPayee',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createPayee.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const getPayeesFunction = new AppsyncFunction(this, 'getPayeesFunction', {
+      name: 'getPayees',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getPayees.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
 
     const passthrough = InlineCode.fromInline(`
         // The before step
@@ -322,6 +336,22 @@ export class ApiStack extends Stack {
       fieldName: 'getCategories',
       runtime: FunctionRuntime.JS_1_0_0,
       pipelineConfig: [getCategoriesFunction],
+      code: passthrough,
+    });
+    const createPayeeResolver = new Resolver(this, 'createPayeeResolver', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'createPayee',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [createPayeeFunction],
+      code: passthrough,
+    });
+    const getPayeesResolver = new Resolver(this, 'getPayeesResolver', {
+      api: api,
+      typeName: 'Query',
+      fieldName: 'getPayees',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [getPayeesFunction],
       code: passthrough,
     });
 

@@ -148,6 +148,12 @@ export type GetInvestmentTransactionsResponse = {
   nextToken?: Maybe<Scalars['String']['output']>;
 };
 
+export type GetPayeesResponse = {
+  __typename?: 'GetPayeesResponse';
+  items?: Maybe<Array<Maybe<Payee>>>;
+  nextToken?: Maybe<Scalars['String']['output']>;
+};
+
 export type GetPositionsResponse = {
   __typename?: 'GetPositionsResponse';
   items?: Maybe<Array<Maybe<Position>>>;
@@ -177,6 +183,7 @@ export type Mutation = {
   createBankTransaction?: Maybe<BankTransaction>;
   createCategory?: Maybe<Category>;
   createInvestmentTransaction?: Maybe<InvestmentTransaction>;
+  createPayee?: Maybe<Payee>;
   deleteAccount?: Maybe<Aggregates>;
   deleteTransaction?: Maybe<DeleteResponse>;
   updateAccount?: Maybe<Account>;
@@ -205,6 +212,11 @@ export type MutationCreateInvestmentTransactionArgs = {
 };
 
 
+export type MutationCreatePayeeArgs = {
+  name: Scalars['String']['input'];
+};
+
+
 export type MutationDeleteAccountArgs = {
   accountId: Scalars['String']['input'];
 };
@@ -227,6 +239,15 @@ export type MutationUpdateBankTransactionArgs = {
 
 export type MutationUpdateInvestmentTransactionArgs = {
   input: UpdateInvestmentTransactionInput;
+};
+
+export type Payee = {
+  __typename?: 'Payee';
+  createdAt: Scalars['String']['output'];
+  entity: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  pk: Scalars['ID']['output'];
+  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type Position = {
@@ -256,6 +277,7 @@ export type Query = {
   getBankTransactions?: Maybe<GetBankTransactionsResponse>;
   getCategories?: Maybe<GetCategoriesResponse>;
   getInvestmentTransactions?: Maybe<GetInvestmentTransactionsResponse>;
+  getPayees?: Maybe<GetPayeesResponse>;
   getPositions?: Maybe<GetPositionsResponse>;
 };
 
@@ -289,6 +311,11 @@ export type QueryGetCategoriesArgs = {
 
 export type QueryGetInvestmentTransactionsArgs = {
   accountId: Scalars['String']['input'];
+  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetPayeesArgs = {
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
 
