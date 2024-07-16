@@ -6,18 +6,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useOpenAccount } from '@/hooks/use-open-account';
 import { Account } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { deleteExistingAccount } from '@/actions';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
+import DeleteItem from '@/components/delete-item';
 
 type ActionsProps = {
   account: Account;
 };
 
 export const Actions = ({ account }: ActionsProps) => {
-  const [deleteConfirm, setDeleteConfirm] = useState<string>('');
   const [isOpen, setOpen] = useState<boolean>(false);
 
   const router = useRouter();
@@ -26,7 +24,6 @@ export const Actions = ({ account }: ActionsProps) => {
 
   const handleClose = () => {
     setOpen(false);
-    setDeleteConfirm('');
   };
 
   const handleConfirm = async () => {
@@ -38,33 +35,18 @@ export const Actions = ({ account }: ActionsProps) => {
     toast({ title: 'Success!', description: 'Account was successfully deleted' });
   };
 
-  const handleInputChange = (event: any) => {
-    setDeleteConfirm(event.target.value);
-  };
-
   const handleDelete = () => {
     setOpen(true);
   };
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you sure you want to delete this account?</DialogTitle>
-            <DialogDescription>To confirm deletion, enter &quot;delete&quot; below</DialogDescription>
-          </DialogHeader>
-          <Input type='text' value={deleteConfirm} onChange={handleInputChange} placeholder='Enter "delete" to confirm' />
-          <DialogFooter className='pt-2'>
-            <Button onClick={handleClose} variant='outline'>
-              Cancel
-            </Button>
-            <Button onClick={handleConfirm} disabled={deleteConfirm !== 'delete'}>
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteItem
+        isOpen={isOpen}
+        handleClose={handleClose}
+        handleConfirm={handleConfirm}
+        dialogTitle={`Are you sure you want to delete this account?`}
+      />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
