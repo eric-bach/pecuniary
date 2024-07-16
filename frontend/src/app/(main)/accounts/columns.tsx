@@ -12,12 +12,9 @@ export const columns: ColumnDef<Account>[] = [
       <Checkbox
         checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
       />
     ),
-    cell: ({ row }) => (
-      <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label='Select row' />
-    ),
+    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} />,
     enableSorting: false,
     enableHiding: false,
   },
@@ -38,8 +35,7 @@ export const columns: ColumnDef<Account>[] = [
     header: 'Last Updated',
     cell: ({ row }) => {
       const date = new Date(row.getValue('updatedAt'));
-      const formattedDate = date.toLocaleString();
-      return <div>{formattedDate}</div>;
+      return <div>{date.toLocaleString()}</div>;
     },
   },
   {

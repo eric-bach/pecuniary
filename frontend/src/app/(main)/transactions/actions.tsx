@@ -16,11 +16,11 @@ type TransactionsProps = {
 };
 
 export const Actions = ({ transaction }: TransactionsProps) => {
+  const [isOpen, setOpen] = useState<boolean>(false);
+
   const { toast } = useToast();
   const { onOpen: onBankingOpen } = useOpenBankTransaction();
   const { onOpen: onInvestmentOpen } = useOpenInvestmentTransaction();
-
-  const [isOpen, setOpen] = useState<boolean>(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -31,11 +31,8 @@ export const Actions = ({ transaction }: TransactionsProps) => {
 
     handleClose();
 
+    // TODO Handle if delete fails
     toast({ title: 'Success!', description: 'Transaction was successfully deleted' });
-  };
-
-  const handleCancel = () => {
-    handleClose();
   };
 
   const handleDelete = () => {
@@ -52,14 +49,14 @@ export const Actions = ({ transaction }: TransactionsProps) => {
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={handleCancel}>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Are you sure you want to delete this transaction?</DialogTitle>
             <DialogDescription>To confirm deletion, enter &quot;delete&quot; below</DialogDescription>
           </DialogHeader>
           <DialogFooter className='pt-2'>
-            <Button onClick={handleCancel} variant='outline'>
+            <Button onClick={handleClose} variant='outline'>
               Cancel
             </Button>
             <Button onClick={handleConfirm}>Confirm</Button>

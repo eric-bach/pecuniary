@@ -17,12 +17,12 @@ type ActionsProps = {
 };
 
 export const Actions = ({ account }: ActionsProps) => {
-  const { toast } = useToast();
-  const router = useRouter();
-  const { onOpen } = useOpenAccount();
-
-  const [isOpen, setOpen] = useState<boolean>(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string>('');
+  const [isOpen, setOpen] = useState<boolean>(false);
+
+  const router = useRouter();
+  const { toast } = useToast();
+  const { onOpen } = useOpenAccount();
 
   const handleClose = () => {
     setOpen(false);
@@ -34,11 +34,8 @@ export const Actions = ({ account }: ActionsProps) => {
 
     handleClose();
 
+    // TODO Handle if delete fails
     toast({ title: 'Success!', description: 'Account was successfully deleted' });
-  };
-
-  const handleCancel = () => {
-    handleClose();
   };
 
   const handleInputChange = (event: any) => {
@@ -51,7 +48,7 @@ export const Actions = ({ account }: ActionsProps) => {
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={handleCancel}>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Are you sure you want to delete this account?</DialogTitle>
@@ -59,7 +56,7 @@ export const Actions = ({ account }: ActionsProps) => {
           </DialogHeader>
           <Input type='text' value={deleteConfirm} onChange={handleInputChange} placeholder='Enter "delete" to confirm' />
           <DialogFooter className='pt-2'>
-            <Button onClick={handleCancel} variant='outline'>
+            <Button onClick={handleClose} variant='outline'>
               Cancel
             </Button>
             <Button onClick={handleConfirm} disabled={deleteConfirm !== 'delete'}>

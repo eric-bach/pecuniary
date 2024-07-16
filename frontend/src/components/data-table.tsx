@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,7 +14,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Trash } from 'lucide-react';
-import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,12 +36,11 @@ function isAccount(obj: any): obj is Account {
 }
 
 export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, disabled }: DataTableProps<TData, TValue>) {
-  const [isOpen, setOpen] = React.useState<boolean>(false);
-  const [deleteConfirm, setDeleteConfirm] = React.useState<string>('');
-
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [deleteConfirm, setDeleteConfirm] = useState<string>('');
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [rowSelection, setRowSelection] = useState({});
 
   const { toast } = useToast();
 
