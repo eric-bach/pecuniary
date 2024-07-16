@@ -56,6 +56,15 @@ export type BankTransaction = {
   userId: Scalars['String']['output'];
 };
 
+export type Category = {
+  __typename?: 'Category';
+  createdAt: Scalars['String']['output'];
+  entity: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  pk: Scalars['ID']['output'];
+  updatedAt: Scalars['AWSDateTime']['output'];
+};
+
 export type CreateAccountInput = {
   category: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -127,6 +136,12 @@ export type GetBankTransactionsResponse = {
   nextToken?: Maybe<Scalars['String']['output']>;
 };
 
+export type GetCategoriesResponse = {
+  __typename?: 'GetCategoriesResponse';
+  items?: Maybe<Array<Maybe<Category>>>;
+  nextToken?: Maybe<Scalars['String']['output']>;
+};
+
 export type GetInvestmentTransactionsResponse = {
   __typename?: 'GetInvestmentTransactionsResponse';
   items?: Maybe<Array<Maybe<InvestmentTransaction>>>;
@@ -160,6 +175,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createAccount?: Maybe<Account>;
   createBankTransaction?: Maybe<BankTransaction>;
+  createCategory?: Maybe<Category>;
   createInvestmentTransaction?: Maybe<InvestmentTransaction>;
   deleteAccount?: Maybe<Aggregates>;
   deleteTransaction?: Maybe<DeleteResponse>;
@@ -176,6 +192,11 @@ export type MutationCreateAccountArgs = {
 
 export type MutationCreateBankTransactionArgs = {
   input: CreateBankTransactionInput;
+};
+
+
+export type MutationCreateCategoryArgs = {
+  name: Scalars['String']['input'];
 };
 
 
@@ -233,6 +254,7 @@ export type Query = {
   getAccounts?: Maybe<GetAccountsResponse>;
   getAggregate?: Maybe<Aggregates>;
   getBankTransactions?: Maybe<GetBankTransactionsResponse>;
+  getCategories?: Maybe<GetCategoriesResponse>;
   getInvestmentTransactions?: Maybe<GetInvestmentTransactionsResponse>;
   getPositions?: Maybe<GetPositionsResponse>;
 };
@@ -256,6 +278,11 @@ export type QueryGetAggregateArgs = {
 
 export type QueryGetBankTransactionsArgs = {
   accountId: Scalars['String']['input'];
+  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetCategoriesArgs = {
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
 

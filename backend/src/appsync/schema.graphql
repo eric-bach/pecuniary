@@ -153,6 +153,15 @@ type Position {
   updatedAt: AWSDateTime!
 }
 
+# Category entity
+type Category {
+  pk: ID!
+  createdAt: String!
+  name: String!
+  entity: String!
+  updatedAt: AWSDateTime!
+}
+
 type GetAccountsResponse {
   items: [Account]
   nextToken: String
@@ -177,6 +186,11 @@ type DeleteResponse {
   aggregateId: String
 }
 
+type GetCategoriesResponse {
+  items: [Category]
+  nextToken: String
+}
+
 # GraphQL actions
 type Query {
   getAccount(accountId: String!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
@@ -188,12 +202,16 @@ type Query {
   getInvestmentTransactions(accountId: String!, lastEvaluatedKey: String): GetInvestmentTransactionsResponse
     @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPositions(accountId: String!, lastEvaluatedKey: String): GetPositionsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+
+  getCategories(lastEvaluatedKey: String): GetCategoriesResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {
   createAccount(input: CreateAccountInput!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateAccount(input: UpdateAccountInput!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
   deleteAccount(accountId: String!): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
+
+  createCategory(name: String!): Category @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   createBankTransaction(input: CreateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateBankTransaction(input: UpdateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])

@@ -4,9 +4,11 @@ import {
   Account,
   Aggregates,
   BankTransaction,
+  Category,
   DeleteResponse,
   GetAccountsResponse,
   GetBankTransactionsResponse,
+  GetCategoriesResponse,
   GetInvestmentTransactionsResponse,
   InvestmentTransaction,
 } from './codegen/appsync';
@@ -62,4 +64,12 @@ export type UpdateInvestmentTransactionMutation = {
 
 export type DeleteTransactionMutation = {
   deleteTransaction: DeleteResponse;
+};
+
+export type CreateCategoryMutation = {
+  createCategory: Category;
+};
+
+export type GetCategoriesQuery = {
+  getCategories: GetCategoriesResponse;
 };

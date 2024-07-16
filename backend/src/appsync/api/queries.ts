@@ -2,9 +2,17 @@ import {
   QueryGetAccountArgs,
   QueryGetAccountsArgs,
   QueryGetBankTransactionsArgs,
+  QueryGetCategoriesArgs,
   QueryGetInvestmentTransactionsArgs,
 } from './codegen/appsync';
-import { GetAccountQuery, GetAccountsQuery, GetBankTransactionsQuery, GetInvestmentTransactionsQuery, Query } from './types';
+import {
+  GetAccountQuery,
+  GetAccountsQuery,
+  GetBankTransactionsQuery,
+  GetCategoriesQuery,
+  GetInvestmentTransactionsQuery,
+  Query,
+} from './types';
 
 export const getAccount = `query GetAccount($accountId: String!) {
   getAccount(accountId: $accountId) { 
@@ -70,3 +78,14 @@ export const getInvestmentTransactions = `query GetBankTransactions($accountId: 
     nextToken
   }
 }` as Query<QueryGetInvestmentTransactionsArgs, GetInvestmentTransactionsQuery>;
+
+export const getCategories = `query GetCategories($lastEvaluatedKey: String) {
+  getCategories(lastEvaluatedKey: $lastEvaluatedKey) {
+    items {
+      name
+      createdAt
+      updatedAt
+    }
+    nextToken
+  }
+}` as Query<QueryGetCategoriesArgs, GetCategoriesQuery>;

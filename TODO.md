@@ -35,6 +35,7 @@ X Add sorting to table
 
 - Create symbol on add
 - Create payee/category on add
+- Switch to tanstack-query - https://docs.amplify.aws/gen1/react/build-a-backend/graphqlapi/optimistic-ui/
 - Create Position on InvestmentTransactionCreated
 - Update Account on BankTransactionCreated and InvestmentTransactionCreated
 

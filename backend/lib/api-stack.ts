@@ -215,6 +215,20 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getInvestmentTransactions.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
+    const createCategoryFunction = new AppsyncFunction(this, 'createCategoryFunction', {
+      name: 'createCategory',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createCategory.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const getCategoriesFunction = new AppsyncFunction(this, 'getCategoriesFunction', {
+      name: 'getCategories',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getCategories.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
 
     const passthrough = InlineCode.fromInline(`
         // The before step
@@ -292,6 +306,22 @@ export class ApiStack extends Stack {
       fieldName: 'getInvestmentTransactions',
       runtime: FunctionRuntime.JS_1_0_0,
       pipelineConfig: [getInvestmentTransactionsFunction],
+      code: passthrough,
+    });
+    const createCategoryResolver = new Resolver(this, 'createCategoryResolver', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'createCategory',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [createCategoryFunction],
+      code: passthrough,
+    });
+    const getCategoriesResolver = new Resolver(this, 'getCategoriesResolver', {
+      api: api,
+      typeName: 'Query',
+      fieldName: 'getCategories',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [getCategoriesFunction],
       code: passthrough,
     });
 

@@ -7,12 +7,32 @@ import { useNewTransaction } from '@/hooks/use-new-transaction';
 import { createNewBankTransaction } from '@/actions';
 import { bankingSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createNewCategory } from '@/actions/create-category';
+import { fetchCategories } from '@/actions/fetch-categories';
 
 const NewBankingTransactionSheet = () => {
+  const [isPending, setIsPending] = useState(false);
+  const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { accountId, isBankingOpen, onClose } = useNewTransaction();
-  const [isPending, setIsPending] = useState(false);
+
+  useEffect(() => {
+    fetchAllCategories();
+  }, []);
+
+  async function fetchAllCategories() {
+    const result = await fetchCategories();
+
+    const categoryOptions = result.map((str) => {
+      return {
+        label: str.name,
+        value: str.name,
+      };
+    });
+
+    setCategories(categoryOptions);
+  }
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
     setIsPending(true);
@@ -23,18 +43,21 @@ const NewBankingTransactionSheet = () => {
       transactionDate: values.transactionDate.toDateString(),
     };
 
-    console.log('data', data);
-
-    const result = await createNewBankTransaction(data);
-
-    console.log('result', result);
+    await createNewBankTransaction(data);
 
     onClose();
-
-    console.log('Transaction created', result);
-
     setIsPending(false);
     toast({ title: 'Success!', description: 'Transaction was successfully created' });
+  };
+
+  const onCreateCategory = async (name: string) => {
+    setIsPending(true);
+
+    await createNewCategory({ name, accountId });
+
+    await fetchAllCategories();
+
+    setIsPending(false);
   };
 
   return (
@@ -55,6 +78,8 @@ const NewBankingTransactionSheet = () => {
             payee: '',
             amount: '',
           }}
+          categoryOptions={categories}
+          onCreateCategory={onCreateCategory}
         />
       </SheetContent>
     </Sheet>

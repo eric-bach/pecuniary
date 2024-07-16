@@ -7,15 +7,35 @@ import { editExistingBankTransaction } from '@/actions';
 import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
 import { bankingSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
+import { fetchCategories } from '@/actions/fetch-categories';
+import { createNewCategory } from '@/actions/create-category';
 
 const EditBankTransactionSheet = () => {
+  const [isPending, setIsPending] = useState(false);
+  const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { isOpen, onClose, transaction } = useOpenBankTransaction();
-  const [isPending, setIsPending] = useState(false);
 
   const trans = transaction as BankTransaction;
+
+  useEffect(() => {
+    fetchAllCategories();
+  }, []);
+
+  async function fetchAllCategories() {
+    const result = await fetchCategories();
+
+    const categoryOptions = result.map((str) => {
+      return {
+        label: str.name,
+        value: str.name,
+      };
+    });
+
+    setCategories(categoryOptions);
+  }
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
     setIsPending(true);
@@ -26,21 +46,27 @@ const EditBankTransactionSheet = () => {
       pk: `trans#${values.accountId}`,
       amount: parseFloat(values.amount),
       transactionId: values.transactionId!,
-
       transactionDate: values.transactionDate.toDateString(),
       createdAt: values.createdAt!,
     };
 
-    console.log('data', data);
-
-    const result = await editExistingBankTransaction(data);
-
-    console.log('result', result);
+    await editExistingBankTransaction(data);
 
     onClose();
     setIsPending(false);
 
     toast({ title: 'Success!', description: 'Transaction was successfully updated' });
+  };
+
+  const onCreateCategory = async (name: string) => {
+    setIsPending(true);
+
+    const accountId = trans.accountId;
+    await createNewCategory({ name, accountId });
+
+    await fetchAllCategories();
+
+    setIsPending(false);
   };
 
   return (
@@ -65,6 +91,8 @@ const EditBankTransactionSheet = () => {
               amount: trans?.amount.toString(),
               createdAt: trans?.createdAt,
             }}
+            categoryOptions={categories}
+            onCreateCategory={onCreateCategory}
           />
         </SheetContent>
       </Sheet>

@@ -1,6 +1,7 @@
 import {
   MutationCreateAccountArgs,
   MutationCreateBankTransactionArgs,
+  MutationCreateCategoryArgs,
   MutationCreateInvestmentTransactionArgs,
   MutationDeleteAccountArgs,
   MutationDeleteTransactionArgs,
@@ -18,6 +19,7 @@ import {
   CreateInvestmentTransactionMutation,
   UpdateBankTransactionMutation,
   UpdateInvestmentTransactionMutation,
+  CreateCategoryMutation,
 } from './types';
 
 export const createAccount = `mutation CreateAccount($input: CreateAccountInput!) {
@@ -116,3 +118,12 @@ export const deleteTransaction = `mutation DeleteTransaction($input: DeleteTrans
     aggregateId
   }
 }` as Query<MutationDeleteTransactionArgs, DeleteTransactionMutation>;
+
+export const createCategory = `mutation CreateCategory($name: String!) {
+  createCategory(name: $name) { 
+    pk
+    name
+    createdAt
+    updatedAt
+  }
+}` as Query<MutationCreateCategoryArgs, CreateCategoryMutation>;
