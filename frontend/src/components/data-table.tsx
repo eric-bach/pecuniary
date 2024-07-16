@@ -4,7 +4,6 @@ import { useState } from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
-  Row,
   SortingState,
   flexRender,
   getCoreRowModel,
