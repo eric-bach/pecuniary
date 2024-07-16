@@ -33,6 +33,7 @@ X Combine backend and infrastructure folders
 X Clean up data-table, actions, columns
 X Add sorting to table
 
+- Troubleshoot unit tests
 - Create symbol on add
 - Create payee/category on add
 - Create Position on InvestmentTransactionCreated
