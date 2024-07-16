@@ -10,7 +10,7 @@
 cdk.out
 
 # AppSync
-**/infrastructure/graphql/types
+**/graphql/types
 
 # Files to convert to TypeScript - for old client
 !/*client*/src/client.js
@@ -20,9 +20,13 @@ cdk.out
 .env*
 aws-exports.js
 
+# Include test configuration
+!jest.config.js
+
+# Exclude cypress test files
 cypress.*.json
 **/cypress/videos/
-/infrastructure/coverage
+**/coverage
 
 # dependencies
 /.pnp

@@ -29,7 +29,7 @@ const BankingTransactions = ({ accountId, transactions }: BankingTransactionsPro
         </div>
       </CardHeader>
       <CardContent>
-        <DataTable filterKey='transactionDate' columns={bankingColumns} data={transactions} onDelete={(row) => console.log(row)} />
+        <DataTable filterKey='transactionDate' columns={bankingColumns} data={transactions} />
       </CardContent>
     </Card>
   );

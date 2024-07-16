@@ -28,7 +28,7 @@ const ManageAccounts = ({ accounts }: ManageAccountsProps) => {
         </CardHeader>
 
         <CardContent>
-          <DataTable filterKey='name' columns={columns} data={accounts} onDelete={(row) => console.log(row)} />
+          <DataTable filterKey='name' columns={columns} data={accounts} />
         </CardContent>
       </Card>
     </div>

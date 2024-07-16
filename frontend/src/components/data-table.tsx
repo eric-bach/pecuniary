@@ -1,9 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
-  Row,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -13,72 +13,28 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Trash } from 'lucide-react';
-import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
-import { deleteExistingAccount } from '@/actions';
-import { Account } from '@/../../backend/src/appsync/api/codegen/appsync';
+import { deleteExistingAccount, deleteExistingTransaction } from '@/actions';
+import { Account, BankTransaction, InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
+import DeleteItem from './delete-item';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filterKey: string;
-  onDelete: (rows: Row<TData>[]) => void;
   disabled?: boolean;
 }
 
-function isAccount(obj: any): obj is Account {
-  return typeof obj === 'object' && obj !== null && typeof obj.accountId === 'string';
-}
-
-export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, disabled }: DataTableProps<TData, TValue>) {
-  const [isOpen, setOpen] = React.useState<boolean>(false);
-  const [deleteConfirm, setDeleteConfirm] = React.useState<string>('');
-
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [rowSelection, setRowSelection] = React.useState({});
-
+export function DataTable<TData, TValue>({ columns, data, filterKey, disabled }: DataTableProps<TData, TValue>) {
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [rowSelection, setRowSelection] = useState({});
   const { toast } = useToast();
-
-  const handleClose = () => {
-    setOpen(false);
-    setDeleteConfirm('');
-  };
-
-  const handleConfirm = async () => {
-    table.getFilteredSelectedRowModel().rows.forEach(async (row) => {
-      if (isAccount(row.original)) {
-        await deleteExistingAccount((row.original as Account).accountId);
-      } else {
-        // TODO Handle other types here
-      }
-    });
-
-    handleClose();
-
-    table.resetRowSelection();
-
-    toast({
-      title: 'Success!',
-      description:
-        table.getFilteredSelectedRowModel().rows.length > 1
-          ? `${table.getFilteredSelectedRowModel().rows.length} Accounts successfully deleted`
-          : 'Account successfully deleted',
-    });
-  };
-
-  const handleCancel = () => {
-    handleClose();
-  };
-
-  const handleInputChange = (event: any) => {
-    setDeleteConfirm(event.target.value);
-  };
 
   const table = useReactTable({
     data,
@@ -97,25 +53,42 @@ export function DataTable<TData, TValue>({ columns, data, filterKey, onDelete, d
     },
   });
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleConfirm = async () => {
+    table.getFilteredSelectedRowModel().rows.forEach(async (row: any) => {
+      if (row.original.entity === 'account') {
+        await deleteExistingAccount((row.original as Account).accountId);
+      } else if (row.original.entity === 'bank-transaction') {
+        await deleteExistingTransaction(row.original as BankTransaction);
+      } else if (row.original.entity === 'investment-transaction') {
+        await deleteExistingTransaction(row.original as InvestmentTransaction);
+      }
+    });
+
+    handleClose();
+
+    table.resetRowSelection();
+
+    toast({
+      title: 'Success!',
+      description:
+        table.getFilteredSelectedRowModel().rows.length > 1
+          ? `${table.getFilteredSelectedRowModel().rows.length} items successfully deleted`
+          : 'Item successfully deleted',
+    });
+  };
+
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={handleCancel}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you sure you want to delete {table.getFilteredSelectedRowModel().rows.length} accounts?</DialogTitle>
-            <DialogDescription>To confirm deletion, enter &quot;delete&quot; below</DialogDescription>
-          </DialogHeader>
-          <Input type='text' value={deleteConfirm} onChange={handleInputChange} placeholder='Enter "delete" to confirm' />
-          <DialogFooter className='pt-2'>
-            <Button onClick={handleCancel} variant='outline'>
-              Cancel
-            </Button>
-            <Button onClick={handleConfirm} disabled={deleteConfirm !== 'delete'}>
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteItem
+        isOpen={isOpen}
+        handleClose={handleClose}
+        handleConfirm={handleConfirm}
+        dialogTitle={`Are you sure you want to delete ${table.getFilteredSelectedRowModel().rows.length} items?`}
+      />
 
       <div className='flex items-center py-4'>
         <Input

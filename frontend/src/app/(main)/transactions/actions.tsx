@@ -7,20 +7,20 @@ import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
 import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
 import { BankTransaction, InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { deleteExistingTransaction } from '@/actions';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import DeleteItem from '@/components/delete-item';
 
 type TransactionsProps = {
   transaction: BankTransaction | InvestmentTransaction;
 };
 
 export const Actions = ({ transaction }: TransactionsProps) => {
+  const [isOpen, setOpen] = useState<boolean>(false);
+
   const { toast } = useToast();
   const { onOpen: onBankingOpen } = useOpenBankTransaction();
   const { onOpen: onInvestmentOpen } = useOpenInvestmentTransaction();
-
-  const [isOpen, setOpen] = useState<boolean>(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -31,11 +31,8 @@ export const Actions = ({ transaction }: TransactionsProps) => {
 
     handleClose();
 
+    // TODO Handle if delete fails
     toast({ title: 'Success!', description: 'Transaction was successfully deleted' });
-  };
-
-  const handleCancel = () => {
-    handleClose();
   };
 
   const handleDelete = () => {
@@ -52,20 +49,12 @@ export const Actions = ({ transaction }: TransactionsProps) => {
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={handleCancel}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you sure you want to delete this transaction?</DialogTitle>
-            <DialogDescription>To confirm deletion, enter &quot;delete&quot; below</DialogDescription>
-          </DialogHeader>
-          <DialogFooter className='pt-2'>
-            <Button onClick={handleCancel} variant='outline'>
-              Cancel
-            </Button>
-            <Button onClick={handleConfirm}>Confirm</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteItem
+        isOpen={isOpen}
+        handleClose={handleClose}
+        handleConfirm={handleConfirm}
+        dialogTitle={`Are you sure you want to delete this transaction?`}
+      />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

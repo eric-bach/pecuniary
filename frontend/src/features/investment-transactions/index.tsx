@@ -29,7 +29,7 @@ const InvestmentTransactions = ({ accountId, transactions }: InvestmentTransacti
         </div>
       </CardHeader>
       <CardContent>
-        <DataTable filterKey='transactionDate' columns={investmentColumns} data={transactions} onDelete={(row) => console.log(row)} />
+        <DataTable filterKey='transactionDate' columns={investmentColumns} data={transactions} />
       </CardContent>
     </Card>
   );
