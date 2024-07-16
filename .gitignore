@@ -10,7 +10,7 @@
 cdk.out
 
 # AppSync
-**/infrastructure/graphql/types
+**/graphql/types
 
 # Files to convert to TypeScript - for old client
 !/*client*/src/client.js
@@ -22,7 +22,7 @@ aws-exports.js
 
 cypress.*.json
 **/cypress/videos/
-/infrastructure/coverage
+**/coverage
 
 # dependencies
 /.pnp
