@@ -20,6 +20,10 @@ cdk.out
 .env*
 aws-exports.js
 
+# Include test configuration
+!jest.config.js
+
+# Exclude cypress test files
 cypress.*.json
 **/cypress/videos/
 **/coverage
