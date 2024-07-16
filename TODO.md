@@ -30,8 +30,9 @@ X Add ability to delete multiple Accounts - data-table.tsx
 X Add progress/loading transitions
 X Build mobile sidebar
 X Combine backend and infrastructure folders
+X Clean up data-table, actions, columns
+X Add sorting to table
 
-- Clean up data-table, actions, columns - add sorting
 - Create symbol on add
 - Create payee/category on add
 - Create Position on InvestmentTransactionCreated
