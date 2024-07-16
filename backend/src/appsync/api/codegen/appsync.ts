@@ -160,6 +160,12 @@ export type GetPositionsResponse = {
   nextToken?: Maybe<Scalars['String']['output']>;
 };
 
+export type GetSymbolsResponse = {
+  __typename?: 'GetSymbolsResponse';
+  items?: Maybe<Array<Maybe<Symbol>>>;
+  nextToken?: Maybe<Scalars['String']['output']>;
+};
+
 export type InvestmentTransaction = {
   __typename?: 'InvestmentTransaction';
   accountId: Scalars['ID']['output'];
@@ -184,6 +190,7 @@ export type Mutation = {
   createCategory?: Maybe<Category>;
   createInvestmentTransaction?: Maybe<InvestmentTransaction>;
   createPayee?: Maybe<Payee>;
+  createSymbol?: Maybe<Symbol>;
   deleteAccount?: Maybe<Aggregates>;
   deleteTransaction?: Maybe<DeleteResponse>;
   updateAccount?: Maybe<Account>;
@@ -213,6 +220,11 @@ export type MutationCreateInvestmentTransactionArgs = {
 
 
 export type MutationCreatePayeeArgs = {
+  name: Scalars['String']['input'];
+};
+
+
+export type MutationCreateSymbolArgs = {
   name: Scalars['String']['input'];
 };
 
@@ -279,6 +291,7 @@ export type Query = {
   getInvestmentTransactions?: Maybe<GetInvestmentTransactionsResponse>;
   getPayees?: Maybe<GetPayeesResponse>;
   getPositions?: Maybe<GetPositionsResponse>;
+  getSymbols?: Maybe<GetSymbolsResponse>;
 };
 
 
@@ -323,6 +336,20 @@ export type QueryGetPayeesArgs = {
 export type QueryGetPositionsArgs = {
   accountId: Scalars['String']['input'];
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetSymbolsArgs = {
+  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Symbol = {
+  __typename?: 'Symbol';
+  createdAt: Scalars['String']['output'];
+  entity: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  pk: Scalars['ID']['output'];
+  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type UpdateAccountInput = {

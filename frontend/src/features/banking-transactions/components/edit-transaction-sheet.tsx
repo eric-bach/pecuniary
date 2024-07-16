@@ -11,9 +11,12 @@ import { useEffect, useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 import { fetchCategories } from '@/actions/fetch-categories';
 import { createNewCategory } from '@/actions/create-category';
+import { createNewPayee } from '@/actions/create-payee';
+import { fetchPayees } from '@/actions/fetch-payees';
 
 const EditBankTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
+  const [payees, setPayees] = useState<{ label: string; value: string }[]>([]);
   const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { isOpen, onClose, transaction } = useOpenBankTransaction();
@@ -21,8 +24,22 @@ const EditBankTransactionSheet = () => {
   const trans = transaction as BankTransaction;
 
   useEffect(() => {
+    fetchAllPayees();
     fetchAllCategories();
   }, []);
+
+  async function fetchAllPayees() {
+    const result = await fetchPayees();
+
+    const payeeOptions = result.map((str) => {
+      return {
+        label: str.name,
+        value: str.name,
+      };
+    });
+
+    setPayees(payeeOptions);
+  }
 
   async function fetchAllCategories() {
     const result = await fetchCategories();
@@ -58,6 +75,17 @@ const EditBankTransactionSheet = () => {
     toast({ title: 'Success!', description: 'Transaction was successfully updated' });
   };
 
+  const onCreatePayee = async (name: string) => {
+    setIsPending(true);
+
+    const accountId = trans.accountId;
+    await createNewPayee({ name, accountId });
+
+    await fetchAllPayees();
+
+    setIsPending(false);
+  };
+
   const onCreateCategory = async (name: string) => {
     setIsPending(true);
 
@@ -91,6 +119,8 @@ const EditBankTransactionSheet = () => {
               amount: trans?.amount.toString(),
               createdAt: trans?.createdAt,
             }}
+            payeeOptions={payees}
+            onCreatePayee={onCreatePayee}
             categoryOptions={categories}
             onCreateCategory={onCreateCategory}
           />

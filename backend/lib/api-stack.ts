@@ -243,6 +243,20 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getPayees.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
+    const createSymbolFunction = new AppsyncFunction(this, 'createSymbolFunction', {
+      name: 'createSymbol',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createSymbol.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const getSymbolsFunction = new AppsyncFunction(this, 'getSymbolsFunction', {
+      name: 'getSymbols',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getSymbols.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
 
     const passthrough = InlineCode.fromInline(`
         // The before step
@@ -352,6 +366,22 @@ export class ApiStack extends Stack {
       fieldName: 'getPayees',
       runtime: FunctionRuntime.JS_1_0_0,
       pipelineConfig: [getPayeesFunction],
+      code: passthrough,
+    });
+    const createSymbolResolver = new Resolver(this, 'createSymbolResolver', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'createSymbol',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [createSymbolFunction],
+      code: passthrough,
+    });
+    const getSymbolsResolver = new Resolver(this, 'getSymbolsResolver', {
+      api: api,
+      typeName: 'Query',
+      fieldName: 'getSymbols',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [getSymbolsFunction],
       code: passthrough,
     });
 

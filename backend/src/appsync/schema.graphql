@@ -171,6 +171,15 @@ type Payee {
   updatedAt: AWSDateTime!
 }
 
+# Symbol entity
+type Symbol {
+  pk: ID!
+  createdAt: String!
+  name: String!
+  entity: String!
+  updatedAt: AWSDateTime!
+}
+
 type GetAccountsResponse {
   items: [Account]
   nextToken: String
@@ -205,6 +214,11 @@ type GetPayeesResponse {
   nextToken: String
 }
 
+type GetSymbolsResponse {
+  items: [Symbol]
+  nextToken: String
+}
+
 # GraphQL actions
 type Query {
   getAccount(accountId: String!): Account @aws_cognito_user_pools(cognito_groups: ["Users"])
@@ -219,6 +233,7 @@ type Query {
 
   getCategories(lastEvaluatedKey: String): GetCategoriesResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
   getPayees(lastEvaluatedKey: String): GetPayeesResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  getSymbols(lastEvaluatedKey: String): GetSymbolsResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 type Mutation {
@@ -228,6 +243,7 @@ type Mutation {
 
   createCategory(name: String!): Category @aws_cognito_user_pools(cognito_groups: ["Users"])
   createPayee(name: String!): Payee @aws_cognito_user_pools(cognito_groups: ["Users"])
+  createSymbol(name: String!): Symbol @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   createBankTransaction(input: CreateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateBankTransaction(input: UpdateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])

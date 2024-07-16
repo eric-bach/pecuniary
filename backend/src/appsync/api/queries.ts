@@ -5,6 +5,7 @@ import {
   QueryGetCategoriesArgs,
   QueryGetInvestmentTransactionsArgs,
   QueryGetPayeesArgs,
+  QueryGetSymbolsArgs,
 } from './codegen/appsync';
 import {
   GetAccountQuery,
@@ -13,6 +14,7 @@ import {
   GetCategoriesQuery,
   GetInvestmentTransactionsQuery,
   GetPayeesQuery,
+  GetSymbolsQuery,
   Query,
 } from './types';
 
@@ -102,3 +104,14 @@ export const getPayees = `query GetPayees($lastEvaluatedKey: String) {
     nextToken
   }
 }` as Query<QueryGetPayeesArgs, GetPayeesQuery>;
+
+export const getSymbols = `query GetSymbols($lastEvaluatedKey: String) {
+  getSymbols(lastEvaluatedKey: $lastEvaluatedKey) {
+    items {
+      name
+      createdAt
+      updatedAt
+    }
+    nextToken
+  }
+}` as Query<QueryGetSymbolsArgs, GetSymbolsQuery>;

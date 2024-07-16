@@ -32,12 +32,16 @@ X Build mobile sidebar
 X Combine backend and infrastructure folders
 X Clean up data-table, actions, columns
 X Add sorting to table
+X Create payee/category on add
+X Create symbol on add
 
-- Create symbol on add
-- Create payee/category on add
+- Refactor new/edit sheets have same functions
 - Switch to tanstack-query - https://docs.amplify.aws/gen1/react/build-a-backend/graphqlapi/optimistic-ui/
-- Create Position on InvestmentTransactionCreated
-- Update Account on BankTransactionCreated and InvestmentTransactionCreated
+- Events
+
+  - Create/Update Position on InvestmentTransactionCreated
+  - Create TimeSeries data when SymbolCreated
+  - Update Account on BankTransactionCreated and InvestmentTransactionCreated
 
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions

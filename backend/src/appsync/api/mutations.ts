@@ -4,6 +4,7 @@ import {
   MutationCreateCategoryArgs,
   MutationCreateInvestmentTransactionArgs,
   MutationCreatePayeeArgs,
+  MutationCreateSymbolArgs,
   MutationDeleteAccountArgs,
   MutationDeleteTransactionArgs,
   MutationUpdateAccountArgs,
@@ -22,6 +23,7 @@ import {
   UpdateInvestmentTransactionMutation,
   CreateCategoryMutation,
   CreatePayeeMutation,
+  CreateSymbolMutation,
 } from './types';
 
 export const createAccount = `mutation CreateAccount($input: CreateAccountInput!) {
@@ -138,3 +140,12 @@ export const createPayee = `mutation CreatePayee($name: String!) {
     updatedAt
   }
 }` as Query<MutationCreatePayeeArgs, CreatePayeeMutation>;
+
+export const createSymbol = `mutation CreateSymbol($name: String!) {
+  createSymbol(name: $name) { 
+    pk
+    name
+    createdAt
+    updatedAt
+  }
+}` as Query<MutationCreateSymbolArgs, CreateSymbolMutation>;

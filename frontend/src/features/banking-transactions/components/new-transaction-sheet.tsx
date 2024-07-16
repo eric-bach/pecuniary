@@ -10,16 +10,33 @@ import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
 import { createNewCategory } from '@/actions/create-category';
 import { fetchCategories } from '@/actions/fetch-categories';
+import { fetchPayees } from '@/actions/fetch-payees';
+import { createNewPayee } from '@/actions/create-payee';
 
 const NewBankingTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
+  const [payees, setPayees] = useState<{ label: string; value: string }[]>([]);
   const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { accountId, isBankingOpen, onClose } = useNewTransaction();
 
   useEffect(() => {
+    fetchAllPayees();
     fetchAllCategories();
   }, []);
+
+  async function fetchAllPayees() {
+    const result = await fetchPayees();
+
+    const payeeOptions = result.map((str) => {
+      return {
+        label: str.name,
+        value: str.name,
+      };
+    });
+
+    setPayees(payeeOptions);
+  }
 
   async function fetchAllCategories() {
     const result = await fetchCategories();
@@ -50,6 +67,16 @@ const NewBankingTransactionSheet = () => {
     toast({ title: 'Success!', description: 'Transaction was successfully created' });
   };
 
+  const onCreatePayee = async (name: string) => {
+    setIsPending(true);
+
+    await createNewPayee({ name, accountId });
+
+    await fetchAllPayees();
+
+    setIsPending(false);
+  };
+
   const onCreateCategory = async (name: string) => {
     setIsPending(true);
 
@@ -78,6 +105,8 @@ const NewBankingTransactionSheet = () => {
             payee: '',
             amount: '',
           }}
+          payeeOptions={payees}
+          onCreatePayee={onCreatePayee}
           categoryOptions={categories}
           onCreateCategory={onCreateCategory}
         />

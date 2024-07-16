@@ -11,6 +11,7 @@ import {
   GetCategoriesResponse,
   GetInvestmentTransactionsResponse,
   GetPayeesResponse,
+  GetSymbolsResponse,
   InvestmentTransaction,
   Payee,
 } from './codegen/appsync';
@@ -82,4 +83,12 @@ export type CreatePayeeMutation = {
 
 export type GetPayeesQuery = {
   getPayees: GetPayeesResponse;
+};
+
+export type CreateSymbolMutation = {
+  createSymbol: Symbol;
+};
+
+export type GetSymbolsQuery = {
+  getSymbols: GetSymbolsResponse;
 };
