@@ -2,7 +2,6 @@
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
 import { createSymbol } from '@/../../backend/src/appsync/api/mutations';
-import { revalidatePath } from 'next/cache';
 import { schema } from '@/types/symbol';
 
 interface CreateSymbolFormState {
@@ -12,7 +11,7 @@ interface CreateSymbolFormState {
   };
 }
 
-export async function createNewSymbol({ name, accountId }: { name: string; accountId: string }): Promise<CreateSymbolFormState> {
+export async function createNewSymbol(name: string): Promise<CreateSymbolFormState> {
   const result = schema.safeParse({
     name,
   });
@@ -38,8 +37,6 @@ export async function createNewSymbol({ name, accountId }: { name: string; accou
       return { errors: { _form: ['An unknown error occurred'] } };
     }
   }
-
-  revalidatePath(`/accounts/${accountId}`, 'layout');
 
   return { errors: {} };
 }

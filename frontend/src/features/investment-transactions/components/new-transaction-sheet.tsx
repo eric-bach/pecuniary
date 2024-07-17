@@ -4,7 +4,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import * as z from 'zod';
 import TransactionForm from './transaction-form';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
-import { createNewInvestmentTransaction, fetchTransactionTypes, fetchSymbols, createNewSymbol } from '@/actions';
+import { createNewInvestmentTransaction, fetchTransactionTypeOptions, fetchSymbolOptions, createNewSymbol } from '@/actions';
 import { investmentSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
@@ -23,29 +23,11 @@ const NewInvestmentTransactionSheet = () => {
   }, []);
 
   async function fetchAllSymbols() {
-    const result = await fetchSymbols();
-
-    const symbolOptions = result.map((str) => {
-      return {
-        label: str.name,
-        value: str.name,
-      };
-    });
-
-    setSymbols(symbolOptions);
+    setSymbols(await fetchSymbolOptions());
   }
 
   async function fetchAllTransactionTypes() {
-    const result = await fetchTransactionTypes();
-
-    const transactionTypeOptions = result.map((str) => {
-      return {
-        label: str.label,
-        value: str.value,
-      };
-    });
-
-    setTransactionTypes(transactionTypeOptions);
+    setTransactionTypes(await fetchTransactionTypeOptions());
   }
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
@@ -68,8 +50,7 @@ const NewInvestmentTransactionSheet = () => {
   const onCreateSymbol = async (name: string) => {
     setIsPending(true);
 
-    await createNewSymbol({ name, accountId });
-
+    await createNewSymbol(name);
     await fetchAllSymbols();
 
     setIsPending(false);

@@ -9,10 +9,7 @@ import { bankingSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
-import { fetchCategories } from '@/actions/fetch-categories';
-import { createNewCategory } from '@/actions/create-category';
-import { createNewPayee } from '@/actions/create-payee';
-import { fetchPayees } from '@/actions/fetch-payees';
+import { createNewCategory, fetchCategoryOptions, fetchPayeeOptions, createNewPayee } from '@/actions/index';
 
 const EditBankTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
@@ -29,29 +26,11 @@ const EditBankTransactionSheet = () => {
   }, []);
 
   async function fetchAllPayees() {
-    const result = await fetchPayees();
-
-    const payeeOptions = result.map((str) => {
-      return {
-        label: str.name,
-        value: str.name,
-      };
-    });
-
-    setPayees(payeeOptions);
+    setPayees(await fetchPayeeOptions());
   }
 
   async function fetchAllCategories() {
-    const result = await fetchCategories();
-
-    const categoryOptions = result.map((str) => {
-      return {
-        label: str.name,
-        value: str.name,
-      };
-    });
-
-    setCategories(categoryOptions);
+    setCategories(await fetchCategoryOptions());
   }
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
@@ -78,9 +57,7 @@ const EditBankTransactionSheet = () => {
   const onCreatePayee = async (name: string) => {
     setIsPending(true);
 
-    const accountId = trans.accountId;
-    await createNewPayee({ name, accountId });
-
+    await createNewPayee(name);
     await fetchAllPayees();
 
     setIsPending(false);
@@ -89,9 +66,7 @@ const EditBankTransactionSheet = () => {
   const onCreateCategory = async (name: string) => {
     setIsPending(true);
 
-    const accountId = trans.accountId;
-    await createNewCategory({ name, accountId });
-
+    await createNewCategory(name);
     await fetchAllCategories();
 
     setIsPending(false);

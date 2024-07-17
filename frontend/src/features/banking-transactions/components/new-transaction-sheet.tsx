@@ -8,14 +8,12 @@ import { createNewBankTransaction } from '@/actions';
 import { bankingSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
-import { createNewCategory } from '@/actions/create-category';
-import { fetchCategories } from '@/actions/fetch-categories';
-import { fetchPayees } from '@/actions/fetch-payees';
-import { createNewPayee } from '@/actions/create-payee';
+import { createNewCategory, fetchCategoryOptions, fetchPayeeOptions, createNewPayee } from '@/actions/index';
+import { SelectOption } from '@/types/select-option';
 
 const NewBankingTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
-  const [payees, setPayees] = useState<{ label: string; value: string }[]>([]);
+  const [payees, setPayees] = useState<SelectOption[]>([]);
   const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { accountId, isBankingOpen, onClose } = useNewTransaction();
@@ -26,29 +24,11 @@ const NewBankingTransactionSheet = () => {
   }, []);
 
   async function fetchAllPayees() {
-    const result = await fetchPayees();
-
-    const payeeOptions = result.map((str) => {
-      return {
-        label: str.name,
-        value: str.name,
-      };
-    });
-
-    setPayees(payeeOptions);
+    setPayees(await fetchPayeeOptions());
   }
 
   async function fetchAllCategories() {
-    const result = await fetchCategories();
-
-    const categoryOptions = result.map((str) => {
-      return {
-        label: str.name,
-        value: str.name,
-      };
-    });
-
-    setCategories(categoryOptions);
+    setCategories(await fetchCategoryOptions());
   }
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
@@ -70,8 +50,7 @@ const NewBankingTransactionSheet = () => {
   const onCreatePayee = async (name: string) => {
     setIsPending(true);
 
-    await createNewPayee({ name, accountId });
-
+    await createNewPayee(name);
     await fetchAllPayees();
 
     setIsPending(false);
@@ -80,8 +59,7 @@ const NewBankingTransactionSheet = () => {
   const onCreateCategory = async (name: string) => {
     setIsPending(true);
 
-    await createNewCategory({ name, accountId });
-
+    await createNewCategory(name);
     await fetchAllCategories();
 
     setIsPending(false);

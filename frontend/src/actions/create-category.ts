@@ -2,7 +2,6 @@
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
 import { createCategory } from '@/../../backend/src/appsync/api/mutations';
-import { revalidatePath } from 'next/cache';
 import { schema } from '@/types/category';
 
 interface CreateCategoryFormState {
@@ -12,7 +11,7 @@ interface CreateCategoryFormState {
   };
 }
 
-export async function createNewCategory({ name, accountId }: { name: string; accountId: string }): Promise<CreateCategoryFormState> {
+export async function createNewCategory(name: string): Promise<CreateCategoryFormState> {
   const result = schema.safeParse({
     name,
   });
@@ -38,8 +37,6 @@ export async function createNewCategory({ name, accountId }: { name: string; acc
       return { errors: { _form: ['An unknown error occurred'] } };
     }
   }
-
-  revalidatePath(`/accounts/${accountId}`, 'layout');
 
   return { errors: {} };
 }

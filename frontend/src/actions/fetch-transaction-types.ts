@@ -1,6 +1,8 @@
 'use server';
 
-export async function fetchTransactionTypes() {
+import { SelectOption } from '@/types/select-option';
+
+export async function fetchTransactionTypeOptions(): Promise<SelectOption[]> {
   return [
     { label: 'Buy', value: 'Buy' },
     { label: 'Sell', value: 'Sell' },

@@ -2,7 +2,6 @@
 
 import { cookieBasedClient } from '@/utils/amplifyServerUtils';
 import { createPayee } from '@/../../backend/src/appsync/api/mutations';
-import { revalidatePath } from 'next/cache';
 import { schema } from '@/types/payee';
 
 interface CreatePayeeFormState {
@@ -12,7 +11,7 @@ interface CreatePayeeFormState {
   };
 }
 
-export async function createNewPayee({ name, accountId }: { name: string; accountId: string }): Promise<CreatePayeeFormState> {
+export async function createNewPayee(name: string): Promise<CreatePayeeFormState> {
   const result = schema.safeParse({
     name,
   });
@@ -38,8 +37,6 @@ export async function createNewPayee({ name, accountId }: { name: string; accoun
       return { errors: { _form: ['An unknown error occurred'] } };
     }
   }
-
-  revalidatePath(`/accounts/${accountId}`, 'layout');
 
   return { errors: {} };
 }
