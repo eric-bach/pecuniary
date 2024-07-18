@@ -7,13 +7,16 @@ import { DataTable } from '@/components/data-table';
 import { columns } from '@/app/(main)/accounts/columns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { fetchAccounts } from '@/actions';
 
-interface ManageAccountsProps {
-  accounts: [Account];
-}
-
-const ManageAccounts = ({ accounts }: ManageAccountsProps) => {
+const ManageAccounts = () => {
   const newAccount = useNewAccount();
+
+  const { data } = useQuery({
+    queryKey: ['accounts'],
+    queryFn: () => fetchAccounts(),
+  });
 
   return (
     <div className='mx-auto w-full max-w-screen-2xl pb-10'>
@@ -28,7 +31,7 @@ const ManageAccounts = ({ accounts }: ManageAccountsProps) => {
         </CardHeader>
 
         <CardContent>
-          <DataTable filterKey='name' columns={columns} data={accounts} />
+          <DataTable filterKey='name' columns={columns} data={data ?? []} />
         </CardContent>
       </Card>
     </div>
