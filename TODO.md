@@ -35,9 +35,6 @@ X Add sorting to table
 X Create payee/category on add
 X Create symbol on add
 
-- Switch to tanstack-query - https://docs.amplify.aws/gen1/react/build-a-backend/graphqlapi/optimistic-ui/
-- Add technologies used to README
-
 - Events
 - Create/Update Position on InvestmentTransactionCreated
 - Create TimeSeries data when SymbolCreated
