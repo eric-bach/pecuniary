@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 import { DatePicker } from '@/components/date-picker';
-import { Select as CreatableSelect } from '@/components/select';
+import { CreatableSelect } from '@/components/creatable-select';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AmountInput } from '@/components/amount-input';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';

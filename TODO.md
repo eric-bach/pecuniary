@@ -36,7 +36,7 @@ X Create payee/category on add
 X Create symbol on add
 
 - Add pages to manage payees, categories, symbols
-- After adding new category/payee/symbol, editing item doesn't show newly added type
+- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item
 
 - Events
 - Create/Update Position on InvestmentTransactionCreated
