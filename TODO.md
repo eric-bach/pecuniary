@@ -35,7 +35,8 @@ X Add sorting to table
 X Create payee/category on add
 X Create symbol on add
 
-- Switch to tanstack-query - https://docs.amplify.aws/gen1/react/build-a-backend/graphqlapi/optimistic-ui/
+- Add pages to manage payees, categories, symbols
+- After adding new category/payee/symbol, editing item doesn't show newly added type
 
 - Events
 - Create/Update Position on InvestmentTransactionCreated

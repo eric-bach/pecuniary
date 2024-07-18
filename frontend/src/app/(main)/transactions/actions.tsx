@@ -17,6 +17,7 @@ type TransactionsProps = {
 
 export const Actions = ({ transaction }: TransactionsProps) => {
   const [isOpen, setOpen] = useState<boolean>(false);
+  const [isPending, setPending] = useState<boolean>(false);
 
   const { toast } = useToast();
   const { onOpen: onBankingOpen } = useOpenBankTransaction();
@@ -27,11 +28,13 @@ export const Actions = ({ transaction }: TransactionsProps) => {
   };
 
   const handleConfirm = async () => {
+    setPending(true);
     await deleteExistingTransaction(transaction);
 
-    handleClose();
-
     // TODO Handle if delete fails
+
+    setPending(false);
+    handleClose();
     toast({ title: 'Success!', description: 'Transaction was successfully deleted' });
   };
 
@@ -51,9 +54,10 @@ export const Actions = ({ transaction }: TransactionsProps) => {
     <>
       <DeleteItem
         isOpen={isOpen}
+        disabled={isPending}
+        dialogTitle={`Are you sure you want to delete this transaction?`}
         handleClose={handleClose}
         handleConfirm={handleConfirm}
-        dialogTitle={`Are you sure you want to delete this transaction?`}
       />
 
       <DropdownMenu>

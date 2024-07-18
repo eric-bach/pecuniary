@@ -17,6 +17,7 @@ type ActionsProps = {
 
 export const Actions = ({ account }: ActionsProps) => {
   const [isOpen, setOpen] = useState<boolean>(false);
+  const [isPending, setPending] = useState<boolean>(false);
 
   const router = useRouter();
   const { toast } = useToast();
@@ -27,11 +28,13 @@ export const Actions = ({ account }: ActionsProps) => {
   };
 
   const handleConfirm = async () => {
+    setPending(true);
     await deleteExistingAccount(account.accountId);
 
-    handleClose();
-
     // TODO Handle if delete fails
+
+    setPending(false);
+    handleClose();
     toast({ title: 'Success!', description: 'Account was successfully deleted' });
   };
 
@@ -43,9 +46,10 @@ export const Actions = ({ account }: ActionsProps) => {
     <>
       <DeleteItem
         isOpen={isOpen}
+        dialogTitle={`Are you sure you want to delete this account?`}
+        disabled={isPending}
         handleClose={handleClose}
         handleConfirm={handleConfirm}
-        dialogTitle={`Are you sure you want to delete this account?`}
       />
 
       <DropdownMenu>

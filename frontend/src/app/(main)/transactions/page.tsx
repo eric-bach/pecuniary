@@ -6,7 +6,7 @@ import InvestmentTransactions from '@/features/investment-transactions/index';
 import { BankTransaction, InvestmentTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 
 const Transactions = async ({ accountId, accountCategory }: { accountId: string; accountCategory: string }) => {
-  if (accountCategory === 'banking') {
+  if (accountCategory === 'banking' || accountCategory === 'credit card') {
     const bankTransactions: [BankTransaction] = await actions.fetchBankTransactions(accountId);
 
     return <BankingTransactions accountId={accountId} transactions={bankTransactions as [BankTransaction]} />;
