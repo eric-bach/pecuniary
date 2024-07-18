@@ -4,11 +4,16 @@ import {
   Account,
   Aggregates,
   BankTransaction,
+  Category,
   DeleteResponse,
   GetAccountsResponse,
   GetBankTransactionsResponse,
+  GetCategoriesResponse,
   GetInvestmentTransactionsResponse,
+  GetPayeesResponse,
+  GetSymbolsResponse,
   InvestmentTransaction,
+  Payee,
 } from './codegen/appsync';
 
 export type Query<InputType, OutputType> = string & {
@@ -62,4 +67,28 @@ export type UpdateInvestmentTransactionMutation = {
 
 export type DeleteTransactionMutation = {
   deleteTransaction: DeleteResponse;
+};
+
+export type CreateCategoryMutation = {
+  createCategory: Category;
+};
+
+export type GetCategoriesQuery = {
+  getCategories: GetCategoriesResponse;
+};
+
+export type CreatePayeeMutation = {
+  createPayee: Payee;
+};
+
+export type GetPayeesQuery = {
+  getPayees: GetPayeesResponse;
+};
+
+export type CreateSymbolMutation = {
+  createSymbol: Symbol;
+};
+
+export type GetSymbolsQuery = {
+  getSymbols: GetSymbolsResponse;
 };

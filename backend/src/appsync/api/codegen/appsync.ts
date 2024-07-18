@@ -56,6 +56,15 @@ export type BankTransaction = {
   userId: Scalars['String']['output'];
 };
 
+export type Category = {
+  __typename?: 'Category';
+  createdAt: Scalars['String']['output'];
+  entity: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  pk: Scalars['ID']['output'];
+  updatedAt: Scalars['AWSDateTime']['output'];
+};
+
 export type CreateAccountInput = {
   category: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -127,15 +136,33 @@ export type GetBankTransactionsResponse = {
   nextToken?: Maybe<Scalars['String']['output']>;
 };
 
+export type GetCategoriesResponse = {
+  __typename?: 'GetCategoriesResponse';
+  items?: Maybe<Array<Maybe<Category>>>;
+  nextToken?: Maybe<Scalars['String']['output']>;
+};
+
 export type GetInvestmentTransactionsResponse = {
   __typename?: 'GetInvestmentTransactionsResponse';
   items?: Maybe<Array<Maybe<InvestmentTransaction>>>;
   nextToken?: Maybe<Scalars['String']['output']>;
 };
 
+export type GetPayeesResponse = {
+  __typename?: 'GetPayeesResponse';
+  items?: Maybe<Array<Maybe<Payee>>>;
+  nextToken?: Maybe<Scalars['String']['output']>;
+};
+
 export type GetPositionsResponse = {
   __typename?: 'GetPositionsResponse';
   items?: Maybe<Array<Maybe<Position>>>;
+  nextToken?: Maybe<Scalars['String']['output']>;
+};
+
+export type GetSymbolsResponse = {
+  __typename?: 'GetSymbolsResponse';
+  items?: Maybe<Array<Maybe<Symbol>>>;
   nextToken?: Maybe<Scalars['String']['output']>;
 };
 
@@ -160,7 +187,10 @@ export type Mutation = {
   __typename?: 'Mutation';
   createAccount?: Maybe<Account>;
   createBankTransaction?: Maybe<BankTransaction>;
+  createCategory?: Maybe<Category>;
   createInvestmentTransaction?: Maybe<InvestmentTransaction>;
+  createPayee?: Maybe<Payee>;
+  createSymbol?: Maybe<Symbol>;
   deleteAccount?: Maybe<Aggregates>;
   deleteTransaction?: Maybe<DeleteResponse>;
   updateAccount?: Maybe<Account>;
@@ -179,8 +209,23 @@ export type MutationCreateBankTransactionArgs = {
 };
 
 
+export type MutationCreateCategoryArgs = {
+  name: Scalars['String']['input'];
+};
+
+
 export type MutationCreateInvestmentTransactionArgs = {
   input: CreateInvestmentTransactionInput;
+};
+
+
+export type MutationCreatePayeeArgs = {
+  name: Scalars['String']['input'];
+};
+
+
+export type MutationCreateSymbolArgs = {
+  name: Scalars['String']['input'];
 };
 
 
@@ -208,6 +253,15 @@ export type MutationUpdateInvestmentTransactionArgs = {
   input: UpdateInvestmentTransactionInput;
 };
 
+export type Payee = {
+  __typename?: 'Payee';
+  createdAt: Scalars['String']['output'];
+  entity: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  pk: Scalars['ID']['output'];
+  updatedAt: Scalars['AWSDateTime']['output'];
+};
+
 export type Position = {
   __typename?: 'Position';
   acb: Scalars['Float']['output'];
@@ -233,8 +287,11 @@ export type Query = {
   getAccounts?: Maybe<GetAccountsResponse>;
   getAggregate?: Maybe<Aggregates>;
   getBankTransactions?: Maybe<GetBankTransactionsResponse>;
+  getCategories?: Maybe<GetCategoriesResponse>;
   getInvestmentTransactions?: Maybe<GetInvestmentTransactionsResponse>;
+  getPayees?: Maybe<GetPayeesResponse>;
   getPositions?: Maybe<GetPositionsResponse>;
+  getSymbols?: Maybe<GetSymbolsResponse>;
 };
 
 
@@ -260,8 +317,18 @@ export type QueryGetBankTransactionsArgs = {
 };
 
 
+export type QueryGetCategoriesArgs = {
+  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryGetInvestmentTransactionsArgs = {
   accountId: Scalars['String']['input'];
+  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetPayeesArgs = {
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -269,6 +336,20 @@ export type QueryGetInvestmentTransactionsArgs = {
 export type QueryGetPositionsArgs = {
   accountId: Scalars['String']['input'];
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetSymbolsArgs = {
+  lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Symbol = {
+  __typename?: 'Symbol';
+  createdAt: Scalars['String']['output'];
+  entity: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  pk: Scalars['ID']['output'];
+  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type UpdateAccountInput = {

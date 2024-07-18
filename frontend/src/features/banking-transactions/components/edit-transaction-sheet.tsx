@@ -7,15 +7,31 @@ import { editExistingBankTransaction } from '@/actions';
 import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
 import { bankingSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
+import { createNewCategory, fetchCategoryOptions, fetchPayeeOptions, createNewPayee } from '@/actions/index';
 
 const EditBankTransactionSheet = () => {
+  const [isPending, setIsPending] = useState(false);
+  const [payees, setPayees] = useState<{ label: string; value: string }[]>([]);
+  const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { isOpen, onClose, transaction } = useOpenBankTransaction();
-  const [isPending, setIsPending] = useState(false);
 
   const trans = transaction as BankTransaction;
+
+  useEffect(() => {
+    fetchAllPayees();
+    fetchAllCategories();
+  }, []);
+
+  async function fetchAllPayees() {
+    setPayees(await fetchPayeeOptions());
+  }
+
+  async function fetchAllCategories() {
+    setCategories(await fetchCategoryOptions());
+  }
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
     setIsPending(true);
@@ -26,21 +42,34 @@ const EditBankTransactionSheet = () => {
       pk: `trans#${values.accountId}`,
       amount: parseFloat(values.amount),
       transactionId: values.transactionId!,
-
       transactionDate: values.transactionDate.toDateString(),
       createdAt: values.createdAt!,
     };
 
-    console.log('data', data);
-
-    const result = await editExistingBankTransaction(data);
-
-    console.log('result', result);
+    await editExistingBankTransaction(data);
 
     onClose();
     setIsPending(false);
 
     toast({ title: 'Success!', description: 'Transaction was successfully updated' });
+  };
+
+  const onCreatePayee = async (name: string) => {
+    setIsPending(true);
+
+    await createNewPayee(name);
+    await fetchAllPayees();
+
+    setIsPending(false);
+  };
+
+  const onCreateCategory = async (name: string) => {
+    setIsPending(true);
+
+    await createNewCategory(name);
+    await fetchAllCategories();
+
+    setIsPending(false);
   };
 
   return (
@@ -65,6 +94,10 @@ const EditBankTransactionSheet = () => {
               amount: trans?.amount.toString(),
               createdAt: trans?.createdAt,
             }}
+            payeeOptions={payees}
+            onCreatePayee={onCreatePayee}
+            categoryOptions={categories}
+            onCreateCategory={onCreateCategory}
           />
         </SheetContent>
       </Sheet>

@@ -17,22 +17,22 @@ type Props = {
   defaultValues?: z.infer<typeof bankingSchema>;
   onSubmit: (values: z.infer<typeof bankingSchema>) => void;
   disabled?: boolean;
+  payeeOptions: { label: string; value: string }[];
+  onCreatePayee: (name: string) => void;
+  categoryOptions: { label: string; value: string }[];
+  onCreateCategory: (name: string) => void;
 };
 
-const payees: [{ label: string; value: string }] = [
-  {
-    label: 'Apple Inc.',
-    value: 'Apple Inc.',
-  },
-];
-const categories: [{ label: string; value: string }] = [
-  {
-    label: 'Groceries',
-    value: 'Groceries',
-  },
-];
-
-const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Props) => {
+const TransactionForm = ({
+  transaction,
+  defaultValues,
+  onSubmit,
+  disabled,
+  payeeOptions,
+  onCreatePayee,
+  categoryOptions,
+  onCreateCategory,
+}: Props) => {
   const form = useForm<z.infer<typeof bankingSchema>>({
     resolver: zodResolver(bankingSchema),
     defaultValues,
@@ -107,8 +107,8 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Payee</FormLabel>
               <FormControl>
                 <CreatableSelect
-                  options={payees}
-                  onCreate={() => console.log('Create payee')}
+                  options={payeeOptions}
+                  onCreate={onCreatePayee}
                   value={field.value}
                   onChange={field.onChange}
                   //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
@@ -128,8 +128,8 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Category</FormLabel>
               <FormControl>
                 <CreatableSelect
-                  options={categories}
-                  onCreate={() => console.log('Create category')}
+                  options={categoryOptions}
+                  onCreate={onCreateCategory}
                   value={field.value}
                   onChange={field.onChange}
                   //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'

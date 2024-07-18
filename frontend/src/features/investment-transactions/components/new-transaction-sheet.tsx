@@ -4,15 +4,31 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import * as z from 'zod';
 import TransactionForm from './transaction-form';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
-import { createNewInvestmentTransaction } from '@/actions';
+import { createNewInvestmentTransaction, fetchTransactionTypeOptions, fetchSymbolOptions, createNewSymbol } from '@/actions';
 import { investmentSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const NewInvestmentTransactionSheet = () => {
+  const [isPending, setIsPending] = useState(false);
+  const [symbols, setSymbols] = useState<{ label: string; value: string }[]>([]);
+  const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
+
   const { toast } = useToast();
   const { accountId, isInvestmentOpen, onClose } = useNewTransaction();
-  const [isPending, setIsPending] = useState(false);
+
+  useEffect(() => {
+    fetchAllSymbols();
+    fetchAllTransactionTypes();
+  }, []);
+
+  async function fetchAllSymbols() {
+    setSymbols(await fetchSymbolOptions());
+  }
+
+  async function fetchAllTransactionTypes() {
+    setTransactionTypes(await fetchTransactionTypeOptions());
+  }
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
@@ -29,6 +45,15 @@ const NewInvestmentTransactionSheet = () => {
 
     setIsPending(false);
     toast({ title: 'Success!', description: 'Transaction was successfully created' });
+  };
+
+  const onCreateSymbol = async (name: string) => {
+    setIsPending(true);
+
+    await createNewSymbol(name);
+    await fetchAllSymbols();
+
+    setIsPending(false);
   };
 
   return (
@@ -51,6 +76,9 @@ const NewInvestmentTransactionSheet = () => {
             price: '',
             commission: '',
           }}
+          symbolOptions={symbols}
+          onCreateSymbol={onCreateSymbol}
+          transactionTypeOptions={transactionTypes}
         />
       </SheetContent>
     </Sheet>

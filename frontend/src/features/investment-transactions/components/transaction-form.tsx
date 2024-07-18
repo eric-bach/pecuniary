@@ -19,26 +19,20 @@ type Props = {
   defaultValues?: z.infer<typeof investmentSchema>;
   onSubmit: (values: z.infer<typeof investmentSchema>) => void;
   disabled?: boolean;
+  symbolOptions: { label: string; value: string }[];
+  onCreateSymbol: (name: string) => void;
+  transactionTypeOptions: { label: string; value: string }[];
 };
 
-const symbols = [
-  { label: 'AAPL', value: 'AAPL' },
-  { label: 'GOOGL', value: 'GOOGL' },
-  { label: 'AMZN', value: 'AMZN' },
-];
-const transactionTypes = [
-  { label: 'Buy', value: 'Buy' },
-  { label: 'Sell', value: 'Sell' },
-  { label: 'Dividend', value: 'Dividend' },
-  { label: 'Interest', value: 'Interest' },
-  { label: 'Transfer', value: 'Transfer' },
-  { label: 'Withdrawal', value: 'Withdrawal' },
-  { label: 'Deposit', value: 'Deposit' },
-  { label: 'Fee', value: 'Fee' },
-  { label: 'Other', value: 'Other' },
-];
-
-const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Props) => {
+const TransactionForm = ({
+  transaction,
+  defaultValues,
+  onSubmit,
+  disabled,
+  symbolOptions,
+  onCreateSymbol,
+  transactionTypeOptions,
+}: Props) => {
   const form = useForm<z.infer<typeof investmentSchema>>({
     resolver: zodResolver(investmentSchema),
     defaultValues,
@@ -113,8 +107,8 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Symbol</FormLabel>
               <FormControl>
                 <CreatableSelect
-                  options={symbols}
-                  onCreate={() => console.log('Create symbol')}
+                  options={symbolOptions}
+                  onCreate={onCreateSymbol}
                   value={field.value}
                   onChange={field.onChange}
                   //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
@@ -134,15 +128,15 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Transaction type</FormLabel>
               <Select value={field.value} onValueChange={field.onChange}>
                 <FormControl>
-                  <SelectTrigger className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'>
+                  <SelectTrigger className='border-zinc-200 dark:bg-slate-500 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'>
                     <SelectValue placeholder='Transaction type' />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Transaction type</SelectLabel>
-                    {transactionTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
+                    {transactionTypeOptions.map((type) => (
+                      <SelectItem key={type.label} value={type.value}>
                         {type.label}
                       </SelectItem>
                     ))}

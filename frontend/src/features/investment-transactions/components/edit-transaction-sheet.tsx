@@ -3,19 +3,34 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import TransactionForm from './transaction-form';
 import * as z from 'zod';
-import { editExistingInvestmentTransaction } from '@/actions';
+import { createNewSymbol, editExistingInvestmentTransaction, fetchSymbolOptions, fetchTransactionTypeOptions } from '@/actions';
 import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
 import { investmentSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InvestmentTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 
 const EditInvestmentTransactionSheet = () => {
+  const [isPending, setIsPending] = useState(false);
+  const [symbols, setSymbols] = useState<{ label: string; value: string }[]>([]);
+  const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { isOpen, onClose, transaction } = useOpenInvestmentTransaction();
-  const [isPending, setIsPending] = useState(false);
 
   const trans = transaction as InvestmentTransaction;
+
+  useEffect(() => {
+    fetchAllSymbols();
+    fetchAllTransactionTypes();
+  }, []);
+
+  async function fetchAllSymbols() {
+    setSymbols(await fetchSymbolOptions());
+  }
+
+  async function fetchAllTransactionTypes() {
+    setTransactionTypes(await fetchTransactionTypeOptions());
+  }
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
@@ -25,7 +40,6 @@ const EditInvestmentTransactionSheet = () => {
       ...values,
       pk: `trans#${values.accountId}`,
       transactionId: values.transactionId!,
-
       shares: parseFloat(values.shares),
       price: parseFloat(values.price),
       commission: parseFloat(values.commission),
@@ -33,11 +47,7 @@ const EditInvestmentTransactionSheet = () => {
       createdAt: values.createdAt!,
     };
 
-    console.log('data', data);
-
-    const result = await editExistingInvestmentTransaction(data);
-
-    console.log('result', result);
+    await editExistingInvestmentTransaction(data);
 
     onClose();
     setIsPending(false);
@@ -45,7 +55,14 @@ const EditInvestmentTransactionSheet = () => {
     toast({ title: 'Success!', description: 'Transaction was successfully updated' });
   };
 
-  console.log(trans);
+  const onCreateSymbol = async (name: string) => {
+    setIsPending(true);
+
+    await createNewSymbol(name);
+    await fetchAllSymbols();
+
+    setIsPending(false);
+  };
 
   return (
     <>
@@ -71,6 +88,9 @@ const EditInvestmentTransactionSheet = () => {
               commission: trans?.commission.toString(),
               createdAt: trans?.createdAt,
             }}
+            symbolOptions={symbols}
+            onCreateSymbol={onCreateSymbol}
+            transactionTypeOptions={transactionTypes}
           />
         </SheetContent>
       </Sheet>
