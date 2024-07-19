@@ -1,6 +1,6 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { createCategory } from '@/../../backend/src/appsync/api/mutations';
 import { schema } from '@/types/category';
 
@@ -24,7 +24,7 @@ export async function createNewCategory(name: string): Promise<CreateCategoryFor
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: createCategory,
       variables: {
         name: result.data.name,

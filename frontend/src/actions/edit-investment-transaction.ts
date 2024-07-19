@@ -1,6 +1,6 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { updateInvestmentTransaction } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -50,7 +50,7 @@ export async function editExistingInvestmentTransaction({
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: updateInvestmentTransaction,
       variables: {
         input: {

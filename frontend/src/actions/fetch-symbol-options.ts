@@ -1,12 +1,12 @@
 'use server';
 
 import { Symbol } from '../../../backend/src/appsync/api/codegen/appsync';
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { getSymbols } from '../../../backend/src/appsync/api/queries';
 import { SelectOption } from '@/types/select-option';
 
 export async function fetchSymbolOptions(): Promise<SelectOption[]> {
-  const { data } = await cookieBasedClient.graphql({
+  const { data } = await serverClient.graphql({
     query: getSymbols,
   });
 

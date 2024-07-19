@@ -1,6 +1,6 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { createAccount } from '@/../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -31,7 +31,7 @@ export async function createNewAccount({ name, category, type }: CreateAccountIn
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: createAccount,
       variables: {
         input: {

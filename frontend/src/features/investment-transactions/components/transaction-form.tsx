@@ -128,13 +128,13 @@ const TransactionForm = ({
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Transaction type</FormLabel>
               <Select value={field.value} onValueChange={field.onChange}>
                 <FormControl>
-                  <SelectTrigger className='border-zinc-200 dark:bg-slate-500 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'>
+                  <SelectTrigger className='text-zinc-500 border-zinc-200 dark:bg-slate-500 focus-visible:ring-0 dark:text-white focus-visible:ring-offset-0'>
                     <SelectValue placeholder='Transaction type' />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Transaction type</SelectLabel>
+                  <SelectGroup className='-left-2'>
+                    {/* <SelectLabel>Transaction type</SelectLabel> */}
                     {transactionTypeOptions.map((type) => (
                       <SelectItem key={type.label} value={type.value}>
                         {type.label}

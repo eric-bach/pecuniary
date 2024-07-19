@@ -1,6 +1,6 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { createPayee } from '@/../../backend/src/appsync/api/mutations';
 import { schema } from '@/types/payee';
 
@@ -24,7 +24,7 @@ export async function createNewPayee(name: string): Promise<CreatePayeeFormState
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: createPayee,
       variables: {
         name: result.data.name,

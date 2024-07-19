@@ -1,6 +1,6 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { createSymbol } from '@/../../backend/src/appsync/api/mutations';
 import { schema } from '@/types/symbol';
 
@@ -24,7 +24,7 @@ export async function createNewSymbol(name: string): Promise<CreateSymbolFormSta
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: createSymbol,
       variables: {
         name: result.data.name,

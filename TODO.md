@@ -35,13 +35,16 @@ X Add sorting to table
 X Create payee/category on add
 X Create symbol on add
 
-- Add pages to manage payees, categories, symbols
-- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item
+- Add pages to manage payees, categories, symbols using Dialog instead of Sheet
+- Style creatable select to match shadcn
 
 - Events
-- Create/Update Position on InvestmentTransactionCreated
-- Create TimeSeries data when SymbolCreated
-- Update Account on BankTransactionCreated and InvestmentTransactionCreated
+  `- Create/Update Position on InvestmentTransactionCreated
+`- Create TimeSeries data when SymbolCreated
+  `- Update Account on BankTransactionCreated and InvestmentTransactionCreated
+
+- Switch from Sheet to Dialog for Account and Transactions
+  `- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item
 
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions
