@@ -1,7 +1,7 @@
 'use server';
 
 import DisplayAccount from '@/features/accounts';
-import * as actions from '@/actions';
+import { fetchAccount } from '@/actions';
 import Transactions from '../../transactions/page';
 
 interface AccountsPageProps {
@@ -13,7 +13,7 @@ interface AccountsPageProps {
 export default async function AccountsPage({ params }: AccountsPageProps) {
   const { accountId } = params;
 
-  const account = await actions.fetchAccount(accountId);
+  const account = await fetchAccount(accountId);
 
   return (
     <>

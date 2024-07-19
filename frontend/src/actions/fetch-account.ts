@@ -1,4 +1,5 @@
 'use server';
+
 import { serverClient } from '@/utils/amplifyServerUtils';
 import { Account } from '@/../../../backend/src/appsync/api/codegen/appsync';
 import { getAccount } from '@/../../../backend/src/appsync/api/queries';
