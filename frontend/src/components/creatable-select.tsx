@@ -64,6 +64,7 @@ export const CreatableSelect = ({ value, onChange, onCreate, options = [], disab
       '&:active': {
         backgroundColor: '#dcdcdc',
       },
+      // paddingLeft: '40px', // Indent the items to the right
     }),
     singleValue: (provided: any) => ({
       ...provided,
