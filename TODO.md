@@ -36,6 +36,9 @@ X Create payee/category on add
 X Create symbol on add
 
 - Add pages to manage payees, categories, symbols using Dialog instead of Sheet
+  X Add Dialog to create and edit Payees
+  - Add backend to create and edit Categories
+  - Add Dialog to create and edit Categories
 - Style creatable select to match shadcn
 - Default creatable values on edit
 - Switch to shadcn blocks - login

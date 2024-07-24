@@ -1,23 +1,26 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { createPayee } from '@/../../backend/src/appsync/api/mutations';
-import { schema } from '@/types/payee';
+import { updatePayee } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
+import { MutationUpdatePayeeArgs } from '../../../backend/src/appsync/api/codegen/appsync';
+import { schema } from '@/types/payee';
 
-interface CreatePayeeFormState {
+interface EditPayeeFormState {
   errors: {
+    pk?: string[];
+    createdAt?: string[];
     name?: string[];
     _form?: string[];
   };
 }
 
-export async function createNewPayee(name: string): Promise<CreatePayeeFormState> {
+export async function editExistingPayee({ pk, createdAt, name }: MutationUpdatePayeeArgs) {
   const result = schema.safeParse({
     name,
+    pk,
+    createdAt,
   });
-
-  console.log('Create Payee Result', result);
 
   if (!result.success) {
     return { errors: result.error.flatten().fieldErrors };
@@ -26,8 +29,10 @@ export async function createNewPayee(name: string): Promise<CreatePayeeFormState
   let data;
   try {
     data = await serverClient.graphql({
-      query: createPayee,
+      query: updatePayee,
       variables: {
+        pk: result.data.pk!,
+        createdAt: result.data.createdAt!,
         name: result.data.name,
       },
     });
@@ -39,7 +44,5 @@ export async function createNewPayee(name: string): Promise<CreatePayeeFormState
     }
   }
 
-  revalidatePath('/payees');
-
-  return { errors: {} };
+  revalidatePath('/payees', 'layout');
 }

@@ -8,6 +8,8 @@ import NewInvestmentTransactionSheet from '@/features/investment-transactions/co
 import NewBankingTransactionSheet from '@/features/banking-transactions/components/new-transaction-sheet';
 import EditBankTransactionSheet from '@/features/banking-transactions/components/edit-transaction-sheet';
 import EditInvestmentTransactionSheet from '@/features/investment-transactions/components/edit-transaction-sheet';
+import NewPayeeSheet from '@/features/payees/components/new-payee-sheet';
+import EditPayeeSheet from '@/features/payees/components/edit-payee-sheet';
 
 export const SheetProvider = () => {
   const isMounted = useMountedState();
@@ -24,6 +26,9 @@ export const SheetProvider = () => {
 
       <NewInvestmentTransactionSheet />
       <EditInvestmentTransactionSheet />
+
+      <NewPayeeSheet />
+      <EditPayeeSheet />
     </>
   );
 };

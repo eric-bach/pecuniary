@@ -195,7 +195,9 @@ export type Mutation = {
   deleteTransaction?: Maybe<DeleteResponse>;
   updateAccount?: Maybe<Account>;
   updateBankTransaction?: Maybe<BankTransaction>;
+  updateCategory?: Maybe<Category>;
   updateInvestmentTransaction?: Maybe<InvestmentTransaction>;
+  updatePayee?: Maybe<Payee>;
 };
 
 
@@ -249,8 +251,22 @@ export type MutationUpdateBankTransactionArgs = {
 };
 
 
+export type MutationUpdateCategoryArgs = {
+  createdAt: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  pk: Scalars['String']['input'];
+};
+
+
 export type MutationUpdateInvestmentTransactionArgs = {
   input: UpdateInvestmentTransactionInput;
+};
+
+
+export type MutationUpdatePayeeArgs = {
+  createdAt: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  pk: Scalars['String']['input'];
 };
 
 export type Payee = {

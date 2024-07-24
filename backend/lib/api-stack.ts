@@ -236,6 +236,13 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createPayee.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
+    const updatePayeeFunction = new AppsyncFunction(this, 'updatePayeeFunction', {
+      name: 'updatePayee',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updatePayee.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
     const getPayeesFunction = new AppsyncFunction(this, 'getPayeesFunction', {
       name: 'getPayees',
       api: api,
@@ -358,6 +365,14 @@ export class ApiStack extends Stack {
       fieldName: 'createPayee',
       runtime: FunctionRuntime.JS_1_0_0,
       pipelineConfig: [createPayeeFunction],
+      code: passthrough,
+    });
+    const updatePayeeResolver = new Resolver(this, 'updatePayeeResolver', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'updatePayee',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [updatePayeeFunction],
       code: passthrough,
     });
     const getPayeesResolver = new Resolver(this, 'getPayeesResolver', {

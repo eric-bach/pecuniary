@@ -10,6 +10,7 @@ import {
   MutationUpdateAccountArgs,
   MutationUpdateBankTransactionArgs,
   MutationUpdateInvestmentTransactionArgs,
+  MutationUpdatePayeeArgs,
 } from './codegen/appsync';
 import {
   CreateAccountMutation,
@@ -24,6 +25,7 @@ import {
   CreateCategoryMutation,
   CreatePayeeMutation,
   CreateSymbolMutation,
+  UpdatePayeeMutation,
 } from './types';
 
 export const createAccount = `mutation CreateAccount($input: CreateAccountInput!) {
@@ -140,6 +142,15 @@ export const createPayee = `mutation CreatePayee($name: String!) {
     updatedAt
   }
 }` as Query<MutationCreatePayeeArgs, CreatePayeeMutation>;
+
+export const updatePayee = `mutation UpdatePayee($name: String!, $pk: String!, $createdAt: String!) {
+  updatePayee(name: $name, pk: $pk, createdAt: $createdAt) { 
+    pk
+    name
+    createdAt
+    updatedAt
+  }
+}` as Query<MutationUpdatePayeeArgs, UpdatePayeeMutation>;
 
 export const createSymbol = `mutation CreateSymbol($name: String!) {
   createSymbol(name: $name) { 

@@ -86,6 +86,7 @@ export const getInvestmentTransactions = `query GetBankTransactions($accountId: 
 export const getCategories = `query GetCategories($lastEvaluatedKey: String) {
   getCategories(lastEvaluatedKey: $lastEvaluatedKey) {
     items {
+      pk
       name
       createdAt
       updatedAt
@@ -97,6 +98,7 @@ export const getCategories = `query GetCategories($lastEvaluatedKey: String) {
 export const getPayees = `query GetPayees($lastEvaluatedKey: String) {
   getPayees(lastEvaluatedKey: $lastEvaluatedKey) {
     items {
+      pk
       name
       createdAt
       updatedAt
@@ -108,6 +110,7 @@ export const getPayees = `query GetPayees($lastEvaluatedKey: String) {
 export const getSymbols = `query GetSymbols($lastEvaluatedKey: String) {
   getSymbols(lastEvaluatedKey: $lastEvaluatedKey) {
     items {
+      pk
       name
       createdAt
       updatedAt

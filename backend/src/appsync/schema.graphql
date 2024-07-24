@@ -242,7 +242,9 @@ type Mutation {
   deleteAccount(accountId: String!): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   createCategory(name: String!): Category @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updateCategory(name: String!, pk: String!, createdAt: String!): Category @aws_cognito_user_pools(cognito_groups: ["Users"])
   createPayee(name: String!): Payee @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updatePayee(name: String!, pk: String!, createdAt: String!): Payee @aws_cognito_user_pools(cognito_groups: ["Users"])
   createSymbol(name: String!): Symbol @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   createBankTransaction(input: CreateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
