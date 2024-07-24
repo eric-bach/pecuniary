@@ -1,15 +1,14 @@
-import { fetchPayeeOptions } from '@/actions';
+import { fetchPayees } from '@/actions/fetch-payees';
+import Payees from '@/features/payees';
 
-const Payee = async () => {
-  const payees = await fetchPayeeOptions();
+const PayeesPage = async () => {
+  const payees = await fetchPayees();
 
   return (
-    <div>
-      {payees.map((p) => {
-        return <div key={p.label}>{p.value}</div>;
-      })}
+    <div className='mx-auto w-full max-w-screen-2xl pb-10'>
+      <Payees payees={payees} />
     </div>
   );
 };
 
-export default Payee;
+export default PayeesPage;

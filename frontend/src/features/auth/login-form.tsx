@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { handleSignIn } from '@/lib/cognitoActions';
+import { useState } from 'react';
 
 const formSchema = z.object({
   email: z.string().min(1, { message: 'Title is required' }).email({ message: 'Please enter a valid email' }),
@@ -15,6 +16,8 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  const [isPending, setIsPending] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -24,13 +27,15 @@ const LoginForm = () => {
   });
 
   const handleSubmit = (data: z.infer<typeof formSchema>) => {
+    setIsPending(true);
     handleSignIn(undefined, { email: data.email, password: data.password });
+    setIsPending(false);
   };
 
   return (
-    <Card>
+    <Card className='mx-auto max-w-sm'>
       <CardHeader>
-        <CardTitle>Sign In</CardTitle>
+        <CardTitle className='text-2xl'>Sign in</CardTitle>
         <CardDescription>Please sign into your account</CardDescription>
       </CardHeader>
       <CardContent className='space-y-2'>
@@ -76,7 +81,7 @@ const LoginForm = () => {
                 Forgot your password?
               </a>
             </div>
-            <Button type='submit' className='w-full bg-slate-800 hover:bg-slate-600 text-white rounded'>
+            <Button type='submit' disabled={isPending} className='w-full bg-slate-800 hover:bg-slate-600 text-white rounded'>
               Sign In
             </Button>
           </form>

@@ -1,10 +1,7 @@
 'use client';
 
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { DataTable } from '@/components/data-table';
 import { bankingColumns } from '@/app/(main)/transactions/banking-columns';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
 import { BankTransaction } from '../../../../backend/src/appsync/api/codegen/appsync';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
 
@@ -17,21 +14,13 @@ const BankingTransactions = ({ accountId, transactions }: BankingTransactionsPro
   const newTransaction = useNewTransaction();
 
   return (
-    <Card className='border-none drop-shadow-sm'>
-      <CardHeader className='gap-y-2 justify-between'>
-        <div className='gap-y-2 flex justify-between'>
-          <p>Date Filter</p>
-
-          <Button size='sm' onClick={() => newTransaction.onBankingOpen(accountId)}>
-            <Plus className='size-4 mr-2' />
-            Add New
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <DataTable filterKey='transactionDate' columns={bankingColumns} data={transactions} />
-      </CardContent>
-    </Card>
+    <DataTable
+      filterKey='transactionDate'
+      title='Transactions'
+      columns={bankingColumns}
+      data={transactions}
+      onClick={() => newTransaction.onBankingOpen(accountId)}
+    />
   );
 };
 

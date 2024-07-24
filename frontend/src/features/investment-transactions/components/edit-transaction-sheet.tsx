@@ -69,8 +69,8 @@ const EditInvestmentTransactionSheet = () => {
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent className='min-w-[600px] sm:w-[480px]'>
           <SheetHeader>
-            <SheetTitle>Edit Account</SheetTitle>
-            <SheetDescription>Edit account</SheetDescription>
+            <SheetTitle>Edit Transaction</SheetTitle>
+            <SheetDescription>Edit transaction</SheetDescription>
           </SheetHeader>
 
           <TransactionForm
