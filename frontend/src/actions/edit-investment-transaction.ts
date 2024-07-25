@@ -21,8 +21,7 @@ interface EditInvestmentTransactionFormState {
 }
 
 export async function editExistingInvestmentTransaction({
-  pk,
-  createdAt,
+  accountId,
   transactionId,
   transactionDate,
   symbol,
@@ -32,9 +31,7 @@ export async function editExistingInvestmentTransaction({
   type,
 }: UpdateInvestmentTransactionInput): Promise<EditInvestmentTransactionFormState> {
   const result = investmentSchema.safeParse({
-    pk,
-    accountId: pk.split('#')[1],
-    createdAt,
+    accountId,
     transactionId,
     transactionDate: new Date(transactionDate),
     symbol,
@@ -54,8 +51,7 @@ export async function editExistingInvestmentTransaction({
       query: updateInvestmentTransaction,
       variables: {
         input: {
-          pk: `trans#${result.data.accountId}`,
-          createdAt: result.data.createdAt!,
+          accountId: result.data.accountId!,
           transactionId: result.data.transactionId!,
           transactionDate: new Date(transactionDate).toISOString().split('T')[0],
           type: result.data.type,
@@ -74,6 +70,6 @@ export async function editExistingInvestmentTransaction({
     }
   }
 
-  revalidatePath('/', 'layout');
+  revalidatePath(`'/'`, 'layout');
   redirect(`/accounts/${result.data.accountId}`);
 }

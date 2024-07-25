@@ -38,7 +38,7 @@ const EditInvestmentTransactionSheet = () => {
     // TODO Fix this type error
     const data = {
       ...values,
-      pk: `trans#${values.accountId}`,
+      accountId: values.accountId,
       transactionId: values.transactionId!,
       shares: parseFloat(values.shares),
       price: parseFloat(values.price),

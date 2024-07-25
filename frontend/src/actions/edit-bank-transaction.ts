@@ -21,18 +21,16 @@ interface EditBankTransactionFormState {
 }
 
 export async function editExistingBankTransaction({
-  pk,
+  accountId,
   transactionId,
-  createdAt,
   transactionDate,
   payee,
   category,
   amount,
 }: UpdateBankTransactionInput): Promise<EditBankTransactionFormState> {
   const result = bankingSchema.safeParse({
-    accountId: pk.split('#')[1],
+    accountId,
     transactionId,
-    createdAt,
     transactionDate: new Date(transactionDate),
     payee,
     category,
@@ -49,8 +47,7 @@ export async function editExistingBankTransaction({
       query: updateBankTransaction,
       variables: {
         input: {
-          pk: `trans#${result.data.accountId}`,
-          createdAt: result.data.createdAt!,
+          accountId: result.data.accountId!,
           transactionId: result.data.transactionId!,
           transactionDate: new Date(transactionDate).toISOString().split('T')[0],
           payee: result.data.payee,

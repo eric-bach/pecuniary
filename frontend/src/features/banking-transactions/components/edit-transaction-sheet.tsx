@@ -39,7 +39,7 @@ const EditBankTransactionSheet = () => {
     // TODO Fix this type error
     const data = {
       ...values,
-      pk: `trans#${values.accountId}`,
+      accountId: values.accountId,
       amount: parseFloat(values.amount),
       transactionId: values.transactionId!,
       transactionDate: values.transactionDate.toDateString(),

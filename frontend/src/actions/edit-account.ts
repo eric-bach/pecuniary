@@ -18,19 +18,12 @@ interface EditAccountFormState {
   };
 }
 
-export async function editExistingAccount({
-  accountId,
-  createdAt,
-  name,
-  category,
-  type,
-}: UpdateAccountInput): Promise<EditAccountFormState> {
+export async function editExistingAccount({ accountId, name, category, type }: UpdateAccountInput): Promise<EditAccountFormState> {
   const result = schema.safeParse({
     name,
     category,
     type,
     accountId,
-    createdAt,
   });
 
   if (!result.success) {
@@ -44,7 +37,6 @@ export async function editExistingAccount({
       variables: {
         input: {
           accountId: result.data.accountId!,
-          createdAt: result.data.createdAt!,
           name: result.data.name,
           category: result.data.category,
           type: result.data.type,

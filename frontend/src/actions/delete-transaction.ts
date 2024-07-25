@@ -22,7 +22,6 @@ export async function deleteExistingTransaction(transaction: BankTransaction | I
       variables: {
         input: {
           pk: transaction.pk,
-          createdAt: transaction.createdAt,
         },
       },
     });
