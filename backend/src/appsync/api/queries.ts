@@ -47,7 +47,6 @@ export const getBankTransactions = `query GetBankTransactions($accountId: String
   getBankTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
     items {
       pk
-      createdAt
       entity
       accountId
       transactionId
@@ -66,7 +65,6 @@ export const getInvestmentTransactions = `query GetBankTransactions($accountId: 
   getInvestmentTransactions(accountId: $accountId, lastEvaluatedKey: $lastEvaluatedKey) { 
     items {
       pk
-      createdAt
       entity
       accountId
       transactionId

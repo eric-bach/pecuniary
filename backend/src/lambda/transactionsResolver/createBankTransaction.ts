@@ -8,18 +8,21 @@ import { v4 as uuidv4 } from 'uuid';
 async function createBankTransaction(userId: string, input: CreateBankTransactionInput) {
   console.debug(`🕧 Create Bank Transaction initialized`);
 
+  const transactionId = uuidv4();
+  const datetime = new Date().toISOString();
+
   const item: BankTransaction = {
-    pk: `trans#${input.accountId}`,
-    createdAt: new Date().toISOString(),
+    pk: `trans#${transactionId}`,
     entity: 'bank-transaction',
     accountId: input.accountId,
-    transactionId: uuidv4(),
+    transactionId: transactionId,
     transactionDate: input.transactionDate,
     payee: input.payee,
     category: input.category,
     amount: input.amount,
     userId: userId,
-    updatedAt: new Date().toISOString(),
+    createdAt: datetime,
+    updatedAt: datetime,
   };
 
   const putItemCommandInput: PutItemCommandInput = {

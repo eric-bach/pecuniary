@@ -8,7 +8,6 @@ export function request(ctx: Context<MutationUpdatePayeeArgs>): DynamoDBUpdateIt
     operation: 'UpdateItem',
     key: {
       pk: util.dynamodb.toDynamoDB(ctx.args.pk),
-      createdAt: util.dynamodb.toDynamoDB(ctx.args.createdAt),
     },
     update: {
       expression: 'SET #name = :name, updatedAt = :updatedAt',

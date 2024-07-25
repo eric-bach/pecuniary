@@ -5,18 +5,19 @@ export function request(ctx: Context<MutationCreatePayeeArgs>): DynamoDBPutItemR
   console.log('🔔 CreatePayee Request: ', ctx);
 
   const payeeId = util.autoId();
+  const datetime = util.time.nowISO8601();
 
   return {
     operation: 'PutItem',
     key: {
       pk: util.dynamodb.toDynamoDB(`pay#${payeeId}`),
-      createdAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),
     },
     attributeValues: {
       entity: util.dynamodb.toDynamoDB('payee'),
       name: util.dynamodb.toDynamoDB(ctx.args.name),
       userId: util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
-      updatedAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),
+      createdAt: util.dynamodb.toDynamoDB(datetime),
+      updatedAt: util.dynamodb.toDynamoDB(datetime),
     },
   };
 }

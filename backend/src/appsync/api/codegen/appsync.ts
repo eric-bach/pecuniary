@@ -27,7 +27,7 @@ export type Account = {
   __typename?: 'Account';
   accountId: Scalars['ID']['output'];
   category: Scalars['String']['output'];
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
   entity: Scalars['String']['output'];
   name: Scalars['String']['output'];
   pk: Scalars['ID']['output'];
@@ -46,7 +46,7 @@ export type BankTransaction = {
   accountId: Scalars['ID']['output'];
   amount: Scalars['Float']['output'];
   category?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
   entity: Scalars['String']['output'];
   payee: Scalars['String']['output'];
   pk: Scalars['ID']['output'];
@@ -58,7 +58,7 @@ export type BankTransaction = {
 
 export type Category = {
   __typename?: 'Category';
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
   entity: Scalars['String']['output'];
   name: Scalars['String']['output'];
   pk: Scalars['ID']['output'];
@@ -97,7 +97,7 @@ export type Data = {
   bookValue?: Maybe<Scalars['Float']['output']>;
   category?: Maybe<Scalars['String']['output']>;
   commission?: Maybe<Scalars['Float']['output']>;
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
   currency?: Maybe<Scalars['String']['output']>;
   entity: Scalars['String']['output'];
   exchange?: Maybe<Scalars['String']['output']>;
@@ -116,11 +116,10 @@ export type Data = {
 
 export type DeleteResponse = {
   __typename?: 'DeleteResponse';
-  aggregateId?: Maybe<Scalars['String']['output']>;
+  pk?: Maybe<Scalars['String']['output']>;
 };
 
 export type DeleteTransactionInput = {
-  createdAt: Scalars['String']['input'];
   pk: Scalars['ID']['input'];
 };
 
@@ -170,7 +169,7 @@ export type InvestmentTransaction = {
   __typename?: 'InvestmentTransaction';
   accountId: Scalars['ID']['output'];
   commission: Scalars['Float']['output'];
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
   entity: Scalars['String']['output'];
   pk: Scalars['ID']['output'];
   price: Scalars['Float']['output'];
@@ -271,7 +270,7 @@ export type MutationUpdatePayeeArgs = {
 
 export type Payee = {
   __typename?: 'Payee';
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
   entity: Scalars['String']['output'];
   name: Scalars['String']['output'];
   pk: Scalars['ID']['output'];
@@ -283,7 +282,7 @@ export type Position = {
   acb: Scalars['Float']['output'];
   accountId: Scalars['ID']['output'];
   bookValue: Scalars['Float']['output'];
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
   currency: Scalars['String']['output'];
   description: Scalars['String']['output'];
   entity: Scalars['String']['output'];
@@ -361,7 +360,7 @@ export type QueryGetSymbolsArgs = {
 
 export type Symbol = {
   __typename?: 'Symbol';
-  createdAt: Scalars['String']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
   entity: Scalars['String']['output'];
   name: Scalars['String']['output'];
   pk: Scalars['ID']['output'];
@@ -371,25 +370,22 @@ export type Symbol = {
 export type UpdateAccountInput = {
   accountId: Scalars['ID']['input'];
   category: Scalars['String']['input'];
-  createdAt: Scalars['String']['input'];
   name: Scalars['String']['input'];
   type: Scalars['String']['input'];
 };
 
 export type UpdateBankTransactionInput = {
+  accountId: Scalars['ID']['input'];
   amount: Scalars['Float']['input'];
   category?: InputMaybe<Scalars['String']['input']>;
-  createdAt: Scalars['String']['input'];
   payee: Scalars['String']['input'];
-  pk: Scalars['String']['input'];
   transactionDate: Scalars['AWSDate']['input'];
   transactionId: Scalars['ID']['input'];
 };
 
 export type UpdateInvestmentTransactionInput = {
+  accountId: Scalars['ID']['input'];
   commission: Scalars['Float']['input'];
-  createdAt: Scalars['String']['input'];
-  pk: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   shares: Scalars['Float']['input'];
   symbol: Scalars['String']['input'];

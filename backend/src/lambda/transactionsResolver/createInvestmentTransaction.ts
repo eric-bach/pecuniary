@@ -8,12 +8,14 @@ import { v4 as uuidv4 } from 'uuid';
 async function createTransaction(userId: string, input: CreateInvestmentTransactionInput) {
   console.debug(`🕧 Create Investment Transaction initialized`);
 
+  const transactionId = uuidv4();
+  const datetime = new Date().toISOString();
+
   const item: InvestmentTransaction = {
-    pk: `trans#${input.accountId}`,
-    createdAt: new Date().toISOString(),
+    pk: `trans#${transactionId}`,
     entity: 'investment-transaction',
     accountId: input.accountId,
-    transactionId: uuidv4(),
+    transactionId: transactionId,
     type: input.type,
     transactionDate: input.transactionDate,
     symbol: input.symbol,
@@ -21,7 +23,8 @@ async function createTransaction(userId: string, input: CreateInvestmentTransact
     price: input.price,
     commission: input.commission,
     userId: userId,
-    updatedAt: new Date().toISOString(),
+    createdAt: datetime,
+    updatedAt: datetime,
   };
 
   const putItemCommandInput: PutItemCommandInput = {

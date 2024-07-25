@@ -13,7 +13,7 @@ export function request(ctx: Context<string>): DynamoDBBatchDeleteItemRequest {
 
   let data = [];
   for (var index in aggregates) {
-    data.push(util.dynamodb.toMapValues({ pk: aggregates[index].pk, createdAt: aggregates[index].createdAt }));
+    data.push(util.dynamodb.toMapValues({ pk: aggregates[index].pk }));
   }
 
   return {

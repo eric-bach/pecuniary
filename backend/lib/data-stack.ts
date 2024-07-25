@@ -125,10 +125,6 @@ export class DataStack extends Stack {
         name: 'pk',
         type: AttributeType.STRING,
       },
-      sortKey: {
-        name: 'createdAt',
-        type: AttributeType.STRING,
-      },
       removalPolicy: RemovalPolicy.DESTROY,
     });
     // GSIs for Data Table

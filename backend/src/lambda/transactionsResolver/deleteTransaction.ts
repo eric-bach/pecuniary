@@ -14,7 +14,6 @@ async function deleteTransaction(input: DeleteTransactionInput) {
     TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({
       pk: input.pk,
-      createdAt: input.createdAt,
     }),
     // ConditionExpression: 'symbol = :v1',
     // ExpressionAttributeValues: {
@@ -25,7 +24,7 @@ async function deleteTransaction(input: DeleteTransactionInput) {
 
   if (result.$metadata.httpStatusCode === 200) {
     // Publish event to update positions
-    await publishEventAsync('TransactionSavedEvent', input);
+    await publishEventAsync('TransactionSavedEvent', input.pk);
 
     console.log(`✅ Deleted Transaction: { result: ${result}, item: ${input} }`);
     return input;

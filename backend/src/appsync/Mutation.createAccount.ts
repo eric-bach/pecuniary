@@ -5,12 +5,12 @@ export function request(ctx: Context<MutationCreateAccountArgs>): DynamoDBPutIte
   console.log('🔔 CreateAccount Request: ', ctx);
 
   const accountId = util.autoId();
+  const datetime = util.time.nowISO8601();
 
   return {
     operation: 'PutItem',
     key: {
       pk: util.dynamodb.toDynamoDB(`acc#${accountId}`),
-      createdAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),
     },
     attributeValues: {
       entity: util.dynamodb.toDynamoDB('account'),
@@ -19,7 +19,8 @@ export function request(ctx: Context<MutationCreateAccountArgs>): DynamoDBPutIte
       type: util.dynamodb.toDynamoDB(ctx.args.input.type),
       name: util.dynamodb.toDynamoDB(ctx.args.input.name),
       userId: util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
-      updatedAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),
+      createdAt: util.dynamodb.toDynamoDB(datetime),
+      updatedAt: util.dynamodb.toDynamoDB(datetime),
     },
   };
 }

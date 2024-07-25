@@ -4,19 +4,20 @@ import { MutationCreateSymbolArgs, Symbol } from './api/codegen/appsync';
 export function request(ctx: Context<MutationCreateSymbolArgs>): DynamoDBPutItemRequest {
   console.log('🔔 CreateSymbol Request: ', ctx);
 
-  const categoryId = util.autoId();
+  const symbolId = util.autoId();
+  const datetime = util.time.nowISO8601();
 
   return {
     operation: 'PutItem',
     key: {
-      pk: util.dynamodb.toDynamoDB(`cat#${categoryId}`),
-      createdAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),
+      pk: util.dynamodb.toDynamoDB(`sym#${symbolId}`),
     },
     attributeValues: {
       entity: util.dynamodb.toDynamoDB('symbol'),
       name: util.dynamodb.toDynamoDB(ctx.args.name),
       userId: util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
-      updatedAt: util.dynamodb.toDynamoDB(util.time.nowISO8601()),
+      createdAt: util.dynamodb.toDynamoDB(datetime),
+      updatedAt: util.dynamodb.toDynamoDB(datetime),
     },
   };
 }
