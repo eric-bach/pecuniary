@@ -263,7 +263,6 @@ export type MutationUpdateInvestmentTransactionArgs = {
 
 
 export type MutationUpdatePayeeArgs = {
-  createdAt: Scalars['String']['input'];
   name: Scalars['String']['input'];
   pk: Scalars['String']['input'];
 };

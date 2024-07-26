@@ -141,11 +141,10 @@ export const createPayee = `mutation CreatePayee($name: String!) {
   }
 }` as Query<MutationCreatePayeeArgs, CreatePayeeMutation>;
 
-export const updatePayee = `mutation UpdatePayee($name: String!, $pk: String!, $createdAt: String!) {
-  updatePayee(name: $name, pk: $pk, createdAt: $createdAt) { 
+export const updatePayee = `mutation UpdatePayee($name: String!, $pk: String!) {
+  updatePayee(name: $name, pk: $pk) { 
     pk
     name
-    createdAt
     updatedAt
   }
 }` as Query<MutationUpdatePayeeArgs, UpdatePayeeMutation>;

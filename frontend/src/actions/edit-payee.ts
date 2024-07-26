@@ -9,17 +9,15 @@ import { schema } from '@/types/payee';
 interface EditPayeeFormState {
   errors: {
     pk?: string[];
-    createdAt?: string[];
     name?: string[];
     _form?: string[];
   };
 }
 
-export async function editExistingPayee({ pk, createdAt, name }: MutationUpdatePayeeArgs) {
+export async function editExistingPayee({ pk, name }: MutationUpdatePayeeArgs) {
   const result = schema.safeParse({
     name,
     pk,
-    createdAt,
   });
 
   if (!result.success) {
@@ -31,12 +29,13 @@ export async function editExistingPayee({ pk, createdAt, name }: MutationUpdateP
     data = await serverClient.graphql({
       query: updatePayee,
       variables: {
-        pk: result.data.pk!,
-        createdAt: result.data.createdAt!,
+        pk,
         name: result.data.name,
       },
     });
+    console.log('DATA', data);
   } catch (err: unknown) {
+    console.log('ERROR', err);
     if (err instanceof Error) {
       return { errors: { _form: [err.message] } };
     } else {

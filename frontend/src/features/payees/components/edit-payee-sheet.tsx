@@ -14,9 +14,9 @@ const EditPayeeSheet = () => {
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
+
     await editExistingPayee({
       pk: payee?.pk!,
-      createdAt: payee?.createdAt!,
       name: values.name,
     });
 
