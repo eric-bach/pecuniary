@@ -46,16 +46,16 @@ X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 `- Create TimeSeries data when SymbolCreated
   `- Update Account on BankTransactionCreated and InvestmentTransactionCreated
 
+- Build dashboard to display account summaries
+- Build way to regenerate positions and networth for an account using it's past transactions
+- Add more seed data tied to user
+
 - Switch from Sheet to Dialog for Account and Transactions
   `- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item
 `- BUG: Prevent creating duplicate Payees/Categories in backend especially when editing item (frontend creatable prevents it)
 - Improve error message when creating/updating items fails
 - Style creatable select to match shadcn
 - Style currency input field
-
-- Build dashboard to display account summaries
-- Build way to regenerate positions and networth for an account using it's past transactions
-- Add more seed data tied to user
 
 #### Tech Debt
 
