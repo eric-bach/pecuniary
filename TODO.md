@@ -38,6 +38,11 @@ X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 
 - Events
   `- Create/Update Position on InvestmentTransactionCreated
+      - Update createBankTransaction to publish BankTransactionCreated
+      - Update createInvestmentTransaction to publish InvestmentTransactionCreated
+      - Update api-stack eventbridge rules to listen to these events
+      - Add updateAccount to update Account balances when BankTransactionCreated
+      - Update updatePositions to upsert Positions when InvestmentTransactionCreated
 `- Create TimeSeries data when SymbolCreated
   `- Update Account on BankTransactionCreated and InvestmentTransactionCreated
 
