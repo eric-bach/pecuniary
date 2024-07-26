@@ -41,6 +41,7 @@ X Create symbol on add
   X BUG Editing transaction does not reflect on data table
   X Add Dialog to create and edit Categories
   - Enter key doesn't confirm
+  - Category entity type interferes with drop down Category
   - Prevent creating duplicate Payees in backend (frontend creatable prevents it)
 - Style creatable select to match shadcn
 - Default creatable values on edit
