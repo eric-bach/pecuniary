@@ -17,15 +17,19 @@ const EditPayeeSheet = () => {
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    // TODO Handle error
-    const result = await editExistingPayee({
+    const response = await editExistingPayee({
       pk: values.pk!,
       name: values.name,
     });
 
     onClose();
     setPending(false);
-    toast({ title: 'Success!', description: 'Payee was successfully updated' });
+
+    if (response?.errors) {
+      toast({ title: 'Failed!', description: 'Payee could not be updated' });
+    } else {
+      toast({ title: 'Success!', description: 'Payee was successfully updated' });
+    }
   };
 
   return (

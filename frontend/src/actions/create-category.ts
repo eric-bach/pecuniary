@@ -12,7 +12,7 @@ interface CreateCategoryFormState {
   };
 }
 
-export async function createNewCategory(name: string): Promise<CreateCategoryFormState> {
+export async function createNewCategory(name: string) {
   const result = schema.safeParse({
     name,
   });
@@ -40,5 +40,4 @@ export async function createNewCategory(name: string): Promise<CreateCategoryFor
   }
 
   revalidatePath('/categories');
-  return { errors: {} };
 }

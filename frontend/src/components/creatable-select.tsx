@@ -23,40 +23,38 @@ export const CreatableSelect = ({ value, onChange, onCreate, options = [], disab
   }, [options, value]);
 
   const customStyles = {
-    control: (provided: any, state: any) => ({
-      ...provided,
-      backgroundColor: '#fff',
-      borderColor: state.isFocused ? '#000' : '#ccc',
-      boxShadow: state.isFocused ? '0 0 0 1px #000' : 'none',
-      '&:hover': {
-        borderColor: state.isFocused ? '#000' : '#aaa',
-      },
-      minHeight: '38px',
-    }),
-    valueContainer: (provided: any) => ({
-      ...provided,
-      padding: '2px 8px',
-    }),
-    input: (provided: any) => ({
-      ...provided,
-      margin: '0px',
-    }),
+    // control: (provided: any, state: any) => ({
+    //   ...provided,
+    //   backgroundColor: '#fff',
+    //   borderColor: state.isFocused ? '#000' : '#ccc',
+    //   boxShadow: state.isFocused ? '0 0 0 1px #000' : 'none',
+    //   '&:hover': {
+    //     borderColor: state.isFocused ? '#000' : '#aaa',
+    //   },
+    //   minHeight: '38px',
+    // }),
+    // valueContainer: (provided: any) => ({
+    //   ...provided,
+    //   padding: '2px 8px',
+    // }),
+    // input: (provided: any) => ({
+    //   ...provided,
+    //   margin: '0px',
+    // }),
     indicatorSeparator: () => ({
       display: 'none',
     }),
     dropdownIndicator: (provided: any) => ({
       ...provided,
       color: '#999',
-      '&:hover': {
-        color: '#666',
-      },
+      // make the indicator smaller in size
     }),
-    menu: (provided: any) => ({
-      ...provided,
-      marginTop: '2px',
-      borderRadius: '4px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    }),
+    // menu: (provided: any) => ({
+    //   ...provided,
+    //   marginTop: '2px',
+    //   borderRadius: '4px',
+    //   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    // }),
     option: (provided: any, state: any) => ({
       ...provided,
       backgroundColor: state.isSelected ? '#f0f0f0' : state.isFocused ? '#e8e8e8' : '#fff',
@@ -64,12 +62,13 @@ export const CreatableSelect = ({ value, onChange, onCreate, options = [], disab
       '&:active': {
         backgroundColor: '#dcdcdc',
       },
+      fontSize: '14px',
       // paddingLeft: '40px', // Indent the items to the right
     }),
-    singleValue: (provided: any) => ({
-      ...provided,
-      color: '#333',
-    }),
+    // singleValue: (provided: any) => ({
+    //   ...provided,
+    //   color: '#333',
+    // }),
   };
 
   return (

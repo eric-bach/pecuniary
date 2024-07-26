@@ -38,7 +38,8 @@ const LoginForm = () => {
         <CardTitle className='text-2xl'>Sign in</CardTitle>
         <CardDescription>Please sign into your account</CardDescription>
       </CardHeader>
-      <CardContent className='space-y-2'>
+
+      <CardContent className='grid gap-4'>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-6'>
             <FormField
@@ -46,7 +47,7 @@ const LoginForm = () => {
               name='email'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Email</FormLabel>
+                  <FormLabel className='text-zinc-500 dark:text-white'>Email</FormLabel>
                   <FormControl>
                     <Input
                       className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
@@ -63,7 +64,16 @@ const LoginForm = () => {
               name='password'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Password</FormLabel>
+                  <div className='grid gap-2'>
+                    <div className='flex items-center'>
+                      <FormLabel className='text-zinc-500 dark:text-white'>Password</FormLabel>
+                      <div className='text-sm text-center ml-auto inline-block'>
+                        <a href='/auth/reset-password' className='text-slate-800 hover:text-slate-600'>
+                          Forgot your password?
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                   <FormControl>
                     <Input
                       className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
@@ -76,11 +86,7 @@ const LoginForm = () => {
                 </FormItem>
               )}
             />
-            <div className='text-sm text-center'>
-              <a href='/auth/reset-password' className='text-slate-800 hover:text-slate-600'>
-                Forgot your password?
-              </a>
-            </div>
+
             <Button type='submit' disabled={isPending} className='w-full bg-slate-800 hover:bg-slate-600 text-white rounded'>
               Sign In
             </Button>

@@ -8,60 +8,37 @@ import { useOpenAccount } from '@/hooks/use-open-account';
 import { schema } from '@/types/account';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
+import { EditAccountFormState } from '@/actions/edit-account';
 
 const EditAccountSheet = () => {
   const { toast } = useToast();
   const { isOpen, onClose, account } = useOpenAccount();
   const [isPending, setIsPending] = useState(false);
+  const [result, setResult] = useState<EditAccountFormState>();
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setIsPending(true);
-    // console.log('Account Sheet values', { values });
 
-    // TODO Fix this type error
     const data = {
       accountId: values.accountId!,
       name: values.name,
       category: values.category,
       type: values.type,
-      createdAt: values.createdAt!,
+      createdAt: values.createdAt,
     };
 
-    const result = await editExistingAccount(data);
-    // console.log('Edit Account Sheet result', { result });
+    const response = await editExistingAccount(data);
+
+    if (response?.errors) {
+      setResult(response);
+      return;
+    }
 
     onClose();
     setIsPending(false);
 
     toast({ title: 'Success!', description: 'Account was successfully updated' });
   };
-
-  // function getAccount(id: string, callback: (account: Account) => void): void {
-  //   (async function () {
-  //     const account = await fetchAccount(id);
-  //     callback(account);
-  //   })();
-  // }
-
-  // let defaultValues;
-  // function handleAccount(account: Account) {
-  //   defaultValues = account
-  //     ? {
-  //         accountId: account.accountId,
-  //         name: account.name,
-  //         category: account.category,
-  //         type: account.type,
-  //         createdAt: account.createdAt,
-  //         updatedAt: account.updatedAt,
-  //       }
-  //     : {};
-
-  //   setLoading(false);
-  //   console.log('defaultValues', defaultValues);
-  // }
-
-  // // Call getAccount and pass the callback function
-  // getAccount(id || '', handleAccount);
 
   return (
     <>
@@ -73,6 +50,14 @@ const EditAccountSheet = () => {
           </SheetHeader>
 
           <AccountForm account={account} onSubmit={onSubmit} disabled={isPending} defaultValues={account} />
+
+          {result?.errors && (
+            <div className='text-red-500 text-sm'>
+              {Object.values(result.errors).map((error, i) => (
+                <p key={i}>{error}</p>
+              ))}
+            </div>
+          )}
         </SheetContent>
       </Sheet>
     </>

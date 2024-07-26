@@ -17,15 +17,19 @@ const EditCategorySheet = () => {
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    // TODO Handle error
-    const result = await editExistingCategory({
+    const response = await editExistingCategory({
       pk: values.pk!,
       name: values.name,
     });
 
     onClose();
     setPending(false);
-    toast({ title: 'Success!', description: 'Category was successfully updated' });
+
+    if (response?.errors) {
+      toast({ title: 'Failed!', description: 'Category could not be updated' });
+    } else {
+      toast({ title: 'Success!', description: 'Category was successfully updated' });
+    }
   };
 
   return (

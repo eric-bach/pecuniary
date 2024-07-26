@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { CreateInvestmentTransactionInput } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 
-interface CreateInvestmentTransactionFormState {
+export interface CreateInvestmentTransactionFormState {
   errors: {
     accountId?: string[];
     transactionDate?: string[];

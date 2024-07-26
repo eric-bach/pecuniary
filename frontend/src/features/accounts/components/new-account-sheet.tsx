@@ -8,18 +8,27 @@ import { createNewAccount } from '@/actions';
 import { schema } from '@/types/account';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
+import { CreateAccountFormState } from '@/actions/create-account';
 
 const NewAccountSheet = () => {
   const { toast } = useToast();
   const { isOpen, onClose } = useNewAccount();
   const [isPending, setIsPending] = useState(false);
+  const [result, setResult] = useState<CreateAccountFormState>();
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setIsPending(true);
-    await createNewAccount(values);
-    onClose();
 
+    const response = await createNewAccount(values);
+
+    if (response?.errors) {
+      setResult(response);
+      return;
+    }
+
+    onClose();
     setIsPending(false);
+
     toast({ title: 'Success!', description: 'Account was successfully created' });
   };
 
@@ -36,6 +45,14 @@ const NewAccountSheet = () => {
           disabled={isPending}
           defaultValues={{ accountId: '', name: '', category: '', type: '', createdAt: '' }}
         />
+
+        {result?.errors && (
+          <div className='text-red-500 text-sm'>
+            {Object.values(result.errors).map((error, i) => (
+              <p key={i}>{error}</p>
+            ))}
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   );

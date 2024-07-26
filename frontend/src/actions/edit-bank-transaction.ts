@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { UpdateBankTransactionInput } from '../../../backend/src/appsync/api/codegen/appsync';
 import { bankingSchema } from '@/types/transaction';
 
-interface EditBankTransactionFormState {
+export interface EditBankTransactionFormState {
   errors: {
     accountId?: string[];
     transactionDate?: string[];

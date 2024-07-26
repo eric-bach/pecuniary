@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { CreateBankTransactionInput } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { bankingSchema } from '@/types/transaction';
 
-interface CreateBankTransactionFormState {
+export interface CreateBankTransactionFormState {
   errors: {
     accountId?: string[];
     transactionDate?: string[];
@@ -27,8 +27,6 @@ export async function createNewBankTransaction({
   category,
   amount,
 }: CreateBankTransactionInput): Promise<CreateBankTransactionFormState> {
-  console.log('createNewBankTransaction', { accountId, transactionDate, payee, category, amount });
-
   const result = bankingSchema.safeParse({
     accountId,
     transactionDate: new Date(transactionDate),
@@ -36,8 +34,6 @@ export async function createNewBankTransaction({
     category,
     amount: amount.toString(),
   });
-
-  console.log('Create Transaction Result', result);
 
   if (!result.success) {
     return { errors: result.error.flatten().fieldErrors };
@@ -58,8 +54,6 @@ export async function createNewBankTransaction({
       },
     });
   } catch (err: unknown) {
-    console.log(err);
-
     if (err instanceof Error) {
       return { errors: { _form: [err.message] } };
     } else {

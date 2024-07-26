@@ -17,12 +17,16 @@ const NewCategorySheet = () => {
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    // TODO Handle error
-    const result = await createNewCategory(values.name);
+    const response = await createNewCategory(values.name);
 
     onClose();
     setPending(false);
-    toast({ title: 'Success!', description: 'Category was successfully created' });
+
+    if (response?.errors) {
+      toast({ title: 'Failed!', description: 'Category could not be created' });
+    } else {
+      toast({ title: 'Success!', description: 'Category was successfully created' });
+    }
   };
 
   return (

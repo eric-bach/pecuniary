@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { UpdateInvestmentTransactionInput } from '../../../backend/src/appsync/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 
-interface EditInvestmentTransactionFormState {
+export interface EditInvestmentTransactionFormState {
   errors: {
     accountId?: string[];
     transactionDate?: string[];

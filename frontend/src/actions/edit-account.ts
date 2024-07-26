@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { UpdateAccountInput } from '../../../backend/src/appsync/api/codegen/appsync';
 import { schema } from '@/types/account';
 
-interface EditAccountFormState {
+export interface EditAccountFormState {
   errors: {
     name?: string[];
     category?: string[];

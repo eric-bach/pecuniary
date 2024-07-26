@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { schema } from '@/types/payee';
 import { createNewPayee } from '@/actions/index';
@@ -17,12 +17,16 @@ const NewPayeeSheet = () => {
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    // TODO Handle error
-    const result = await createNewPayee(values.name);
+    const response = await createNewPayee(values.name);
 
     onClose();
     setPending(false);
-    toast({ title: 'Success!', description: 'Payee was successfully created' });
+
+    if (response?.errors) {
+      toast({ title: 'Failed!', description: 'Payee could not be created' });
+    } else {
+      toast({ title: 'Success!', description: 'Payee was successfully created' });
+    }
   };
 
   return (

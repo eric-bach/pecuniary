@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { CreateAccountInput } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { schema } from '@/types/account';
 
-interface CreateAccountFormState {
+export interface CreateAccountFormState {
   errors: {
     name?: string[];
     category?: string[];
@@ -22,8 +22,6 @@ export async function createNewAccount({ name, category, type }: CreateAccountIn
     category,
     type,
   });
-
-  console.log('Create Account Result', result);
 
   if (!result.success) {
     return { errors: result.error.flatten().fieldErrors };

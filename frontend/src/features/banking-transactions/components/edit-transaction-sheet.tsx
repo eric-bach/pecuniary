@@ -10,6 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 import { createNewCategory, fetchCategoryOptions, fetchPayeeOptions, createNewPayee } from '@/actions/index';
+import { EditBankTransactionFormState } from '@/actions/edit-bank-transaction';
 
 const EditBankTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
@@ -17,6 +18,7 @@ const EditBankTransactionSheet = () => {
   const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { isOpen, onClose, transaction } = useOpenBankTransaction();
+  const [result, setResult] = useState<EditBankTransactionFormState>();
 
   const trans = transaction as BankTransaction;
 
@@ -45,7 +47,12 @@ const EditBankTransactionSheet = () => {
       createdAt: values.createdAt,
     };
 
-    await editExistingBankTransaction(data);
+    const response = await editExistingBankTransaction(data);
+
+    if (response?.errors) {
+      setResult(response);
+      return;
+    }
 
     onClose();
     setIsPending(false);
@@ -97,6 +104,14 @@ const EditBankTransactionSheet = () => {
           categoryOptions={categories}
           onCreateCategory={onCreateCategory}
         />
+
+        {result?.errors && (
+          <div className='text-red-500 text-sm'>
+            {Object.values(result.errors).map((error, i) => (
+              <p key={i}>{error}</p>
+            ))}
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   );
