@@ -44,7 +44,7 @@ const EditInvestmentTransactionSheet = () => {
       price: parseFloat(values.price),
       commission: parseFloat(values.commission),
       transactionDate: values.transactionDate.toDateString(),
-      createdAt: values.createdAt!,
+      createdAt: values.createdAt,
     };
 
     const result = await editExistingInvestmentTransaction(data);

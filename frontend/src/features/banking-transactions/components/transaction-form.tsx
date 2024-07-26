@@ -11,6 +11,7 @@ import { DatePicker } from '@/components/date-picker';
 import { CreatableSelect } from '@/components/creatable-select';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
+import { fetchPayeeOptions } from '@/actions';
 
 type Props = {
   transaction?: BankTransaction;

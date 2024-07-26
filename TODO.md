@@ -37,7 +37,6 @@ X Create symbol on add
 X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 
 - Style creatable select to match shadcn
-- Default creatable values on edit
 - Switch to shadcn blocks - login
 
 - Events
