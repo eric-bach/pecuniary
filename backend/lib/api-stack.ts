@@ -222,6 +222,13 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createCategory.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
+    const updateCategoryFunction = new AppsyncFunction(this, 'updateCategoryFunction', {
+      name: 'updateCategory',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateCategory.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
     const getCategoriesFunction = new AppsyncFunction(this, 'getCategoriesFunction', {
       name: 'getCategories',
       api: api,
@@ -349,6 +356,14 @@ export class ApiStack extends Stack {
       fieldName: 'createCategory',
       runtime: FunctionRuntime.JS_1_0_0,
       pipelineConfig: [createCategoryFunction],
+      code: passthrough,
+    });
+    const updateCategoryResolver = new Resolver(this, 'updateCategoryResolver', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'updateCategory',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [updateCategoryFunction],
       code: passthrough,
     });
     const getCategoriesResolver = new Resolver(this, 'getCategoriesResolver', {

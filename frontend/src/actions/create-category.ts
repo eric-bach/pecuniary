@@ -3,6 +3,7 @@
 import { serverClient } from '@/utils/amplifyServerUtils';
 import { createCategory } from '@/../../backend/src/appsync/api/mutations';
 import { schema } from '@/types/category';
+import { revalidatePath } from 'next/cache';
 
 interface CreateCategoryFormState {
   errors: {
@@ -38,5 +39,6 @@ export async function createNewCategory(name: string): Promise<CreateCategoryFor
     }
   }
 
+  revalidatePath('/categories');
   return { errors: {} };
 }

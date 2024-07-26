@@ -1,12 +1,12 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { updatePayee } from '../../../backend/src/appsync/api/mutations';
+import { updateCategory } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
-import { MutationUpdatePayeeArgs } from '../../../backend/src/appsync/api/codegen/appsync';
-import { schema } from '@/types/payee';
+import { MutationUpdateCategoryArgs } from '../../../backend/src/appsync/api/codegen/appsync';
+import { schema } from '@/types/category';
 
-interface EditPayeeFormState {
+interface EditCategoryFormState {
   errors: {
     pk?: string[];
     name?: string[];
@@ -14,7 +14,7 @@ interface EditPayeeFormState {
   };
 }
 
-export async function editExistingPayee({ pk, name }: MutationUpdatePayeeArgs) {
+export async function editExistingCategory({ pk, name }: MutationUpdateCategoryArgs) {
   const result = schema.safeParse({
     name,
     pk,
@@ -27,7 +27,7 @@ export async function editExistingPayee({ pk, name }: MutationUpdatePayeeArgs) {
   let data;
   try {
     data = await serverClient.graphql({
-      query: updatePayee,
+      query: updateCategory,
       variables: {
         pk,
         name: result.data.name,
@@ -41,5 +41,5 @@ export async function editExistingPayee({ pk, name }: MutationUpdatePayeeArgs) {
     }
   }
 
-  revalidatePath('/payees', 'layout');
+  revalidatePath('/categories', 'layout');
 }

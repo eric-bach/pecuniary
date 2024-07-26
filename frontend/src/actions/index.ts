@@ -13,6 +13,7 @@ export { fetchBankTransactions } from './fetch-bank-transactions';
 export { fetchInvestmentTransactions } from './fetch-investment-transactions';
 
 export { createNewCategory } from './create-category';
+export { editExistingCategory } from './edit-category';
 export { createNewPayee } from './create-payee';
 export { editExistingPayee } from './edit-payee';
 export { createNewSymbol } from './create-symbol';

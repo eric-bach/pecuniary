@@ -73,6 +73,10 @@ export type CreateCategoryMutation = {
   createCategory: Category;
 };
 
+export type UpdateCategoryMutation = {
+  updateCategory: Category;
+};
+
 export type GetCategoriesQuery = {
   getCategories: GetCategoriesResponse;
 };

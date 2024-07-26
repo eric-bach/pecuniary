@@ -9,6 +9,7 @@ import {
   MutationDeleteTransactionArgs,
   MutationUpdateAccountArgs,
   MutationUpdateBankTransactionArgs,
+  MutationUpdateCategoryArgs,
   MutationUpdateInvestmentTransactionArgs,
   MutationUpdatePayeeArgs,
 } from './codegen/appsync';
@@ -131,6 +132,14 @@ export const createCategory = `mutation CreateCategory($name: String!) {
     updatedAt
   }
 }` as Query<MutationCreateCategoryArgs, CreateCategoryMutation>;
+
+export const updateCategory = `mutation UpdateCategory($name: String!, $pk: String!) {
+  updateCategory(name: $name, pk: $pk) { 
+    pk
+    name
+    updatedAt
+  }
+}` as Query<MutationUpdateCategoryArgs, UpdateAccountMutation>;
 
 export const createPayee = `mutation CreatePayee($name: String!) {
   createPayee(name: $name) { 

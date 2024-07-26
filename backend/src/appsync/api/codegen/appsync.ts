@@ -251,7 +251,6 @@ export type MutationUpdateBankTransactionArgs = {
 
 
 export type MutationUpdateCategoryArgs = {
-  createdAt: Scalars['String']['input'];
   name: Scalars['String']['input'];
   pk: Scalars['String']['input'];
 };
