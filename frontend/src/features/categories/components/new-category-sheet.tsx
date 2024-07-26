@@ -16,7 +16,9 @@ const NewCategorySheet = () => {
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
-    await createNewCategory(values.name);
+
+    // TODO Handle error
+    const result = await createNewCategory(values.name);
 
     onClose();
     setPending(false);

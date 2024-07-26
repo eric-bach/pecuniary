@@ -30,6 +30,19 @@ const CategoryForm = ({ defaultValues, onSubmit, onClose, disabled }: Props) => 
       <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-4 pt-4'>
         <FormField
           control={form.control}
+          name='pk'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input type='hidden' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name='name'
           render={({ field }) => (
             <FormItem>

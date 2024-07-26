@@ -34,15 +34,8 @@ X Clean up data-table, actions, columns
 X Add sorting to table
 X Create payee/category on add
 X Create symbol on add
+X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 
-- Add pages to manage payees, categories, symbols using Dialog instead of Sheet
-  X Add Dialog to create and edit Payees
-  X Remove mandatory sortkey in table, add required gsis to support sorting
-  X BUG Editing transaction does not reflect on data table
-  X Add Dialog to create and edit Categories
-  - Enter key doesn't confirm
-  - Category entity type interferes with drop down Category
-  - Prevent creating duplicate Payees in backend (frontend creatable prevents it)
 - Style creatable select to match shadcn
 - Default creatable values on edit
 - Switch to shadcn blocks - login
@@ -54,6 +47,8 @@ X Create symbol on add
 
 - Switch from Sheet to Dialog for Account and Transactions
   `- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item
+- Prevent creating duplicate Payees/Categories in backend especially when editing item (frontend creatable prevents it)
+- Add handling of errors when creating/updating items
 
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions

@@ -17,8 +17,9 @@ const EditCategorySheet = () => {
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    await editExistingCategory({
-      pk: category?.pk!,
+    // TODO Handle error
+    const result = await editExistingCategory({
+      pk: values.pk!,
       name: values.name,
     });
 

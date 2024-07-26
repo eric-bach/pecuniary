@@ -16,7 +16,9 @@ const NewPayeeSheet = () => {
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
-    await createNewPayee(values.name);
+
+    // TODO Handle error
+    const result = await createNewPayee(values.name);
 
     onClose();
     setPending(false);
