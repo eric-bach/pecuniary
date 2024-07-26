@@ -47,7 +47,7 @@ const EditInvestmentTransactionSheet = () => {
       createdAt: values.createdAt!,
     };
 
-    await editExistingInvestmentTransaction(data);
+    const result = await editExistingInvestmentTransaction(data);
 
     onClose();
     setIsPending(false);

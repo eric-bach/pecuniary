@@ -84,7 +84,6 @@ export const updateBankTransaction = `mutation UpdateBankTransaction($input: Upd
     payee
     category
     amount
-    createdAt
     updatedAt
   }
 }` as Query<MutationUpdateBankTransactionArgs, UpdateBankTransactionMutation>;
@@ -114,7 +113,6 @@ export const updateInvestmentTransaction = `mutation UpdateInvestmentTransaction
     shares
     price
     commission
-    createdAt
     updatedAt
   }
 }` as Query<MutationUpdateInvestmentTransactionArgs, UpdateInvestmentTransactionMutation>;

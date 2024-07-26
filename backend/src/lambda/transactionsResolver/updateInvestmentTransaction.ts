@@ -43,6 +43,7 @@ async function updateInvestmentTransaction(userId: string, input: UpdateInvestme
     console.log(`✅ Updated Transaction: {result: ${JSON.stringify(updateResult)}`);
     return {
       ...input,
+      accountId: input.accountId,
       updatedAt,
     };
   }

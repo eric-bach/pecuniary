@@ -38,9 +38,9 @@ X Create symbol on add
 - Add pages to manage payees, categories, symbols using Dialog instead of Sheet
   X Add Dialog to create and edit Payees
   X Remove mandatory sortkey in table, add required gsis to support sorting
+  X BUG Editing transaction does not reflect on data table
   - Add backend to create and edit Categories
   - Add Dialog to create and edit Categories
-  - BUG Editing transaction does not reflect on data table
   - Prevent creating duplicate Payees in backend (frontend creatable prevents it)
 - Style creatable select to match shadcn
 - Default creatable values on edit
