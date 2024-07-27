@@ -1,13 +1,13 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { updateBankTransaction } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { UpdateBankTransactionInput } from '../../../backend/src/appsync/api/codegen/appsync';
 import { bankingSchema } from '@/types/transaction';
 
-interface EditBankTransactionFormState {
+export interface EditBankTransactionFormState {
   errors: {
     accountId?: string[];
     transactionDate?: string[];
@@ -21,18 +21,16 @@ interface EditBankTransactionFormState {
 }
 
 export async function editExistingBankTransaction({
-  pk,
+  accountId,
   transactionId,
-  createdAt,
   transactionDate,
   payee,
   category,
   amount,
 }: UpdateBankTransactionInput): Promise<EditBankTransactionFormState> {
   const result = bankingSchema.safeParse({
-    accountId: pk.split('#')[1],
+    accountId,
     transactionId,
-    createdAt,
     transactionDate: new Date(transactionDate),
     payee,
     category,
@@ -45,12 +43,11 @@ export async function editExistingBankTransaction({
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: updateBankTransaction,
       variables: {
         input: {
-          pk: `trans#${result.data.accountId}`,
-          createdAt: result.data.createdAt!,
+          accountId: result.data.accountId!,
           transactionId: result.data.transactionId!,
           transactionDate: new Date(transactionDate).toISOString().split('T')[0],
           payee: result.data.payee,

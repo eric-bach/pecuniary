@@ -1,13 +1,13 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { updateAccount } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { UpdateAccountInput } from '../../../backend/src/appsync/api/codegen/appsync';
 import { schema } from '@/types/account';
 
-interface EditAccountFormState {
+export interface EditAccountFormState {
   errors: {
     name?: string[];
     category?: string[];
@@ -18,19 +18,12 @@ interface EditAccountFormState {
   };
 }
 
-export async function editExistingAccount({
-  accountId,
-  createdAt,
-  name,
-  category,
-  type,
-}: UpdateAccountInput): Promise<EditAccountFormState> {
+export async function editExistingAccount({ accountId, name, category, type }: UpdateAccountInput): Promise<EditAccountFormState> {
   const result = schema.safeParse({
     name,
     category,
     type,
     accountId,
-    createdAt,
   });
 
   if (!result.success) {
@@ -39,12 +32,11 @@ export async function editExistingAccount({
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: updateAccount,
       variables: {
         input: {
           accountId: result.data.accountId!,
-          createdAt: result.data.createdAt!,
           name: result.data.name,
           category: result.data.category,
           type: result.data.type,

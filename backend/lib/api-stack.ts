@@ -222,6 +222,13 @@ export class ApiStack extends Stack {
       code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createCategory.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
+    const updateCategoryFunction = new AppsyncFunction(this, 'updateCategoryFunction', {
+      name: 'updateCategory',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateCategory.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
     const getCategoriesFunction = new AppsyncFunction(this, 'getCategoriesFunction', {
       name: 'getCategories',
       api: api,
@@ -234,6 +241,13 @@ export class ApiStack extends Stack {
       api: api,
       dataSource: dynamoDbDataSource,
       code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createPayee.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const updatePayeeFunction = new AppsyncFunction(this, 'updatePayeeFunction', {
+      name: 'updatePayee',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updatePayee.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
     const getPayeesFunction = new AppsyncFunction(this, 'getPayeesFunction', {
@@ -344,6 +358,14 @@ export class ApiStack extends Stack {
       pipelineConfig: [createCategoryFunction],
       code: passthrough,
     });
+    const updateCategoryResolver = new Resolver(this, 'updateCategoryResolver', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'updateCategory',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [updateCategoryFunction],
+      code: passthrough,
+    });
     const getCategoriesResolver = new Resolver(this, 'getCategoriesResolver', {
       api: api,
       typeName: 'Query',
@@ -358,6 +380,14 @@ export class ApiStack extends Stack {
       fieldName: 'createPayee',
       runtime: FunctionRuntime.JS_1_0_0,
       pipelineConfig: [createPayeeFunction],
+      code: passthrough,
+    });
+    const updatePayeeResolver = new Resolver(this, 'updatePayeeResolver', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'updatePayee',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [updatePayeeFunction],
       code: passthrough,
     });
     const getPayeesResolver = new Resolver(this, 'getPayeesResolver', {

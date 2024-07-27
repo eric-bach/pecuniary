@@ -1,6 +1,6 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { deleteAccount } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -14,7 +14,7 @@ interface DeleteAccountFormState {
 
 export async function deleteExistingAccount(accountId: string): Promise<DeleteAccountFormState> {
   try {
-    await cookieBasedClient.graphql({
+    await serverClient.graphql({
       query: deleteAccount,
       variables: {
         accountId,

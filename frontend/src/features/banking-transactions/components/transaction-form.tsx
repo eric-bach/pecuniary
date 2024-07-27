@@ -8,9 +8,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { BankTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { bankingSchema } from '@/types/transaction';
 import { DatePicker } from '@/components/date-picker';
-import { Select as CreatableSelect } from '@/components/select';
+import { CreatableSelect } from '@/components/creatable-select';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
+import { fetchPayeeOptions } from '@/actions';
 
 type Props = {
   transaction?: BankTransaction;

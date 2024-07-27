@@ -9,7 +9,9 @@ import {
   MutationDeleteTransactionArgs,
   MutationUpdateAccountArgs,
   MutationUpdateBankTransactionArgs,
+  MutationUpdateCategoryArgs,
   MutationUpdateInvestmentTransactionArgs,
+  MutationUpdatePayeeArgs,
 } from './codegen/appsync';
 import {
   CreateAccountMutation,
@@ -24,6 +26,7 @@ import {
   CreateCategoryMutation,
   CreatePayeeMutation,
   CreateSymbolMutation,
+  UpdatePayeeMutation,
 } from './types';
 
 export const createAccount = `mutation CreateAccount($input: CreateAccountInput!) {
@@ -82,7 +85,6 @@ export const updateBankTransaction = `mutation UpdateBankTransaction($input: Upd
     payee
     category
     amount
-    createdAt
     updatedAt
   }
 }` as Query<MutationUpdateBankTransactionArgs, UpdateBankTransactionMutation>;
@@ -112,7 +114,6 @@ export const updateInvestmentTransaction = `mutation UpdateInvestmentTransaction
     shares
     price
     commission
-    createdAt
     updatedAt
   }
 }` as Query<MutationUpdateInvestmentTransactionArgs, UpdateInvestmentTransactionMutation>;
@@ -132,6 +133,14 @@ export const createCategory = `mutation CreateCategory($name: String!) {
   }
 }` as Query<MutationCreateCategoryArgs, CreateCategoryMutation>;
 
+export const updateCategory = `mutation UpdateCategory($name: String!, $pk: String!) {
+  updateCategory(name: $name, pk: $pk) { 
+    pk
+    name
+    updatedAt
+  }
+}` as Query<MutationUpdateCategoryArgs, UpdateAccountMutation>;
+
 export const createPayee = `mutation CreatePayee($name: String!) {
   createPayee(name: $name) { 
     pk
@@ -140,6 +149,14 @@ export const createPayee = `mutation CreatePayee($name: String!) {
     updatedAt
   }
 }` as Query<MutationCreatePayeeArgs, CreatePayeeMutation>;
+
+export const updatePayee = `mutation UpdatePayee($name: String!, $pk: String!) {
+  updatePayee(name: $name, pk: $pk) { 
+    pk
+    name
+    updatedAt
+  }
+}` as Query<MutationUpdatePayeeArgs, UpdatePayeeMutation>;
 
 export const createSymbol = `mutation CreateSymbol($name: String!) {
   createSymbol(name: $name) { 

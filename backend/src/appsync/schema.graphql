@@ -1,6 +1,5 @@
 type Data {
   pk: ID!
-  createdAt: String!
   userId: String!
   accountId: ID!
   entity: String!
@@ -19,6 +18,7 @@ type Data {
   acb: Float
   payee: String
   amount: Float
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
@@ -32,7 +32,6 @@ input CreateAccountInput {
 # UpdateAccount
 input UpdateAccountInput {
   accountId: ID!
-  createdAt: String!
   name: String!
   type: String!
   category: String!
@@ -48,13 +47,16 @@ input CreateBankTransactionInput {
 }
 
 input UpdateBankTransactionInput {
-  pk: String!
-  createdAt: String!
+  accountId: ID!
   transactionId: ID!
   transactionDate: AWSDate!
   payee: String!
   category: String
   amount: Float!
+}
+
+input DeleteTransactionInput {
+  pk: ID!
 }
 
 # CreateInvestmentTransaction
@@ -69,8 +71,7 @@ input CreateInvestmentTransactionInput {
 }
 
 input UpdateInvestmentTransactionInput {
-  pk: String!
-  createdAt: String!
+  accountId: ID!
   transactionId: ID!
   transactionDate: AWSDate!
   type: String!
@@ -78,11 +79,6 @@ input UpdateInvestmentTransactionInput {
   shares: Float!
   price: Float!
   commission: Float!
-}
-
-input DeleteTransactionInput {
-  pk: ID!
-  createdAt: String!
 }
 
 # Aggregate Response
@@ -93,20 +89,19 @@ type Aggregates {
 # Account entity
 type Account {
   pk: ID!
-  createdAt: String!
   accountId: ID!
   entity: String!
   category: String!
   type: String!
   name: String!
   userId: String!
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
 #  Transaction entity
 type BankTransaction {
   pk: ID!
-  createdAt: String!
   entity: String!
   accountId: ID!
   transactionId: ID!
@@ -115,12 +110,12 @@ type BankTransaction {
   category: String
   amount: Float!
   userId: String!
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
 type InvestmentTransaction {
   pk: ID!
-  createdAt: String!
   entity: String!
   accountId: ID!
   transactionId: ID!
@@ -131,13 +126,13 @@ type InvestmentTransaction {
   price: Float!
   commission: Float!
   userId: String!
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
 # Position entity
 type Position {
   pk: ID!
-  createdAt: String!
   entity: String!
   accountId: ID!
   postiionId: ID!
@@ -150,33 +145,34 @@ type Position {
   marketValue: Float!
   acb: Float!
   userId: String!
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
 # Category entity
 type Category {
   pk: ID!
-  createdAt: String!
   name: String!
   entity: String!
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
 # Payee entity
 type Payee {
   pk: ID!
-  createdAt: String!
   name: String!
   entity: String!
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
 # Symbol entity
 type Symbol {
   pk: ID!
-  createdAt: String!
   name: String!
   entity: String!
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
@@ -201,7 +197,7 @@ type GetPositionsResponse {
 }
 
 type DeleteResponse {
-  aggregateId: String
+  pk: String
 }
 
 type GetCategoriesResponse {
@@ -242,7 +238,9 @@ type Mutation {
   deleteAccount(accountId: String!): Aggregates @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   createCategory(name: String!): Category @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updateCategory(name: String!, pk: String!): Category @aws_cognito_user_pools(cognito_groups: ["Users"])
   createPayee(name: String!): Payee @aws_cognito_user_pools(cognito_groups: ["Users"])
+  updatePayee(name: String!, pk: String!): Payee @aws_cognito_user_pools(cognito_groups: ["Users"])
   createSymbol(name: String!): Symbol @aws_cognito_user_pools(cognito_groups: ["Users"])
 
   createBankTransaction(input: CreateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
@@ -258,69 +256,3 @@ schema {
   query: Query
   mutation: Mutation
 }
-
-# input LastEvaluatedKey {
-#   userId: ID
-#   sk: String
-# }
-
-# input TransactionLastEvaluatedKey {
-#   userId: ID
-#   sk: String
-#   aggregateId: ID
-#   transactionDate: AWSDate
-# }
-
-# type GetAccountsResponse {
-#   items: [AccountReadModel]
-#   lastEvaluatedKey: LastEvaluatedKeyResponse
-# }
-
-# type LastEvaluatedKeyResponse {
-#   userId: ID
-#   sk: String
-# }
-
-# type AccountReadModel {
-#   userId: ID
-#   sk: String
-#   createdAt: AWSDateTime
-#   updatedAt: AWSDateTime
-#   aggregateId: ID
-#   entity: String
-#   type: String
-#   name: String
-#   description: String
-#   currencies: [Currency]
-#   acb: Float
-#   payee: String
-#   amount: Float
-# }
-
-# type TransactionLastEvaluatedKeyResponse {
-#   userId: ID
-#   sk: String
-#   aggregateId: ID
-#   transactionDate: AWSDate
-# }
-
-# type TransactionReadModel {
-#   userId: ID
-#   sk: String
-#   createdAt: AWSDateTime
-#   updatedAt: AWSDateTime
-#   aggregateId: ID
-#   entity: String
-#   type: String
-#   transactionDate: AWSDate
-#   symbol: String
-#   shares: Float
-#   price: Float
-#   commission: Float
-# }
-
-# type Currency {
-#   currency: String
-#   bookValue: Float
-#   marketValue: Float
-# }

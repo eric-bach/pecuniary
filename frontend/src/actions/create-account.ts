@@ -1,13 +1,13 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { createAccount } from '@/../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { CreateAccountInput } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { schema } from '@/types/account';
 
-interface CreateAccountFormState {
+export interface CreateAccountFormState {
   errors: {
     name?: string[];
     category?: string[];
@@ -23,15 +23,13 @@ export async function createNewAccount({ name, category, type }: CreateAccountIn
     type,
   });
 
-  console.log('Create Account Result', result);
-
   if (!result.success) {
     return { errors: result.error.flatten().fieldErrors };
   }
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: createAccount,
       variables: {
         input: {

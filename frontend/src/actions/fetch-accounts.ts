@@ -1,11 +1,11 @@
 'use server';
 
 import { Account } from '../../../backend/src/appsync/api/codegen/appsync';
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { getAccounts } from '../../../backend/src/appsync/api/queries';
 
 export async function fetchAccounts(): Promise<[Account]> {
-  const { data } = await cookieBasedClient.graphql({
+  const { data } = await serverClient.graphql({
     query: getAccounts,
   });
 

@@ -10,6 +10,7 @@ import {
   Database,
   Home,
   HousePlus,
+  LineChart,
   Settings,
   SquareMenu,
   Users,
@@ -75,6 +76,7 @@ export default function SidebarNavItems({ accounts, isSidebarExpanded, isMobileN
         <SidebarItem label='Accounts' icon={<BookUser size={20} />} path='/accounts' isSidebarExpanded={isSidebarExpanded} />
         <SidebarItem label='Payees' icon={<Users size={20} />} path='/payees' isSidebarExpanded={isSidebarExpanded} />
         <SidebarItem label='Categories' icon={<SquareMenu size={20} />} path='/categories' isSidebarExpanded={isSidebarExpanded} />
+        <SidebarItem label='Symbols' icon={<LineChart size={20} />} path='/symbols' isSidebarExpanded={isSidebarExpanded} />
 
         {/* Bottom */}
         <div className='sticky bottom-0  mt-auto whitespace-nowrap mb-4 transition duration-200 block'>

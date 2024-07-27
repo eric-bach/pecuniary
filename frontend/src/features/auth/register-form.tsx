@@ -7,7 +7,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
 import { handleSignUp } from '@/lib/cognitoActions';
 
 const formSchema = z
@@ -19,8 +18,6 @@ const formSchema = z
   .refine((data) => data.password === data.confirmPassword, { message: 'Passwords do not match', path: ['confirmPassword'] });
 
 const RegisterForm = () => {
-  const router = useRouter();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,7 +37,7 @@ const RegisterForm = () => {
         <CardTitle>Create Account</CardTitle>
         <CardDescription>Sign up for a new account</CardDescription>
       </CardHeader>
-      <CardContent className='space-y-2'>
+      <CardContent className='gap-4'>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-6'>
             <FormField
@@ -48,7 +45,7 @@ const RegisterForm = () => {
               name='email'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Email</FormLabel>
+                  <FormLabel className='text-zinc-500 dark:text-white'>Email</FormLabel>
                   <FormControl>
                     <Input
                       className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
@@ -65,7 +62,7 @@ const RegisterForm = () => {
               name='password'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Password</FormLabel>
+                  <FormLabel className='text-zinc-500 dark:text-white'>Password</FormLabel>
                   <FormControl>
                     <Input
                       className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
@@ -83,7 +80,7 @@ const RegisterForm = () => {
               name='confirmPassword'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Confirm Password</FormLabel>
+                  <FormLabel className='text-zinc-500 dark:text-white'>Confirm Password</FormLabel>
                   <FormControl>
                     <Input
                       className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'

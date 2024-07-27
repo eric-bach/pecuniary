@@ -1,5 +1,5 @@
 import { UpdateItemCommand, UpdateItemCommandInput } from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+import { marshall } from '@aws-sdk/util-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 import publishEventAsync from './helpers/eventBridge';
@@ -13,8 +13,7 @@ async function updateInvestmentTransaction(userId: string, input: UpdateInvestme
   const updateItemCommandInput: UpdateItemCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({
-      pk: input.pk,
-      createdAt: input.createdAt,
+      pk: `trans#${input.transactionId}`,
     }),
     UpdateExpression:
       'SET #type=:type, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt',
@@ -44,7 +43,7 @@ async function updateInvestmentTransaction(userId: string, input: UpdateInvestme
     console.log(`✅ Updated Transaction: {result: ${JSON.stringify(updateResult)}`);
     return {
       ...input,
-      accountId: input.pk.split('#')[1],
+      accountId: input.accountId,
       updatedAt,
     };
   }

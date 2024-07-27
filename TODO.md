@@ -34,17 +34,28 @@ X Clean up data-table, actions, columns
 X Add sorting to table
 X Create payee/category on add
 X Create symbol on add
-
-- Switch to tanstack-query - https://docs.amplify.aws/gen1/react/build-a-backend/graphqlapi/optimistic-ui/
+X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 
 - Events
-- Create/Update Position on InvestmentTransactionCreated
-- Create TimeSeries data when SymbolCreated
-- Update Account on BankTransactionCreated and InvestmentTransactionCreated
+  `- Create/Update Position on InvestmentTransactionCreated
+      - Update createBankTransaction to publish BankTransactionCreated
+      - Update createInvestmentTransaction to publish InvestmentTransactionCreated
+      - Update api-stack eventbridge rules to listen to these events
+      - Add updateAccount to update Account balances when BankTransactionCreated
+      - Update updatePositions to upsert Positions when InvestmentTransactionCreated
+`- Create TimeSeries data when SymbolCreated
+  `- Update Account on BankTransactionCreated and InvestmentTransactionCreated
 
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
+
+- Switch from Sheet to Dialog for Account and Transactions
+  `- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item
+`- BUG: Prevent creating duplicate Payees/Categories in backend especially when editing item (frontend creatable prevents it)
+- Improve error message when creating/updating items fails
+- Style creatable select to match shadcn
+- Style currency input field
 
 #### Tech Debt
 

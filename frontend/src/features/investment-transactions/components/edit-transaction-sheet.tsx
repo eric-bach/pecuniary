@@ -9,6 +9,7 @@ import { investmentSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
 import { InvestmentTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
+import { EditInvestmentTransactionFormState } from '@/actions/edit-investment-transaction';
 
 const EditInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
@@ -16,6 +17,7 @@ const EditInvestmentTransactionSheet = () => {
   const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { isOpen, onClose, transaction } = useOpenInvestmentTransaction();
+  const [result, setResult] = useState<EditInvestmentTransactionFormState>();
 
   const trans = transaction as InvestmentTransaction;
 
@@ -35,19 +37,23 @@ const EditInvestmentTransactionSheet = () => {
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
 
-    // TODO Fix this type error
     const data = {
       ...values,
-      pk: `trans#${values.accountId}`,
+      accountId: values.accountId,
       transactionId: values.transactionId!,
       shares: parseFloat(values.shares),
       price: parseFloat(values.price),
       commission: parseFloat(values.commission),
       transactionDate: values.transactionDate.toDateString(),
-      createdAt: values.createdAt!,
+      createdAt: values.createdAt,
     };
 
-    await editExistingInvestmentTransaction(data);
+    const response = await editExistingInvestmentTransaction(data);
+
+    if (response?.errors) {
+      setResult(response);
+      return;
+    }
 
     onClose();
     setIsPending(false);
@@ -69,8 +75,8 @@ const EditInvestmentTransactionSheet = () => {
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent className='min-w-[600px] sm:w-[480px]'>
           <SheetHeader>
-            <SheetTitle>Edit Account</SheetTitle>
-            <SheetDescription>Edit account</SheetDescription>
+            <SheetTitle>Edit Transaction</SheetTitle>
+            <SheetDescription>Edit transaction</SheetDescription>
           </SheetHeader>
 
           <TransactionForm
@@ -92,6 +98,14 @@ const EditInvestmentTransactionSheet = () => {
             onCreateSymbol={onCreateSymbol}
             transactionTypeOptions={transactionTypes}
           />
+
+          {result?.errors && (
+            <div className='text-red-500 text-sm'>
+              {Object.values(result.errors).map((error, i) => (
+                <p key={i}>{error}</p>
+              ))}
+            </div>
+          )}
         </SheetContent>
       </Sheet>
     </>

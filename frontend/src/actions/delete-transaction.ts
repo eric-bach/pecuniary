@@ -1,6 +1,6 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { deleteTransaction } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -17,12 +17,11 @@ export async function deleteExistingTransaction(transaction: BankTransaction | I
   console.log('deleteExistingTransaction', transaction);
 
   try {
-    await cookieBasedClient.graphql({
+    await serverClient.graphql({
       query: deleteTransaction,
       variables: {
         input: {
           pk: transaction.pk,
-          createdAt: transaction.createdAt,
         },
       },
     });

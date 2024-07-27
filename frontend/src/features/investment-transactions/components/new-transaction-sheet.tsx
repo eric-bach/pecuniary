@@ -8,11 +8,13 @@ import { createNewInvestmentTransaction, fetchTransactionTypeOptions, fetchSymbo
 import { investmentSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
+import { CreateInvestmentTransactionFormState } from '@/actions/create-investment-transaction';
 
 const NewInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
   const [symbols, setSymbols] = useState<{ label: string; value: string }[]>([]);
   const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
+  const [result, setResult] = useState<CreateInvestmentTransactionFormState>();
 
   const { toast } = useToast();
   const { accountId, isInvestmentOpen, onClose } = useNewTransaction();
@@ -32,18 +34,23 @@ const NewInvestmentTransactionSheet = () => {
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
-    const result = await createNewInvestmentTransaction({
+
+    const response = await createNewInvestmentTransaction({
       ...values,
       shares: parseFloat(values.shares),
       price: parseFloat(values.price),
       commission: parseFloat(values.commission),
       transactionDate: values.transactionDate.toDateString(),
     });
+
+    if (response?.errors) {
+      setResult(response);
+      return;
+    }
+
     onClose();
-
-    console.log('Transaction created', result);
-
     setIsPending(false);
+
     toast({ title: 'Success!', description: 'Transaction was successfully created' });
   };
 
@@ -80,6 +87,14 @@ const NewInvestmentTransactionSheet = () => {
           onCreateSymbol={onCreateSymbol}
           transactionTypeOptions={transactionTypes}
         />
+
+        {result?.errors && (
+          <div className='text-red-500 text-sm'>
+            {Object.values(result.errors).map((error, i) => (
+              <p key={i}>{error}</p>
+            ))}
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   );

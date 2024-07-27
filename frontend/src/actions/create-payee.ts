@@ -1,22 +1,21 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { createPayee } from '@/../../backend/src/appsync/api/mutations';
 import { schema } from '@/types/payee';
+import { revalidatePath } from 'next/cache';
 
-interface CreatePayeeFormState {
+export interface CreatePayeeFormState {
   errors: {
     name?: string[];
     _form?: string[];
   };
 }
 
-export async function createNewPayee(name: string): Promise<CreatePayeeFormState> {
+export async function createNewPayee(name: string) {
   const result = schema.safeParse({
     name,
   });
-
-  console.log('Create Payee Result', result);
 
   if (!result.success) {
     return { errors: result.error.flatten().fieldErrors };
@@ -24,7 +23,7 @@ export async function createNewPayee(name: string): Promise<CreatePayeeFormState
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: createPayee,
       variables: {
         name: result.data.name,
@@ -38,5 +37,5 @@ export async function createNewPayee(name: string): Promise<CreatePayeeFormState
     }
   }
 
-  return { errors: {} };
+  revalidatePath('/payees');
 }

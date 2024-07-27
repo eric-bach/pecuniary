@@ -1,13 +1,13 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { updateInvestmentTransaction } from '../../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { UpdateInvestmentTransactionInput } from '../../../backend/src/appsync/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 
-interface EditInvestmentTransactionFormState {
+export interface EditInvestmentTransactionFormState {
   errors: {
     accountId?: string[];
     transactionDate?: string[];
@@ -21,8 +21,7 @@ interface EditInvestmentTransactionFormState {
 }
 
 export async function editExistingInvestmentTransaction({
-  pk,
-  createdAt,
+  accountId,
   transactionId,
   transactionDate,
   symbol,
@@ -32,9 +31,7 @@ export async function editExistingInvestmentTransaction({
   type,
 }: UpdateInvestmentTransactionInput): Promise<EditInvestmentTransactionFormState> {
   const result = investmentSchema.safeParse({
-    pk,
-    accountId: pk.split('#')[1],
-    createdAt,
+    accountId,
     transactionId,
     transactionDate: new Date(transactionDate),
     symbol,
@@ -50,12 +47,11 @@ export async function editExistingInvestmentTransaction({
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: updateInvestmentTransaction,
       variables: {
         input: {
-          pk: `trans#${result.data.accountId}`,
-          createdAt: result.data.createdAt!,
+          accountId: result.data.accountId!,
           transactionId: result.data.transactionId!,
           transactionDate: new Date(transactionDate).toISOString().split('T')[0],
           type: result.data.type,
@@ -74,6 +70,6 @@ export async function editExistingInvestmentTransaction({
     }
   }
 
-  revalidatePath('/', 'layout');
+  revalidatePath(`'/'`, 'layout');
   redirect(`/accounts/${result.data.accountId}`);
 }

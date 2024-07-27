@@ -10,6 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
 import { createNewCategory, fetchCategoryOptions, fetchPayeeOptions, createNewPayee } from '@/actions/index';
 import { SelectOption } from '@/types/select-option';
+import { CreateBankTransactionFormState } from '@/actions/create-bank-transaction';
 
 const NewBankingTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
@@ -17,6 +18,7 @@ const NewBankingTransactionSheet = () => {
   const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { accountId, isBankingOpen, onClose } = useNewTransaction();
+  const [result, setResult] = useState<CreateBankTransactionFormState>();
 
   useEffect(() => {
     fetchAllPayees();
@@ -40,7 +42,14 @@ const NewBankingTransactionSheet = () => {
       transactionDate: values.transactionDate.toDateString(),
     };
 
-    await createNewBankTransaction(data);
+    const response = await createNewBankTransaction(data);
+
+    console.log(response);
+
+    if (response?.errors) {
+      setResult(response);
+      return;
+    }
 
     onClose();
     setIsPending(false);
@@ -88,6 +97,14 @@ const NewBankingTransactionSheet = () => {
           categoryOptions={categories}
           onCreateCategory={onCreateCategory}
         />
+
+        {result?.errors && (
+          <div className='text-red-500 text-sm'>
+            {Object.values(result.errors).map((error, i) => (
+              <p key={i}>{error}</p>
+            ))}
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   );

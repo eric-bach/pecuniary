@@ -1,8 +1,9 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { createCategory } from '@/../../backend/src/appsync/api/mutations';
 import { schema } from '@/types/category';
+import { revalidatePath } from 'next/cache';
 
 interface CreateCategoryFormState {
   errors: {
@@ -11,7 +12,7 @@ interface CreateCategoryFormState {
   };
 }
 
-export async function createNewCategory(name: string): Promise<CreateCategoryFormState> {
+export async function createNewCategory(name: string) {
   const result = schema.safeParse({
     name,
   });
@@ -24,7 +25,7 @@ export async function createNewCategory(name: string): Promise<CreateCategoryFor
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: createCategory,
       variables: {
         name: result.data.name,
@@ -38,5 +39,5 @@ export async function createNewCategory(name: string): Promise<CreateCategoryFor
     }
   }
 
-  return { errors: {} };
+  revalidatePath('/categories');
 }

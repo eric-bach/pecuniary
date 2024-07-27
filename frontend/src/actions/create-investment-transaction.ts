@@ -1,13 +1,13 @@
 'use server';
 
-import { cookieBasedClient } from '@/utils/amplifyServerUtils';
+import { serverClient } from '@/utils/amplifyServerUtils';
 import { createInvestmentTransaction } from '@/../../backend/src/appsync/api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { CreateInvestmentTransactionInput } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 
-interface CreateInvestmentTransactionFormState {
+export interface CreateInvestmentTransactionFormState {
   errors: {
     accountId?: string[];
     transactionDate?: string[];
@@ -47,7 +47,7 @@ export async function createNewInvestmentTransaction({
 
   let data;
   try {
-    data = await cookieBasedClient.graphql({
+    data = await serverClient.graphql({
       query: createInvestmentTransaction,
       variables: {
         input: {

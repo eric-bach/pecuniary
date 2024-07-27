@@ -1,22 +1,18 @@
 'use client';
 
-import React from 'react';
 import { Account } from '@/../../backend/src/appsync/api/codegen/appsync';
+import { useNewAccount } from '@/hooks/use-new-account';
+import { DataTable } from '@/components/data-table';
+import { columns } from '@/app/(main)/accounts/columns';
 
-interface DisplayAccountProps {
-  account: Account;
-  children: React.ReactNode;
+interface ManageAccountsProps {
+  accounts: [Account];
 }
 
-export default function DisplayAccount({ children, account }: DisplayAccountProps) {
-  return (
-    <div className='mx-auto w-full max-w-screen-2xl pb-10'>
-      <div className='flex flex-col space-y-1 5 p-6 gap-y-2 justify-between'>
-        <h3 className='text-2xl font-semibold leading-none tracking-tight text-xl-line-clamp-1'>{account.name}</h3>
-        <p className='text-sm text-muted-foreground'>{account.type}</p>
-      </div>
+const Accounts = ({ accounts }: ManageAccountsProps) => {
+  const newAccount = useNewAccount();
 
-      {children}
-    </div>
-  );
-}
+  return <DataTable filterKey='name' title='Accounts' columns={columns} data={accounts} onClick={newAccount.onOpen} />;
+};
+
+export default Accounts;

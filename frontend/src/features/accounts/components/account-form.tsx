@@ -58,7 +58,7 @@ const AccountForm = ({ account, defaultValues, onSubmit, disabled }: Props) => {
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Account Name</FormLabel>
               <FormControl>
                 <Input
-                  className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
+                  className='border-zinc-200 dark:bg-slate-500 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
                   placeholder='Account name'
                   {...field}
                 />
@@ -77,7 +77,7 @@ const AccountForm = ({ account, defaultValues, onSubmit, disabled }: Props) => {
                 <FormControl>
                   <SelectTrigger
                     disabled={!!account}
-                    className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
+                    className='border-zinc-200 dark:bg-slate-500 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
                   >
                     <SelectValue placeholder='Account category' />
                   </SelectTrigger>
@@ -107,7 +107,7 @@ const AccountForm = ({ account, defaultValues, onSubmit, disabled }: Props) => {
                 <FormControl>
                   <SelectTrigger
                     disabled={!!account}
-                    className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
+                    className='border-zinc-200 dark:bg-slate-500 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
                   >
                     <SelectValue placeholder='Account type' />
                   </SelectTrigger>
