@@ -5,39 +5,71 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { BankTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
+import { BankTransaction, Category, Payee } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { bankingSchema } from '@/types/transaction';
 import { DatePicker } from '@/components/date-picker';
-import { CreatableSelect } from '@/components/creatable-select';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
-import { fetchPayeeOptions } from '@/actions';
+import { createNewCategory, createNewPayee } from '@/actions';
+import Combobox from '@/components/combobox';
+import { useCallback, useEffect, useState } from 'react';
+import { fetchPayees } from '@/actions/fetch-payees';
+import { fetchCategories } from '@/actions/fetch-cateogies';
 
 type Props = {
   transaction?: BankTransaction;
   defaultValues?: z.infer<typeof bankingSchema>;
   onSubmit: (values: z.infer<typeof bankingSchema>) => void;
   disabled?: boolean;
-  payeeOptions: { label: string; value: string }[];
-  onCreatePayee: (name: string) => void;
-  categoryOptions: { label: string; value: string }[];
-  onCreateCategory: (name: string) => void;
 };
 
-const TransactionForm = ({
-  transaction,
-  defaultValues,
-  onSubmit,
-  disabled,
-  payeeOptions,
-  onCreatePayee,
-  categoryOptions,
-  onCreateCategory,
-}: Props) => {
+const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Props) => {
   const form = useForm<z.infer<typeof bankingSchema>>({
     resolver: zodResolver(bankingSchema),
     defaultValues,
   });
+
+  const [payees, setPayees] = useState<Payee[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetchAllPayees();
+    fetchAllCategories();
+  }, []);
+
+  async function fetchAllPayees() {
+    setPayees(await fetchPayees());
+  }
+
+  async function fetchAllCategories() {
+    setCategories(await fetchCategories());
+  }
+
+  async function createPayee(name: string) {
+    const result = await createNewPayee(name);
+
+    await fetchAllPayees();
+  }
+
+  async function createCategory(name: string) {
+    const result = await createNewCategory(name);
+
+    await fetchAllCategories();
+  }
+
+  const handlePayeeChange = useCallback(
+    (value: string) => {
+      form.setValue('payee', value);
+    },
+    [form]
+  );
+
+  const handleCategoryChange = useCallback(
+    (value: string) => {
+      form.setValue('category', value);
+    },
+    [form]
+  );
 
   const handleSubmit = (data: z.infer<typeof bankingSchema>) => {
     console.log('Submitting', data);
@@ -107,14 +139,7 @@ const TransactionForm = ({
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Payee</FormLabel>
               <FormControl>
-                <CreatableSelect
-                  options={payeeOptions}
-                  onCreate={onCreatePayee}
-                  value={field.value}
-                  onChange={field.onChange}
-                  //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
-                  placeholder='Payee'
-                />
+                <Combobox type='payee' items={payees} onCreate={createPayee} onChange={handlePayeeChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -128,14 +153,7 @@ const TransactionForm = ({
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Category</FormLabel>
               <FormControl>
-                <CreatableSelect
-                  options={categoryOptions}
-                  onCreate={onCreateCategory}
-                  value={field.value}
-                  onChange={field.onChange}
-                  //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
-                  placeholder='Category'
-                />
+                <Combobox type='category' items={categories} onCreate={createCategory} onChange={handleCategoryChange} />
               </FormControl>
               <FormMessage />
             </FormItem>

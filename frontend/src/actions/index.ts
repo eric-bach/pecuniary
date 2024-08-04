@@ -17,7 +17,4 @@ export { editExistingCategory } from './edit-category';
 export { createNewPayee } from './create-payee';
 export { editExistingPayee } from './edit-payee';
 export { createNewSymbol } from './create-symbol';
-export { fetchCategoryOptions } from './fetch-category-options';
-export { fetchPayeeOptions } from './fetch-payee-options';
-export { fetchSymbolOptions } from './fetch-symbol-options';
-export { fetchTransactionTypeOptions } from './fetch-transaction-types';
+export { fetchTransactionTypeOptions } from './fetch-transaction-type-options';
