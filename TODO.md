@@ -36,6 +36,10 @@ X Create payee/category on add
 X Create symbol on add
 X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 
+- Switch to use ComboBox from budget-tracker tutorial
+- Budget Tracker
+  - https://github.com/monirhabderabby/budget-tracker - Ppb!hZ$#3\*Q9UL
+  - https://github.com/AyushGlitch/budget-tracker
 - Events
   `- Create/Update Position on InvestmentTransactionCreated
       - Update createBankTransaction to publish BankTransactionCreated
@@ -45,7 +49,6 @@ X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
       - Update updatePositions to upsert Positions when InvestmentTransactionCreated
 `- Create TimeSeries data when SymbolCreated
   `- Update Account on BankTransactionCreated and InvestmentTransactionCreated
-
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user

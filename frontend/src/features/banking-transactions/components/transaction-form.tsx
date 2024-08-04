@@ -12,6 +12,7 @@ import { CreatableSelect } from '@/components/creatable-select';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
 import { fetchPayeeOptions } from '@/actions';
+import CategoryPicker from './CategoryPicker';
 
 type Props = {
   transaction?: BankTransaction;
@@ -107,14 +108,15 @@ const TransactionForm = ({
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Payee</FormLabel>
               <FormControl>
-                <CreatableSelect
+                <CategoryPicker />
+                {/* <CreatableSelect
                   options={payeeOptions}
                   onCreate={onCreatePayee}
                   value={field.value}
                   onChange={field.onChange}
                   //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
                   placeholder='Payee'
-                />
+                /> */}
               </FormControl>
               <FormMessage />
             </FormItem>
