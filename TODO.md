@@ -35,7 +35,6 @@ X Add sorting to table
 X Create payee/category on add
 X Create symbol on add
 X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
-
 X Switch to use ComboBox from budget-tracker tutorial
 
 - Budget Tracker
