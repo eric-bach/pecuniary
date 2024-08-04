@@ -7,33 +7,17 @@ import { editExistingBankTransaction } from '@/actions';
 import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
 import { bankingSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
-import { createNewCategory, fetchCategoryOptions, fetchPayeeOptions, createNewPayee } from '@/actions/index';
 import { EditBankTransactionFormState } from '@/actions/edit-bank-transaction';
 
 const EditBankTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
-  const [payees, setPayees] = useState<{ label: string; value: string }[]>([]);
-  const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
   const { toast } = useToast();
   const { isOpen, onClose, transaction } = useOpenBankTransaction();
   const [result, setResult] = useState<EditBankTransactionFormState>();
 
   const trans = transaction as BankTransaction;
-
-  useEffect(() => {
-    fetchAllPayees();
-    fetchAllCategories();
-  }, []);
-
-  async function fetchAllPayees() {
-    setPayees(await fetchPayeeOptions());
-  }
-
-  async function fetchAllCategories() {
-    setCategories(await fetchCategoryOptions());
-  }
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
     setIsPending(true);
@@ -60,24 +44,6 @@ const EditBankTransactionSheet = () => {
     toast({ title: 'Success!', description: 'Transaction was successfully updated' });
   };
 
-  const onCreatePayee = async (name: string) => {
-    setIsPending(true);
-
-    await createNewPayee(name);
-    await fetchAllPayees();
-
-    setIsPending(false);
-  };
-
-  const onCreateCategory = async (name: string) => {
-    setIsPending(true);
-
-    await createNewCategory(name);
-    await fetchAllCategories();
-
-    setIsPending(false);
-  };
-
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className='min-w-[600px] sm:w-[480px]'>
@@ -99,10 +65,6 @@ const EditBankTransactionSheet = () => {
             amount: trans?.amount.toString(),
             createdAt: trans?.createdAt,
           }}
-          payeeOptions={payees}
-          onCreatePayee={onCreatePayee}
-          categoryOptions={categories}
-          onCreateCategory={onCreateCategory}
         />
 
         {result?.errors && (

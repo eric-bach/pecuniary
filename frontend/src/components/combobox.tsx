@@ -1,34 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createNewPayee } from '@/actions';
-import { fetchPayees } from '@/actions/fetch-payees';
-import { Payee } from '../../../../../backend/src/appsync/api/codegen/appsync';
 
-function CategoryPicker() {
+interface Props<TData> {
+  type: String;
+  items: TData[];
+  onCreate: (name: string) => void;
+  onChange: (value: string) => void;
+}
+
+function Combobox<TData>({ type, items, onCreate, onChange }: Props<TData>) {
   const [open, setOpen] = React.useState(false);
-  const [payees, setPayees] = useState<Payee[]>([]);
   const [value, setValue] = React.useState('');
 
   useEffect(() => {
-    fetchAllPayees();
-  }, []);
+    if (!value) {
+      return;
+    }
 
-  async function fetchAllPayees() {
-    setPayees(await fetchPayees());
-  }
+    // when the value change, call the on Change callback
+    onChange(value);
+  }, [value, onChange]);
 
-  async function createPayee(event: any) {
+  async function handleChange(event: any) {
     if (event.key === 'Enter' || event.key === 'Tab') {
       event.preventDefault();
 
-      const result = await createNewPayee(event.target.value);
-
       setValue(event.target.value);
-      await fetchAllPayees();
+
+      onCreate(event.target.value);
     }
   }
 
@@ -38,7 +41,7 @@ function CategoryPicker() {
         <Button variant='outline' role='combobox' aria-expanded={open} className='w-full justify-between'>
           {/* TODO Find the selected category instead of the value */}
           {/* {selectedCategory ? <CategoryRow category={selectedCategory} /> : 'Select category'} */}
-          {value ? value : 'Select category'}
+          {value ? value : `Select ${type.toLowerCase()}`}
           <ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
@@ -48,23 +51,23 @@ function CategoryPicker() {
             e.preventDefault();
           }}
         >
-          <CommandInput onKeyDown={(e) => createPayee(e)} placeholder='Search or create a category...' />
+          <CommandInput onKeyDown={(e) => handleChange(e)} placeholder={`Search or create a new ${type.toLowerCase()}...`} />
           <CommandEmpty>
-            <p>Category not found</p>
-            <p className='text-xs text-muted-foreground'>Press 'Enter' or 'Tab' to create</p>
+            <p>No results</p>
+            <p className='text-xs text-muted-foreground'>Press 'Enter' or 'Tab' to create one</p>
           </CommandEmpty>
           <CommandGroup>
             <CommandList>
-              {payees.map((category) => (
+              {items.map((item: any) => (
                 <CommandItem
-                  key={category.pk}
+                  key={item.pk}
                   onSelect={(currentvalue) => {
-                    setValue(category.name);
+                    setValue(item.name);
                     setOpen((prev) => !prev);
                   }}
                 >
-                  <Check className={cn('mr-2 w-4 h-4 opacity-0', value === category.name && 'opacity-100')} />
-                  <CategoryRow category={category} />
+                  <Check className={cn('mr-2 w-4 h-4 opacity-0', value === item.name && 'opacity-100')} />
+                  <ComboboxRow item={item} />
                 </CommandItem>
               ))}
             </CommandList>
@@ -75,12 +78,12 @@ function CategoryPicker() {
   );
 }
 
-function CategoryRow({ category }: { category: any }) {
+function ComboboxRow({ item }: { item: any }) {
   return (
     <div className='flex w-full items-center gap-2'>
-      <span>{category.name}</span>
+      <span>{item.name}</span>
     </div>
   );
 }
 
-export default CategoryPicker;
+export default Combobox;
