@@ -54,7 +54,7 @@ function Combobox<TData>({ type, items, onCreate, onChange }: Props<TData>) {
           <CommandInput onKeyDown={(e) => handleChange(e)} placeholder={`Search or create a new ${type.toLowerCase()}...`} />
           <CommandEmpty>
             <p>No results</p>
-            <p className='text-xs text-muted-foreground'>Press 'Enter' or 'Tab' to create one</p>
+            <p className='text-xs text-muted-foreground'>Press &apos;Enter&apos; or &apos;Tab&apos; to create one</p>
           </CommandEmpty>
           <CommandGroup>
             <CommandList>
