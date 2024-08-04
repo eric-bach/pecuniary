@@ -40,6 +40,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
   async function fetchAllPayees() {
     setPayees(await fetchPayees());
   }
+
   async function fetchAllCategories() {
     setCategories(await fetchCategories());
   }

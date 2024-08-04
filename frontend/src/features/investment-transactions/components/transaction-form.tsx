@@ -5,38 +5,54 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
+import { InvestmentTransaction, Symbol } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 import { DatePicker } from '@/components/date-picker';
-import { CreatableSelect } from '@/components/creatable-select';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AmountInput } from '@/components/amount-input';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
+import { useCallback, useEffect, useState } from 'react';
+import { fetchSymbols } from '@/actions/fetch-symbols';
+import { createNewSymbol } from '@/actions';
+import Combobox from '@/components/combobox';
 
 type Props = {
   transaction?: InvestmentTransaction;
   defaultValues?: z.infer<typeof investmentSchema>;
   onSubmit: (values: z.infer<typeof investmentSchema>) => void;
   disabled?: boolean;
-  symbolOptions: { label: string; value: string }[];
-  onCreateSymbol: (name: string) => void;
   transactionTypeOptions: { label: string; value: string }[];
 };
 
-const TransactionForm = ({
-  transaction,
-  defaultValues,
-  onSubmit,
-  disabled,
-  symbolOptions,
-  onCreateSymbol,
-  transactionTypeOptions,
-}: Props) => {
+const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, transactionTypeOptions }: Props) => {
   const form = useForm<z.infer<typeof investmentSchema>>({
     resolver: zodResolver(investmentSchema),
     defaultValues,
   });
+
+  const [symbols, setSymbols] = useState<Symbol[]>([]);
+
+  useEffect(() => {
+    fetchAllSymbols();
+  }, []);
+
+  async function fetchAllSymbols() {
+    setSymbols(await fetchSymbols());
+  }
+
+  async function createSymbol(name: string) {
+    const result = await createNewSymbol(name);
+
+    await fetchAllSymbols();
+  }
+
+  const handleSymbolChange = useCallback(
+    (value: string) => {
+      form.setValue('symbol', value);
+    },
+    [form]
+  );
 
   const handleSubmit = (data: z.infer<typeof investmentSchema>) => {
     console.log('Submitting', data);
@@ -106,14 +122,15 @@ const TransactionForm = ({
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Symbol</FormLabel>
               <FormControl>
-                <CreatableSelect
+                <Combobox type='symbol' items={symbols} onCreate={createSymbol} onChange={handleSymbolChange} />
+                {/* <CreatableSelect
                   options={symbolOptions}
                   onCreate={onCreateSymbol}
                   value={field.value}
                   onChange={field.onChange}
                   //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
                   placeholder='Symbol'
-                />
+                /> */}
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -4,7 +4,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import * as z from 'zod';
 import TransactionForm from './transaction-form';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
-import { createNewInvestmentTransaction, fetchTransactionTypeOptions, fetchSymbolOptions, createNewSymbol } from '@/actions';
+import { createNewInvestmentTransaction, fetchTransactionTypeOptions } from '@/actions';
 import { investmentSchema } from '@/types/transaction';
 import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
@@ -12,7 +12,6 @@ import { CreateInvestmentTransactionFormState } from '@/actions/create-investmen
 
 const NewInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
-  const [symbols, setSymbols] = useState<{ label: string; value: string }[]>([]);
   const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
   const [result, setResult] = useState<CreateInvestmentTransactionFormState>();
 
@@ -20,13 +19,8 @@ const NewInvestmentTransactionSheet = () => {
   const { accountId, isInvestmentOpen, onClose } = useNewTransaction();
 
   useEffect(() => {
-    fetchAllSymbols();
     fetchAllTransactionTypes();
   }, []);
-
-  async function fetchAllSymbols() {
-    setSymbols(await fetchSymbolOptions());
-  }
 
   async function fetchAllTransactionTypes() {
     setTransactionTypes(await fetchTransactionTypeOptions());
@@ -54,15 +48,6 @@ const NewInvestmentTransactionSheet = () => {
     toast({ title: 'Success!', description: 'Transaction was successfully created' });
   };
 
-  const onCreateSymbol = async (name: string) => {
-    setIsPending(true);
-
-    await createNewSymbol(name);
-    await fetchAllSymbols();
-
-    setIsPending(false);
-  };
-
   return (
     <Sheet open={isInvestmentOpen} onOpenChange={() => onClose()}>
       <SheetContent className='min-w-[600px] sm:w-[480px]'>
@@ -83,8 +68,6 @@ const NewInvestmentTransactionSheet = () => {
             price: '',
             commission: '',
           }}
-          symbolOptions={symbols}
-          onCreateSymbol={onCreateSymbol}
           transactionTypeOptions={transactionTypes}
         />
 
