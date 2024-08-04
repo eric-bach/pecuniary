@@ -84,7 +84,6 @@ const AccountForm = ({ account, defaultValues, onSubmit, disabled }: Props) => {
                 </FormControl>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Category</SelectLabel>
                     {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
@@ -114,7 +113,6 @@ const AccountForm = ({ account, defaultValues, onSubmit, disabled }: Props) => {
                 </FormControl>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Type</SelectLabel>
                     {selectOptions.map((option) => (
                       <SelectItem key={option} value={option}>
                         {option}

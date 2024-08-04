@@ -123,14 +123,6 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Symbol</FormLabel>
               <FormControl>
                 <Combobox type='symbol' items={symbols} onCreate={createSymbol} onChange={handleSymbolChange} />
-                {/* <CreatableSelect
-                  options={symbolOptions}
-                  onCreate={onCreateSymbol}
-                  value={field.value}
-                  onChange={field.onChange}
-                  //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
-                  placeholder='Symbol'
-                /> */}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,13 +137,12 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Transaction type</FormLabel>
               <Select value={field.value} onValueChange={field.onChange}>
                 <FormControl>
-                  <SelectTrigger className='text-zinc-500 border-zinc-200 dark:bg-slate-500 focus-visible:ring-0 dark:text-white focus-visible:ring-offset-0'>
+                  <SelectTrigger className='border-zinc-200 dark:bg-slate-500 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'>
                     <SelectValue placeholder='Transaction type' />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectGroup className='-left-2'>
-                    {/* <SelectLabel>Transaction type</SelectLabel> */}
+                  <SelectGroup>
                     {transactionTypeOptions.map((type) => (
                       <SelectItem key={type.label} value={type.value}>
                         {type.label}

@@ -140,14 +140,6 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Payee</FormLabel>
               <FormControl>
                 <Combobox type='payee' items={payees} onCreate={createPayee} onChange={handlePayeeChange} />
-                {/* <CreatableSelect
-                  options={payeeOptions}
-                  onCreate={onCreatePayee}
-                  value={field.value}
-                  onChange={field.onChange}
-                  //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
-                  placeholder='Payee'
-                /> */}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -162,14 +154,6 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Category</FormLabel>
               <FormControl>
                 <Combobox type='category' items={categories} onCreate={createCategory} onChange={handleCategoryChange} />
-                {/* <CreatableSelect
-                  options={categoryOptions}
-                  onCreate={onCreateCategory}
-                  value={field.value}
-                  onChange={field.onChange}
-                  //className='bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black dark:text-white focus-visible:ring-offset-0'
-                  placeholder='Category'
-                /> */}
               </FormControl>
               <FormMessage />
             </FormItem>
