@@ -40,6 +40,9 @@ X Switch to use ComboBox from budget-tracker tutorial
 - Budget Tracker
   - https://github.com/monirhabderabby/budget-tracker - Ppb!hZ$#3\*Q9UL
   - https://github.com/AyushGlitch/budget-tracker
+- Switch to sonner
+- Add tanstack query
+
 - Events
   `- Create/Update Position on InvestmentTransactionCreated
       - Update createBankTransaction to publish BankTransactionCreated
