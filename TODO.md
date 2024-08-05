@@ -36,13 +36,12 @@ X Create payee/category on add
 X Create symbol on add
 X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 X Switch to use ComboBox from budget-tracker tutorial
+X Switch to sonner
 
 - Budget Tracker
   - https://github.com/monirhabderabby/budget-tracker - Ppb!hZ$#3\*Q9UL
   - https://github.com/AyushGlitch/budget-tracker
-- Switch to sonner
 - Add tanstack query
-
 - Events
   `- Create/Update Position on InvestmentTransactionCreated
       - Update createBankTransaction to publish BankTransactionCreated

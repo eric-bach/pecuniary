@@ -6,12 +6,11 @@ import * as z from 'zod';
 import { editExistingAccount } from '@/actions';
 import { useOpenAccount } from '@/hooks/use-open-account';
 import { schema } from '@/types/account';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { EditAccountFormState } from '@/actions/edit-account';
 
 const EditAccountSheet = () => {
-  const { toast } = useToast();
   const { isOpen, onClose, account } = useOpenAccount();
   const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<EditAccountFormState>();
@@ -31,13 +30,16 @@ const EditAccountSheet = () => {
 
     if (response?.errors) {
       setResult(response);
+
+      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
+
       return;
     }
 
     onClose();
     setIsPending(false);
 
-    toast({ title: 'Success!', description: 'Account was successfully updated' });
+    toast.success('Success!', { description: 'Account was successfully updated' });
   };
 
   return (

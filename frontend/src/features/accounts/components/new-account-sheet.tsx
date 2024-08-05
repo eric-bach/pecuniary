@@ -6,12 +6,11 @@ import AccountForm from './account-form';
 import { useNewAccount } from '@/hooks/use-new-account';
 import { createNewAccount } from '@/actions';
 import { schema } from '@/types/account';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { CreateAccountFormState } from '@/actions/create-account';
 
 const NewAccountSheet = () => {
-  const { toast } = useToast();
   const { isOpen, onClose } = useNewAccount();
   const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<CreateAccountFormState>();
@@ -23,13 +22,16 @@ const NewAccountSheet = () => {
 
     if (response?.errors) {
       setResult(response);
+
+      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
+
       return;
     }
 
     onClose();
     setIsPending(false);
 
-    toast({ title: 'Success!', description: 'Account was successfully created' });
+    toast.success('Success!', { description: 'Account was successfully created' });
   };
 
   return (
