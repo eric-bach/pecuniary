@@ -7,10 +7,9 @@ import { schema } from '@/types/category';
 import * as z from 'zod';
 import { useState } from 'react';
 import { editExistingCategory } from '@/actions';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const EditCategorySheet = () => {
-  const { toast } = useToast();
   const { isOpen, onClose, category } = useOpenCategory();
   const [isPending, setPending] = useState(false);
 
@@ -26,9 +25,9 @@ const EditCategorySheet = () => {
     setPending(false);
 
     if (response?.errors) {
-      toast({ title: 'Failed!', description: 'Category could not be updated' });
+      toast.error('Failed!', { description: 'Category could not be updated' });
     } else {
-      toast({ title: 'Success!', description: 'Category was successfully updated' });
+      toast.success('Success!', { description: 'Category was successfully updated' });
     }
   };
 

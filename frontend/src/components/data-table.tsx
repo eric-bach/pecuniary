@@ -17,7 +17,7 @@ import { Plus, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { deleteExistingAccount, deleteExistingTransaction } from '@/actions';
 import { Account, BankTransaction, InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 import DeleteItem from './delete-item';
@@ -37,7 +37,6 @@ export function DataTable<TData, TValue>({ title, columns, data, onClick, filter
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
-  const { toast } = useToast();
 
   const table = useReactTable({
     data,
@@ -75,8 +74,7 @@ export function DataTable<TData, TValue>({ title, columns, data, onClick, filter
 
     table.resetRowSelection();
 
-    toast({
-      title: 'Success!',
+    toast.success('Success!', {
       description:
         table.getFilteredSelectedRowModel().rows.length > 1
           ? `${table.getFilteredSelectedRowModel().rows.length} items successfully deleted`

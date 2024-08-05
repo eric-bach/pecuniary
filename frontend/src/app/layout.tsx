@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import NextTopLoader from 'nextjs-toploader';
 
@@ -27,7 +26,6 @@ export default function RootLayout({
           <ConfigureAmplifyClientSide />
           <NextTopLoader />
           {children}
-          <Toaster />
         </NextThemesProvider>
       </body>
     </html>

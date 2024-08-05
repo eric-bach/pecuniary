@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Payee } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { useState } from 'react';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useOpenPayee } from '@/hooks/use-open-payee';
 import DeleteItem from '@/components/delete-item';
 
@@ -17,7 +17,6 @@ export const Actions = ({ payee }: ActionsProps) => {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isPending, setPending] = useState<boolean>(false);
 
-  const { toast } = useToast();
   const { onOpen } = useOpenPayee();
 
   const handleClose = () => {
@@ -34,7 +33,7 @@ export const Actions = ({ payee }: ActionsProps) => {
 
     setPending(false);
     handleClose();
-    toast({ title: 'Success!', description: 'Payee was successfully deleted' });
+    toast.success('Success!', { description: 'Payee was successfully deleted' });
   };
 
   const handleDelete = () => {
