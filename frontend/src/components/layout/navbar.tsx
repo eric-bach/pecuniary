@@ -6,9 +6,8 @@ import { ThemeToggler } from '../theme-toggler';
 import { Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SidebarMobile } from './sidebar-mobile';
-import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
 
-export default function Navbar({ accounts }: { accounts: [Account] }) {
+export default function Navbar() {
   return (
     <div className='supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur'>
       <nav className='flex h-12 items-center justify-between px-4'>
@@ -30,7 +29,7 @@ export default function Navbar({ accounts }: { accounts: [Account] }) {
           </Link>
         </div>
         <div className={cn('block lg:!hidden')}>
-          <SidebarMobile accounts={accounts} />
+          <SidebarMobile />
         </div>
         <div className='flex items-center gap-1 px-3'>
           <Sun className='w-6 h-6' />

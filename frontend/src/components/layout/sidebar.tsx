@@ -2,15 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
 import SidebarNavItems from './sidebar-nav-items';
 
-interface SidebarProps {
-  accounts: [Account];
-  isMobileNav?: boolean;
-}
-
-export default function Sidebar({ accounts }: SidebarProps) {
+export default function Sidebar() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
     // Get the sidebar state from localStorage
     const saved = window.localStorage.getItem('sidebarExpanded');
@@ -39,7 +33,7 @@ export default function Sidebar({ accounts }: SidebarProps) {
           'border-r transition-all duration-300 ease-in-out transform hidden sm:flex h-full pt-20 relative pb-2'
         )}
       >
-        <SidebarNavItems accounts={accounts} isMobileNav={false} isSidebarExpanded={isSidebarExpanded} toggleSidebar={toggleSidebar} />
+        <SidebarNavItems isMobileNav={false} isSidebarExpanded={isSidebarExpanded} toggleSidebar={toggleSidebar} />
       </div>
     </div>
   );
