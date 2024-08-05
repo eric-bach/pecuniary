@@ -7,10 +7,9 @@ import { schema } from '@/types/payee';
 import * as z from 'zod';
 import { useState } from 'react';
 import { editExistingPayee } from '@/actions';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const EditPayeeSheet = () => {
-  const { toast } = useToast();
   const { isOpen, onClose, payee } = useOpenPayee();
   const [isPending, setPending] = useState(false);
 
@@ -26,9 +25,9 @@ const EditPayeeSheet = () => {
     setPending(false);
 
     if (response?.errors) {
-      toast({ title: 'Failed!', description: 'Payee could not be updated' });
+      toast.error('Failed!', { description: 'Payee could not be updated' });
     } else {
-      toast({ title: 'Success!', description: 'Payee was successfully updated' });
+      toast.success('Success!', { description: 'Payee was successfully updated' });
     }
   };
 
