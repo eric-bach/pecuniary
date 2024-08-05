@@ -6,14 +6,13 @@ import * as z from 'zod';
 import { editExistingBankTransaction } from '@/actions';
 import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
 import { bankingSchema } from '@/types/transaction';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 import { EditBankTransactionFormState } from '@/actions/edit-bank-transaction';
 
 const EditBankTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
-  const { toast } = useToast();
   const { isOpen, onClose, transaction } = useOpenBankTransaction();
   const [result, setResult] = useState<EditBankTransactionFormState>();
 
@@ -35,13 +34,16 @@ const EditBankTransactionSheet = () => {
 
     if (response?.errors) {
       setResult(response);
+
+      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
+
       return;
     }
 
     onClose();
     setIsPending(false);
 
-    toast({ title: 'Success!', description: 'Transaction was successfully updated' });
+    toast.success('Success!', { description: 'Transaction was successfully updated' });
   };
 
   return (

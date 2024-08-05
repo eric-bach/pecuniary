@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { editExistingInvestmentTransaction, fetchTransactionTypeOptions } from '@/actions';
 import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
 import { investmentSchema } from '@/types/transaction';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
 import { InvestmentTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 import { EditInvestmentTransactionFormState } from '@/actions/edit-investment-transaction';
@@ -14,7 +14,6 @@ import { EditInvestmentTransactionFormState } from '@/actions/edit-investment-tr
 const EditInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
   const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
-  const { toast } = useToast();
   const { isOpen, onClose, transaction } = useOpenInvestmentTransaction();
   const [result, setResult] = useState<EditInvestmentTransactionFormState>();
 
@@ -46,13 +45,16 @@ const EditInvestmentTransactionSheet = () => {
 
     if (response?.errors) {
       setResult(response);
+
+      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
+
       return;
     }
 
     onClose();
     setIsPending(false);
 
-    toast({ title: 'Success!', description: 'Transaction was successfully updated' });
+    toast.success('Success!', { description: 'Transaction was successfully updated' });
   };
 
   return (

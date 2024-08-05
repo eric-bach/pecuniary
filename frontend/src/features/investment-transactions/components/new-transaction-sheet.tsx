@@ -6,7 +6,7 @@ import TransactionForm from './transaction-form';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
 import { createNewInvestmentTransaction, fetchTransactionTypeOptions } from '@/actions';
 import { investmentSchema } from '@/types/transaction';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
 import { CreateInvestmentTransactionFormState } from '@/actions/create-investment-transaction';
 
@@ -15,7 +15,6 @@ const NewInvestmentTransactionSheet = () => {
   const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
   const [result, setResult] = useState<CreateInvestmentTransactionFormState>();
 
-  const { toast } = useToast();
   const { accountId, isInvestmentOpen, onClose } = useNewTransaction();
 
   useEffect(() => {
@@ -39,13 +38,16 @@ const NewInvestmentTransactionSheet = () => {
 
     if (response?.errors) {
       setResult(response);
+
+      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
+
       return;
     }
 
     onClose();
     setIsPending(false);
 
-    toast({ title: 'Success!', description: 'Transaction was successfully created' });
+    toast.success('Success!', { description: 'Transaction was successfully created' });
   };
 
   return (
