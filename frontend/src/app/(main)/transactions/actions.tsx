@@ -8,7 +8,7 @@ import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transa
 import { BankTransaction, InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { deleteExistingTransaction } from '@/actions';
 import { useState } from 'react';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import DeleteItem from '@/components/delete-item';
 
 type TransactionsProps = {
@@ -19,7 +19,6 @@ export const Actions = ({ transaction }: TransactionsProps) => {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isPending, setPending] = useState<boolean>(false);
 
-  const { toast } = useToast();
   const { onOpen: onBankingOpen } = useOpenBankTransaction();
   const { onOpen: onInvestmentOpen } = useOpenInvestmentTransaction();
 
@@ -35,7 +34,7 @@ export const Actions = ({ transaction }: TransactionsProps) => {
 
     setPending(false);
     handleClose();
-    toast({ title: 'Success!', description: 'Transaction was successfully deleted' });
+    toast.success('Success!', { description: 'Transaction was successfully deleted' });
   };
 
   const handleDelete = () => {

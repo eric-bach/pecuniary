@@ -7,10 +7,9 @@ import { createNewCategory } from '@/actions/index';
 import * as z from 'zod';
 import CategoryForm from './category-form';
 import { useNewCategory } from '@/hooks/use-new-category';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const NewCategorySheet = () => {
-  const { toast } = useToast();
   const [isPending, setPending] = useState<boolean>(false);
   const { isOpen, onClose } = useNewCategory();
 
@@ -23,9 +22,9 @@ const NewCategorySheet = () => {
     setPending(false);
 
     if (response?.errors) {
-      toast({ title: 'Failed!', description: 'Category could not be created' });
+      toast.error('Failed!', { description: 'Category could not be created' });
     } else {
-      toast({ title: 'Success!', description: 'Category was successfully created' });
+      toast.success('Success!', { description: 'Category was successfully created' });
     }
   };
 

@@ -7,10 +7,9 @@ import { createNewPayee } from '@/actions/index';
 import * as z from 'zod';
 import PayeeForm from './payee-form';
 import { useNewPayee } from '@/hooks/use-new-payee';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const NewPayeeSheet = () => {
-  const { toast } = useToast();
   const [isPending, setPending] = useState<boolean>(false);
   const { isOpen, onClose } = useNewPayee();
 
@@ -23,9 +22,9 @@ const NewPayeeSheet = () => {
     setPending(false);
 
     if (response?.errors) {
-      toast({ title: 'Failed!', description: 'Payee could not be created' });
+      toast.error('Failed!', { description: 'Payee could not be created' });
     } else {
-      toast({ title: 'Success!', description: 'Payee was successfully created' });
+      toast.success('Success!', { description: 'Payee was successfully created' });
     }
   };
 

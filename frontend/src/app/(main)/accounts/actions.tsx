@@ -7,7 +7,7 @@ import { useOpenAccount } from '@/hooks/use-open-account';
 import { Account } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { deleteExistingAccount } from '@/actions';
 import { useState } from 'react';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import DeleteItem from '@/components/delete-item';
 
@@ -20,7 +20,6 @@ export const Actions = ({ account }: ActionsProps) => {
   const [isPending, setPending] = useState<boolean>(false);
 
   const router = useRouter();
-  const { toast } = useToast();
   const { onOpen } = useOpenAccount();
 
   const handleClose = () => {
@@ -35,7 +34,7 @@ export const Actions = ({ account }: ActionsProps) => {
 
     setPending(false);
     handleClose();
-    toast({ title: 'Success!', description: 'Account was successfully deleted' });
+    toast.success('Success!', { description: 'Account was successfully deleted' });
   };
 
   const handleDelete = () => {
