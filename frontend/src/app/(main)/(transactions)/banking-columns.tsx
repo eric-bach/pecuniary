@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { BankTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
-import { Actions } from '@/app/(main)/transactions/actions';
+import { Actions } from '@/app/(main)/(transactions)/actions';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';

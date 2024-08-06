@@ -1,7 +1,7 @@
 'use client';
 
 import { DataTable } from '@/components/data-table';
-import { bankingColumns } from '@/app/(main)/transactions/banking-columns';
+import { bankingColumns } from '@/app/(main)/(transactions)/banking-columns';
 import { BankTransaction } from '../../../../backend/src/appsync/api/codegen/appsync';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
 
