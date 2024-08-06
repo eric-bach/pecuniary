@@ -3,29 +3,28 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import TransactionForm from './transaction-form';
 import * as z from 'zod';
-import { editExistingInvestmentTransaction, fetchTransactionTypeOptions } from '@/actions';
+import { editExistingInvestmentTransaction } from '@/actions';
 import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
 import { investmentSchema } from '@/types/transaction';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { InvestmentTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 import { EditInvestmentTransactionFormState } from '@/actions/edit-investment-transaction';
+import { useQuery } from '@tanstack/react-query';
+import { SelectOption } from '@/types/select-option';
 
 const EditInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
-  const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
   const { isOpen, onClose, transaction } = useOpenInvestmentTransaction();
   const [result, setResult] = useState<EditInvestmentTransactionFormState>();
 
   const trans = transaction as InvestmentTransaction;
 
-  useEffect(() => {
-    fetchAllTransactionTypes();
-  }, []);
-
-  async function fetchAllTransactionTypes() {
-    setTransactionTypes(await fetchTransactionTypeOptions());
-  }
+  const transactionTypeQuery = useQuery({
+    queryKey: ['transaction-types'],
+    queryFn: async () => fetch('/api/transaction-type-options').then((res) => res.json()),
+    refetchOnWindowFocus: false,
+  });
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
@@ -56,6 +55,10 @@ const EditInvestmentTransactionSheet = () => {
 
     toast.success('Success!', { description: 'Transaction was successfully updated' });
   };
+
+  if (transactionTypeQuery.isPending) return <div>Loading...</div>;
+
+  const transactionTypes: SelectOption[] = transactionTypeQuery.data;
 
   return (
     <>

@@ -3,7 +3,6 @@
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { MenuIcon } from 'lucide-react';
 import { useState } from 'react';
-import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
 import SidebarNavItems from './sidebar-nav-items';
 
 export interface Item {
@@ -11,11 +10,7 @@ export interface Item {
   name: string;
 }
 
-interface SidebarMobileProps extends React.HTMLAttributes<HTMLDivElement> {
-  accounts: [Account];
-}
-
-export function SidebarMobile({ accounts }: SidebarMobileProps) {
+export function SidebarMobile() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -29,7 +24,7 @@ export function SidebarMobile({ accounts }: SidebarMobileProps) {
             <div className='px-3 py-2'>
               <h2 className='mb-2 px-4 text-lg font-semibold tracking-tight'>Overview</h2>
               <div className='space-y-1'>
-                <SidebarNavItems accounts={accounts} isSidebarExpanded={true} isMobileNav={true} />
+                <SidebarNavItems isSidebarExpanded={true} isMobileNav={true} />
               </div>
             </div>
           </div>

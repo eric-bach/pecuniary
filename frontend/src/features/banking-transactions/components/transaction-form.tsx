@@ -12,9 +12,8 @@ import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
 import { createNewCategory, createNewPayee } from '@/actions';
 import Combobox from '@/components/combobox';
-import { useCallback, useEffect, useState } from 'react';
-import { fetchPayees } from '@/actions/fetch-payees';
-import { fetchCategories } from '@/actions/fetch-cateogies';
+import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 type Props = {
   transaction?: BankTransaction;
@@ -29,32 +28,28 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
     defaultValues,
   });
 
-  const [payees, setPayees] = useState<Payee[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const payeesQuery = useQuery({
+    queryKey: ['payees'],
+    queryFn: async () => fetch('/api/payees').then((res) => res.json()),
+    refetchOnWindowFocus: false,
+  });
 
-  useEffect(() => {
-    fetchAllPayees();
-    fetchAllCategories();
-  }, []);
-
-  async function fetchAllPayees() {
-    setPayees(await fetchPayees());
-  }
-
-  async function fetchAllCategories() {
-    setCategories(await fetchCategories());
-  }
+  const categoriesQuery = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => fetch('/api/categories').then((res) => res.json()),
+    refetchOnWindowFocus: false,
+  });
 
   async function createPayee(name: string) {
     const result = await createNewPayee(name);
 
-    await fetchAllPayees();
+    // await fetchAllPayees();
   }
 
   async function createCategory(name: string) {
     const result = await createNewCategory(name);
 
-    await fetchAllCategories();
+    // await fetchAllCategories();
   }
 
   const handlePayeeChange = useCallback(
@@ -75,6 +70,11 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
     console.log('Submitting', data);
     onSubmit(data);
   };
+
+  if (payeesQuery.isPending || categoriesQuery.isPending) return <div>Loading...</div>;
+
+  const payees: Payee[] = payeesQuery.data;
+  const categories: Category[] = categoriesQuery.data;
 
   return (
     <Form {...form}>
