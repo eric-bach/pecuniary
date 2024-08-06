@@ -1,26 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import SidebarNavItems from './sidebar-nav-items';
+import { useSidebarExpanded } from '@/hooks/use-sidebar-expanded';
 
 export default function Sidebar() {
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
-    // Get the sidebar state from localStorage
-    const saved = window.localStorage.getItem('sidebarExpanded');
-    if (saved === null) {
-      return true;
-    }
-    const initialValue = JSON.parse(saved);
-    return initialValue;
-  });
+  const { isSidebarExpanded, setIsSidebarExpanded } = useSidebarExpanded();
 
-  // Save the sidebar state in localStorage
-  useEffect(() => {
-    window.localStorage.setItem('sidebarExpanded', JSON.stringify(isSidebarExpanded));
-  }, [isSidebarExpanded]);
-
-  // Toggle the sidebar state
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
