@@ -13,9 +13,9 @@ import { AmountInput } from '@/components/amount-input';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchSymbols } from '@/actions/fetch-symbols';
 import { createNewSymbol } from '@/actions';
 import Combobox from '@/components/combobox';
+import { useQuery } from '@tanstack/react-query';
 
 type Props = {
   transaction?: InvestmentTransaction;
@@ -33,18 +33,16 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
 
   const [symbols, setSymbols] = useState<Symbol[]>([]);
 
-  useEffect(() => {
-    fetchAllSymbols();
-  }, []);
-
-  async function fetchAllSymbols() {
-    setSymbols(await fetchSymbols());
-  }
+  const symbolsQuery = useQuery({
+    queryKey: ['symbols'],
+    queryFn: async () => fetch('/api/symbols').then((res) => res.json()),
+    refetchOnWindowFocus: false,
+  });
 
   async function createSymbol(name: string) {
     const result = await createNewSymbol(name);
 
-    await fetchAllSymbols();
+    // await fetchAllSymbols();
   }
 
   const handleSymbolChange = useCallback(

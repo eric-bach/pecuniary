@@ -8,24 +8,41 @@ import * as z from 'zod';
 import PayeeForm from './payee-form';
 import { useNewPayee } from '@/hooks/use-new-payee';
 import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const NewPayeeSheet = () => {
   const [isPending, setPending] = useState<boolean>(false);
   const { isOpen, onClose } = useNewPayee();
 
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createNewPayee,
+    onSuccess: async () => {
+      setPending(false);
+      onClose();
+
+      toast.success('Created payee successfully 🎉', {
+        id: 'create-payee',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['payees'] });
+    },
+    onError: (error) => {
+      setPending(false);
+
+      toast.error('Failed to create payee', {
+        id: 'create-payee',
+      });
+    },
+  });
+
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    const response = await createNewPayee(values.name);
+    toast.loading('Creating payee...', { id: 'create-payee' });
 
-    onClose();
-    setPending(false);
-
-    if (response?.errors) {
-      toast.error('Failed!', { description: 'Payee could not be created' });
-    } else {
-      toast.success('Success!', { description: 'Payee was successfully created' });
-    }
+    mutation.mutate(values.name);
   };
 
   return (

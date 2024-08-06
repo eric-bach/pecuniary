@@ -12,6 +12,7 @@ const Accounts = () => {
   const accountsQuery = useQuery({
     queryKey: ['accounts'],
     queryFn: () => fetch('/api/accounts').then((res) => res.json()),
+    refetchOnWindowFocus: false,
   });
 
   if (accountsQuery.isFetching) return <div>Loading...</div>;
