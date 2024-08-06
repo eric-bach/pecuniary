@@ -45,21 +45,6 @@ const NewAccountSheet = () => {
     toast.loading('Creating account...', { id: 'create-account' });
 
     mutation.mutate(values);
-
-    // const response = await createNewAccount(values);
-
-    // if (response?.errors) {
-    //   setResult(response);
-
-    //   toast.error('Error!', { description: Object.values(response.errors).join('\n') });
-
-    //   return;
-    // }
-
-    // onClose();
-    // setIsPending(false);
-
-    // toast.success('Success!', { description: 'Account was successfully created' });
   };
 
   return (

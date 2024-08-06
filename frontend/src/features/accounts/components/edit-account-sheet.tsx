@@ -9,11 +9,35 @@ import { schema } from '@/types/account';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { EditAccountFormState } from '@/actions/edit-account';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditAccountSheet = () => {
   const { isOpen, onClose, account } = useOpenAccount();
   const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<EditAccountFormState>();
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: editExistingAccount,
+    onSuccess: async () => {
+      setIsPending(false);
+      onClose();
+
+      toast.success('Account updated successfully 🎉', {
+        id: 'update-account',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['accounts'] });
+    },
+    onError: (error) => {
+      setIsPending(false);
+
+      toast.error('Failed to update account', {
+        id: 'update-account',
+      });
+    },
+  });
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setIsPending(true);
@@ -26,20 +50,7 @@ const EditAccountSheet = () => {
       createdAt: values.createdAt,
     };
 
-    const response = await editExistingAccount(data);
-
-    if (response?.errors) {
-      setResult(response);
-
-      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
-
-      return;
-    }
-
-    onClose();
-    setIsPending(false);
-
-    toast.success('Success!', { description: 'Account was successfully updated' });
+    mutation.mutate(data);
   };
 
   return (
