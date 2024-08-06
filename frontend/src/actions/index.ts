@@ -13,4 +13,3 @@ export { editExistingCategory } from './edit-category';
 export { createNewPayee } from './create-payee';
 export { editExistingPayee } from './edit-payee';
 export { createNewSymbol } from './create-symbol';
-export { fetchTransactionTypeOptions } from './fetch-transaction-type-options';

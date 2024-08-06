@@ -4,26 +4,25 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import * as z from 'zod';
 import TransactionForm from './transaction-form';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
-import { createNewInvestmentTransaction, fetchTransactionTypeOptions } from '@/actions';
+import { createNewInvestmentTransaction } from '@/actions';
 import { investmentSchema } from '@/types/transaction';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { CreateInvestmentTransactionFormState } from '@/actions/create-investment-transaction';
+import { useQuery } from '@tanstack/react-query';
+import { SelectOption } from '@/types/select-option';
 
 const NewInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
-  const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
   const [result, setResult] = useState<CreateInvestmentTransactionFormState>();
 
   const { accountId, isInvestmentOpen, onClose } = useNewTransaction();
 
-  useEffect(() => {
-    fetchAllTransactionTypes();
-  }, []);
-
-  async function fetchAllTransactionTypes() {
-    setTransactionTypes(await fetchTransactionTypeOptions());
-  }
+  const transactionTypeQuery = useQuery({
+    queryKey: ['transaction-types'],
+    queryFn: async () => fetch('/api/transaction-type-options').then((res) => res.json()),
+    refetchOnWindowFocus: false,
+  });
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
@@ -49,6 +48,10 @@ const NewInvestmentTransactionSheet = () => {
 
     toast.success('Success!', { description: 'Transaction was successfully created' });
   };
+
+  if (transactionTypeQuery.isPending) return <div>Loading...</div>;
+
+  const transactionTypes: SelectOption[] = transactionTypeQuery.data;
 
   return (
     <Sheet open={isInvestmentOpen} onOpenChange={() => onClose()}>
