@@ -41,6 +41,7 @@ const EditInvestmentTransactionSheet = () => {
 
       toast.error('Failed to update transaction', {
         id: 'update-investment-transaction',
+        description: '',
       });
     },
   });

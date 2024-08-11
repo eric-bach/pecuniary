@@ -50,6 +50,8 @@ const EditAccountSheet = () => {
       createdAt: values.createdAt,
     };
 
+    toast.loading('Updating account...', { id: 'update-account', description: '' });
+
     mutation.mutate(data);
   };
 

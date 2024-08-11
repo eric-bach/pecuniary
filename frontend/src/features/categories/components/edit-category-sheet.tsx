@@ -42,7 +42,7 @@ const EditCategorySheet = () => {
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    toast.loading('Updating category...', { id: 'update-category' });
+    toast.loading('Updating category...', { id: 'update-category', description: '' });
 
     mutation.mutate({ pk: values.pk!, name: values.name });
   };

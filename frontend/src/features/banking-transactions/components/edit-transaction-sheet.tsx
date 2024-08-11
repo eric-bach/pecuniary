@@ -56,6 +56,7 @@ const EditBankTransactionSheet = () => {
 
     toast.loading('Updating transaction...', {
       id: 'update-bank-transaction',
+      description: '',
     });
 
     mutation.mutate(data);
