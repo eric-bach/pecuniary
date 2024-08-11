@@ -8,24 +8,41 @@ import * as z from 'zod';
 import CategoryForm from './category-form';
 import { useNewCategory } from '@/hooks/use-new-category';
 import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const NewCategorySheet = () => {
   const [isPending, setPending] = useState<boolean>(false);
   const { isOpen, onClose } = useNewCategory();
 
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createNewCategory,
+    onSuccess: async () => {
+      setPending(false);
+      onClose();
+
+      toast.success('Created category successfully 🎉', {
+        id: 'create-category',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+    onError: (error) => {
+      setPending(false);
+
+      toast.error('Failed to create category', {
+        id: 'create-category',
+      });
+    },
+  });
+
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    const response = await createNewCategory(values.name);
+    toast.loading('Creating category...', { id: 'create-category' });
 
-    onClose();
-    setPending(false);
-
-    if (response?.errors) {
-      toast.error('Failed!', { description: 'Category could not be created' });
-    } else {
-      toast.success('Success!', { description: 'Category was successfully created' });
-    }
+    mutation.mutate(values.name);
   };
 
   return (

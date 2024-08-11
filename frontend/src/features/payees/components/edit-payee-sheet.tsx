@@ -40,6 +40,8 @@ const EditPayeeSheet = () => {
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
+    toast.loading('Updating payee...', { id: 'update-payee' });
+
     mutation.mutate({ pk: values.pk!, name: values.name });
   };
 
