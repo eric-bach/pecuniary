@@ -8,13 +8,14 @@ import { cn } from '@/lib/utils';
 interface Props<TData> {
   type: String;
   items: TData[];
+  defaultValue?: string;
   onCreate: (name: string) => void;
   onChange: (value: string) => void;
 }
 
-function Combobox<TData>({ type, items, onCreate, onChange }: Props<TData>) {
+function Combobox<TData>({ type, items, defaultValue, onCreate, onChange }: Props<TData>) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState(defaultValue ?? '');
 
   useEffect(() => {
     if (!value) {

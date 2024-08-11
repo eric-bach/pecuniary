@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { createNewCategory, createNewPayee } from '@/actions';
 import Combobox from '@/components/combobox';
 import { useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 type Props = {
   transaction?: BankTransaction;
@@ -28,6 +28,8 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
     defaultValues,
   });
 
+  const queryClient = useQueryClient();
+
   const payeesQuery = useQuery({
     queryKey: ['payees'],
     queryFn: async () => fetch('/api/payees').then((res) => res.json()),
@@ -40,16 +42,32 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
     refetchOnWindowFocus: false,
   });
 
-  async function createPayee(name: string) {
-    const result = await createNewPayee(name);
+  const payeeMutation = useMutation({
+    mutationFn: createNewPayee,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['payees'] });
+    },
+    onError: (error) => {
+      // TODO Handle error
+    },
+  });
 
-    // await fetchAllPayees();
+  const categoryMutation = useMutation({
+    mutationFn: createNewCategory,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+    onError: (error) => {
+      // TODO Handle error
+    },
+  });
+
+  async function createPayee(name: string) {
+    payeeMutation.mutate(name);
   }
 
   async function createCategory(name: string) {
-    const result = await createNewCategory(name);
-
-    // await fetchAllCategories();
+    categoryMutation.mutate(name);
   }
 
   const handlePayeeChange = useCallback(
@@ -139,7 +157,13 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Payee</FormLabel>
               <FormControl>
-                <Combobox type='payee' items={payees} onCreate={createPayee} onChange={handlePayeeChange} />
+                <Combobox
+                  type='payee'
+                  items={payees}
+                  defaultValue={defaultValues?.payee}
+                  onCreate={createPayee}
+                  onChange={handlePayeeChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -153,7 +177,13 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Category</FormLabel>
               <FormControl>
-                <Combobox type='category' items={categories} onCreate={createCategory} onChange={handleCategoryChange} />
+                <Combobox
+                  type='category'
+                  defaultValue={defaultValues?.category}
+                  items={categories}
+                  onCreate={createCategory}
+                  onChange={handleCategoryChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

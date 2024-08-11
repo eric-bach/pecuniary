@@ -12,10 +12,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { AmountInput } from '@/components/amount-input';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { createNewSymbol } from '@/actions';
 import Combobox from '@/components/combobox';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 type Props = {
   transaction?: InvestmentTransaction;
@@ -31,7 +31,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
     defaultValues,
   });
 
-  const [symbols, setSymbols] = useState<Symbol[]>([]);
+  const queryClient = useQueryClient();
 
   const symbolsQuery = useQuery({
     queryKey: ['symbols'],
@@ -39,10 +39,18 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
     refetchOnWindowFocus: false,
   });
 
-  async function createSymbol(name: string) {
-    const result = await createNewSymbol(name);
+  const mutation = useMutation({
+    mutationFn: createNewSymbol,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['symbols'] });
+    },
+    onError: (error) => {
+      // TODO Handle error
+    },
+  });
 
-    // await fetchAllSymbols();
+  async function createSymbol(name: string) {
+    mutation.mutate(name);
   }
 
   const handleSymbolChange = useCallback(
@@ -56,6 +64,10 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
     console.log('Submitting', data);
     onSubmit(data);
   };
+
+  if (symbolsQuery.isPending) return <div>Loading...</div>;
+
+  const symbols: Symbol[] = symbolsQuery.data;
 
   return (
     <Form {...form}>
@@ -120,7 +132,13 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Symbol</FormLabel>
               <FormControl>
-                <Combobox type='symbol' items={symbols} onCreate={createSymbol} onChange={handleSymbolChange} />
+                <Combobox
+                  type='symbol'
+                  defaultValue={defaultValues?.symbol}
+                  items={symbols}
+                  onCreate={createSymbol}
+                  onChange={handleSymbolChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
