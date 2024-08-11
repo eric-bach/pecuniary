@@ -39,7 +39,10 @@ X Switch to use ComboBox from budget-tracker tutorial
 X Switch to sonner
 
 - Add tanstack query
-  `- Improve loading screens for sidebar-nav-items and features/accounts/index
+
+  - Make loading messages consistent
+  - Test all Tanstack query is working
+  - Improve loading screens for sidebar-nav-items and features/accounts/index
 
 - Budget Tracker
   - https://github.com/monirhabderabby/budget-tracker - Ppb!hZ$#3\*Q9UL
