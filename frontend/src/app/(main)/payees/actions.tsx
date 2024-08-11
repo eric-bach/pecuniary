@@ -26,14 +26,14 @@ export const Actions = ({ payee }: ActionsProps) => {
   const handleConfirm = async () => {
     setPending(true);
 
-    // TODO Delete Payee
+    // TODO Delete Payee, what to do with associated transactions?
     //await deleteExistingAccount(payee.accountId);
-
-    // TODO Handle if delete fails
 
     setPending(false);
     handleClose();
-    toast.success('Success!', { description: 'Payee was successfully deleted' });
+
+    toast.warning('Error!', { description: 'Not implemented yet' });
+    //toast.success('Success!', { description: 'Payee was successfully deleted' });
   };
 
   const handleDelete = () => {

@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import DeleteItem from '@/components/delete-item';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type ActionsProps = {
   account: Account;
@@ -22,19 +23,39 @@ export const Actions = ({ account }: ActionsProps) => {
   const router = useRouter();
   const { onOpen } = useOpenAccount();
 
+  const queryClient = useQueryClient();
+
   const handleClose = () => {
     setOpen(false);
   };
 
+  const mutation = useMutation({
+    mutationFn: deleteExistingAccount,
+    onSuccess: async () => {
+      setPending(false);
+      handleClose();
+
+      toast.success('Account deleted successfully 🎉', {
+        id: 'delete-account',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['accounts'] });
+    },
+    onError: (error) => {
+      setPending(false);
+
+      toast.error('Failed to delete account', {
+        id: 'delete-account',
+      });
+    },
+  });
+
   const handleConfirm = async () => {
     setPending(true);
-    await deleteExistingAccount(account.accountId);
 
-    // TODO Handle if delete fails
+    toast.loading('Deleting account...', { id: 'delete-account' });
 
-    setPending(false);
-    handleClose();
-    toast.success('Success!', { description: 'Account was successfully deleted' });
+    mutation.mutate(account.accountId);
   };
 
   const handleDelete = () => {

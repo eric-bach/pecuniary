@@ -10,6 +10,7 @@ import { deleteExistingTransaction } from '@/actions';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import DeleteItem from '@/components/delete-item';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TransactionsProps = {
   transaction: BankTransaction | InvestmentTransaction;
@@ -19,6 +20,8 @@ export const Actions = ({ transaction }: TransactionsProps) => {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isPending, setPending] = useState<boolean>(false);
 
+  const queryClient = useQueryClient();
+
   const { onOpen: onBankingOpen } = useOpenBankTransaction();
   const { onOpen: onInvestmentOpen } = useOpenInvestmentTransaction();
 
@@ -26,15 +29,34 @@ export const Actions = ({ transaction }: TransactionsProps) => {
     setOpen(false);
   };
 
+  const mutation = useMutation({
+    mutationFn: deleteExistingTransaction,
+    onSuccess: async () => {
+      setPending(false);
+      handleClose();
+
+      toast.success('Transaction deleted successfully 🎉', {
+        id: 'delete-transaction',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['bank-transactions'] });
+      await queryClient.invalidateQueries({ queryKey: ['investment-transactions'] });
+    },
+    onError: (error) => {
+      setPending(false);
+
+      toast.error('Failed to delete transaction', {
+        id: 'delete-transaction',
+      });
+    },
+  });
+
   const handleConfirm = async () => {
     setPending(true);
-    await deleteExistingTransaction(transaction);
 
-    // TODO Handle if delete fails
+    toast.loading('Deleting transaction...', { id: 'delete-transaction' });
 
-    setPending(false);
-    handleClose();
-    toast.success('Success!', { description: 'Transaction was successfully deleted' });
+    mutation.mutate(transaction);
   };
 
   const handleDelete = () => {

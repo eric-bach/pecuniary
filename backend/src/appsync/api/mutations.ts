@@ -120,7 +120,7 @@ export const updateInvestmentTransaction = `mutation UpdateInvestmentTransaction
 
 export const deleteTransaction = `mutation DeleteTransaction($input: DeleteTransactionInput!) {
   deleteTransaction(input: $input) { 
-    aggregateId
+    pk
   }
 }` as Query<MutationDeleteTransactionArgs, DeleteTransactionMutation>;
 
