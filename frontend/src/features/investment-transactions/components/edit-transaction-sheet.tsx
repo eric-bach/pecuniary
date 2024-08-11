@@ -9,14 +9,12 @@ import { investmentSchema } from '@/types/transaction';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { InvestmentTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
-import { EditInvestmentTransactionFormState } from '@/actions/edit-investment-transaction';
 import { TRANSACTION_TYPE_OPTIONS } from '@/types/transaction-type-options';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
   const { isOpen, onClose, transaction } = useOpenInvestmentTransaction();
-  const [result, setResult] = useState<EditInvestmentTransactionFormState>();
 
   const transactionTypes = TRANSACTION_TYPE_OPTIONS;
 
@@ -30,8 +28,10 @@ const EditInvestmentTransactionSheet = () => {
       setIsPending(false);
       onClose();
 
-      toast.success('Transaction updated successfully 🎉', {
+      toast.success('Transaction updated successfully', {
         id: 'update-investment-transaction',
+        duration: 5000,
+        description: 'The transaction has been updated',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['investment-transactions'] });
@@ -92,14 +92,6 @@ const EditInvestmentTransactionSheet = () => {
             }}
             transactionTypeOptions={transactionTypes}
           />
-
-          {result?.errors && (
-            <div className='text-red-500 text-sm'>
-              {Object.values(result.errors).map((error, i) => (
-                <p key={i}>{error}</p>
-              ))}
-            </div>
-          )}
         </SheetContent>
       </Sheet>
     </>

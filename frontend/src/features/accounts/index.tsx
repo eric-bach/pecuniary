@@ -1,10 +1,11 @@
 'use client';
 
-import { Account } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { useNewAccount } from '@/hooks/use-new-account';
 import { DataTable } from '@/components/data-table';
 import { columns } from '@/app/(main)/accounts/columns';
 import { useQuery } from '@tanstack/react-query';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
 
 const Accounts = () => {
   const newAccount = useNewAccount();
@@ -15,11 +16,11 @@ const Accounts = () => {
     refetchOnWindowFocus: false,
   });
 
-  if (accountsQuery.isFetching) return <div>Loading...</div>;
+  if (accountsQuery.isFetching) return <Skeleton className='h-6 w-100' />;
 
-  const accounts: Account[] = accountsQuery.data;
-
-  return <DataTable filterKey='name' title='Accounts' columns={columns} data={accounts} onClick={newAccount.onOpen} />;
+  return (
+    <DataTable filterKey='name' title='Accounts' columns={columns} data={accountsQuery.data as Account[]} onClick={newAccount.onOpen} />
+  );
 };
 
 export default Accounts;

@@ -27,7 +27,6 @@ export default function DisplayAccount() {
     queryFn: () => fetch('/api/investment-transactions?' + new URLSearchParams({ accountId })).then((res) => res.json()),
   });
 
-  // TODO Fix this loading page
   if (accountQuery.isPending || bankTransactionsQuery.isPending || investmentTransactionsQuery.isPending) return <div>Loading...</div>;
 
   const account = accountQuery.data as Account;

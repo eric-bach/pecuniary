@@ -8,13 +8,11 @@ import { createNewInvestmentTransaction } from '@/actions';
 import { investmentSchema } from '@/types/transaction';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { CreateInvestmentTransactionFormState } from '@/actions/create-investment-transaction';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TRANSACTION_TYPE_OPTIONS } from '@/types/transaction-type-options';
 
 const NewInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
-  const [result, setResult] = useState<CreateInvestmentTransactionFormState>();
 
   const { accountId, isInvestmentOpen, onClose } = useNewTransaction();
 
@@ -28,8 +26,10 @@ const NewInvestmentTransactionSheet = () => {
       setIsPending(false);
       onClose();
 
-      toast.success('Transaction created successfully 🎉', {
+      toast.success('Transaction created successfully', {
         id: 'create-investment-transaction',
+        duration: 5000,
+        description: 'Your transaction has been created',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['investment-transactions'] });
@@ -83,14 +83,6 @@ const NewInvestmentTransactionSheet = () => {
           }}
           transactionTypeOptions={transactionTypes}
         />
-
-        {result?.errors && (
-          <div className='text-red-500 text-sm'>
-            {Object.values(result.errors).map((error, i) => (
-              <p key={i}>{error}</p>
-            ))}
-          </div>
-        )}
       </SheetContent>
     </Sheet>
   );

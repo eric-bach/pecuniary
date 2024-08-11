@@ -9,13 +9,11 @@ import { bankingSchema } from '@/types/transaction';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
-import { EditBankTransactionFormState } from '@/actions/edit-bank-transaction';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditBankTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
   const { isOpen, onClose, transaction } = useOpenBankTransaction();
-  const [result, setResult] = useState<EditBankTransactionFormState>();
 
   const trans = transaction as BankTransaction;
 
@@ -27,8 +25,10 @@ const EditBankTransactionSheet = () => {
       setIsPending(false);
       onClose();
 
-      toast.success('Transaction updated successfully 🎉', {
+      toast.success('Transaction updated successfully', {
         id: 'update-bank-transaction',
+        duration: 5000,
+        description: 'The transaction has been updated',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['bank-transactions'] });
@@ -83,14 +83,6 @@ const EditBankTransactionSheet = () => {
             createdAt: trans?.createdAt,
           }}
         />
-
-        {result?.errors && (
-          <div className='text-red-500 text-sm'>
-            {Object.values(result.errors).map((error, i) => (
-              <p key={i}>{error}</p>
-            ))}
-          </div>
-        )}
       </SheetContent>
     </Sheet>
   );

@@ -22,8 +22,10 @@ const NewPayeeSheet = () => {
       setPending(false);
       onClose();
 
-      toast.success('Created payee successfully 🎉', {
+      toast.success('Payee created successfully', {
         id: 'create-payee',
+        duration: 5000,
+        description: 'Your payee has been created',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['payees'] });

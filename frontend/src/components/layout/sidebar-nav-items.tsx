@@ -19,6 +19,8 @@ import {
 import { usePathname } from 'next/navigation';
 import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
 import { useQuery } from '@tanstack/react-query';
+import SkeletonWrapper from '../skeleton-wrapper';
+import { Skeleton } from '../ui/skeleton';
 
 export interface Item {
   id: string;
@@ -38,7 +40,8 @@ export default function SidebarNavItems({ isSidebarExpanded, isMobileNav, toggle
     refetchOnWindowFocus: false,
   });
 
-  if (accountsQuery.isFetching) return <div>Loading...</div>;
+  if (accountsQuery.isFetching) return <Skeleton />;
+
   const accounts = accountsQuery.data as Account[];
 
   let banking = accounts

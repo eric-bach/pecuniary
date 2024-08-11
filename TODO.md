@@ -40,7 +40,6 @@ X Switch to sonner
 
 - Add tanstack query
 
-  - Make loading messages consistent
   - Test all Tanstack query is working
   - Improve loading screens for sidebar-nav-items and features/accounts/index
 

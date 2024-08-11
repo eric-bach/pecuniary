@@ -8,13 +8,11 @@ import { createNewBankTransaction } from '@/actions';
 import { bankingSchema } from '@/types/transaction';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { CreateBankTransactionFormState } from '@/actions/create-bank-transaction';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const NewBankingTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
   const { accountId, isBankingOpen, onClose } = useNewTransaction();
-  const [result, setResult] = useState<CreateBankTransactionFormState>();
 
   const queryClient = useQueryClient();
 
@@ -24,8 +22,10 @@ const NewBankingTransactionSheet = () => {
       setIsPending(false);
       onClose();
 
-      toast.success('Transaction created successfully 🎉', {
+      toast.success('Transaction created successfully', {
         id: 'create-bank-transaction',
+        duration: 5000,
+        description: 'Your transaction has been created',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['bank-transactions'] });
@@ -74,14 +74,6 @@ const NewBankingTransactionSheet = () => {
             amount: '',
           }}
         />
-
-        {result?.errors && (
-          <div className='text-red-500 text-sm'>
-            {Object.values(result.errors).map((error, i) => (
-              <p key={i}>{error}</p>
-            ))}
-          </div>
-        )}
       </SheetContent>
     </Sheet>
   );

@@ -22,8 +22,10 @@ const NewCategorySheet = () => {
       setPending(false);
       onClose();
 
-      toast.success('Created category successfully 🎉', {
+      toast.success('Category created successfully', {
         id: 'create-category',
+        duration: 5000,
+        description: 'Your category has been created',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['categories'] });

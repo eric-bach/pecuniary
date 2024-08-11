@@ -8,13 +8,11 @@ import { createNewAccount } from '@/actions';
 import { schema } from '@/types/account';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { CreateAccountFormState } from '@/actions/create-account';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const NewAccountSheet = () => {
   const { isOpen, onClose } = useNewAccount();
   const [isPending, setIsPending] = useState(false);
-  const [result, setResult] = useState<CreateAccountFormState>();
 
   const queryClient = useQueryClient();
 
@@ -24,8 +22,10 @@ const NewAccountSheet = () => {
       setIsPending(false);
       onClose();
 
-      toast.success('Created account successfully 🎉', {
+      toast.success('Account created successfully', {
         id: 'create-account',
+        duration: 5000,
+        description: 'Your account has been created',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['accounts'] });
@@ -33,7 +33,7 @@ const NewAccountSheet = () => {
     onError: (error) => {
       setIsPending(false);
 
-      toast.error('Failed to create account ��', {
+      toast.error('Failed to create account', {
         id: 'create-account',
       });
     },
@@ -60,14 +60,6 @@ const NewAccountSheet = () => {
           disabled={isPending}
           defaultValues={{ accountId: '', name: '', category: '', type: '', createdAt: '' }}
         />
-
-        {result?.errors && (
-          <div className='text-red-500 text-sm'>
-            {Object.values(result.errors).map((error, i) => (
-              <p key={i}>{error}</p>
-            ))}
-          </div>
-        )}
       </SheetContent>
     </Sheet>
   );

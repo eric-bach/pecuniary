@@ -8,13 +8,11 @@ import { useOpenAccount } from '@/hooks/use-open-account';
 import { schema } from '@/types/account';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { EditAccountFormState } from '@/actions/edit-account';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditAccountSheet = () => {
   const { isOpen, onClose, account } = useOpenAccount();
   const [isPending, setIsPending] = useState(false);
-  const [result, setResult] = useState<EditAccountFormState>();
 
   const queryClient = useQueryClient();
 
@@ -24,8 +22,10 @@ const EditAccountSheet = () => {
       setIsPending(false);
       onClose();
 
-      toast.success('Account updated successfully 🎉', {
+      toast.success('Account updated successfully', {
         id: 'update-account',
+        duration: 5000,
+        description: 'The account has been updated',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['accounts'] });
@@ -63,14 +63,6 @@ const EditAccountSheet = () => {
           </SheetHeader>
 
           <AccountForm account={account} onSubmit={onSubmit} disabled={isPending} defaultValues={account} />
-
-          {result?.errors && (
-            <div className='text-red-500 text-sm'>
-              {Object.values(result.errors).map((error, i) => (
-                <p key={i}>{error}</p>
-              ))}
-            </div>
-          )}
         </SheetContent>
       </Sheet>
     </>

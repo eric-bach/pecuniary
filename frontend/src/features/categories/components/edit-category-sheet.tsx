@@ -22,8 +22,10 @@ const EditCategorySheet = () => {
       setPending(false);
       onClose();
 
-      toast.success('Updated category successfully 🎉', {
+      toast.success('Category updated successfully', {
         id: 'update-category',
+        duration: 5000,
+        description: 'The category has been updated',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['categories'] });

@@ -22,8 +22,10 @@ const EditPayeeSheet = () => {
       setPending(false);
       onClose();
 
-      toast.success('Updated payee successfully 🎉', {
+      toast.success('Payee updated successfully', {
         id: 'update-payee',
+        duration: 5000,
+        description: 'The payee has been updated',
       });
 
       await queryClient.invalidateQueries({ queryKey: ['payees'] });
