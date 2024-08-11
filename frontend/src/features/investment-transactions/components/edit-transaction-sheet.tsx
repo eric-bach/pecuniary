@@ -3,29 +3,48 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import TransactionForm from './transaction-form';
 import * as z from 'zod';
-import { editExistingInvestmentTransaction, fetchTransactionTypeOptions } from '@/actions';
+import { editExistingInvestmentTransaction } from '@/actions';
 import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
 import { investmentSchema } from '@/types/transaction';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { InvestmentTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
-import { EditInvestmentTransactionFormState } from '@/actions/edit-investment-transaction';
+import { TRANSACTION_TYPE_OPTIONS } from '@/types/transaction-type-options';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
-  const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
   const { isOpen, onClose, transaction } = useOpenInvestmentTransaction();
-  const [result, setResult] = useState<EditInvestmentTransactionFormState>();
+
+  const transactionTypes = TRANSACTION_TYPE_OPTIONS;
 
   const trans = transaction as InvestmentTransaction;
 
-  useEffect(() => {
-    fetchAllTransactionTypes();
-  }, []);
+  const queryClient = useQueryClient();
 
-  async function fetchAllTransactionTypes() {
-    setTransactionTypes(await fetchTransactionTypeOptions());
-  }
+  const mutation = useMutation({
+    mutationFn: editExistingInvestmentTransaction,
+    onSuccess: async () => {
+      setIsPending(false);
+      onClose();
+
+      toast.success('Transaction updated successfully', {
+        id: 'update-investment-transaction',
+        duration: 5000,
+        description: 'The transaction has been updated',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['investment-transactions'] });
+    },
+    onError: (error) => {
+      setIsPending(false);
+
+      toast.error('Failed to update transaction', {
+        id: 'update-investment-transaction',
+        description: '',
+      });
+    },
+  });
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
@@ -41,20 +60,11 @@ const EditInvestmentTransactionSheet = () => {
       createdAt: values.createdAt,
     };
 
-    const response = await editExistingInvestmentTransaction(data);
+    toast.loading('Updating transaction...', {
+      id: 'update-investment-transaction',
+    });
 
-    if (response?.errors) {
-      setResult(response);
-
-      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
-
-      return;
-    }
-
-    onClose();
-    setIsPending(false);
-
-    toast.success('Success!', { description: 'Transaction was successfully updated' });
+    mutation.mutate(data);
   };
 
   return (
@@ -83,14 +93,6 @@ const EditInvestmentTransactionSheet = () => {
             }}
             transactionTypeOptions={transactionTypes}
           />
-
-          {result?.errors && (
-            <div className='text-red-500 text-sm'>
-              {Object.values(result.errors).map((error, i) => (
-                <p key={i}>{error}</p>
-              ))}
-            </div>
-          )}
         </SheetContent>
       </Sheet>
     </>

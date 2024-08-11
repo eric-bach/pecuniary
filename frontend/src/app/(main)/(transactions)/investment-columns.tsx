@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
-import { Actions } from '@/app/(main)/transactions/actions';
+import { Actions } from '@/app/(main)/(transactions)/actions';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export const investmentColumns: ColumnDef<InvestmentTransaction>[] = [

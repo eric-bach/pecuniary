@@ -18,6 +18,9 @@ import {
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { Account } from '../../../../backend/src/appsync/api/codegen/appsync';
+import { useQuery } from '@tanstack/react-query';
+import SkeletonWrapper from '../skeleton-wrapper';
+import { Skeleton } from '../ui/skeleton';
 
 export interface Item {
   id: string;
@@ -25,13 +28,22 @@ export interface Item {
 }
 
 interface SidebarNavItemsProps {
-  accounts: [Account];
   isSidebarExpanded: boolean;
   isMobileNav?: boolean;
   toggleSidebar?: () => void;
 }
 
-export default function SidebarNavItems({ accounts, isSidebarExpanded, isMobileNav, toggleSidebar }: SidebarNavItemsProps) {
+export default function SidebarNavItems({ isSidebarExpanded, isMobileNav, toggleSidebar }: SidebarNavItemsProps) {
+  const accountsQuery = useQuery({
+    queryKey: ['accounts'],
+    queryFn: () => fetch('/api/accounts').then((res) => res.json()),
+    refetchOnWindowFocus: false,
+  });
+
+  if (accountsQuery.isFetching) return <Skeleton />;
+
+  const accounts = accountsQuery.data as Account[];
+
   let banking = accounts
     .filter((account) => account.category.toLowerCase() === 'banking')
     .map((account) => ({ id: account.accountId, name: account.name }));

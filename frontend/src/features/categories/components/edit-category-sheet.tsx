@@ -8,27 +8,43 @@ import * as z from 'zod';
 import { useState } from 'react';
 import { editExistingCategory } from '@/actions';
 import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditCategorySheet = () => {
   const { isOpen, onClose, category } = useOpenCategory();
   const [isPending, setPending] = useState(false);
 
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: editExistingCategory,
+    onSuccess: async () => {
+      setPending(false);
+      onClose();
+
+      toast.success('Category updated successfully', {
+        id: 'update-category',
+        duration: 5000,
+        description: 'The category has been updated',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+    onError: (error) => {
+      setPending(false);
+
+      toast.error('Failed to update category', {
+        id: 'update-category',
+      });
+    },
+  });
+
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    const response = await editExistingCategory({
-      pk: values.pk!,
-      name: values.name,
-    });
+    toast.loading('Updating category...', { id: 'update-category', description: '' });
 
-    onClose();
-    setPending(false);
-
-    if (response?.errors) {
-      toast.error('Failed!', { description: 'Category could not be updated' });
-    } else {
-      toast.success('Success!', { description: 'Category was successfully updated' });
-    }
+    mutation.mutate({ pk: values.pk!, name: values.name });
   };
 
   return (

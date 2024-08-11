@@ -12,10 +12,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { AmountInput } from '@/components/amount-input';
 import { CurrencyAmountInput } from '@/components/currency-amount-input';
 import { Input } from '@/components/ui/input';
-import { useCallback, useEffect, useState } from 'react';
-import { fetchSymbols } from '@/actions/fetch-symbols';
+import { useCallback } from 'react';
 import { createNewSymbol } from '@/actions';
 import Combobox from '@/components/combobox';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 type Props = {
   transaction?: InvestmentTransaction;
@@ -31,20 +31,26 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
     defaultValues,
   });
 
-  const [symbols, setSymbols] = useState<Symbol[]>([]);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchAllSymbols();
-  }, []);
+  const symbolsQuery = useQuery({
+    queryKey: ['symbols'],
+    queryFn: async () => fetch('/api/symbols').then((res) => res.json()),
+    refetchOnWindowFocus: false,
+  });
 
-  async function fetchAllSymbols() {
-    setSymbols(await fetchSymbols());
-  }
+  const mutation = useMutation({
+    mutationFn: createNewSymbol,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['symbols'] });
+    },
+    onError: (error) => {
+      // TODO Handle error
+    },
+  });
 
   async function createSymbol(name: string) {
-    const result = await createNewSymbol(name);
-
-    await fetchAllSymbols();
+    mutation.mutate(name);
   }
 
   const handleSymbolChange = useCallback(
@@ -58,6 +64,10 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
     console.log('Submitting', data);
     onSubmit(data);
   };
+
+  if (symbolsQuery.isPending) return <div>Loading...</div>;
+
+  const symbols: Symbol[] = symbolsQuery.data;
 
   return (
     <Form {...form}>
@@ -122,7 +132,13 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Symbol</FormLabel>
               <FormControl>
-                <Combobox type='symbol' items={symbols} onCreate={createSymbol} onChange={handleSymbolChange} />
+                <Combobox
+                  type='symbol'
+                  defaultValue={defaultValues?.symbol}
+                  items={symbols}
+                  onCreate={createSymbol}
+                  onChange={handleSymbolChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

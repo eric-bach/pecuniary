@@ -4,50 +4,61 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import * as z from 'zod';
 import TransactionForm from './transaction-form';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
-import { createNewInvestmentTransaction, fetchTransactionTypeOptions } from '@/actions';
+import { createNewInvestmentTransaction } from '@/actions';
 import { investmentSchema } from '@/types/transaction';
 import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
-import { CreateInvestmentTransactionFormState } from '@/actions/create-investment-transaction';
+import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { TRANSACTION_TYPE_OPTIONS } from '@/types/transaction-type-options';
 
 const NewInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
-  const [transactionTypes, setTransactionTypes] = useState<{ label: string; value: string }[]>([]);
-  const [result, setResult] = useState<CreateInvestmentTransactionFormState>();
 
   const { accountId, isInvestmentOpen, onClose } = useNewTransaction();
 
-  useEffect(() => {
-    fetchAllTransactionTypes();
-  }, []);
+  const transactionTypes = TRANSACTION_TYPE_OPTIONS;
 
-  async function fetchAllTransactionTypes() {
-    setTransactionTypes(await fetchTransactionTypeOptions());
-  }
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createNewInvestmentTransaction,
+    onSuccess: async () => {
+      setIsPending(false);
+      onClose();
+
+      toast.success('Transaction created successfully', {
+        id: 'create-investment-transaction',
+        duration: 5000,
+        description: 'Your transaction has been created',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['investment-transactions'] });
+    },
+    onError: (error) => {
+      setIsPending(false);
+
+      toast.error('Failed to create transaction', {
+        id: 'create-investment-transaction',
+      });
+    },
+  });
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
     setIsPending(true);
 
-    const response = await createNewInvestmentTransaction({
+    toast.loading('Creating transaction...', {
+      id: 'create-investment-transaction',
+    });
+
+    const data = {
       ...values,
       shares: parseFloat(values.shares),
       price: parseFloat(values.price),
       commission: parseFloat(values.commission),
       transactionDate: values.transactionDate.toDateString(),
-    });
+    };
 
-    if (response?.errors) {
-      setResult(response);
-
-      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
-
-      return;
-    }
-
-    onClose();
-    setIsPending(false);
-
-    toast.success('Success!', { description: 'Transaction was successfully created' });
+    mutation.mutate(data);
   };
 
   return (
@@ -72,14 +83,6 @@ const NewInvestmentTransactionSheet = () => {
           }}
           transactionTypeOptions={transactionTypes}
         />
-
-        {result?.errors && (
-          <div className='text-red-500 text-sm'>
-            {Object.values(result.errors).map((error, i) => (
-              <p key={i}>{error}</p>
-            ))}
-          </div>
-        )}
       </SheetContent>
     </Sheet>
   );

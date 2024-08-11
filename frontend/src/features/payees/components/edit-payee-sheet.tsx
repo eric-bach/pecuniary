@@ -8,27 +8,43 @@ import * as z from 'zod';
 import { useState } from 'react';
 import { editExistingPayee } from '@/actions';
 import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditPayeeSheet = () => {
   const { isOpen, onClose, payee } = useOpenPayee();
   const [isPending, setPending] = useState(false);
 
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: editExistingPayee,
+    onSuccess: async () => {
+      setPending(false);
+      onClose();
+
+      toast.success('Payee updated successfully', {
+        id: 'update-payee',
+        duration: 5000,
+        description: 'The payee has been updated',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['payees'] });
+    },
+    onError: (error) => {
+      setPending(false);
+
+      toast.error('Failed to update payee', {
+        id: 'update-payee',
+      });
+    },
+  });
+
   const onSubmit = async (values: z.infer<typeof schema>) => {
     setPending(true);
 
-    const response = await editExistingPayee({
-      pk: values.pk!,
-      name: values.name,
-    });
+    toast.loading('Updating payee...', { id: 'update-payee', description: '' });
 
-    onClose();
-    setPending(false);
-
-    if (response?.errors) {
-      toast.error('Failed!', { description: 'Payee could not be updated' });
-    } else {
-      toast.success('Success!', { description: 'Payee was successfully updated' });
-    }
+    mutation.mutate({ pk: values.pk!, name: values.name });
   };
 
   return (

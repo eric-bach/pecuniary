@@ -38,10 +38,7 @@ X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 X Switch to use ComboBox from budget-tracker tutorial
 X Switch to sonner
 
-- Budget Tracker
-  - https://github.com/monirhabderabby/budget-tracker - Ppb!hZ$#3\*Q9UL
-  - https://github.com/AyushGlitch/budget-tracker
-- Add tanstack query
+- Add Skeleton loading screens
 - Events
   `- Create/Update Position on InvestmentTransactionCreated
       - Update createBankTransaction to publish BankTransactionCreated
@@ -69,6 +66,9 @@ X Switch to sonner
 
 ##### References
 
+- Budget Tracker
+  - https://github.com/monirhabderabby/budget-tracker - Ppb!hZ$#3\*Q9UL
+  - https://github.com/AyushGlitch/budget-tracker
 - Finance Dashboard
   - https://appfinance.vercel.app/
   - https://github.com/sanidhyy/finance-dashboard

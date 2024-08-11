@@ -1,7 +1,7 @@
 'use client';
 
 import { DataTable } from '@/components/data-table';
-import { investmentColumns } from '@/app/(main)/transactions/investment-columns';
+import { investmentColumns } from '@/app/(main)/(transactions)/investment-columns';
 import { InvestmentTransaction } from '../../../../backend/src/appsync/api/codegen/appsync';
 import { useNewTransaction } from '@/hooks/use-new-transaction';
 

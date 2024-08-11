@@ -9,14 +9,38 @@ import { bankingSchema } from '@/types/transaction';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
-import { EditBankTransactionFormState } from '@/actions/edit-bank-transaction';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditBankTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
   const { isOpen, onClose, transaction } = useOpenBankTransaction();
-  const [result, setResult] = useState<EditBankTransactionFormState>();
 
   const trans = transaction as BankTransaction;
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: editExistingBankTransaction,
+    onSuccess: async () => {
+      setIsPending(false);
+      onClose();
+
+      toast.success('Transaction updated successfully', {
+        id: 'update-bank-transaction',
+        duration: 5000,
+        description: 'The transaction has been updated',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['bank-transactions'] });
+    },
+    onError: (error) => {
+      setIsPending(false);
+
+      toast.error('Failed to update transaction', {
+        id: 'update-bank-transaction',
+      });
+    },
+  });
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
     setIsPending(true);
@@ -30,20 +54,12 @@ const EditBankTransactionSheet = () => {
       createdAt: values.createdAt,
     };
 
-    const response = await editExistingBankTransaction(data);
+    toast.loading('Updating transaction...', {
+      id: 'update-bank-transaction',
+      description: '',
+    });
 
-    if (response?.errors) {
-      setResult(response);
-
-      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
-
-      return;
-    }
-
-    onClose();
-    setIsPending(false);
-
-    toast.success('Success!', { description: 'Transaction was successfully updated' });
+    mutation.mutate(data);
   };
 
   return (
@@ -68,14 +84,6 @@ const EditBankTransactionSheet = () => {
             createdAt: trans?.createdAt,
           }}
         />
-
-        {result?.errors && (
-          <div className='text-red-500 text-sm'>
-            {Object.values(result.errors).map((error, i) => (
-              <p key={i}>{error}</p>
-            ))}
-          </div>
-        )}
       </SheetContent>
     </Sheet>
   );
