@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { BankTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 import { EditBankTransactionFormState } from '@/actions/edit-bank-transaction';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditBankTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
@@ -17,6 +18,29 @@ const EditBankTransactionSheet = () => {
   const [result, setResult] = useState<EditBankTransactionFormState>();
 
   const trans = transaction as BankTransaction;
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: editExistingBankTransaction,
+    onSuccess: async () => {
+      setIsPending(false);
+      onClose();
+
+      toast.success('Transaction updated successfully 🎉', {
+        id: 'update-bank-transaction',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['bank-transactions'] });
+    },
+    onError: (error) => {
+      setIsPending(false);
+
+      toast.error('Failed to update transaction', {
+        id: 'update-bank-transaction',
+      });
+    },
+  });
 
   const onSubmit = async (values: z.infer<typeof bankingSchema>) => {
     setIsPending(true);
@@ -30,20 +54,11 @@ const EditBankTransactionSheet = () => {
       createdAt: values.createdAt,
     };
 
-    const response = await editExistingBankTransaction(data);
+    toast.loading('Updating transaction...', {
+      id: 'update-bank-transaction',
+    });
 
-    if (response?.errors) {
-      setResult(response);
-
-      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
-
-      return;
-    }
-
-    onClose();
-    setIsPending(false);
-
-    toast.success('Success!', { description: 'Transaction was successfully updated' });
+    mutation.mutate(data);
   };
 
   return (

@@ -10,20 +10,39 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import { InvestmentTransaction } from '../../../../../backend/src/appsync/api/codegen/appsync';
 import { EditInvestmentTransactionFormState } from '@/actions/edit-investment-transaction';
-import { useQuery } from '@tanstack/react-query';
-import { SelectOption } from '@/types/select-option';
+import { TRANSACTION_TYPE_OPTIONS } from '@/types/transaction-type-options';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const EditInvestmentTransactionSheet = () => {
   const [isPending, setIsPending] = useState(false);
   const { isOpen, onClose, transaction } = useOpenInvestmentTransaction();
   const [result, setResult] = useState<EditInvestmentTransactionFormState>();
 
+  const transactionTypes = TRANSACTION_TYPE_OPTIONS;
+
   const trans = transaction as InvestmentTransaction;
 
-  const transactionTypeQuery = useQuery({
-    queryKey: ['transaction-types'],
-    queryFn: async () => fetch('/api/transaction-type-options').then((res) => res.json()),
-    refetchOnWindowFocus: false,
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: editExistingInvestmentTransaction,
+    onSuccess: async () => {
+      setIsPending(false);
+      onClose();
+
+      toast.success('Transaction updated successfully 🎉', {
+        id: 'update-investment-transaction',
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ['investment-transactions'] });
+    },
+    onError: (error) => {
+      setIsPending(false);
+
+      toast.error('Failed to update transaction', {
+        id: 'update-investment-transaction',
+      });
+    },
   });
 
   const onSubmit = async (values: z.infer<typeof investmentSchema>) => {
@@ -40,25 +59,12 @@ const EditInvestmentTransactionSheet = () => {
       createdAt: values.createdAt,
     };
 
-    const response = await editExistingInvestmentTransaction(data);
+    toast.loading('Updating transaction...', {
+      id: 'update-investment-transaction',
+    });
 
-    if (response?.errors) {
-      setResult(response);
-
-      toast.error('Error!', { description: Object.values(response.errors).join('\n') });
-
-      return;
-    }
-
-    onClose();
-    setIsPending(false);
-
-    toast.success('Success!', { description: 'Transaction was successfully updated' });
+    mutation.mutate(data);
   };
-
-  if (transactionTypeQuery.isPending) return <div>Loading...</div>;
-
-  const transactionTypes: SelectOption[] = transactionTypeQuery.data;
 
   return (
     <>
