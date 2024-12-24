@@ -53,6 +53,7 @@ jobs:
         working-directory: backend
         env:
           AWS_SERVICE_ROLE_ARN: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
+          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
 
   integration-tests:
     name: Integration Tests
