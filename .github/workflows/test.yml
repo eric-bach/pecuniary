@@ -36,6 +36,12 @@ jobs:
       - name: 📥 Install Backend and Sources
         uses: ./.github/actions/backend
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
+          aws-region: ${{ secrets.REGION }}
+
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
@@ -51,6 +57,8 @@ jobs:
       - name: 🔭 Run CDK Unit Tests
         run: npm run test
         working-directory: backend
+        env:
+          AWS_SERVICE_ROLE_ARN: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
 
   integration-tests:
     name: Integration Tests
