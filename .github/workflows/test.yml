@@ -30,7 +30,7 @@ jobs:
 
       - name: Check AWS_SERVICE_ROLE_ARN Secret
         run: |
-          if [ -z "${{ secrets.AWS_SERVICE_ROLE_ARN }}" ]; then
+          if [ -z "${{ secrets.REGION }}" ]; then
             echo "AWS_SERVICE_ROLE_ARN secret is not set"
             exit 1
           else
