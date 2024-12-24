@@ -40,7 +40,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
           role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
-          aws-region: ${{ secrets.REGION }}
+          aws-region: 'us-east-1'
 
       - name: 🚧 Build AppSync
         run: |
