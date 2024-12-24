@@ -7,9 +7,9 @@ dotenv.config();
 
 const file = './src/appsync/build/Mutation.createAccount.js';
 
-if (!process.env.AWS_SERVICE_ROLE_ARN) {
-  throw new Error('AWS_SERVICE_ROLE_ARN environment variable is required');
-}
+// if (!process.env.AWS_SERVICE_ROLE_ARN) {
+//   throw new Error('AWS_SERVICE_ROLE_ARN environment variable is required');
+// }
 
 const appsync = new AppSyncClient({
   region: 'us-east-1',
