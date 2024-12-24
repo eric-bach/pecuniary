@@ -139,18 +139,23 @@ jobs:
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
-      - name: 🗒️ Create Frontend .env
-        run: |
-          touch .env
-          echo NEXT_PUBLIC_USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> .env
-          echo NEXT_PUBLIC_USER_POOL_CLIENT_ID=${{ secrets.USER_POOL_CLIENT_ID }} >> .env
-          echo NEXT_PUBLIC_APPSYNC_API_ENDPOINT=${{ secrets.APPSYNC_API_ENDPOINT }} >> .env
-          echo NEXT_PUBLIC_APPSYNC_REGION=${{ secrets.REGION }} >> .env
-        working-directory: frontend
+      # - name: 🗒️ Create Frontend .env
+      #   run: |
+      #     touch .env
+      #     echo NEXT_PUBLIC_USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> .env
+      #     echo NEXT_PUBLIC_USER_POOL_CLIENT_ID=${{ secrets.USER_POOL_CLIENT_ID }} >> .env
+      #     echo NEXT_PUBLIC_APPSYNC_API_ENDPOINT=${{ secrets.APPSYNC_API_ENDPOINT }} >> .env
+      #     echo NEXT_PUBLIC_APPSYNC_REGION=${{ secrets.REGION }} >> .env
+      #   working-directory: frontend
 
       - name: 🏗 Build Frontend
         run: npm run build-frontend
         working-directory: backend
+        env:
+          NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
+          NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
+          NEXT_PUBLIC_APPSYNC_API_ENDPOINT: ${{ secrets.APPSYNC_API_ENDPOINT }}
+          NEXT_PUBLIC_APPSYNC_REGION: ${{ secrets.REGION }}
 
       # - name: 🗒️ Create Backend .env
       #   run: |
