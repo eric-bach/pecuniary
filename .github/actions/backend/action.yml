@@ -21,7 +21,17 @@ runs:
 
     - name: 📥 Install Backend
       run: |
+        # Install Lambda dependencies
         find ./src/lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
+        while IFS= read -r file; do
+          echo "💾 Installing dependencies for $file"
+          cd "$(dirname "$file")"
+          npm ci
+          cd - >/dev/null
+        done
+
+        # Install AppSync dependencies
+        find ./src/appsync -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
         while IFS= read -r file; do
           echo "💾 Installing dependencies for $file"
           cd "$(dirname "$file")"

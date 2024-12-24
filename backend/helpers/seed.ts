@@ -27,7 +27,7 @@ async function seed() {
 }
 
 async function seedItem(tableName: string, item: any) {
-  item.sk = item.sk + new Date().toISOString();
+  //item.sk = item.sk + new Date().toISOString();
   item.updatedAt = new Date().toISOString();
 
   const putItemCommandInput: PutItemCommandInput = {
