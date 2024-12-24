@@ -33,6 +33,13 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
+      # Add this step before running the tests
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
+          aws-region: us-east-1
+
       - name: 📥 Install Backend and Sources
         uses: ./.github/actions/backend
 
@@ -53,7 +60,6 @@ jobs:
         working-directory: backend
         env:
           AWS_SERVICE_ROLE_ARN: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
-          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
 
   integration-tests:
     name: Integration Tests

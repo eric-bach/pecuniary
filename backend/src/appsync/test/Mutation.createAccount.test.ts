@@ -1,7 +1,7 @@
 import { AppSyncClient, EvaluateCodeCommand, EvaluateCodeCommandInput } from '@aws-sdk/client-appsync';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { readFile } from 'fs/promises';
-import { fromTemporaryCredentials, fromSSO } from '@aws-sdk/credential-providers';
+// import { fromTemporaryCredentials, fromSSO } from '@aws-sdk/credential-providers';
 import dotenv from 'dotenv';
 dotenv.config();
 
