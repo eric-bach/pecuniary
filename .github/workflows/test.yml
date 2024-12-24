@@ -14,6 +14,10 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
 
     steps:
       - name: ⬇️ Checkout Code
@@ -24,6 +28,13 @@ jobs:
         with:
           node-version: 20
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
+          aws-region: us-east-1
+          role-session-name: GithubActionsSession
+
       - name: 👀 Env
         run: |
           echo "Event name: ${{ github.event_name }}"
@@ -33,22 +44,15 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      # Add this step before running the tests
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
-          aws-region: us-east-1
-
       - name: 📥 Install Backend and Sources
         uses: ./.github/actions/backend
 
-      - name: 🗒️ Create Backend .env
-        run: |
-          touch .env
-          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-          echo AWS_SERVICE_ROLE_ARN=${{ secrets.AWS_SERVICE_ROLE_ARN }} >> .env
-        working-directory: backend
+      # - name: 🗒️ Create Backend .env
+      #   run: |
+      #     touch .env
+      #     echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
+      #     echo AWS_SERVICE_ROLE_ARN=${{ secrets.AWS_SERVICE_ROLE_ARN }} >> .env
+      #   working-directory: backend
 
       - name: 🚧 Build AppSync
         run: |
