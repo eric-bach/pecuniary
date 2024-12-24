@@ -136,12 +136,6 @@ jobs:
         run: npm run build-frontend
         working-directory: backend
 
-      - name: 🗒️ Create Backend .env
-        run: |
-          touch .env
-          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-        working-directory: backend
-
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync

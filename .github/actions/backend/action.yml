@@ -40,3 +40,10 @@ runs:
         done
       working-directory: backend
       shell: bash
+
+    - name: 🗒️ Create Backend .env
+      run: |
+        touch .env
+        echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
+        echo AWS_SERVICE_ROLE_ARN=${{ secrets.AWS_SERVICE_ROLE_ARN }} >> .env
+      working-directory: backend

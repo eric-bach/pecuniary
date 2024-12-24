@@ -59,6 +59,7 @@ This quick start guide describes how to get the application running. An `AWS acc
 
     ```
     DLQ_NOTIFICATIONS - email address to send failed event message notifications to.
+    AWS_SERVICE_ROLE_ARN - ARN of the GitHub actions role to deploy the stack.
     ```
 
 5.  Copy the `./frontend/.env.example` file to `./frontend/.env` and fill in the parameter values from the CDK stack outputs in step 2:
