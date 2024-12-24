@@ -13,12 +13,12 @@ if (!process.env.AWS_SERVICE_ROLE_ARN) {
 
 const appsync = new AppSyncClient({
   region: 'us-east-1',
-  credentials: fromTemporaryCredentials({
-    params: {
-      RoleArn: process.env.AWS_SERVICE_ROLE_ARN,
-      RoleSessionName: 'AppSyncTestSession',
-    },
-  }),
+  // credentials: fromTemporaryCredentials({
+  //   params: {
+  //     RoleArn: process.env.AWS_SERVICE_ROLE_ARN,
+  //     RoleSessionName: 'AppSyncTestSession',
+  //   },
+  // }),
 });
 
 describe('createAccount', () => {
