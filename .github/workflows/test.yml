@@ -29,15 +29,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Check AWS_SERVICE_ROLE_ARN Secret
-        run: |
-          if [ -z "${{ secrets.AWS_SERVICE_ROLE_ARN }}" ]; then
-            echo "AWS_SERVICE_ROLE_ARN secret is not set"
-            exit 1
-          else
-            echo "AWS_SERVICE_ROLE_ARN secret is set"
-          fi
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -57,13 +48,6 @@ jobs:
       - name: 📥 Install Backend and Sources
         uses: ./.github/actions/backend
 
-      # - name: 🗒️ Create Backend .env
-      #   run: |
-      #     touch .env
-      #     echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-      #     echo AWS_SERVICE_ROLE_ARN=${{ secrets.AWS_SERVICE_ROLE_ARN }} >> .env
-      #   working-directory: backend
-
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
@@ -72,8 +56,8 @@ jobs:
       - name: 🔭 Run CDK Unit Tests
         run: npm run test
         working-directory: backend
-        env:
-          AWS_SERVICE_ROLE_ARN: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
+        # env:
+        #   AWS_SERVICE_ROLE_ARN: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
 
   integration-tests:
     name: Integration Tests
