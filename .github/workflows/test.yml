@@ -36,17 +36,17 @@ jobs:
       - name: 📥 Install Backend and Sources
         uses: ./.github/actions/backend
 
+      - name: 🗒️ Create Backend .env
+        run: |
+          touch .env
+          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
+          echo AWS_SERVICE_ROLE_ARN=${{ secrets.AWS_SERVICE_ROLE_ARN }} >> .env
+        working-directory: backend
+
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
         working-directory: backend
-
-      # - name: 🗒️ Create Backend .env
-      #   run: |
-      #     touch .env
-      #     echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-      #     echo AWS_SERVICE_ROLE_ARN=${{ secrets.AWS_SERVICE_ROLE_ARN }} >> .env
-      #   working-directory: backend
 
       - name: 🔭 Run CDK Unit Tests
         run: npm run test
