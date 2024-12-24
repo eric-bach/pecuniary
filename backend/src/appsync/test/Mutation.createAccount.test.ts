@@ -1,8 +1,25 @@
 import { AppSyncClient, EvaluateCodeCommand, EvaluateCodeCommandInput } from '@aws-sdk/client-appsync';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { readFile } from 'fs/promises';
-const appsync = new AppSyncClient({ region: 'us-east-1' });
+import { fromTemporaryCredentials, fromSSO } from '@aws-sdk/credential-providers';
+import dotenv from 'dotenv';
+dotenv.config();
+
 const file = './src/appsync/build/Mutation.createAccount.js';
+
+if (!process.env.AWS_SERVICE_ROLE_ARN) {
+  throw new Error('AWS_SERVICE_ROLE_ARN environment variable is required');
+}
+
+const appsync = new AppSyncClient({
+  region: 'us-east-1',
+  credentials: fromTemporaryCredentials({
+    params: {
+      RoleArn: process.env.AWS_SERVICE_ROLE_ARN,
+      RoleSessionName: 'AppSyncTestSession',
+    },
+  }),
+});
 
 describe('createAccount', () => {
   it('creates a new account', async () => {

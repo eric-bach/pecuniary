@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@aws-sdk/client-appsync": "^3.716.0"
+    "@aws-sdk/client-appsync": "^3.716.0",
+    "@aws-sdk/credential-providers": "^3.716.0",
+    "dotenv": "^16.4.7"
   }
 }
