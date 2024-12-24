@@ -50,26 +50,14 @@ jobs:
       # - name: 📥 Install Frontend
       #   uses: ./.github/actions/frontend
 
-      # - name: 🗒️ Create Frontend .env
-      #   run: |
-      #     touch .env
-      #     echo NEXT_PUBLIC_USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> .env
-      #     echo NEXT_PUBLIC_USER_POOL_CLIENT_ID=${{ secrets.USER_POOL_CLIENT_ID }} >> .env
-      #     echo NEXT_PUBLIC_APPSYNC_API_ENDPOINT=${{ secrets.APPSYNC_API_ENDPOINT }} >> .env
-      #     echo NEXT_PUBLIC_APPSYNC_REGION=${{ secrets.REGION }} >> .env
-      #   working-directory: frontend
-
       # - name: 🏗 Build Frontend
       #   run: npm run build-frontend
       #   working-directory: infrastructure
-
-      - name: 🗒️ Create Backend .env
-        run: |
-          touch .env
-          echo CERTIFICATE_ARN=${{ secrets.CERTIFICATE_ARN }} >> .env
-          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-          echo AWS_SERVICE_ROLE_ARN=${{ secrets.AWS_SERVICE_ROLE_ARN }} >> .env
-        working-directory: backend
+      #   env:
+      #     NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
+      #     NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
+      #     NEXT_PUBLIC_APPSYNC_API_ENDPOINT: ${{ secrets.APPSYNC_API_ENDPOINT }}
+      #     NEXT_PUBLIC_APPSYNC_REGION: ${{ secrets.REGION }}
 
       - name: 🚧 Build AppSync
         run: |
@@ -86,12 +74,18 @@ jobs:
             cd - >/dev/null
           done
         working-directory: backend
+        env:
+          CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
+          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
 
       - name: 🚀 Deploy Backend
         run: |
           echo "🚀 Deploying backend prod"
           npm run cdk -- deploy --all -c stage=backend -c env=prod --require-approval=never
         working-directory: backend
+        env:
+          CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
+          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
 
       # - name: 🚀 Deploy Frontend
       #   run: npx sst deploy --stage prod
