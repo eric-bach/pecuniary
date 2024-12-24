@@ -29,12 +29,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Configure AWS credentials
+      - name: 🔑 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
           aws-region: us-east-1
-          role-session-name: GithubActionsSession
 
       - name: 👀 Env
         run: |
@@ -56,12 +55,15 @@ jobs:
       - name: 🔭 Run CDK Unit Tests
         run: npm run test
         working-directory: backend
-        # env:
-        #   AWS_SERVICE_ROLE_ARN: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
 
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
 
     steps:
       - name: ⬇️ Checkout Code
@@ -150,12 +152,11 @@ jobs:
         run: npm run build-frontend
         working-directory: backend
 
-      - name: 🗒️ Create Backend .env
-        run: |
-          touch .env
-          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-          echo AWS_SERVICE_ROLE_ARN=${{ secrets.AWS_SERVICE_ROLE_ARN }} >> .env
-        working-directory: backend
+      # - name: 🗒️ Create Backend .env
+      #   run: |
+      #     touch .env
+      #     echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
+      #   working-directory: backend
 
       - name: 🚧 Build AppSync
         run: |
@@ -178,6 +179,8 @@ jobs:
           echo "🚀 Deploying backend dev"
           npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never
         working-directory: backend
+        env:
+          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
 
       # TODO Once SST setup to deploy frontend
       # - name: 🚀 Deploy Frontend
