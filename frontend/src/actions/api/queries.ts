@@ -6,7 +6,7 @@ import {
   QueryGetInvestmentTransactionsArgs,
   QueryGetPayeesArgs,
   QueryGetSymbolsArgs,
-} from './codegen/appsync';
+} from '@/../../../backend/src/appsync/api/codegen/appsync';
 import {
   GetAccountQuery,
   GetAccountsQuery,
@@ -16,7 +16,7 @@ import {
   GetPayeesQuery,
   GetSymbolsQuery,
   Query,
-} from './types';
+} from '@/../../../backend/src/appsync/api/types';
 
 export const getAccount = `query GetAccount($accountId: String!) {
   getAccount(accountId: $accountId) { 

@@ -1,7 +1,7 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { createCategory } from '@/../../backend/src/appsync/api/mutations';
+import { createCategory } from './api/mutations';
 import { schema } from '@/types/category';
 import { revalidatePath } from 'next/cache';
 

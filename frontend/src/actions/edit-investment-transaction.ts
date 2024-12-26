@@ -1,10 +1,10 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { updateInvestmentTransaction } from '../../../backend/src/appsync/api/mutations';
+import { updateInvestmentTransaction } from './api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { UpdateInvestmentTransactionInput } from '../../../backend/src/appsync/api/codegen/appsync';
+import { UpdateInvestmentTransactionInput } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { investmentSchema } from '@/types/transaction';
 
 export interface EditInvestmentTransactionFormState {

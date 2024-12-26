@@ -1,9 +1,9 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { updatePayee } from '../../../backend/src/appsync/api/mutations';
+import { updatePayee } from './api/mutations';
 import { revalidatePath } from 'next/cache';
-import { MutationUpdatePayeeArgs } from '../../../backend/src/appsync/api/codegen/appsync';
+import { MutationUpdatePayeeArgs } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { schema } from '@/types/payee';
 
 interface EditPayeeFormState {

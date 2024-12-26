@@ -1,7 +1,7 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { createSymbol } from '@/../../backend/src/appsync/api/mutations';
+import { createSymbol } from './api/mutations';
 import { schema } from '@/types/symbol';
 
 interface CreateSymbolFormState {

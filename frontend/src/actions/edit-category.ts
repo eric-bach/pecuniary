@@ -1,9 +1,9 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { updateCategory } from '../../../backend/src/appsync/api/mutations';
+import { updateCategory } from './api/mutations';
 import { revalidatePath } from 'next/cache';
-import { MutationUpdateCategoryArgs } from '../../../backend/src/appsync/api/codegen/appsync';
+import { MutationUpdateCategoryArgs } from '@/../../backend/src/appsync/api/codegen/appsync';
 import { schema } from '@/types/category';
 
 interface EditCategoryFormState {

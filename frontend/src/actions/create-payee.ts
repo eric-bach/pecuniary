@@ -1,7 +1,7 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { createPayee } from '@/../../backend/src/appsync/api/mutations';
+import { createPayee } from './api/mutations';
 import { schema } from '@/types/payee';
 import { revalidatePath } from 'next/cache';
 
