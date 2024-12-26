@@ -1,7 +1,7 @@
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import * as cdk from 'aws-cdk-lib';
-import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
-import { DataStack } from '../lib/data-stack';
+import { PecuniaryBaseStackProps } from '../../lib/types/PecuniaryStackProps';
+import { DataStack } from '../../lib/data-stack';
 
 describe('Data Stack contains expected resources', () => {
   const app = new cdk.App();

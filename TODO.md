@@ -37,6 +37,13 @@ X Create symbol on add
 X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 X Switch to use ComboBox from budget-tracker tutorial
 X Switch to sonner
+X Add tests to validate APIs and workflows
+
+- Frontend
+
+  - Create new NextJS 15 app
+  - Add Cognito auth
+  - Add new layout to call APIs
 
 - Add Skeleton loading screens
 - Events
@@ -51,6 +58,13 @@ X Switch to sonner
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
+  - Build script to generate transaction data from Quicken export
+    - Export Quicken
+    - Put into CSV (manually)
+    - Write script to parse CSV
+    - Maintain CSV
+- Build lambda process to re-generate positions and point-in-time networth for an account
+- Build dashboard to display account summaries
 
 - Switch from Sheet to Dialog for Account and Transactions
   `- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item

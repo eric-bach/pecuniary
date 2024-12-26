@@ -14,6 +14,11 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
 
     steps:
       - name: ⬇️ Checkout Code
@@ -23,6 +28,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_SERVICE_ROLE_ARN }}
+          aws-region: us-east-1
 
       - name: 👀 Env
         run: |
@@ -48,6 +59,11 @@ jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
 
     steps:
       - name: ⬇️ Checkout Code
@@ -123,24 +139,14 @@ jobs:
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
-      - name: 🗒️ Create Frontend .env
-        run: |
-          touch .env
-          echo NEXT_PUBLIC_USER_POOL_ID=${{ secrets.USER_POOL_ID }} >> .env
-          echo NEXT_PUBLIC_USER_POOL_CLIENT_ID=${{ secrets.USER_POOL_CLIENT_ID }} >> .env
-          echo NEXT_PUBLIC_APPSYNC_API_ENDPOINT=${{ secrets.APPSYNC_API_ENDPOINT }} >> .env
-          echo NEXT_PUBLIC_APPSYNC_REGION=${{ secrets.REGION }} >> .env
-        working-directory: frontend
-
       - name: 🏗 Build Frontend
         run: npm run build-frontend
         working-directory: backend
-
-      - name: 🗒️ Create Backend .env
-        run: |
-          touch .env
-          echo DLQ_NOTIFICATIONS=${{ secrets.DLQ_NOTIFICATIONS }} >> .env
-        working-directory: backend
+        env:
+          NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
+          NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
+          NEXT_PUBLIC_APPSYNC_API_ENDPOINT: ${{ secrets.APPSYNC_API_ENDPOINT }}
+          NEXT_PUBLIC_APPSYNC_REGION: ${{ secrets.REGION }}
 
       - name: 🚧 Build AppSync
         run: |
@@ -163,6 +169,8 @@ jobs:
           echo "🚀 Deploying backend dev"
           npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never
         working-directory: backend
+        env:
+          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
 
       # TODO Once SST setup to deploy frontend
       # - name: 🚀 Deploy Frontend
