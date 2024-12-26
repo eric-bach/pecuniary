@@ -8,7 +8,7 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "@aws-sdk/client-appsync": "^3.716.0"
   }
 }
