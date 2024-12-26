@@ -8,7 +8,8 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@aws-sdk/client-appsync": "^3.716.0"
+  "devDependencies": {
+    "@aws-sdk/client-appsync": "^3.716.0",
+    "@aws-sdk/util-dynamodb": "^3.716.0"
   }
 }
