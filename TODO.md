@@ -39,19 +39,10 @@ X Switch to use ComboBox from budget-tracker tutorial
 X Switch to sonner
 X Add tests to validate APIs and workflows
 
-- Frontend
-
-  - Create new NextJS 15 app
-  - Add Cognito auth
-  - Add new layout to call APIs
-
-- Backend
-  - Add tests to validate APIs and workflows
-- Frontend
-
-  - Create new NextJS 15 app
-  - Add Cognito auth
-  - Add new layout to call APIs
+Frontend
+. Create new NextJS 15 app
+. Add Cognito auth - https://www.youtube.com/watch?v=wiWDOgIu7cU
+. Add new layout to call APIs
 
 - Add Skeleton loading screens
 - Events
@@ -73,7 +64,6 @@ X Add tests to validate APIs and workflows
     - Maintain CSV
 - Build lambda process to re-generate positions and point-in-time networth for an account
 - Build dashboard to display account summaries
-
 - Switch from Sheet to Dialog for Account and Transactions
   `- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item
 `- BUG: Prevent creating duplicate Payees/Categories in backend especially when editing item (frontend creatable prevents it)
