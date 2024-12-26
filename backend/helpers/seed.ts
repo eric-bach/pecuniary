@@ -37,11 +37,7 @@ async function seed() {
   }
 }
 
-<<<<<<< HEAD
-async function seedItem(tableName: string, item: any) {
-=======
 async function seedItem(tableName: string, item: Account) {
->>>>>>> da77200b0c1ec87c9576165efa8d5aa6a87d1e08
   //item.sk = item.sk + new Date().toISOString();
   item.updatedAt = new Date().toISOString();
 
