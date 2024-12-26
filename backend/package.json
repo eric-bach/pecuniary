@@ -17,7 +17,7 @@
     "deploy-full": "npm run install-backend && npm run deploy",
     "deploy-backend": "npm run build-appsync && npm run build-backend && echo '🚀 Deploying backend' && npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never --profile bach-dev",
     "deploy-frontend": "echo '🚀 Deploy frontend from Amplify console'",
-    "install-backend": "find ./src/lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' -exec echo '💾 Installing {}' ; -execdir sh -c 'npm install' ; && find ./src/appsync -mindepth 2 -maxdepth 2 -type f -name 'package.json' -exec echo '💾 Installing {}' ; -execdir sh -c 'npm install' ;",
+    "install-backend": "find ./src/lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' -exec echo '💾 Installing {}' ; -execdir sh -c 'npm install' ; && find ./test -mindepth 2 -maxdepth 2 -type f -name 'package.json' -exec echo '💾 Installing {}' ; -execdir sh -c 'npm install' ;",
     "install-frontend": "echo '💾 Installing frontend' && cd ../frontend && npm install",
     "seed": "npm run build && ts-node ./helpers/seed.ts",
     "test": "npm run build && jest --watchAll=false --coverage",

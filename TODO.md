@@ -37,6 +37,13 @@ X Create symbol on add
 X Add pages to manage payees, categories, symbols using Dialog instead of Sheet
 X Switch to use ComboBox from budget-tracker tutorial
 X Switch to sonner
+X Add tests to validate APIs and workflows
+
+- Frontend
+
+  - Create new NextJS 15 app
+  - Add Cognito auth
+  - Add new layout to call APIs
 
 - Backend
   - Add tests to validate APIs and workflows
