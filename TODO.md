@@ -40,7 +40,8 @@ X Switch to sonner
 X Add tests to validate APIs and workflows
 X Switch frontend to use NextJS 14 with turbo
 
-- Add Skeleton loading screens
+- Frontend - remove "Loading..." on screens, remove landing page for login page, improvements to FE
+
 - Events
   `- Create/Update Position on InvestmentTransactionCreated
       - Update createBankTransaction to publish BankTransactionCreated
