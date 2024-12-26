@@ -63,7 +63,7 @@ function getSeedData(file: string) {
 }
 
 async function getTableName(stackName: string): Promise<string> {
-  var tableName: string = 'pecuniary-data-dev';
+  let tableName: string = 'pecuniary-data-dev';
 
   const client = new CloudFormationClient({});
   const command = new DescribeStacksCommand({ StackName: stackName });
@@ -79,10 +79,10 @@ async function getTableName(stackName: string): Promise<string> {
 }
 
 async function dynamoDbCommand(command: PutItemCommand) {
-  var result;
+  let result;
 
   try {
-    var client = new DynamoDBClient({});
+    const client = new DynamoDBClient({});
 
     console.debug(` 🔔 Seeding item: ${JSON.stringify(command.input.Item)}`);
     result = await client.send(command);
