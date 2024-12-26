@@ -1,7 +1,7 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { createAccount } from '@/../../backend/src/appsync/api/mutations';
+import { createAccount } from './api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { CreateAccountInput } from '@/../../backend/src/appsync/api/codegen/appsync';

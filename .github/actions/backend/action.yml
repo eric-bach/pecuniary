@@ -31,11 +31,7 @@ runs:
         done
 
         # Install AppSync dependencies
-<<<<<<< HEAD
-        find ./src/appsync -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
-=======
         find ./test -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
->>>>>>> da77200b0c1ec87c9576165efa8d5aa6a87d1e08
         while IFS= read -r file; do
           echo "💾 Installing dependencies for $file"
           cd "$(dirname "$file")"

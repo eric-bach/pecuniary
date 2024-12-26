@@ -1,10 +1,10 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { deleteTransaction } from '../../../backend/src/appsync/api/mutations';
+import { deleteTransaction } from './api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { BankTransaction, InvestmentTransaction } from '../../../backend/src/appsync/api/codegen/appsync';
+import { BankTransaction, InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 
 interface DeleteTransactionFormState {
   errors: {

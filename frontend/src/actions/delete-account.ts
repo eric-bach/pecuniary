@@ -1,7 +1,7 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { deleteAccount } from '../../../backend/src/appsync/api/mutations';
+import { deleteAccount } from './api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 

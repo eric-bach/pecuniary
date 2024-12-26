@@ -37,11 +37,7 @@ async function seed() {
   }
 }
 
-<<<<<<< HEAD
-async function seedItem(tableName: string, item: any) {
-=======
 async function seedItem(tableName: string, item: Account) {
->>>>>>> da77200b0c1ec87c9576165efa8d5aa6a87d1e08
   //item.sk = item.sk + new Date().toISOString();
   item.updatedAt = new Date().toISOString();
 
@@ -76,7 +72,7 @@ async function getTableName(stackName: string): Promise<string> {
   if (response && response.$metadata.httpStatusCode === 200) {
     const outputs = response.Stacks![0].Outputs;
     const output = outputs?.filter((o) => o.OutputKey === 'DataTableName')[0];
-    tableName = output?.OutputValue!;
+    tableName = output?.OutputValue ?? tableName;
   }
 
   return tableName;

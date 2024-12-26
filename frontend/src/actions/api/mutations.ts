@@ -12,7 +12,7 @@ import {
   MutationUpdateCategoryArgs,
   MutationUpdateInvestmentTransactionArgs,
   MutationUpdatePayeeArgs,
-} from './codegen/appsync';
+} from '@/../../../backend/src/appsync/api/codegen/appsync';
 import {
   CreateAccountMutation,
   Query,
@@ -27,7 +27,7 @@ import {
   CreatePayeeMutation,
   CreateSymbolMutation,
   UpdatePayeeMutation,
-} from './types';
+} from '@/../../../backend/src/appsync/api/types';
 
 export const createAccount = `mutation CreateAccount($input: CreateAccountInput!) {
     createAccount(input: $input) { 
