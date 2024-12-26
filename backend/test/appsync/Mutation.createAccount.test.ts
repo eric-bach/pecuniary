@@ -6,7 +6,7 @@ const file = './src/appsync/build/Mutation.createAccount.js';
 
 const appsync = new AppSyncClient({ region: 'us-east-1' });
 
-describe('createAccount', () => {
+describe('Mutation.createAccount', () => {
   it('creates a new account', async () => {
     // Arrange
     const context = {
