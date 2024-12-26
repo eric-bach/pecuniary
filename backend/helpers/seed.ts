@@ -5,6 +5,17 @@ import * as fs from 'fs';
 
 const STACK_NAME = 'pecuniary-data-dev';
 
+type Account = {
+  pk: string;
+  createdAt: string;
+  updatedAt: string;
+  accountId: string;
+  name: string;
+  type: string;
+  entity: string;
+  userId: string;
+};
+
 async function seed() {
   try {
     // Get DynamoDB table name
@@ -12,12 +23,12 @@ async function seed() {
     console.log(' ✅ Verify table exists:', tableName);
 
     // Read items to see from data/seeds.json
-    const data = getSeedData('./data/seeds.json');
+    const data: Account[] = getSeedData('./data/seeds.json');
     console.log(` ✅ Parsed seed data: ${data.length} objects`);
 
     console.log('\n🚀 Seeding table...\n');
     // Seed each item in table
-    data.map(async (item: any) => {
+    data.map(async (item: Account) => {
       await seedItem(tableName, item);
     });
   } catch (error) {
@@ -26,7 +37,7 @@ async function seed() {
   }
 }
 
-async function seedItem(tableName: string, item: any) {
+async function seedItem(tableName: string, item: Account) {
   //item.sk = item.sk + new Date().toISOString();
   item.updatedAt = new Date().toISOString();
 
@@ -67,7 +78,7 @@ async function getTableName(stackName: string): Promise<string> {
   return tableName;
 }
 
-async function dynamoDbCommand(command: any) {
+async function dynamoDbCommand(command: PutItemCommand) {
   var result;
 
   try {
