@@ -1,7 +1,7 @@
-const yahooFinance = require('yahoo-finance2').default;
+import yahooFinance from 'yahoo-finance2';
 
 // Return the quoteSummary
-async function getQuoteSummary(symbol: string) {
+export async function getQuoteSummary(symbol: string) {
   console.debug(`Getting quote for ${symbol}`);
 
   // Get quotes from Yahoo Finance
@@ -9,15 +9,15 @@ async function getQuoteSummary(symbol: string) {
     modules: ['price'],
   });
 
-  if (!data) {
+  if (!data || !data.price || !data.price.regularMarketTime) {
     return;
   }
 
   var result = {
     symbol: symbol,
     description: data.price.longName,
-    exchange: data.price.exchangeName,
     currency: data.price.currency,
+    exchange: data.price.exchangeName,
     date: data.price.regularMarketTime.toISOString().substring(0, 10),
     open: data.price.regularMarketOpen,
     high: data.price.regularMarketDayHigh,
@@ -71,5 +71,3 @@ async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
   console.log(`✅ ${JSON.stringify(result)}`);
   return result;
 }
-
-module.exports = { getQuoteSummary, getHistorical };

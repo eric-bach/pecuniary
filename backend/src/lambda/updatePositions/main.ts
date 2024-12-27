@@ -2,8 +2,7 @@ import { EventBridgeEvent } from 'aws-lambda';
 import { QueryCommand, QueryCommandInput, PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
-const { getQuoteSummary } = require('./yahooFinance');
-
+import { getQuoteSummary } from './yahooFinance';
 import { PositionReadModel } from '../types/Position';
 import { CreateInvestmentTransactionInput, InvestmentTransaction } from '../../appsync/api/codegen/appsync';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
@@ -37,7 +36,7 @@ async function getTransactions(detail: CreateTransactionInputV2): Promise<Invest
     ExpressionAttributeValues: {
       ':v1': { S: detail.accountId },
       ':v2': { S: detail.userId },
-      ':v3': { S: 'transaction' },
+      ':v3': { S: 'investment-transaction' },
       ':v4': { S: detail.symbol },
     },
   };
@@ -59,8 +58,8 @@ async function getPosition(detail: CreateTransactionInputV2): Promise<PositionRe
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'accountId-gsi',
-    KeyConditionExpression: 'asccountId = :v1',
-    FilterExpression: 'userId = :v1 AND entity = :v3 AND symbol = :v4',
+    KeyConditionExpression: 'accountId = :v1',
+    FilterExpression: 'userId = :v2 AND entity = :v3 AND symbol = :v4',
     ExpressionAttributeValues: {
       ':v1': { S: detail.accountId },
       ':v2': { S: detail.userId },
@@ -119,38 +118,43 @@ async function savePosition(detail: CreateTransactionInputV2, shares: number, ac
   // Get quote for symbol
   const quote = await getQuoteSummary(detail.symbol);
 
-  // Calculate market value
-  var marketValue = quote.close * shares;
+  let result;
 
-  var item = {
-    userId: detail.userId,
-    sk: position ? position.sk : 'ACCPOS#' + new Date().toISOString(),
-    createdAt: position ? position.createdAt : new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    accountId: detail.accountId,
-    entity: 'position',
-    symbol: quote.symbol,
-    description: quote.description,
-    exchange: quote.exchange,
-    currency: quote.currency,
-    shares: shares,
-    acb: acb,
-    bookValue: bookValue,
-    marketValue: marketValue,
-  };
+  if (quote && quote.close) {
+    // Calculate market value
+    var marketValue = quote.close * shares;
 
-  const putItemCommandInput: PutItemCommandInput = {
-    TableName: process.env.DATA_TABLE_NAME,
-    Item: marshall(item),
-  };
-  let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
+    var item = {
+      pk: position ? position.pk : 'pos#' + detail.accountId,
+      userId: detail.userId,
+      //sk: position ? position.sk : "ACCPOS#" + new Date().toISOString(),
+      createdAt: position ? position.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      accountId: detail.accountId,
+      entity: 'position',
+      symbol: quote.symbol,
+      description: quote.description,
+      exchange: quote.exchange,
+      currency: quote.currency,
+      shares: shares,
+      acb: acb,
+      bookValue: bookValue,
+      marketValue: marketValue,
+    };
 
-  if (result.$metadata.httpStatusCode === 200) {
-    console.log(`✅ Saved Position: { result: ${JSON.stringify(result)}, items: ${JSON.stringify(item)} }`);
-    return result.Items;
+    const putItemCommandInput: PutItemCommandInput = {
+      TableName: process.env.DATA_TABLE_NAME,
+      Item: marshall(item),
+    };
+    result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
+
+    if (result.$metadata.httpStatusCode === 200) {
+      console.log(`✅ Saved Position: { result: ${JSON.stringify(result)}, items: ${JSON.stringify(item)} }`);
+      return result.Items;
+    }
   }
 
-  console.log(`🛑 Could not save Position: `, result);
+  console.log(`🛑 Could not save Position ${detail.symbol}:`, result);
   return {};
 }
 

@@ -1,4 +1,5 @@
 export type PositionReadModel = {
+  pk: string;
   userId: string;
   sk: string;
   createdAt: Date;

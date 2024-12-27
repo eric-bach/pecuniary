@@ -26,7 +26,7 @@ import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { LayerVersion, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -419,6 +419,13 @@ export class ApiStack extends Stack {
      *** AWS AppSync - Lambda Resolvers
      ***/
 
+    // AWS ADOT Lambda layer
+    const adotLayer = LayerVersion.fromLayerVersionArn(
+      this,
+      'adotLayer',
+      `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-nodejs-amd64-ver-1-18-1:4`
+    );
+
     // AppSync Lambda DataSource
     const transactionsReolverFunction = new NodejsFunction(this, 'TransactionsResolver', {
       functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
@@ -427,9 +434,12 @@ export class ApiStack extends Stack {
       entry: path.resolve(__dirname, '../src/lambda/transactionsResolver/main.ts'),
       memorySize: 512,
       timeout: Duration.seconds(10),
+      tracing: Tracing.ACTIVE,
+      layers: [adotLayer],
       environment: {
         DATA_TABLE_NAME: dataTable.tableName,
         EVENTBUS_NAME: eventBus.eventBusName,
+        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
       },
     });
     transactionsReolverFunction.addToRolePolicy(
@@ -483,9 +493,12 @@ export class ApiStack extends Stack {
       entry: path.resolve(__dirname, '../src/lambda/updatePositions/main.ts'),
       memorySize: 1024,
       timeout: Duration.seconds(10),
+      tracing: Tracing.ACTIVE,
+      layers: [adotLayer],
       environment: {
         DATA_TABLE_NAME: dataTable.tableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
+        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
       },
       deadLetterQueue: eventHandlerQueue,
     });
@@ -494,7 +507,7 @@ export class ApiStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/aggregateId-lsi', dataTable.tableArn + '/index/aggregateId-gsi'],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/accountId-gsi'],
       })
     );
     updatePositionsFunction.addToRolePolicy(
