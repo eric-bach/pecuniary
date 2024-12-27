@@ -6,7 +6,7 @@ export function request(ctx: Context): DynamoDBQueryRequest {
 
   return {
     operation: 'Query',
-    index: 'accountId-gsi',
+    index: 'transaction-gsi',
     query: {
       expression: 'accountId = :accountId',
       expressionValues: {

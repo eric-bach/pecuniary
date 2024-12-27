@@ -29,7 +29,7 @@ exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInputV
 async function getTransactions(detail: CreateTransactionInputV2): Promise<InvestmentTransaction[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
-    IndexName: 'accountId-gsi',
+    IndexName: 'transaction-gsi',
     ScanIndexForward: true,
     KeyConditionExpression: 'accountId = :v1',
     FilterExpression: 'userId = :v2 AND entity = :v3 AND symbol = :v4',

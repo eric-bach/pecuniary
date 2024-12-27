@@ -2,16 +2,20 @@ import { AppSyncClient, EvaluateCodeCommand, EvaluateCodeCommandInput } from '@a
 import { readFile } from 'fs/promises';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 
-const file = './src/appsync/build/Mutation.createSymbol.js';
+const file = './src/appsync/build/Mutation.createAccount.js';
 
 const appsync = new AppSyncClient({ region: 'us-east-1' });
 
-describe('Mutation.createSymbol', () => {
-  it('creates a new symbol', async () => {
+describe('Mutation.createAccoujt', () => {
+  it('creates a new investment account', async () => {
     // Arrange
     const context = {
       arguments: {
-        name: 'Test Symbol',
+        input: {
+          name: 'Test Account',
+          category: 'investment',
+          type: 'TFSA',
+        },
       },
       identity: {
         username: 'testuser',
@@ -44,9 +48,11 @@ describe('Mutation.createSymbol', () => {
 
     const key = unmarshall(result.key);
     const attributeValues = unmarshall(result.attributeValues);
-    expect(key.pk).toContain('symb#');
-    expect(attributeValues['entity']).toBe('symbol');
-    expect(attributeValues['name']).toBe(context.arguments.name);
+    expect(key.pk).toContain('acc#');
+    expect(attributeValues['entity']).toBe('account');
+    expect(attributeValues['name']).toBe(context.arguments.input.name);
+    expect(attributeValues['category']).toBe(context.arguments.input.category);
+    expect(attributeValues['type']).toBe(context.arguments.input.type);
     expect(attributeValues['userId']).toBe(context.identity.username);
     expect(attributeValues['createdAt']).toBeDefined();
     expect(attributeValues['updatedAt']).toBeDefined();

@@ -10,7 +10,7 @@ export function request(ctx: Context<MutationCreateSymbolArgs>): DynamoDBPutItem
   return {
     operation: 'PutItem',
     key: {
-      pk: util.dynamodb.toDynamoDB(`sym#${symbolId}`),
+      pk: util.dynamodb.toDynamoDB(`symb#${symbolId}`),
     },
     attributeValues: {
       entity: util.dynamodb.toDynamoDB('symbol'),

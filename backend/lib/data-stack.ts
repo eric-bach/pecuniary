@@ -30,7 +30,7 @@ export class DataStack extends Stack {
     const REGION = Stack.of(this).region;
 
     /***
-    //  *** AWS Lambda - Cognito post-confirmation trigger
+     *** AWS Lambda - Cognito post-confirmation trigger
      ***/
 
     // AWS Cognito post-confirmation lambda function
@@ -135,7 +135,7 @@ export class DataStack extends Stack {
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'createdAt',
+        name: 'updatedAt',
         type: AttributeType.STRING,
       },
     });
@@ -146,18 +146,18 @@ export class DataStack extends Stack {
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'createdAt',
+        name: 'updatedAt',
         type: AttributeType.STRING,
       },
     });
     dataTable.addGlobalSecondaryIndex({
-      indexName: 'entity-gsi',
+      indexName: 'transaction-gsi',
       partitionKey: {
-        name: 'entity',
+        name: 'accountId',
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'createdAt',
+        name: 'transactionDate',
         type: AttributeType.STRING,
       },
     });
