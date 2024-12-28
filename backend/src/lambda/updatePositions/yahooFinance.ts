@@ -63,7 +63,7 @@ async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
       high: d.high,
       low: d.low,
       close: d.close,
-      adjusted_close: d.adjClose ?? d.close,
+      adjClose: d.adjClose,
       volume: d.volume,
     });
   });
