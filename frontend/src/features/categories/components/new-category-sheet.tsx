@@ -30,7 +30,7 @@ const NewCategorySheet = () => {
 
       await queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
-    onError: (error) => {
+    onError: () => {
       setPending(false);
 
       toast.error('Failed to create category', {
@@ -51,7 +51,7 @@ const NewCategorySheet = () => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Payee</DialogTitle>
+          <DialogTitle>Create Category</DialogTitle>
         </DialogHeader>
 
         <CategoryForm onSubmit={onSubmit} onClose={onClose} disabled={isPending} defaultValues={{ name: '' }} />

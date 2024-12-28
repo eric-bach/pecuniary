@@ -53,7 +53,7 @@
     "@apollo/client": "^3.10.4",
     "aws-cdk-lib": "^2.173.1",
     "constructs": "^10.3.0",
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.21.5",
     "graphql": "^16.10.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

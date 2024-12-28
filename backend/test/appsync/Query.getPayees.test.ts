@@ -2,16 +2,16 @@ import { AppSyncClient, EvaluateCodeCommand, EvaluateCodeCommandInput } from '@a
 import { readFile } from 'fs/promises';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 
-const file = './src/appsync/build/Mutation.createSymbol.js';
+const file = './src/appsync/build/Query.getPayees.js';
 
 const appsync = new AppSyncClient({ region: 'us-east-1' });
 
-describe('Mutation.createSymbol', () => {
-  it('creates a new symbol', async () => {
+describe('Query.getPayees', () => {
+  it('returns all payees', async () => {
     // Arrange
     const context = {
       arguments: {
-        name: 'Test Symbol',
+        lastEvaluatedKey: null,
       },
       identity: {
         username: 'testuser',
@@ -40,15 +40,14 @@ describe('Mutation.createSymbol', () => {
     expect(response.evaluationResult).toBeDefined();
 
     const result = JSON.parse(response.evaluationResult ?? '{}');
-    expect(result.operation).toEqual('PutItem');
+    expect(result.operation).toEqual('Query');
 
-    const key = unmarshall(result.key);
-    const attributeValues = unmarshall(result.attributeValues);
-    expect(key.pk).toContain('symb#');
-    expect(attributeValues['entity']).toBe('symbol');
-    expect(attributeValues['name']).toBe(context.arguments.name);
-    expect(attributeValues['userId']).toBe(context.identity.username);
-    expect(attributeValues['createdAt']).toBeDefined();
-    expect(attributeValues['updatedAt']).toBeDefined();
+    expect(result.query.expression).toEqual('userId = :userId');
+    const queryExpressionValues = unmarshall(result.query.expressionValues);
+    expect(queryExpressionValues[':userId']).toEqual(context.identity.username);
+
+    expect(result.filter.expression).toEqual('entity = :entity');
+    const filterExpressionValues = unmarshall(result.filter.expressionValues);
+    expect(filterExpressionValues[':entity']).toEqual('payee');
   });
 });

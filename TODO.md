@@ -40,6 +40,7 @@ X Switch to sonner
 X Add tests to validate APIs and workflows
 X Switch frontend to use NextJS 14 with turbo
 
+- Ensure positions updates on transactions create/update, add tests to Lambdas
 - Frontend - remove "Loading..." on screens, remove landing page for login page, improvements to FE
 
 - Events

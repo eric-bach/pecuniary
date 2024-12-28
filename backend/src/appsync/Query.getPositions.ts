@@ -8,18 +8,17 @@ export function request(ctx: Context): DynamoDBQueryRequest {
     operation: 'Query',
     index: 'userId-gsi',
     query: {
-      expression: 'userId = :userId AND begins_with(pk, :entity)',
+      expression: 'userId = :userId',
       expressionValues: {
-        ':entity': util.dynamodb.toDynamoDB('account'),
-        ':v2': { S: 'accpos' },
+        ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
       },
     },
     nextToken: ctx.arguments.lastEvaluatedKey,
     filter: {
-      expression: 'accountId = :accountId AND userId = :userId',
+      expression: 'accountId = :accountId AND entity = :entity',
       expressionValues: {
         ':accountId': util.dynamodb.toDynamoDB(ctx.args.accountId),
-        ':userId': util.dynamodb.toDynamoDB((ctx.identity as AppSyncIdentityCognito).username),
+        ':entity': util.dynamodb.toDynamoDB('position'),
       },
     },
   };
