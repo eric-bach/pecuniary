@@ -13,7 +13,7 @@ export async function getQuoteSummary(symbol: string) {
     return;
   }
 
-  var result = {
+  const result = {
     symbol: symbol,
     description: data.price.longName,
     currency: data.price.currency,
@@ -34,9 +34,9 @@ export async function getQuoteSummary(symbol: string) {
 async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
   console.debug(`Getting quote for ${symbol} from ${startDate} to ${endDate}`);
 
-  let start = new Date(startDate);
+  const start = new Date(startDate);
   // Yahoo Finance needs next day
-  let end = new Date(new Date(endDate).getTime() + 1000 * 60 * 60 * 24);
+  const end = new Date(new Date(endDate).getTime() + 1000 * 60 * 60 * 24);
 
   // Get quotes from Yahoo Finance
   const data = await yahooFinance.historical(symbol, {
@@ -49,11 +49,11 @@ async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
     return;
   }
 
-  var result = new Array();
+  const result = [];
 
   // TODO Set type for d
   data.map((d: any) => {
-    let date = d.date.toISOString().substring(0, 10);
+    const date = d.date.toISOString().substring(0, 10);
 
     console.debug(`${date}: ${d.close}`);
 

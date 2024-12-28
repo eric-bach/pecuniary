@@ -40,7 +40,7 @@ async function getTransactions(detail: CreateTransactionInputV2): Promise<Invest
       ':v4': { S: detail.symbol },
     },
   };
-  var result = await dynamoDbCommand(new QueryCommand(params));
+  const result = await dynamoDbCommand(new QueryCommand(params));
 
   if (result.$metadata.httpStatusCode === 200) {
     const transactions = result.Items?.map((Item: any) => unmarshall(Item));
@@ -67,7 +67,7 @@ async function getPosition(detail: CreateTransactionInputV2): Promise<PositionRe
       ':v4': { S: detail.symbol },
     },
   };
-  var result = await dynamoDbCommand(new QueryCommand(params));
+  const result = await dynamoDbCommand(new QueryCommand(params));
 
   if (result.$metadata.httpStatusCode === 200) {
     const position = result.Items?.map((Item: any) => unmarshall(Item))[0];
@@ -82,9 +82,9 @@ async function getPosition(detail: CreateTransactionInputV2): Promise<PositionRe
 }
 
 function calculateAdjustedCostBase(transactions: InvestmentTransaction[]) {
-  var acb = 0;
-  var shares = 0;
-  var bookValue = 0;
+  let acb = 0;
+  let shares = 0;
+  let bookValue = 0;
 
   for (const t of transactions) {
     const transactionType = t.type.toUpperCase();
@@ -122,9 +122,9 @@ async function savePosition(detail: CreateTransactionInputV2, shares: number, ac
 
   if (quote && quote.close) {
     // Calculate market value
-    var marketValue = quote.close * shares;
+    const marketValue = quote.close * shares;
 
-    var item = {
+    const item = {
       pk: position ? position.pk : 'pos#' + detail.accountId,
       userId: detail.userId,
       //sk: position ? position.sk : "ACCPOS#" + new Date().toISOString(),
