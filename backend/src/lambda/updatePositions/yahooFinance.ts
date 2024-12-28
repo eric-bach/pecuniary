@@ -50,11 +50,10 @@ async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
     return;
   }
 
-  var result: HistoricalRowHistory[] = new Array();
+  let result: HistoricalRowHistory[] = [];
 
-  // TODO Set type for d
   data.map((d: HistoricalRowHistory) => {
-    let date = d.date.toISOString().substring(0, 10);
+    const date = d.date.toISOString().substring(0, 10);
 
     console.debug(`${date}: ${d.close}`);
 

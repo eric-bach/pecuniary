@@ -30,7 +30,7 @@ const NewCategorySheet = () => {
 
       await queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
-    onError: (error) => {
+    onError: () => {
       setPending(false);
 
       toast.error('Failed to create category', {
