@@ -50,7 +50,7 @@ async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
     return;
   }
 
-  let result: HistoricalRowHistory[] = [];
+  const result: HistoricalRowHistory[] = [];
 
   data.map((d: HistoricalRowHistory) => {
     const date = d.date.toISOString().substring(0, 10);

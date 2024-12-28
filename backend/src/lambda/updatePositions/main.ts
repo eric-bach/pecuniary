@@ -43,7 +43,7 @@ async function getTransactions(detail: CreateTransactionInputV2): Promise<Invest
   const result = await dynamoDbCommand(new QueryCommand(params));
 
   if (result.$metadata.httpStatusCode === 200) {
-    const transactions = result.Items?.map((Item: any) => unmarshall(Item));
+    const transactions = result.Items?.map((Item: Record<string, any>) => unmarshall(Item));
 
     console.log(`🔔 Found ${transactions.length} Transactions: ${JSON.stringify(transactions)}`);
 
@@ -70,8 +70,7 @@ async function getPosition(detail: CreateTransactionInputV2): Promise<PositionRe
   const result = await dynamoDbCommand(new QueryCommand(params));
 
   if (result.$metadata.httpStatusCode === 200) {
-    const position = result.Items?.map((Item: any) => unmarshall(Item))[0];
-
+    const position = result.Items?.map((Item: Record<string, any>) => unmarshall(Item))[0];
     console.log(`🔔 Found Position: ${JSON.stringify(position)}`);
 
     return position;
