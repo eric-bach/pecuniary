@@ -2,20 +2,16 @@ import { AppSyncClient, EvaluateCodeCommand, EvaluateCodeCommandInput } from '@a
 import { readFile } from 'fs/promises';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 
-const file = './src/appsync/build/Mutation.createAccount.js';
+const file = './src/appsync/build/Query.getAggregate.js';
 
 const appsync = new AppSyncClient({ region: 'us-east-1' });
 
-describe('Mutation.createAccount', () => {
-  it('creates a new investment account', async () => {
+describe('Query.getAggregate', () => {
+  it('returns all aggregates', async () => {
     // Arrange
     const context = {
       arguments: {
-        input: {
-          name: 'Test Account',
-          category: 'investment',
-          type: 'TFSA',
-        },
+        accountId: '123',
       },
       identity: {
         username: 'testuser',
@@ -44,29 +40,24 @@ describe('Mutation.createAccount', () => {
     expect(response.evaluationResult).toBeDefined();
 
     const result = JSON.parse(response.evaluationResult ?? '{}');
-    expect(result.operation).toEqual('PutItem');
+    expect(result.operation).toEqual('Query');
 
-    const key = unmarshall(result.key);
-    const attributeValues = unmarshall(result.attributeValues);
-    expect(key.pk).toContain('acc#');
-    expect(attributeValues['entity']).toBe('account');
-    expect(attributeValues['name']).toBe(context.arguments.input.name);
-    expect(attributeValues['category']).toBe(context.arguments.input.category);
-    expect(attributeValues['type']).toBe(context.arguments.input.type);
-    expect(attributeValues['userId']).toBe(context.identity.username);
-    expect(attributeValues['createdAt']).toBeDefined();
-    expect(attributeValues['updatedAt']).toBeDefined();
+    expect(result.query.expression).toEqual('accountId = :accountId');
+    const queryExpressionValues = unmarshall(result.query.expressionValues);
+    expect(queryExpressionValues[':accountId']).toEqual(context.arguments.accountId);
+
+    expect(result.filter.expression).toEqual('userId = :userId');
+    const filterExpressionValues = unmarshall(result.filter.expressionValues);
+    expect(filterExpressionValues[':userId']).toEqual(context.identity.username);
   });
 
-  it('creates a new banking account', async () => {
+  // TODO: this may not be a use case anymore?
+  it('returns all aggregates with type', async () => {
     // Arrange
     const context = {
       arguments: {
-        input: {
-          name: 'Test Account',
-          category: 'banking',
-          type: 'TFSA',
-        },
+        accountId: '123',
+        type: 'TFSA',
       },
       identity: {
         username: 'testuser',
@@ -95,17 +86,15 @@ describe('Mutation.createAccount', () => {
     expect(response.evaluationResult).toBeDefined();
 
     const result = JSON.parse(response.evaluationResult ?? '{}');
-    expect(result.operation).toEqual('PutItem');
+    expect(result.operation).toEqual('Query');
 
-    const key = unmarshall(result.key);
-    const attributeValues = unmarshall(result.attributeValues);
-    expect(key.pk).toContain('acc#');
-    expect(attributeValues['entity']).toBe('account');
-    expect(attributeValues['name']).toBe(context.arguments.input.name);
-    expect(attributeValues['category']).toBe(context.arguments.input.category);
-    expect(attributeValues['type']).toBe(context.arguments.input.type);
-    expect(attributeValues['userId']).toBe(context.identity.username);
-    expect(attributeValues['createdAt']).toBeDefined();
-    expect(attributeValues['updatedAt']).toBeDefined();
+    expect(result.query.expression).toEqual('accountId = :accountId');
+    const queryExpressionValues = unmarshall(result.query.expressionValues);
+    expect(queryExpressionValues[':accountId']).toEqual(context.arguments.accountId);
+
+    expect(result.filter.expression).toEqual('userId = :userId AND #type = :type');
+    const filterExpressionValues = unmarshall(result.filter.expressionValues);
+    expect(filterExpressionValues[':userId']).toEqual(context.identity.username);
+    expect(filterExpressionValues[':type']).toEqual(context.arguments.type);
   });
 });

@@ -51,7 +51,7 @@ const NewCategorySheet = () => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Payee</DialogTitle>
+          <DialogTitle>Create Category</DialogTitle>
         </DialogHeader>
 
         <CategoryForm onSubmit={onSubmit} onClose={onClose} disabled={isPending} defaultValues={{ name: '' }} />

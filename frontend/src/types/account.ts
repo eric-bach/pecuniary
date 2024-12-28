@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const categories: string[] = ['Banking', 'Credit Card', 'Investment', 'Asset', 'Test'];
+export const categories: string[] = ['Banking', 'Credit Card', 'Investment', 'Asset'];
 export const investmentTypes: string[] = ['Non Registered', 'TFSA', 'RRSP', 'LIRA', 'Crypto'];
 export const bankingTypes: string[] = ['Chequing', 'Savings'];
 export const creditCardTypes: string[] = ['Credit'];

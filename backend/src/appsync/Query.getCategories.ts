@@ -2,7 +2,7 @@ import { AppSyncIdentityCognito, Context, DynamoDBQueryRequest, util } from '@aw
 import { GetCategoriesResponse } from './api/codegen/appsync';
 
 export function request(ctx: Context): DynamoDBQueryRequest {
-  console.log('🔔 GetCateogies Request: ', ctx);
+  console.log('🔔 GetCategories Request: ', ctx);
 
   return {
     operation: 'Query',

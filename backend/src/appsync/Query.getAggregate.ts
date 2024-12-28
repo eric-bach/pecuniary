@@ -15,6 +15,7 @@ export function request(ctx: Context<QueryGetAggregateArgs>): DynamoDBQueryReque
         ':accountId': util.dynamodb.toDynamoDB(accountId),
       },
     },
+    // Not sure what the type filter is used for now
     filter: type
       ? {
           expression: 'userId = :userId AND #type = :type',
