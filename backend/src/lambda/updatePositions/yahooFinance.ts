@@ -1,4 +1,5 @@
 import yahooFinance from 'yahoo-finance2';
+import { HistoricalHistoryResult, HistoricalRowHistory } from 'yahoo-finance2/dist/esm/src/modules/historical';
 
 // Return the quoteSummary
 export async function getQuoteSummary(symbol: string) {
@@ -39,7 +40,7 @@ async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
   let end = new Date(new Date(endDate).getTime() + 1000 * 60 * 60 * 24);
 
   // Get quotes from Yahoo Finance
-  const data = await yahooFinance.historical(symbol, {
+  const data: HistoricalHistoryResult = await yahooFinance.historical(symbol, {
     period1: start.toISOString().substring(0, 10),
     period2: end.toISOString().substring(0, 10),
     includeAdjustedClose: true,
@@ -49,16 +50,16 @@ async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
     return;
   }
 
-  var result = new Array();
+  var result: HistoricalRowHistory[] = new Array();
 
   // TODO Set type for d
-  data.map((d: any) => {
+  data.map((d: HistoricalRowHistory) => {
     let date = d.date.toISOString().substring(0, 10);
 
     console.debug(`${date}: ${d.close}`);
 
     result.push({
-      date: date,
+      date: new Date(date),
       open: d.open,
       high: d.high,
       low: d.low,
