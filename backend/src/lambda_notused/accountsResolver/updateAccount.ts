@@ -2,7 +2,7 @@ import { UpdateItemCommand, UpdateItemCommandInput } from '@aws-sdk/client-dynam
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
-import { UpdateAccountInput } from '../types/Account';
+import { UpdateAccountInput } from '../../lambda/types/Account';
 
 async function updateAccount(input: UpdateAccountInput) {
   console.debug(`🕧 Update Account initialized`);

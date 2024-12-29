@@ -1,7 +1,7 @@
 import { QueryCommand, QueryCommandInput, DeleteItemCommand, DeleteItemCommandInput } from '@aws-sdk/client-dynamodb';
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
-import { DeleteAccountInput } from '../types/Account';
+import { DeleteAccountInput } from '../../lambda/types/Account';
 
 async function deleteAccount(input: DeleteAccountInput) {
   console.debug(`🕧 Delete Account initialized`);

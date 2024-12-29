@@ -1,7 +1,7 @@
 import { QueryCommand, QueryCommandInput } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
-import { LastEvaluatedKey } from '../types/Account';
+import { LastEvaluatedKey } from '../../lambda/types/Account';
 import dynamoDbCommand from './helpers/dynamoDbCommand';
 
 async function getAccounts(userId: string, aggregateId: string, lastEvaluatedKey: LastEvaluatedKey) {

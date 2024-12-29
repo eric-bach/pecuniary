@@ -3,7 +3,7 @@ import { marshall } from '@aws-sdk/util-dynamodb';
 const { v4: uuidv4 } = require('uuid');
 
 import dynamoDbCommand from './helpers/dynamoDbCommand';
-import { CreateAccountInput, AccountReadModel } from '../types/Account';
+import { CreateAccountInput, AccountReadModel } from '../../lambda/types/Account';
 
 async function createAccount(input: CreateAccountInput) {
   console.debug(`🕧 Create Account initialized`);

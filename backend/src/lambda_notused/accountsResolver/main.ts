@@ -3,7 +3,7 @@ import createAccount from './createAccount';
 import updateAccount from './updateAccount';
 import deleteAccount from './deleteAccount';
 
-import { AccountAppSyncEvent } from '../types/Account';
+import { AccountAppSyncEvent } from '../../lambda/types/Account';
 
 exports.handler = async (event: AccountAppSyncEvent) => {
   console.debug(`🕧 AppSync event: ${JSON.stringify(event)}`);
