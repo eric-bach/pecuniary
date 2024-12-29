@@ -1,24 +1,26 @@
 'use server';
 
 import { serverClient } from '@/utils/amplifyServerUtils';
-import { deleteTransaction } from './api/mutations';
+import { deleteInvestmentTransaction } from './api/mutations';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { BankTransaction, InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
+import { InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 
-interface DeleteTransactionFormState {
+interface DeleteInvestmentTransactionFormState {
   errors: {
     transactionId?: string[];
     _form?: string[];
   };
 }
 
-export async function deleteExistingTransaction(transaction: BankTransaction | InvestmentTransaction): Promise<DeleteTransactionFormState> {
-  console.log('deleteExistingTransaction', transaction);
+export async function deleteExistingInvestmentTransaction(
+  transaction: InvestmentTransaction
+): Promise<DeleteInvestmentTransactionFormState> {
+  console.log('deleteExistingInvestmentTransaction', transaction);
 
   try {
     await serverClient.graphql({
-      query: deleteTransaction,
+      query: deleteInvestmentTransaction,
       variables: {
         input: {
           pk: transaction.pk,

@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { deleteExistingAccount, deleteExistingTransaction } from '@/actions';
+import { deleteExistingAccount, deleteExistingBankTransaction, deleteExistingInvestmentTransaction } from '@/actions';
 import { Account, BankTransaction, InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
 import DeleteItem from './delete-item';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -64,9 +64,9 @@ export function DataTable<TData, TValue>({ title, columns, data, onClick, filter
       if (row.original.entity === 'account') {
         await deleteExistingAccount((row.original as Account).accountId);
       } else if (row.original.entity === 'bank-transaction') {
-        await deleteExistingTransaction(row.original as BankTransaction);
+        await deleteExistingBankTransaction(row.original as BankTransaction);
       } else if (row.original.entity === 'investment-transaction') {
-        await deleteExistingTransaction(row.original as InvestmentTransaction);
+        await deleteExistingInvestmentTransaction(row.original as InvestmentTransaction);
       }
     });
 
