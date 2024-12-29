@@ -43,10 +43,12 @@ X Switch transactionsResolver to use AppSync JS pipeline resolvers
 
 ##### Current Task
 
-##### Future Task
-
+- Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 - Ensure updatePositions updates on investment transactions create/update - FAILING, add tests to Lambdas
 - Create updateBalances updates on bank transactions create/update
+
+##### Future Task
+
 - create L3 constructs for AppSync CDK
 - Update to nodejs 22
 - Frontend - remove "Loading..." on screens, remove landing page for login page, improvements to FE

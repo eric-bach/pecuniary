@@ -15,6 +15,7 @@ export function request(ctx: Context<MutationUpdateInvestmentTransactionArgs>): 
       expression:
         'SET #type=:type, transactionDate=:transactionDate, symbol=:symbol, shares=:shares, price=:price, commission=:commission, updatedAt=:updatedAt',
       expressionValues: {
+        accountId: util.dynamodb.toDynamoDB(ctx.args.input.accountId),
         type: util.dynamodb.toDynamoDB(ctx.args.input.type),
         transactionDate: util.dynamodb.toDynamoDB(ctx.args.input.transactionDate),
         symbol: util.dynamodb.toDynamoDB(ctx.args.input.symbol),
