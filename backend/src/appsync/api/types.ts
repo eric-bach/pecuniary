@@ -5,7 +5,7 @@ import {
   Aggregates,
   BankTransaction,
   Category,
-  DeleteResponse,
+  DeleteTransaction,
   GetAccountsResponse,
   GetBankTransactionsResponse,
   GetCategoriesResponse,
@@ -66,7 +66,7 @@ export type UpdateInvestmentTransactionMutation = {
 };
 
 export type DeleteTransactionMutation = {
-  deleteTransaction: DeleteResponse;
+  deleteTransaction: DeleteTransaction;
 };
 
 export type CreateCategoryMutation = {
