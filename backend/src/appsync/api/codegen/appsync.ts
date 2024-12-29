@@ -114,13 +114,17 @@ export type Data = {
   userId: Scalars['String']['output'];
 };
 
-export type DeleteResponse = {
-  __typename?: 'DeleteResponse';
-  pk?: Maybe<Scalars['String']['output']>;
+export type DeleteBankTransactionInput = {
+  pk: Scalars['ID']['input'];
 };
 
-export type DeleteTransactionInput = {
+export type DeleteInvestmentTransactionInput = {
   pk: Scalars['ID']['input'];
+};
+
+export type DeleteTransaction = {
+  __typename?: 'DeleteTransaction';
+  pk?: Maybe<Scalars['String']['output']>;
 };
 
 export type GetAccountsResponse = {
@@ -191,7 +195,8 @@ export type Mutation = {
   createPayee?: Maybe<Payee>;
   createSymbol?: Maybe<Symbol>;
   deleteAccount?: Maybe<Aggregates>;
-  deleteTransaction?: Maybe<DeleteResponse>;
+  deleteBankTransaction?: Maybe<DeleteTransaction>;
+  deleteInvestmentTransaction?: Maybe<DeleteTransaction>;
   updateAccount?: Maybe<Account>;
   updateBankTransaction?: Maybe<BankTransaction>;
   updateCategory?: Maybe<Category>;
@@ -235,8 +240,13 @@ export type MutationDeleteAccountArgs = {
 };
 
 
-export type MutationDeleteTransactionArgs = {
-  input: DeleteTransactionInput;
+export type MutationDeleteBankTransactionArgs = {
+  input: DeleteBankTransactionInput;
+};
+
+
+export type MutationDeleteInvestmentTransactionArgs = {
+  input: DeleteInvestmentTransactionInput;
 };
 
 

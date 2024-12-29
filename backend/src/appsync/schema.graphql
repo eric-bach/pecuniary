@@ -55,7 +55,7 @@ input UpdateBankTransactionInput {
   amount: Float!
 }
 
-input DeleteTransactionInput {
+input DeleteBankTransactionInput {
   pk: ID!
 }
 
@@ -79,6 +79,10 @@ input UpdateInvestmentTransactionInput {
   shares: Float!
   price: Float!
   commission: Float!
+}
+
+input DeleteInvestmentTransactionInput {
+  pk: ID!
 }
 
 # Aggregate Response
@@ -196,7 +200,7 @@ type GetPositionsResponse {
   nextToken: String
 }
 
-type DeleteResponse {
+type DeleteTransaction {
   pk: String
 }
 
@@ -245,11 +249,13 @@ type Mutation {
 
   createBankTransaction(input: CreateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateBankTransaction(input: UpdateBankTransactionInput!): BankTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteBankTransaction(input: DeleteBankTransactionInput!): DeleteTransaction @aws_cognito_user_pools(cognito_groups: ["Users"])
   createInvestmentTransaction(input: CreateInvestmentTransactionInput!): InvestmentTransaction
     @aws_cognito_user_pools(cognito_groups: ["Users"])
   updateInvestmentTransaction(input: UpdateInvestmentTransactionInput!): InvestmentTransaction
     @aws_cognito_user_pools(cognito_groups: ["Users"])
-  deleteTransaction(input: DeleteTransactionInput!): DeleteResponse @aws_cognito_user_pools(cognito_groups: ["Users"])
+  deleteInvestmentTransaction(input: DeleteInvestmentTransactionInput!): DeleteTransaction
+    @aws_cognito_user_pools(cognito_groups: ["Users"])
 }
 
 schema {

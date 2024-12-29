@@ -40,7 +40,10 @@ X Switch to sonner
 X Add tests to validate APIs and workflows
 X Switch frontend to use NextJS 14 with turbo
 
-- Ensure positions updates on transactions create/update, add tests to Lambdas
+- Switch transactionsResolver to use AppSync JS pipeline resolvers, document architecture
+- Ensure updatePositions updates on investment transactions create/update - FAILING, add tests to Lambdas
+- Create updateBalances updates on bank transactions create/update
+- Update to nodejs 22
 - Frontend - remove "Loading..." on screens, remove landing page for login page, improvements to FE
 
 - Events
