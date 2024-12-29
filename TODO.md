@@ -45,6 +45,7 @@ X Switch frontend to use NextJS 14 with turbo
 - Switch transactionsResolver to use AppSync JS pipeline resolvers
 
   - Test updateTransactions(2), deleteTransactions(2) lambda
+  - update FE to use deleteBankTransaction/deleteInvestmentTransaction
   - document architecture
   - create L3 constructs for AppSync CDK
 
