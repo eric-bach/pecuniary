@@ -15,7 +15,7 @@
     "@aws-sdk/util-dynamodb": "^3.577.0",
     "@types/aws-lambda": "^8.10.138",
     "aws-lambda": "^1.0.7",
-    "yahoo-finance2": "2.11.3"
+    "yahoo-finance2": "2.13.3"
   },
   "devDependencies": {
     "@types/node": "^20.12.12"
