@@ -40,7 +40,16 @@ X Switch to sonner
 X Add tests to validate APIs and workflows
 X Switch frontend to use NextJS 14 with turbo
 
-- Switch transactionsResolver to use AppSync JS pipeline resolvers, document architecture
+##### Current Task
+
+- Switch transactionsResolver to use AppSync JS pipeline resolvers
+
+  - Test updateTransactions(2), deleteTransactions(2) lambda
+  - document architecture
+  - create L3 constructs for AppSync CDK
+
+##### Future Task
+
 - Ensure updatePositions updates on investment transactions create/update - FAILING, add tests to Lambdas
 - Create updateBalances updates on bank transactions create/update
 - Update to nodejs 22
