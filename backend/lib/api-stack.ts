@@ -537,7 +537,7 @@ export class ApiStack extends Stack {
     });
 
     /***
-     *** AWS AppSync - Lambda Resolvers
+     *** AWS Lambda - Event Handlers
      ***/
 
     // AWS ADOT Lambda layer
@@ -546,65 +546,6 @@ export class ApiStack extends Stack {
       'adotLayer',
       `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-nodejs-amd64-ver-1-18-1:4`
     );
-
-    // AppSync Lambda DataSource
-    // const transactionsReolverFunction = new NodejsFunction(this, 'TransactionsResolver', {
-    //   functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
-    //   runtime: Runtime.NODEJS_20_X,
-    //   handler: 'handler',
-    //   entry: path.resolve(__dirname, '../src/lambda/transactionsResolver/main.ts'),
-    //   memorySize: 512,
-    //   timeout: Duration.seconds(10),
-    //   tracing: Tracing.ACTIVE,
-    //   layers: [adotLayer],
-    //   environment: {
-    //     DATA_TABLE_NAME: dataTable.tableName,
-    //     EVENTBUS_NAME: eventBus.eventBusName,
-    //     AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
-    //   },
-    // });
-    // transactionsReolverFunction.addToRolePolicy(
-    //   new PolicyStatement({
-    //     effect: Effect.ALLOW,
-    //     actions: ['dynamodb:Query', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
-    //     resources: [dataTable.tableArn],
-    //   })
-    // );
-    // transactionsReolverFunction.addToRolePolicy(
-    //   new PolicyStatement({
-    //     effect: Effect.ALLOW,
-    //     actions: ['events:PutEvents'],
-    //     resources: [eventBus.eventBusArn],
-    //   })
-    // );
-    // const transactionsResolverDataSource = api.addLambdaDataSource('transactionsDataSource', transactionsReolverFunction, {
-    //   name: 'TransactionsLambdaDataSource',
-    // });
-    // Lambda Resolvers
-    // transactionsResolverDataSource.createResolver('createBankTransactionResolver', {
-    //   typeName: 'Mutation',
-    //   fieldName: 'createBankTransaction',
-    // });
-    // transactionsResolverDataSource.createResolver('updateBankTransactionResolver', {
-    //   typeName: 'Mutation',
-    //   fieldName: 'updateBankTransaction',
-    // });
-    // transactionsResolverDataSource.createResolver('createInvestmentTransactionResolver', {
-    //   typeName: 'Mutation',
-    //   fieldName: 'createInvestmentTransaction',
-    // });
-    // transactionsResolverDataSource.createResolver('updateInvestmentTransactionResolver', {
-    //   typeName: 'Mutation',
-    //   fieldName: 'updateInvestmentTransaction',
-    // });
-    // transactionsResolverDataSource.createResolver('deleteTransactionResolver', {
-    //   typeName: 'Mutation',
-    //   fieldName: 'deleteTransaction',
-    // });
-
-    /***
-     *** AWS Lambda - Event Handlers
-     ***/
 
     const updatePositionsFunction = new NodejsFunction(this, 'UpdatePositions', {
       runtime: Runtime.NODEJS_18_X,
@@ -700,9 +641,6 @@ export class ApiStack extends Stack {
     });
 
     // Lambda functions
-    // new CfnOutput(this, 'TransactionsResolverFunctionArn', {
-    //   value: transactionsReolverFunction.functionArn,
-    // });
     new CfnOutput(this, 'UpdatePositionsFunctionArn', {
       value: updatePositionsFunction.functionArn,
     });

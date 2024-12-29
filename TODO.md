@@ -39,10 +39,9 @@ X Switch to use ComboBox from budget-tracker tutorial
 X Switch to sonner
 X Add tests to validate APIs and workflows
 X Switch frontend to use NextJS 14 with turbo
+X Switch transactionsResolver to use AppSync JS pipeline resolvers
 
 ##### Current Task
-
-- Switch transactionsResolver to use AppSync JS pipeline resolvers
 
 ##### Future Task
 
