@@ -4,16 +4,15 @@ import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useOpenBankTransaction } from '@/hooks/use-open-bank-transaction';
-import { useOpenInvestmentTransaction } from '@/hooks/use-open-investment-transaction';
-import { BankTransaction, InvestmentTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
-import { deleteExistingTransaction } from '@/actions';
+import { BankTransaction } from '@/../../backend/src/appsync/api/codegen/appsync';
+import { deleteExistingBankTransaction } from '@/actions';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import DeleteItem from '@/components/delete-item';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type TransactionsProps = {
-  transaction: BankTransaction | InvestmentTransaction;
+  transaction: BankTransaction;
 };
 
 export const Actions = ({ transaction }: TransactionsProps) => {
@@ -23,14 +22,13 @@ export const Actions = ({ transaction }: TransactionsProps) => {
   const queryClient = useQueryClient();
 
   const { onOpen: onBankingOpen } = useOpenBankTransaction();
-  const { onOpen: onInvestmentOpen } = useOpenInvestmentTransaction();
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const mutation = useMutation({
-    mutationFn: deleteExistingTransaction,
+    mutationFn: deleteExistingBankTransaction,
     onSuccess: async () => {
       setPending(false);
       handleClose();
@@ -40,13 +38,12 @@ export const Actions = ({ transaction }: TransactionsProps) => {
       });
 
       await queryClient.invalidateQueries({ queryKey: ['bank-transactions'] });
-      await queryClient.invalidateQueries({ queryKey: ['investment-transactions'] });
     },
     onError: (error) => {
       setPending(false);
 
       toast.error('Failed to delete transaction', {
-        id: 'delete-transaction',
+        id: 'delete-bank-transaction',
       });
     },
   });
@@ -54,7 +51,7 @@ export const Actions = ({ transaction }: TransactionsProps) => {
   const handleConfirm = async () => {
     setPending(true);
 
-    toast.loading('Deleting transaction...', { id: 'delete-transaction' });
+    toast.loading('Deleting transaction...', { id: 'delete-bank-transaction' });
 
     mutation.mutate(transaction);
   };
@@ -64,11 +61,7 @@ export const Actions = ({ transaction }: TransactionsProps) => {
   };
 
   const handleOpen = () => {
-    if (transaction.entity === 'bank-transaction') {
-      onBankingOpen(transaction as BankTransaction);
-    } else if (transaction.entity === 'investment-transaction') {
-      onInvestmentOpen(transaction as InvestmentTransaction);
-    }
+    onBankingOpen(transaction);
   };
 
   return (

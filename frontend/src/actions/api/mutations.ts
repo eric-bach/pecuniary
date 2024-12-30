@@ -6,7 +6,8 @@ import {
   MutationCreatePayeeArgs,
   MutationCreateSymbolArgs,
   MutationDeleteAccountArgs,
-  MutationDeleteTransactionArgs,
+  MutationDeleteBankTransactionArgs,
+  MutationDeleteInvestmentTransactionArgs,
   MutationUpdateAccountArgs,
   MutationUpdateBankTransactionArgs,
   MutationUpdateCategoryArgs,
@@ -89,6 +90,12 @@ export const updateBankTransaction = `mutation UpdateBankTransaction($input: Upd
   }
 }` as Query<MutationUpdateBankTransactionArgs, UpdateBankTransactionMutation>;
 
+export const deleteBankTransaction = `mutation DeleteBankTransaction($input: DeleteBankTransactionInput!) {
+  deleteBankTransaction(input: $input) { 
+    pk
+  }
+}` as Query<MutationDeleteBankTransactionArgs, DeleteTransactionMutation>;
+
 export const createInvestmentTransaction = `mutation CreateInvestmentTransaction($input: CreateInvestmentTransactionInput!) {
   createInvestmentTransaction(input: $input) { 
     transactionId
@@ -118,11 +125,11 @@ export const updateInvestmentTransaction = `mutation UpdateInvestmentTransaction
   }
 }` as Query<MutationUpdateInvestmentTransactionArgs, UpdateInvestmentTransactionMutation>;
 
-export const deleteTransaction = `mutation DeleteTransaction($input: DeleteTransactionInput!) {
-  deleteTransaction(input: $input) { 
+export const deleteInvestmentTransaction = `mutation DeleteInvestmentTransaction($input: DeleteInvestmentTransactionInput!) {
+  deleteInvestmentTransaction(input: $input) { 
     pk
   }
-}` as Query<MutationDeleteTransactionArgs, DeleteTransactionMutation>;
+}` as Query<MutationDeleteInvestmentTransactionArgs, DeleteTransactionMutation>;
 
 export const createCategory = `mutation CreateCategory($name: String!) {
   createCategory(name: $name) { 

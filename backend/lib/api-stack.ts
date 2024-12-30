@@ -13,12 +13,12 @@ import {
   FieldLogLevel,
   InlineCode,
   AuthorizationType,
-  SchemaFile,
   DynamoDbDataSource,
   FunctionRuntime,
   AppsyncFunction,
   Resolver,
   Definition,
+  EventBridgeDataSource,
 } from 'aws-cdk-lib/aws-appsync';
 import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
@@ -130,7 +130,7 @@ export class ApiStack extends Stack {
       name: 'dynamoDBDataSource',
       serviceRole: new Role(this, `${props.appName}AppSyncServiceRole`, {
         assumedBy: new ServicePrincipal('appsync.amazonaws.com'),
-        roleName: `${props.appName}-appsync-service-role-${props.envName}`,
+        roleName: `${props.appName}-appsync-dynamodb-service-role-${props.envName}`,
         inlinePolicies: {
           name: new PolicyDocument({
             statements: [
@@ -151,6 +151,29 @@ export class ApiStack extends Stack {
                   'dynamodb:UpdateItem',
                 ],
                 resources: [dataTable.tableArn + '/*'],
+              }),
+            ],
+          }),
+        },
+      }),
+    });
+
+    // AppSync EventBridge DataSource
+    const eventBridgeDataSource = new EventBridgeDataSource(this, 'EventBridgeDataSource', {
+      api,
+      eventBus: eventBus,
+      description: 'EventBridgeDataSource',
+      name: 'eventBridgeDataSource',
+      serviceRole: new Role(this, `${props.appName}AppSyncEventBridgeServiceRole`, {
+        assumedBy: new ServicePrincipal('appsync.amazonaws.com'),
+        roleName: `${props.appName}-appsync-event-bridge-service-role-${props.envName}`,
+        inlinePolicies: {
+          name: new PolicyDocument({
+            statements: [
+              new PolicyStatement({
+                effect: Effect.ALLOW,
+                actions: ['events:PutEvents'],
+                resources: [eventBus.eventBusArn],
               }),
             ],
           }),
@@ -269,6 +292,56 @@ export class ApiStack extends Stack {
       api: api,
       dataSource: dynamoDbDataSource,
       code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getSymbols.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const publishEvent = new AppsyncFunction(this, 'publishEvent', {
+      name: 'publishEvent',
+      api: api,
+      dataSource: eventBridgeDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Event.publishEvent.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+
+    const createBankTransaction = new AppsyncFunction(this, 'createBankTransactionFunction', {
+      name: 'createBankTransaction',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createBankTransaction.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const updateBankTransaction = new AppsyncFunction(this, 'updateBankTransactionFunction', {
+      name: 'updateBankTransaction',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateBankTransaction.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const deleteBankTransaction = new AppsyncFunction(this, 'deleteBankTransactionFunction', {
+      name: 'deleteBankTransaction',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.deleteBankTransaction.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const createInvestmentTransaction = new AppsyncFunction(this, 'createInvestmentTransactionFunction', {
+      name: 'createInvestmentTransaction',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createInvestmentTransaction.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const updateInvestmentTransaction = new AppsyncFunction(this, 'updateInvestmentTransactionFunction', {
+      name: 'updateInvestmentTransaction',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateInvestmentTransaction.js')),
+      runtime: FunctionRuntime.JS_1_0_0,
+    });
+    const deleteInvestmentTransaction = new AppsyncFunction(this, 'deleteInvestmentTransactionFunction', {
+      name: 'deleteInvestmentTransaction',
+      api: api,
+      dataSource: dynamoDbDataSource,
+      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.deleteInvestmentTransaction.js')),
       runtime: FunctionRuntime.JS_1_0_0,
     });
 
@@ -414,9 +487,57 @@ export class ApiStack extends Stack {
       pipelineConfig: [getSymbolsFunction],
       code: passthrough,
     });
+    const createBankTransactionResolver = new Resolver(this, 'createBankTransaction', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'createBankTransaction',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [createBankTransaction, publishEvent],
+      code: passthrough,
+    });
+    const updateBankTransactionResolver = new Resolver(this, 'updateBankTransaction', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'updateBankTransaction',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [updateBankTransaction, publishEvent],
+      code: passthrough,
+    });
+    const deleteBankTransactionResolver = new Resolver(this, 'deleteBankTransaction', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'deleteBankTransaction',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [deleteBankTransaction, publishEvent],
+      code: passthrough,
+    });
+    const createInvestmentTransactionResolver = new Resolver(this, 'createInvestmentTransaction', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'createInvestmentTransaction',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [createInvestmentTransaction, publishEvent],
+      code: passthrough,
+    });
+    const updateInvestmentTransactionResolver = new Resolver(this, 'updateInvestmentTransaction', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'updateInvestmentTransaction',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [updateInvestmentTransaction, publishEvent],
+      code: passthrough,
+    });
+    const deleteInvestmentTransactionResolver = new Resolver(this, 'deleteInvestmentTransaction', {
+      api: api,
+      typeName: 'Mutation',
+      fieldName: 'deleteInvestmentTransaction',
+      runtime: FunctionRuntime.JS_1_0_0,
+      pipelineConfig: [deleteInvestmentTransaction, publishEvent],
+      code: passthrough,
+    });
 
     /***
-     *** AWS AppSync - Lambda Resolvers
+     *** AWS Lambda - Event Handlers
      ***/
 
     // AWS ADOT Lambda layer
@@ -425,66 +546,6 @@ export class ApiStack extends Stack {
       'adotLayer',
       `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-nodejs-amd64-ver-1-18-1:4`
     );
-
-    // AppSync Lambda DataSource
-    const transactionsReolverFunction = new NodejsFunction(this, 'TransactionsResolver', {
-      functionName: `${props.appName}-${props.envName}-TransactionsResolver`,
-      runtime: Runtime.NODEJS_20_X,
-      handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/transactionsResolver/main.ts'),
-      memorySize: 512,
-      timeout: Duration.seconds(10),
-      tracing: Tracing.ACTIVE,
-      layers: [adotLayer],
-      environment: {
-        DATA_TABLE_NAME: dataTable.tableName,
-        EVENTBUS_NAME: eventBus.eventBusName,
-        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
-      },
-    });
-    transactionsReolverFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Query', 'dynamodb:PutItem', 'dynamodb:UpdateItem', 'dynamodb:DeleteItem'],
-        resources: [dataTable.tableArn],
-      })
-    );
-    transactionsReolverFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['events:PutEvents'],
-        resources: [eventBus.eventBusArn],
-      })
-    );
-    const transactionsResolverDataSource = api.addLambdaDataSource('transactionsDataSource', transactionsReolverFunction, {
-      name: 'TransactionsLambdaDataSource',
-    });
-
-    // Lambda Resolvers
-    transactionsResolverDataSource.createResolver('createBankTransactionResolver', {
-      typeName: 'Mutation',
-      fieldName: 'createBankTransaction',
-    });
-    transactionsResolverDataSource.createResolver('updateBankTransactionResolver', {
-      typeName: 'Mutation',
-      fieldName: 'updateBankTransaction',
-    });
-    transactionsResolverDataSource.createResolver('createInvestmentTransactionResolver', {
-      typeName: 'Mutation',
-      fieldName: 'createInvestmentTransaction',
-    });
-    transactionsResolverDataSource.createResolver('updateInvestmentTransactionResolver', {
-      typeName: 'Mutation',
-      fieldName: 'updateInvestmentTransaction',
-    });
-    transactionsResolverDataSource.createResolver('deleteTransactionResolver', {
-      typeName: 'Mutation',
-      fieldName: 'deleteTransaction',
-    });
-
-    /***
-     *** AWS Lambda - Event Handlers
-     ***/
 
     const updatePositionsFunction = new NodejsFunction(this, 'UpdatePositions', {
       runtime: Runtime.NODEJS_18_X,
@@ -496,6 +557,7 @@ export class ApiStack extends Stack {
       tracing: Tracing.ACTIVE,
       layers: [adotLayer],
       environment: {
+        REGION: Stack.of(this).region,
         DATA_TABLE_NAME: dataTable.tableName,
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
@@ -538,17 +600,17 @@ export class ApiStack extends Stack {
      *** AWS EventBridge - Event Bus Rules
      ***/
 
-    // EventBus Rule - TransactionSavedEventRule
-    const transactionSavedEventRule = new Rule(this, 'TransactionSavedEventRule', {
-      ruleName: `${props.appName}-TransactionSavedEvent-${props.envName}`,
-      description: 'TransactionSavedEvent',
+    // EventBus Rule - InvestmentTransactionSavedEventRule
+    const investmentTransactionSavedRule = new Rule(this, 'InvestmentTransactionSavedEventRule', {
+      ruleName: `${props.appName}-InvestmentTransactionSavedEvent-${props.envName}`,
+      description: 'InvestmentTransactionSavedEvent',
       eventBus: eventBus,
       eventPattern: {
         source: ['custom.pecuniary'],
-        detailType: ['TransactionSavedEvent'],
+        detailType: ['InvestmentTransactionSavedEvent'],
       },
     });
-    transactionSavedEventRule.addTarget(
+    investmentTransactionSavedRule.addTarget(
       new LambdaFunction(updatePositionsFunction, {
         //deadLetterQueue: SqsQueue,
         maxEventAge: Duration.hours(2),
@@ -574,14 +636,11 @@ export class ApiStack extends Stack {
 
     // EventBridge
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
-    new CfnOutput(this, 'TransactionSavedEventRuleArn', {
-      value: transactionSavedEventRule.ruleArn,
+    new CfnOutput(this, 'InvestmentTransactionSavedRuleArn', {
+      value: investmentTransactionSavedRule.ruleArn,
     });
 
     // Lambda functions
-    new CfnOutput(this, 'TransactionsResolverFunctionArn', {
-      value: transactionsReolverFunction.functionArn,
-    });
     new CfnOutput(this, 'UpdatePositionsFunctionArn', {
       value: updatePositionsFunction.functionArn,
     });
