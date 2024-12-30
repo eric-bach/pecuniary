@@ -14,6 +14,7 @@ import {
   GetSymbolsResponse,
   InvestmentTransaction,
   Payee,
+  Symbol,
 } from './codegen/appsync';
 
 export type Query<InputType, OutputType> = string & {

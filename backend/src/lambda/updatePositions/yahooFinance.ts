@@ -5,15 +5,13 @@ import { HistoricalHistoryResult, HistoricalRowHistory } from 'yahoo-finance2/di
 export async function getQuoteSummary(symbol: string) {
   console.debug(`Getting quote for ${symbol}`);
 
-  let data;
-
   console.log('🕵️ Calling YahooFinance quoteSummary()');
 
   // Get quotes from Yahoo Finance
   // TODO: this is returning ""Unsupported redirect to https://finance.yahoo.com/quote/AAPL/, please report."," and halting the lambda
   // https://github.com/gadicc/node-yahoo-finance2/issues/777
   // Need to fix
-  data = await yahooFinance.quoteSummary(symbol, {
+  const data = await yahooFinance.quoteSummary(symbol, {
     modules: ['price'],
   });
 
