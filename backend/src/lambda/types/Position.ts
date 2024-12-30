@@ -1,21 +1,19 @@
 export type PositionReadModel = {
   pk: string;
   userId: string;
-  sk: string;
-  createdAt: Date;
-  updatedAt: Date;
-  aggregateId: string;
+  createdAt: string;
+  updatedAt: string;
+  accountId: string;
   entity: string;
-  type: string;
-  description: string;
   symbol: string;
+  shares: number;
+  acb: number;
+  bookValue: number;
+
+  description: string;
   exchange: string;
   currency: string;
-  shares: number;
-  bookValue: number;
   marketValue: number;
-  acb: number;
-  lastTransactionDate: Date;
 };
 
 export type PositionAppSyncEvent = {

@@ -2,12 +2,17 @@ import { EventBridgeEvent } from 'aws-lambda';
 import { QueryCommand, QueryCommandInput, PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
-import { InvestmentTransaction } from '../../appsync/api/codegen/appsync';
-import dynamoDbCommand from './helpers/dynamoDbCommand';
-import publishEventAsync from './helpers/eventBridgePublishEvent';
+import { getQuoteSummary } from './yahooFinance';
 import { PositionReadModel } from '../types/Position';
+import { CreateInvestmentTransactionInput, InvestmentTransaction } from '../../appsync/api/codegen/appsync';
+import dynamoDbCommand from './helpers/dynamoDbCommand';
 
-exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>) => {
+type CreateTransactionInputV2 = {
+  userId: string;
+  symbol: string;
+} & CreateInvestmentTransactionInput;
+
+exports.handler = async (event: EventBridgeEvent<string, CreateTransactionInputV2>) => {
   const detail = parseEvent(event);
 
   // Get all transactions
@@ -17,16 +22,11 @@ exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>)
   const { shares, acb, bookValue } = calculateAdjustedCostBase(transactions);
 
   // Save Position - create if not exists, update if exists
-  const position = await savePosition(detail, shares, acb, bookValue);
-
-  // Publish PositionUpdatedEvent to trigger updatePositionMarketValue
-  await publishEventAsync('PositionUpdatedEvent', position);
-
-  return position;
+  return await savePosition(detail, shares, acb, bookValue);
 };
 
 // Returns all transactions for the symbol sorted in ascending order
-async function getTransactions(detail: InvestmentTransaction): Promise<InvestmentTransaction[]> {
+async function getTransactions(detail: CreateTransactionInputV2): Promise<InvestmentTransaction[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'transaction-gsi',
@@ -54,7 +54,7 @@ async function getTransactions(detail: InvestmentTransaction): Promise<Investmen
   return [] as InvestmentTransaction[];
 }
 
-async function getPosition(detail: InvestmentTransaction): Promise<PositionReadModel> {
+async function getPosition(detail: CreateTransactionInputV2): Promise<PositionReadModel> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'accountId-gsi',
@@ -110,47 +110,54 @@ function calculateAdjustedCostBase(transactions: InvestmentTransaction[]) {
   return { shares, acb, bookValue };
 }
 
-async function savePosition(detail: InvestmentTransaction, shares: number, acb: number, bookValue: number): Promise<PositionReadModel> {
+async function savePosition(detail: CreateTransactionInputV2, shares: number, acb: number, bookValue: number) {
   // Get current position (if exists)
   const position = await getPosition(detail);
 
+  // Get quote for symbol
+  const quote = await getQuoteSummary(detail.symbol);
+
   let result;
 
-  const item: PositionReadModel = {
-    pk: position ? position.pk : 'pos#' + detail.accountId,
-    userId: detail.userId,
-    createdAt: position ? position.createdAt : new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    accountId: detail.accountId,
-    entity: 'position',
-    symbol: detail.symbol,
-    description: '', // To be set downstream
-    exchange: '', // To be set downstream
-    currency: '', // To be set downstream
-    marketValue: 0, // To be set downstream
-    shares: shares,
-    acb: acb,
-    bookValue: bookValue,
-  };
+  if (quote && quote.close) {
+    // Calculate market value
+    const marketValue = quote.close * shares;
 
-  console.log(`Saving Position: ${JSON.stringify(item)}`);
+    const item = {
+      pk: position ? position.pk : 'pos#' + detail.accountId,
+      userId: detail.userId,
+      //sk: position ? position.sk : "ACCPOS#" + new Date().toISOString(),
+      createdAt: position ? position.createdAt : new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      accountId: detail.accountId,
+      entity: 'position',
+      symbol: quote.symbol,
+      description: quote.description,
+      exchange: quote.exchange,
+      currency: quote.currency,
+      shares: shares,
+      acb: acb,
+      bookValue: bookValue,
+      marketValue: marketValue,
+    };
 
-  const putItemCommandInput: PutItemCommandInput = {
-    TableName: process.env.DATA_TABLE_NAME,
-    Item: marshall(item),
-  };
-  result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
+    const putItemCommandInput: PutItemCommandInput = {
+      TableName: process.env.DATA_TABLE_NAME,
+      Item: marshall(item),
+    };
+    result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
-  if (result.$metadata.httpStatusCode === 200) {
-    console.log(`✅ Saved Position: { result: ${JSON.stringify(result)}`);
-    return item;
+    if (result.$metadata.httpStatusCode === 200) {
+      console.log(`✅ Saved Position: { result: ${JSON.stringify(result)}, items: ${JSON.stringify(item)} }`);
+      return result.Items;
+    }
   }
 
   console.log(`🛑 Could not save Position ${detail.symbol}:`, result);
-  return {} as PositionReadModel;
+  return {};
 }
 
-function parseEvent(event: EventBridgeEvent<string, InvestmentTransaction>): InvestmentTransaction {
+function parseEvent(event: EventBridgeEvent<string, CreateTransactionInputV2>): CreateTransactionInputV2 {
   const eventString: string = JSON.stringify(event);
 
   console.debug(`🕧 Received event: ${eventString}`);

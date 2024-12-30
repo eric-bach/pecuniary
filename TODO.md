@@ -44,6 +44,7 @@ X Switch transactionsResolver to use AppSync JS pipeline resolvers
 ##### Current Task
 
 - Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
+  - Add Python Lambda function to updatePositionMakretPrice
 - Ensure updatePositions updates on investment transactions create/update - FAILING, add tests to Lambdas
 - Create updateBalances updates on bank transactions create/update
 

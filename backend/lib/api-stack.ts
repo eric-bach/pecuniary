@@ -596,6 +596,47 @@ export class ApiStack extends Stack {
       })
     );
 
+    // TODO: Switch to python and use yfinance
+    const updatePositionMarketValueFunction = new NodejsFunction(this, 'UpdatePositionMarketValue', {
+      runtime: Runtime.NODEJS_22_X,
+      functionName: `${props.appName}-${props.envName}-UpdatePositionMarketValue`,
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/updateMarketValue/main.ts'),
+      memorySize: 1024,
+      timeout: Duration.seconds(10),
+      tracing: Tracing.ACTIVE,
+      layers: [adotLayer],
+      environment: {
+        REGION: Stack.of(this).region,
+        DATA_TABLE_NAME: dataTable.tableName,
+        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
+      },
+      deadLetterQueue: eventHandlerQueue,
+    });
+    // Add permissions to call DynamoDB
+    updatePositionMarketValueFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:Query'],
+        resources: [dataTable.tableArn, dataTable.tableArn + '/index/accountId-gsi'],
+      })
+    );
+    updatePositionMarketValueFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem'],
+        resources: [dataTable.tableArn],
+      })
+    );
+    // Add permission send message to SQS
+    updatePositionMarketValueFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['SQS:SendMessage', 'SNS:Publish'],
+        resources: [eventHandlerQueue.queueArn],
+      })
+    );
+
     /***
      *** AWS EventBridge - Event Bus Rules
      ***/
@@ -612,6 +653,24 @@ export class ApiStack extends Stack {
     });
     investmentTransactionSavedRule.addTarget(
       new LambdaFunction(updatePositionsFunction, {
+        //deadLetterQueue: SqsQueue,
+        maxEventAge: Duration.hours(2),
+        retryAttempts: 2,
+      })
+    );
+
+    // EventBus Rule - PositionUpdatedEventRule
+    const positionUpdatedEventRule = new Rule(this, 'PositionUpdatedEventRule', {
+      ruleName: `${props.appName}-PositionUpdatedEventRule-${props.envName}`,
+      description: 'PositionUpdatedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['PositionUpdatedEvent'],
+      },
+    });
+    positionUpdatedEventRule.addTarget(
+      new LambdaFunction(updatePositionMarketValueFunction, {
         //deadLetterQueue: SqsQueue,
         maxEventAge: Duration.hours(2),
         retryAttempts: 2,
