@@ -61,11 +61,11 @@ export function DataTable<TData, TValue>({ title, columns, data, onClick, filter
 
   const handleConfirm = async () => {
     table.getFilteredSelectedRowModel().rows.forEach(async (row: { original: TData }) => {
-      if ((row.original as any).entity === 'account') {
+      if ((row.original as Account).entity === 'account') {
         await deleteExistingAccount((row.original as Account).accountId);
-      } else if ((row.original as any).entity === 'bank-transaction') {
+      } else if ((row.original as BankTransaction).entity === 'bank-transaction') {
         await deleteExistingBankTransaction(row.original as BankTransaction);
-      } else if ((row.original as any).entity === 'investment-transaction') {
+      } else if ((row.original as InvestmentTransaction).entity === 'investment-transaction') {
         await deleteExistingInvestmentTransaction(row.original as InvestmentTransaction);
       }
     });
