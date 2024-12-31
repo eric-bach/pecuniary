@@ -25,8 +25,10 @@ import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
+import { Architecture, LayerVersion, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { LayerVersion, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { PythonFunction } from '@aws-cdk/aws-lambda-python-alpha';
+import { LambdaPowertoolsLayer } from 'cdk-aws-lambda-powertools-layer';
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -541,11 +543,16 @@ export class ApiStack extends Stack {
      ***/
 
     // AWS ADOT Lambda layer
-    const adotLayer = LayerVersion.fromLayerVersionArn(
+    const adotJavscriptLayer = LayerVersion.fromLayerVersionArn(
       this,
-      'adotLayer',
+      'adotJavascriptLayer',
       `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-nodejs-amd64-ver-1-18-1:4`
     );
+    // const adotPythonLayer = LayerVersion.fromLayerVersionArn(
+    //   this,
+    //   'adotPythonLayer',
+    //   `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-python-arm64-ver-1-25-0:1`
+    // );
 
     const updatePositionsFunction = new NodejsFunction(this, 'UpdatePositions', {
       runtime: Runtime.NODEJS_18_X,
@@ -555,7 +562,7 @@ export class ApiStack extends Stack {
       memorySize: 1024,
       timeout: Duration.seconds(10),
       tracing: Tracing.ACTIVE,
-      layers: [adotLayer],
+      layers: [adotJavscriptLayer],
       environment: {
         REGION: Stack.of(this).region,
         DATA_TABLE_NAME: dataTable.tableName,
@@ -596,16 +603,31 @@ export class ApiStack extends Stack {
       })
     );
 
-    // TODO: Switch to python and use yfinance
+    // const updatePositionMarketValueFunction = new PythonFunction(this, 'UpdatePositionMarketValue', {
+    //   functionName: `${props.appName}-${props.envName}-UpdatePositionMarketValue`,
+    //   entry: 'src/lambda/updatePositionMarketValue',
+    //   runtime: Runtime.PYTHON_3_12,
+    //   architecture: Architecture.ARM_64,
+    //   memorySize: 512,
+    //   timeout: Duration.seconds(10),
+    //   tracing: Tracing.ACTIVE,
+    //   layers: [adotPythonLayer],
+    //   environment: {
+    //     REGION: Stack.of(this).region,
+    //     DATA_TABLE_NAME: dataTable.tableName,
+    //     AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-instrument',
+    //   },
+    //   deadLetterQueue: eventHandlerQueue,
+    // });
     const updatePositionMarketValueFunction = new NodejsFunction(this, 'UpdatePositionMarketValue', {
       runtime: Runtime.NODEJS_22_X,
       functionName: `${props.appName}-${props.envName}-UpdatePositionMarketValue`,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/updateMarketValue/main.ts'),
+      entry: path.resolve(__dirname, '../src/lambda/updatePositionMarketValueJS/main.ts'),
       memorySize: 1024,
       timeout: Duration.seconds(10),
       tracing: Tracing.ACTIVE,
-      layers: [adotLayer],
+      layers: [adotJavscriptLayer],
       environment: {
         REGION: Stack.of(this).region,
         DATA_TABLE_NAME: dataTable.tableName,
