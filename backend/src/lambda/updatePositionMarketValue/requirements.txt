@@ -1,3 +1,0 @@
-boto3==1.35.86
-yahooquery==2.3.7
-urllib3==2.2.3

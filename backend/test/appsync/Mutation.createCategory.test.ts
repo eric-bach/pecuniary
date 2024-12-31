@@ -44,7 +44,7 @@ describe('Mutation.createCategory', () => {
 
     const key = unmarshall(result.key);
     const attributeValues = unmarshall(result.attributeValues);
-    expect(key.pk).toContain('cat#');
+    expect(key.pk).toBe(`cat#${context.arguments.name}`);
     expect(attributeValues['entity']).toBe('category');
     expect(attributeValues['name']).toBe(context.arguments.name);
     expect(attributeValues['userId']).toBe(context.identity.username);

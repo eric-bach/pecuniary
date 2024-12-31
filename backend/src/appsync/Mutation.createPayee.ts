@@ -4,13 +4,12 @@ import { Payee, MutationCreatePayeeArgs } from './api/codegen/appsync';
 export function request(ctx: Context<MutationCreatePayeeArgs>): DynamoDBPutItemRequest {
   console.log('🔔 CreatePayee Request: ', ctx);
 
-  const payeeId = util.autoId();
   const datetime = util.time.nowISO8601();
 
   return {
     operation: 'PutItem',
     key: {
-      pk: util.dynamodb.toDynamoDB(`pay#${payeeId}`),
+      pk: util.dynamodb.toDynamoDB(`pay#${ctx.args.name}`),
     },
     attributeValues: {
       entity: util.dynamodb.toDynamoDB('payee'),

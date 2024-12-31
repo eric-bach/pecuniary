@@ -44,7 +44,7 @@ describe('Mutation.createSymbol', () => {
 
     const key = unmarshall(result.key);
     const attributeValues = unmarshall(result.attributeValues);
-    expect(key.pk).toContain('symb#');
+    expect(key.pk).toBe(`symb#${context.arguments.name}`);
     expect(attributeValues['entity']).toBe('symbol');
     expect(attributeValues['name']).toBe(context.arguments.name);
     expect(attributeValues['userId']).toBe(context.identity.username);

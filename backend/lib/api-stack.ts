@@ -25,10 +25,8 @@ import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
-import { Architecture, LayerVersion, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { LayerVersion, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { PythonFunction } from '@aws-cdk/aws-lambda-python-alpha';
-import { LambdaPowertoolsLayer } from 'cdk-aws-lambda-powertools-layer';
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -548,17 +546,12 @@ export class ApiStack extends Stack {
       'adotJavascriptLayer',
       `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-nodejs-amd64-ver-1-18-1:4`
     );
-    // const adotPythonLayer = LayerVersion.fromLayerVersionArn(
-    //   this,
-    //   'adotPythonLayer',
-    //   `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-python-arm64-ver-1-25-0:1`
-    // );
 
-    const updatePositionsFunction = new NodejsFunction(this, 'UpdatePositions', {
+    const updatePositionFunction = new NodejsFunction(this, 'UpdatePosition', {
       runtime: Runtime.NODEJS_18_X,
-      functionName: `${props.appName}-${props.envName}-UpdatePositions`,
+      functionName: `${props.appName}-${props.envName}-UpdatePosition`,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/updatePositions/main.ts'),
+      entry: path.resolve(__dirname, '../src/lambda/updatePosition/main.ts'),
       memorySize: 1024,
       timeout: Duration.seconds(10),
       tracing: Tracing.ACTIVE,
@@ -572,14 +565,14 @@ export class ApiStack extends Stack {
       deadLetterQueue: eventHandlerQueue,
     });
     // Add permissions to call DynamoDB
-    updatePositionsFunction.addToRolePolicy(
+    updatePositionFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
         resources: [dataTable.tableArn, dataTable.tableArn + '/index/accountId-gsi', dataTable.tableArn + '/index/transaction-gsi'],
       })
     );
-    updatePositionsFunction.addToRolePolicy(
+    updatePositionFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem'],
@@ -587,7 +580,7 @@ export class ApiStack extends Stack {
       })
     );
     // Add permission to send to EventBridge
-    updatePositionsFunction.addToRolePolicy(
+    updatePositionFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['events:PutEvents'],
@@ -595,63 +588,7 @@ export class ApiStack extends Stack {
       })
     );
     // Add permission send message to SQS
-    updatePositionsFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['SQS:SendMessage', 'SNS:Publish'],
-        resources: [eventHandlerQueue.queueArn],
-      })
-    );
-
-    // const updatePositionMarketValueFunction = new PythonFunction(this, 'UpdatePositionMarketValue', {
-    //   functionName: `${props.appName}-${props.envName}-UpdatePositionMarketValue`,
-    //   entry: 'src/lambda/updatePositionMarketValue',
-    //   runtime: Runtime.PYTHON_3_12,
-    //   architecture: Architecture.ARM_64,
-    //   memorySize: 512,
-    //   timeout: Duration.seconds(10),
-    //   tracing: Tracing.ACTIVE,
-    //   layers: [adotPythonLayer],
-    //   environment: {
-    //     REGION: Stack.of(this).region,
-    //     DATA_TABLE_NAME: dataTable.tableName,
-    //     AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-instrument',
-    //   },
-    //   deadLetterQueue: eventHandlerQueue,
-    // });
-    const updatePositionMarketValueFunction = new NodejsFunction(this, 'UpdatePositionMarketValue', {
-      runtime: Runtime.NODEJS_22_X,
-      functionName: `${props.appName}-${props.envName}-UpdatePositionMarketValue`,
-      handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/updatePositionMarketValueJS/main.ts'),
-      memorySize: 1024,
-      timeout: Duration.seconds(10),
-      tracing: Tracing.ACTIVE,
-      layers: [adotJavscriptLayer],
-      environment: {
-        REGION: Stack.of(this).region,
-        DATA_TABLE_NAME: dataTable.tableName,
-        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
-      },
-      deadLetterQueue: eventHandlerQueue,
-    });
-    // Add permissions to call DynamoDB
-    updatePositionMarketValueFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:Query'],
-        resources: [dataTable.tableArn, dataTable.tableArn + '/index/accountId-gsi'],
-      })
-    );
-    updatePositionMarketValueFunction.addToRolePolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem'],
-        resources: [dataTable.tableArn],
-      })
-    );
-    // Add permission send message to SQS
-    updatePositionMarketValueFunction.addToRolePolicy(
+    updatePositionFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['SQS:SendMessage', 'SNS:Publish'],
@@ -674,25 +611,7 @@ export class ApiStack extends Stack {
       },
     });
     investmentTransactionSavedRule.addTarget(
-      new LambdaFunction(updatePositionsFunction, {
-        //deadLetterQueue: SqsQueue,
-        maxEventAge: Duration.hours(2),
-        retryAttempts: 2,
-      })
-    );
-
-    // EventBus Rule - PositionUpdatedEventRule
-    const positionUpdatedEventRule = new Rule(this, 'PositionUpdatedEventRule', {
-      ruleName: `${props.appName}-PositionUpdatedEventRule-${props.envName}`,
-      description: 'PositionUpdatedEvent',
-      eventBus: eventBus,
-      eventPattern: {
-        source: ['custom.pecuniary'],
-        detailType: ['PositionUpdatedEvent'],
-      },
-    });
-    positionUpdatedEventRule.addTarget(
-      new LambdaFunction(updatePositionMarketValueFunction, {
+      new LambdaFunction(updatePositionFunction, {
         //deadLetterQueue: SqsQueue,
         maxEventAge: Duration.hours(2),
         retryAttempts: 2,
@@ -722,8 +641,8 @@ export class ApiStack extends Stack {
     });
 
     // Lambda functions
-    new CfnOutput(this, 'UpdatePositionsFunctionArn', {
-      value: updatePositionsFunction.functionArn,
+    new CfnOutput(this, 'UpdatePositionFunctionArn', {
+      value: updatePositionFunction.functionArn,
     });
   }
 }

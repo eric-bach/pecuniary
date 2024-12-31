@@ -3,9 +3,9 @@ import { QueryCommand, QueryCommandInput, PutItemCommand, PutItemCommandInput } 
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 import { InvestmentTransaction } from '../../appsync/api/codegen/appsync';
-import dynamoDbCommand from './helpers/dynamoDbCommand';
-import publishEventAsync from './helpers/eventBridgePublishEvent';
-import { PositionReadModel } from '../types/Position';
+import dynamoDbCommand from './utils/dynamoDbClient';
+import { getQuoteSummary } from './utils/yahooFinance';
+import { PositionReadModel } from './types/PositionReadModel';
 
 exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>) => {
   const detail = parseEvent(event);
@@ -16,11 +16,11 @@ exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>)
   // Calculate ACB
   const { shares, acb, bookValue } = calculateAdjustedCostBase(transactions);
 
-  // Save Position - create if not exists, update if exists
-  const position = await savePosition(detail, shares, acb, bookValue);
+  // Get current position (if exists)
+  let position = await getPosition(detail);
 
-  // Publish PositionUpdatedEvent to trigger updatePositionMarketValue
-  await publishEventAsync('PositionUpdatedEvent', position);
+  // Save Position - create if not exists, update if exists
+  position = await savePosition(position, detail, shares, acb, bookValue);
 
   return position;
 };
@@ -110,11 +110,24 @@ function calculateAdjustedCostBase(transactions: InvestmentTransaction[]) {
   return { shares, acb, bookValue };
 }
 
-async function savePosition(detail: InvestmentTransaction, shares: number, acb: number, bookValue: number): Promise<PositionReadModel> {
-  // Get current position (if exists)
-  const position = await getPosition(detail);
+async function savePosition(
+  position: PositionReadModel,
+  detail: InvestmentTransaction,
+  shares: number,
+  acb: number,
+  bookValue: number
+): Promise<PositionReadModel> {
+  const quote = await getQuoteSummary(detail.symbol);
+
+  if (!quote || !quote.close) {
+    console.log(`🛑 Could not get quote for ${detail.symbol}`);
+    return {} as PositionReadModel;
+  }
 
   let result;
+
+  // Calculate market value
+  const marketValue = quote.close ?? 0 * position.shares;
 
   const item: PositionReadModel = {
     pk: position ? position.pk : 'pos#' + detail.accountId,
@@ -124,10 +137,11 @@ async function savePosition(detail: InvestmentTransaction, shares: number, acb: 
     accountId: detail.accountId,
     entity: 'position',
     symbol: detail.symbol,
-    description: '', // To be set downstream
-    exchange: '', // To be set downstream
-    currency: '', // To be set downstream
-    marketValue: 0, // To be set downstream
+    // TODO - handle when quote fields are not populated
+    description: quote.description ?? '',
+    exchange: quote.exchange ?? '',
+    currency: quote.currency ?? '',
+    marketValue: marketValue,
     shares: shares,
     acb: acb,
     bookValue: bookValue,

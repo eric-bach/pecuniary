@@ -4,13 +4,12 @@ import { Category, MutationCreateCategoryArgs } from './api/codegen/appsync';
 export function request(ctx: Context<MutationCreateCategoryArgs>): DynamoDBPutItemRequest {
   console.log('🔔 CreateCategory Request: ', ctx);
 
-  const categoryId = util.autoId();
   const datetime = util.time.nowISO8601();
 
   return {
     operation: 'PutItem',
     key: {
-      pk: util.dynamodb.toDynamoDB(`cat#${categoryId}`),
+      pk: util.dynamodb.toDynamoDB(`cat#${ctx.args.name}`),
     },
     attributeValues: {
       entity: util.dynamodb.toDynamoDB('category'),
