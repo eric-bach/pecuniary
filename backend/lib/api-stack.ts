@@ -5,7 +5,7 @@ import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { PolicyStatement, Effect, Role, ServicePrincipal, PolicyDocument } from 'aws-cdk-lib/aws-iam';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
-import { Alarm, Metric, ComparisonOperator } from 'aws-cdk-lib/aws-cloudwatch';
+import { Alarm, Metric, ComparisonOperator, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
 import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 import {
   Code,
@@ -43,20 +43,20 @@ export class ApiStack extends Stack {
      ***/
 
     // Event handler DLQ
-    const eventHandlerQueue = new Queue(this, 'EventHandlerQueue', {
-      queueName: `${props.appName}-eventHandler-DeadLetterQueue-${props.envName}`,
+    const updatePositionDLQ = new Queue(this, 'UpdatePositionDLQ', {
+      queueName: `${props.appName}-${props.envName}-updatePosition-DLQ`,
     });
 
     /***
      *** AWS SNS - Topics
      ***/
 
-    const eventHandlerTopic = new Topic(this, 'EventHandlerTopic', {
-      topicName: `${props.appName}-eventHandler-Topic-${props.envName}`,
-      displayName: 'Event Handler Topic',
+    const updatePositionNotification = new Topic(this, 'UpdatePositionNotification', {
+      topicName: `${props.appName}-${props.envName}-updatePosition-Notification`,
+      displayName: 'Update Postion DLQ Notification',
     });
     if (props.params.dlqNotifications) {
-      eventHandlerTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
+      updatePositionNotification.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     /***
@@ -64,26 +64,27 @@ export class ApiStack extends Stack {
      ***/
 
     // Generic metric
-    const metric = new Metric({
+    const dlqMetric = new Metric({
       namespace: 'AWS/SQS',
-      metricName: 'NumberOfMessagesSent',
-    });
-    // TODO Doesn't seem to work
-    metric.with({
+      metricName: 'ApproximateNumberOfMessagesVisible',
+      dimensionsMap: {
+        QueueName: updatePositionDLQ.queueName,
+      },
+      period: Duration.minutes(1),
       statistic: 'Sum',
-      period: Duration.seconds(300),
     });
 
-    const eventHandlerAlarm = new Alarm(this, 'EventHandlerAlarm', {
-      alarmName: `${props.appName}-eventHandler-Alarm-${props.envName}`,
-      alarmDescription: 'One or more failed EventHandler messages',
-      metric: metric,
+    const updatePositionAlarm = new Alarm(this, 'UpdatePositionAlarm', {
+      alarmName: `${props.appName}-${props.envName}-updatePosition-Alarm`,
+      alarmDescription: 'Unable to update one or more positions',
+      metric: dlqMetric,
       datapointsToAlarm: 1,
-      evaluationPeriods: 2,
+      evaluationPeriods: 1,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
     });
-    eventHandlerAlarm.addAlarmAction(new SnsAction(eventHandlerTopic));
+    updatePositionAlarm.addAlarmAction(new SnsAction(updatePositionNotification));
 
     /***
      *** AWS EventBridge - Event Bus
@@ -562,7 +563,7 @@ export class ApiStack extends Stack {
         EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
       },
-      deadLetterQueue: eventHandlerQueue,
+      deadLetterQueue: updatePositionDLQ,
     });
     // Add permissions to call DynamoDB
     updatePositionFunction.addToRolePolicy(
@@ -592,7 +593,7 @@ export class ApiStack extends Stack {
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['SQS:SendMessage', 'SNS:Publish'],
-        resources: [eventHandlerQueue.queueArn],
+        resources: [updatePositionDLQ.queueArn],
       })
     );
 
@@ -623,13 +624,13 @@ export class ApiStack extends Stack {
      ***/
 
     // Dead Letter Queues
-    new CfnOutput(this, 'EventHandlerQueueArn', {
-      value: eventHandlerQueue.queueArn,
-      exportName: `${props.appName}-${props.envName}-eventHandlerQueueArn`,
+    new CfnOutput(this, 'UpdatePositionDLQArn', {
+      value: updatePositionDLQ.queueArn,
+      exportName: `${props.appName}-${props.envName}-updatePositionDLQArn`,
     });
 
     // SNS Topics
-    new CfnOutput(this, 'EventHandlerTopicArn', { value: eventHandlerTopic.topicArn });
+    new CfnOutput(this, 'UpdatePositionNotificationArn', { value: updatePositionNotification.topicArn });
 
     // AppSync API
     new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });

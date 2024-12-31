@@ -160,8 +160,7 @@ async function savePosition(
     return item;
   }
 
-  console.log(`🛑 Could not save Position ${detail.symbol}:`, result);
-  return {} as PositionReadModel;
+  throw new Error(`🛑 Could not save Position ${detail.symbol}: ${result}`);
 }
 
 function parseEvent(event: EventBridgeEvent<string, InvestmentTransaction>): InvestmentTransaction {
