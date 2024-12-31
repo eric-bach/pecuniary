@@ -47,10 +47,10 @@ X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 X BUG: Creates multiple symbols in drop down
 X Ensure updatePositions updates on investment transactions create/update
 
-- Update dashboard to pull positions and totals
 - Create updateBalances updates on bank transactions create/update
 - simulate failure in updatePosition Lambda to ensure it goes to DLQ (i.e. set the pk to undefined L133)
 - add tests to updatePosition Lambda
+- Update dashboard to pull positions and totals - requires new API getPositions(userId)
 
 ##### Future Task
 
