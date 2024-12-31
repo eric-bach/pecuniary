@@ -45,13 +45,12 @@ async function getTransactions(detail: InvestmentTransaction): Promise<Investmen
   if (result.$metadata.httpStatusCode === 200) {
     const transactions = result.Items?.map((Item: Record<string, any>) => unmarshall(Item));
 
-    console.log(`🔔 Found ${transactions.length} Transactions: ${JSON.stringify(transactions)}`);
+    console.info(`🔔 Found ${transactions.length} Transactions: ${JSON.stringify(transactions)}`);
 
     return transactions;
   }
 
-  console.log(`🛑 Could not find transactions: ${result}`);
-  return [] as InvestmentTransaction[];
+  throw new Error(`🛑 Could not find any transactions: ${result}`);
 }
 
 async function getPosition(detail: InvestmentTransaction): Promise<PositionReadModel> {
@@ -69,15 +68,16 @@ async function getPosition(detail: InvestmentTransaction): Promise<PositionReadM
   };
   const result = await dynamoDbCommand(new QueryCommand(params));
 
+  let position;
   if (result.$metadata.httpStatusCode === 200) {
-    const position = result.Items?.map((Item: Record<string, any>) => unmarshall(Item))[0];
-    console.log(`🔔 Found Position: ${JSON.stringify(position)}`);
-
-    return position;
+    position = result.Items?.map((Item: Record<string, any>) => unmarshall(Item))[0];
   }
 
-  console.log(`🛑 Could not find Position: ${result}`);
-  return {} as PositionReadModel;
+  position
+    ? console.log(`🔔 Found existing Position: ${JSON.stringify(position)}`)
+    : console.log(`🔔 No existing Position found: ${result}`);
+
+  return position as PositionReadModel;
 }
 
 function calculateAdjustedCostBase(transactions: InvestmentTransaction[]) {
@@ -119,12 +119,9 @@ async function savePosition(
 ): Promise<PositionReadModel> {
   const quote = await getQuoteSummary(detail.symbol);
 
-  if (!quote || !quote.close) {
-    console.log(`🛑 Could not get quote for ${detail.symbol}`);
-    return {} as PositionReadModel;
+  if (!quote || !quote.close || !quote.currency) {
+    throw new Error(`🛑 Could not get quote for ${detail.symbol}`);
   }
-
-  let result;
 
   // Calculate market value
   const marketValue = quote.close ?? 0 * position.shares;
@@ -137,10 +134,9 @@ async function savePosition(
     accountId: detail.accountId,
     entity: 'position',
     symbol: detail.symbol,
-    // TODO - handle when quote fields are not populated
     description: quote.description ?? '',
     exchange: quote.exchange ?? '',
-    currency: quote.currency ?? '',
+    currency: quote.currency,
     marketValue: marketValue,
     shares: shares,
     acb: acb,
@@ -153,10 +149,11 @@ async function savePosition(
     TableName: process.env.DATA_TABLE_NAME,
     Item: marshall(item),
   };
-  result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
+
+  let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
   if (result.$metadata.httpStatusCode === 200) {
-    console.log(`✅ Saved Position: { result: ${JSON.stringify(result)}`);
+    console.log(`✅ Saved/Updated Position: { result: ${JSON.stringify(result)}`);
     return item;
   }
 
