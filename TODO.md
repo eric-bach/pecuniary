@@ -46,9 +46,10 @@ X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 
 X On PositionUpdatedEvent, update account balance with Position.marketvalue
 X On BankTransactionSavedEvent, update account balance with Transaction.amount
--- Create new DLQ for updateAccountBalance
+X Fixed and simplified bookValue and ACB calculations
+X Include Buy/Sell transaction type on tranasctions table
 
-- review bookValue formula should be = price \* shares + commission
+- Create new DLQ for updateAccountBalance
 - Draw diagram
 
 ##### Future Task
