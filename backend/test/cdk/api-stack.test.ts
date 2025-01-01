@@ -25,24 +25,24 @@ describe('Api Stack contains expected resources', () => {
   const template = Template.fromStack(stack);
 
   test('should have SQS Queues and SNS Topics', () => {
+    template.hasResourceProperties('AWS::SQS::Queue', Match.objectLike({ QueueName: `pecuniary-${props.envName}-updatePosition-DLQ` }));
     template.hasResourceProperties(
-      'AWS::SQS::Queue',
-      Match.objectLike({ QueueName: `pecuniary-eventHandler-DeadLetterQueue-${props.envName}` })
+      'AWS::SNS::Topic',
+      Match.objectLike({ TopicName: `pecuniary-${props.envName}-updatePosition-Notification` })
     );
-    template.hasResourceProperties('AWS::SNS::Topic', Match.objectLike({ TopicName: `pecuniary-eventHandler-Topic-${props.envName}` }));
     template.hasResourceProperties('AWS::SNS::Subscription', Match.objectLike({ Protocol: 'email' }));
 
     template.hasResourceProperties(
       'AWS::CloudWatch::Alarm',
       Match.objectLike({
         ComparisonOperator: 'GreaterThanOrEqualToThreshold',
-        EvaluationPeriods: 2,
-        AlarmName: `pecuniary-eventHandler-Alarm-${props.envName}`,
+        EvaluationPeriods: 1,
+        AlarmName: `pecuniary-${props.envName}-updatePosition-Alarm`,
         DatapointsToAlarm: 1,
-        MetricName: 'NumberOfMessagesSent',
+        MetricName: 'ApproximateNumberOfMessagesVisible',
         Namespace: 'AWS/SQS',
-        Period: 300,
-        Statistic: 'Average',
+        Period: 60,
+        Statistic: 'Sum',
         Threshold: 1,
       })
     );

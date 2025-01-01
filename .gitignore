@@ -64,3 +64,6 @@ yarn-error.log*
 !tailwind.config.js
 !next.config.js
 !postcss.config.js
+
+# reference
+~*.xlsx

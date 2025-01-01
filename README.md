@@ -182,6 +182,55 @@ Ensure to configure the GitHub Secrets to include:
     CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
     ```
 
+# Troubleshooting
+
+## Lambda DLQ
+
+To retry the Lambda function
+
+1. Get the message from the SQS DLQ
+
+```
+aws sqs receive-message --queue-url https://sqs.us-east-1.amazonaws.com/524849261220/pecuniary-dev-updatePosition-DLQ --profile bach-dev
+```
+
+2. Save the DLQ message event to a json file
+
+```
+{
+  "version": "0",
+  "id": "26b8f7d1-b141-9baf-8a01-f625b7c3b0bc",
+  "detail-type": "InvestmentTransactionSavedEvent",
+  "source": "custom.pecuniary",
+  "account": "524849261220",
+  "time": "2024-12-31T20:29:49Z",
+  "region": "us-east-1",
+  "resources": [],
+  "detail": {
+      "accountId": "c8df14ba-0bf9-43dc-a92f-0185714336a7",
+      "transactionDate": "2024-12-31",
+      "type": "Buy",
+      "symbol": "FNMA",
+      "shares": 123.0,
+      "price": 12.0,
+      "commission": 12.0,
+      "userId": "a4e824d8-2021-7008-6807-ec5d9400debb"
+  }
+}
+```
+
+3. Run the CLI command to invoke lambda
+
+```
+aws lambda invoke --function-name pecuniary-dev-UpdatePosition --payload fileb://request.json response.json --profile bach-dev
+```
+
+4. Run the CLI command to remove the message from the SQS DLQ
+
+```
+aws sqs delete-message --queue-url https://sqs.us-east-1.amazonaws.com/524849261220/pecuniary-dev-updatePosition-DLQ --receipt-handle <receipt-handle> --profile bach-dev
+```
+
 # Event Sourcing and CQRS Architecture
 
 For more detailed information about the event-driven nature of the Pecuniary application and it's architecture, please see the [Architecture.md](ARCHITECTURE.md)

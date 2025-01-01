@@ -4,13 +4,12 @@ import { MutationCreateSymbolArgs, Symbol } from './api/codegen/appsync';
 export function request(ctx: Context<MutationCreateSymbolArgs>): DynamoDBPutItemRequest {
   console.log('🔔 CreateSymbol Request: ', ctx);
 
-  const symbolId = util.autoId();
   const datetime = util.time.nowISO8601();
 
   return {
     operation: 'PutItem',
     key: {
-      pk: util.dynamodb.toDynamoDB(`symb#${symbolId}`),
+      pk: util.dynamodb.toDynamoDB(`symb#${ctx.args.name}`),
     },
     attributeValues: {
       entity: util.dynamodb.toDynamoDB('symbol'),
