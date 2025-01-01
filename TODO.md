@@ -44,11 +44,16 @@ X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 
 ##### Current Task
 
-- On PositionUpdatedEvent, update account balance with Position.marketvalue
-- On BankTransactionSavedEvent, update account balance with Transaction.amount
+X On PositionUpdatedEvent, update account balance with Position.marketvalue
+X On BankTransactionSavedEvent, update account balance with Transaction.amount
+-- Create new DLQ for updateAccountBalance
+
+- review bookValue formula should be = price \* shares + commission
+- Draw diagram
 
 ##### Future Task
 
+- hide dropdowns after creating a new symbol, payee, category, etc
 - add tests to updatePosition Lambda
 - Update dashboard to pull positions and totals - requires new API getPositions(userId)
 - create L3 constructs for AppSync CDK

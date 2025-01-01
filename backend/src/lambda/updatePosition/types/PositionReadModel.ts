@@ -12,5 +12,7 @@ export type PositionReadModel = {
   shares: number;
   acb: number;
   bookValue: number;
+  bookValueChange: number;
   marketValue: number;
+  marketValueChange: number;
 };

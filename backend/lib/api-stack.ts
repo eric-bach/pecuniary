@@ -597,6 +597,31 @@ export class ApiStack extends Stack {
       })
     );
 
+    const updateAccountBalanceFunction = new NodejsFunction(this, 'UpdateAccountBalance', {
+      runtime: Runtime.NODEJS_22_X,
+      functionName: `${props.appName}-${props.envName}-UpdateAccountBalance`,
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/updateAccountbalance/main.ts'),
+      memorySize: 384,
+      timeout: Duration.seconds(5),
+      tracing: Tracing.ACTIVE,
+      layers: [adotJavscriptLayer],
+      environment: {
+        REGION: Stack.of(this).region,
+        DATA_TABLE_NAME: dataTable.tableName,
+        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
+      },
+      deadLetterQueue: updatePositionDLQ,
+    });
+    // Add permissions to call DynamoDB
+    updateAccountBalanceFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:UpdateItem'],
+        resources: [dataTable.tableArn],
+      })
+    );
+
     /***
      *** AWS EventBridge - Event Bus Rules
      ***/
@@ -613,12 +638,27 @@ export class ApiStack extends Stack {
     });
     investmentTransactionSavedRule.addTarget(
       new LambdaFunction(updatePositionFunction, {
-        //deadLetterQueue: SqsQueue,
         maxEventAge: Duration.hours(2),
         retryAttempts: 2,
       })
     );
 
+    // EventBus Rule - PositionUpdatedEvent and BankTransactionSavedEvent
+    const transactionUpdatedEventRule = new Rule(this, 'PositionUpdatedEvent', {
+      ruleName: `${props.appName}-TransactionUpdatedEvent-${props.envName}`,
+      description: 'TransactionUdpatedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['PositionUpdatedEvent', 'BankTransactionSavedEvent'],
+      },
+    });
+    transactionUpdatedEventRule.addTarget(
+      new LambdaFunction(updateAccountBalanceFunction, {
+        maxEventAge: Duration.hours(2),
+        retryAttempts: 2,
+      })
+    );
     /***
      *** Outputs
      ***/
@@ -639,6 +679,9 @@ export class ApiStack extends Stack {
     new CfnOutput(this, 'EventBusArn', { value: eventBus.eventBusArn });
     new CfnOutput(this, 'InvestmentTransactionSavedRuleArn', {
       value: investmentTransactionSavedRule.ruleArn,
+    });
+    new CfnOutput(this, 'TransactionUpdatedEventRule', {
+      value: transactionUpdatedEventRule.ruleArn,
     });
 
     // Lambda functions

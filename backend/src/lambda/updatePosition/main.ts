@@ -6,8 +6,9 @@ import { InvestmentTransaction } from '../../appsync/api/codegen/appsync';
 import dynamoDbCommand from './utils/dynamoDbClient';
 import { getQuoteSummary } from './utils/yahooFinance';
 import { PositionReadModel } from './types/PositionReadModel';
+import publishEventAsync from './utils/eventBridgeClient';
 
-exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>) => {
+const handler = async (event: EventBridgeEvent<string, InvestmentTransaction>) => {
   const detail = parseEvent(event);
 
   // Get all transactions
@@ -21,6 +22,12 @@ exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>)
 
   // Save Position - create if not exists, update if exists
   position = await savePosition(position, detail, shares, acb, bookValue);
+
+  // Publish PositionUpdatedEvent
+  await publishEventAsync('PositionUpdatedEvent', {
+    accountId: position.accountId,
+    amount: position.marketValueChange,
+  });
 
   return position;
 };
@@ -73,9 +80,7 @@ async function getPosition(detail: InvestmentTransaction): Promise<PositionReadM
     position = result.Items?.map((Item: Record<string, any>) => unmarshall(Item))[0];
   }
 
-  position
-    ? console.log(`🔔 Found existing Position: ${JSON.stringify(position)}`)
-    : console.log(`🔔 No existing Position found: ${result}`);
+  position ? console.log(`🔔 Found existing Position: ${position}`) : console.log(`🔔 No existing Position found: ${result}`);
 
   return position as PositionReadModel;
 }
@@ -124,7 +129,7 @@ async function savePosition(
   }
 
   // Calculate market value
-  const marketValue = quote.close ?? 0 * position.shares;
+  const marketValue = quote.close * shares;
 
   const item: PositionReadModel = {
     pk: position ? position.pk : 'pos#' + detail.accountId,
@@ -137,10 +142,12 @@ async function savePosition(
     description: quote.description ?? '',
     exchange: quote.exchange ?? '',
     currency: quote.currency,
-    marketValue: marketValue,
     shares: shares,
     acb: acb,
     bookValue: bookValue,
+    bookValueChange: position ? bookValue - position.bookValue : bookValue,
+    marketValue: marketValue,
+    marketValueChange: position ? marketValue - position.marketValue : marketValue,
   };
 
   console.log(`Saving Position: ${JSON.stringify(item)}`);
@@ -167,3 +174,5 @@ function parseEvent(event: EventBridgeEvent<string, InvestmentTransaction>): Inv
 
   return JSON.parse(eventString).detail;
 }
+
+module.exports = { handler };
