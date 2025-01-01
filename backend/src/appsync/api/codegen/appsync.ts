@@ -26,6 +26,7 @@ export type Scalars = {
 export type Account = {
   __typename?: 'Account';
   accountId: Scalars['ID']['output'];
+  balance: Scalars['Float']['output'];
   category: Scalars['String']['output'];
   createdAt: Scalars['AWSDateTime']['output'];
   entity: Scalars['String']['output'];

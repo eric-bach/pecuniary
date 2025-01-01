@@ -40,20 +40,17 @@ X Switch to sonner
 X Add tests to validate APIs and workflows
 X Switch frontend to use NextJS 14 with turbo
 X Switch transactionsResolver to use AppSync JS pipeline resolvers
+X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 
 ##### Current Task
 
-X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
-X BUG: Creates multiple symbols in drop down
-X Ensure updatePositions updates on investment transactions create/update
-
-- Create updateBalances updates on bank transactions create/update
-- simulate failure in updatePosition Lambda to ensure it goes to DLQ (i.e. set the pk to undefined L133)
-- add tests to updatePosition Lambda
-- Update dashboard to pull positions and totals - requires new API getPositions(userId)
+- On PositionUpdatedEvent, update account balance with Position.marketvalue
+- On BankTransactionSavedEvent, update account balance with Transaction.amount
 
 ##### Future Task
 
+- add tests to updatePosition Lambda
+- Update dashboard to pull positions and totals - requires new API getPositions(userId)
 - create L3 constructs for AppSync CDK
 - Update to nodejs 22
 - Frontend - remove "Loading..." on screens, remove landing page for login page, improvements to FE

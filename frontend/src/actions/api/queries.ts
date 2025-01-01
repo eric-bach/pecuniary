@@ -24,6 +24,7 @@ export const getAccount = `query GetAccount($accountId: String!) {
     name
     category
     type
+    balance
     createdAt
     updatedAt
   }
@@ -36,6 +37,7 @@ export const getAccounts = `query GetAccounts($lastEvaluatedKey: String) {
       name
       category
       type
+      balance
       createdAt
       updatedAt
     }

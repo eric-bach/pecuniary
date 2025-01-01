@@ -98,6 +98,7 @@ type Account {
   category: String!
   type: String!
   name: String!
+  balance: Float!
   userId: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
