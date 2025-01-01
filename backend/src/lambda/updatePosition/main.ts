@@ -26,7 +26,7 @@ exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>)
 };
 
 // Returns all transactions for the symbol sorted in ascending order
-async function getTransactions(detail: InvestmentTransaction): Promise<InvestmentTransaction[]> {
+export async function getTransactions(detail: InvestmentTransaction): Promise<InvestmentTransaction[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'transaction-gsi',
@@ -80,7 +80,7 @@ async function getPosition(detail: InvestmentTransaction): Promise<PositionReadM
   return position as PositionReadModel;
 }
 
-function calculateAdjustedCostBase(transactions: InvestmentTransaction[]) {
+export function calculateAdjustedCostBase(transactions: InvestmentTransaction[]) {
   let acb = 0;
   let shares = 0;
   let bookValue = 0;

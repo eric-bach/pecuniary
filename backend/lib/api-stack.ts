@@ -549,7 +549,7 @@ export class ApiStack extends Stack {
     );
 
     const updatePositionFunction = new NodejsFunction(this, 'UpdatePosition', {
-      runtime: Runtime.NODEJS_18_X,
+      runtime: Runtime.NODEJS_22_X,
       functionName: `${props.appName}-${props.envName}-UpdatePosition`,
       handler: 'handler',
       entry: path.resolve(__dirname, '../src/lambda/updatePosition/main.ts'),
