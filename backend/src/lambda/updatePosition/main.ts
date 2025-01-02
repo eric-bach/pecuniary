@@ -1,5 +1,5 @@
 import { EventBridgeEvent } from 'aws-lambda';
-import { QueryCommand, QueryCommandInput, PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
+import { QueryCommand, QueryCommandInput, PutItemCommand, PutItemCommandInput, AttributeValue } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 import { InvestmentTransaction } from '../../appsync/api/codegen/appsync';
@@ -51,7 +51,7 @@ export async function getTransactions(detail: InvestmentTransaction): Promise<In
 
   if (result.$metadata.httpStatusCode === 200) {
     // Sort transactions in ascending order by transactionDate and then createdAt in case multiple transactions with the same transactionDate
-    const transactions = result.Items?.map((Item: Record<string, InvestmentTransaction>) => unmarshall(Item)).sort(
+    const transactions = result.Items?.map((Item: Record<string, AttributeValue>) => unmarshall(Item)).sort(
       (a: InvestmentTransaction, b: InvestmentTransaction) => {
         const dateCompare = new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime();
         return dateCompare === 0 ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime() : dateCompare;
