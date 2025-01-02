@@ -48,17 +48,17 @@ X On PositionUpdatedEvent, update account balance with Position.marketvalue
 X On BankTransactionSavedEvent, update account balance with Transaction.amount
 X Fixed and simplified bookValue and ACB calculations
 X Include Buy/Sell transaction type on tranasctions table
+X Create new DLQ for updateAccountBalance
+X Update to nodejs 22
 
-- Create new DLQ for updateAccountBalance
 - Draw diagram
+- Display account balance and positions on pages
 
 ##### Future Task
 
 - hide dropdowns after creating a new symbol, payee, category, etc
 - add tests to updatePosition Lambda
-- Update dashboard to pull positions and totals - requires new API getPositions(userId)
 - create L3 constructs for AppSync CDK
-- Update to nodejs 22
 - Frontend - remove "Loading..." on screens, remove landing page for login page, improvements to FE
 
 - Events

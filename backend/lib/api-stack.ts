@@ -42,9 +42,14 @@ export class ApiStack extends Stack {
      *** AWS SQS - Dead letter Queues
      ***/
 
-    // Event handler DLQ
+    // UpdatePosition DLQ
     const updatePositionDLQ = new Queue(this, 'UpdatePositionDLQ', {
       queueName: `${props.appName}-${props.envName}-updatePosition-DLQ`,
+    });
+
+    // UpdateAccountBalance DLQ
+    const updateAccountBalanceDLQ = new Queue(this, 'UpdateAccountBalanceDLQ', {
+      queueName: `${props.appName}-${props.envName}-updateAccountBalance-DLQ`,
     });
 
     /***
@@ -55,8 +60,15 @@ export class ApiStack extends Stack {
       topicName: `${props.appName}-${props.envName}-updatePosition-Notification`,
       displayName: 'Update Postion DLQ Notification',
     });
+
+    const updateAccountBalanceNotification = new Topic(this, 'UpdateAccountBalanceNotification', {
+      topicName: `${props.appName}-${props.envName}-updateAccountBalance-Notification`,
+      displayName: 'Update Account Balance DLQ Notification',
+    });
+
     if (props.params.dlqNotifications) {
       updatePositionNotification.addSubscription(new EmailSubscription(props.params.dlqNotifications));
+      updateAccountBalanceNotification.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     /***
@@ -64,7 +76,7 @@ export class ApiStack extends Stack {
      ***/
 
     // Generic metric
-    const dlqMetric = new Metric({
+    const updatePositionDlqMetric = new Metric({
       namespace: 'AWS/SQS',
       metricName: 'ApproximateNumberOfMessagesVisible',
       dimensionsMap: {
@@ -73,11 +85,10 @@ export class ApiStack extends Stack {
       period: Duration.minutes(1),
       statistic: 'Sum',
     });
-
     const updatePositionAlarm = new Alarm(this, 'UpdatePositionAlarm', {
       alarmName: `${props.appName}-${props.envName}-updatePosition-Alarm`,
       alarmDescription: 'Unable to update one or more positions',
-      metric: dlqMetric,
+      metric: updatePositionDlqMetric,
       datapointsToAlarm: 1,
       evaluationPeriods: 1,
       threshold: 1,
@@ -85,6 +96,27 @@ export class ApiStack extends Stack {
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
     updatePositionAlarm.addAlarmAction(new SnsAction(updatePositionNotification));
+
+    const updateAccountBalanceDlqMetric = new Metric({
+      namespace: 'AWS/SQS',
+      metricName: 'ApproximateNumberOfMessagesVisible',
+      dimensionsMap: {
+        QueueName: updateAccountBalanceDLQ.queueName,
+      },
+      period: Duration.minutes(1),
+      statistic: 'Sum',
+    });
+    const updateAccountBalanceAlarm = new Alarm(this, 'UpdateAccountBalanceAlarm', {
+      alarmName: `${props.appName}-${props.envName}-updateAccountBalance-Alarm`,
+      alarmDescription: 'Unable to update account balance',
+      metric: updateAccountBalanceDlqMetric,
+      datapointsToAlarm: 1,
+      evaluationPeriods: 1,
+      threshold: 1,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
+    updateAccountBalanceAlarm.addAlarmAction(new SnsAction(updateAccountBalanceNotification));
 
     /***
      *** AWS EventBridge - Event Bus
@@ -611,7 +643,7 @@ export class ApiStack extends Stack {
         DATA_TABLE_NAME: dataTable.tableName,
         AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
       },
-      deadLetterQueue: updatePositionDLQ,
+      deadLetterQueue: updateAccountBalanceDLQ,
     });
     // Add permissions to call DynamoDB
     updateAccountBalanceFunction.addToRolePolicy(
@@ -668,9 +700,14 @@ export class ApiStack extends Stack {
       value: updatePositionDLQ.queueArn,
       exportName: `${props.appName}-${props.envName}-updatePositionDLQArn`,
     });
+    new CfnOutput(this, 'UpdateAccountBalanceDLQArn', {
+      value: updateAccountBalanceDLQ.queueArn,
+      exportName: `${props.appName}-${props.envName}-updateAccountBalanceDLQArn`,
+    });
 
     // SNS Topics
     new CfnOutput(this, 'UpdatePositionNotificationArn', { value: updatePositionNotification.topicArn });
+    new CfnOutput(this, 'UpdateAccountBalanceNotificationArn', { value: updateAccountBalanceNotification.topicArn });
 
     // AppSync API
     new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
@@ -687,6 +724,9 @@ export class ApiStack extends Stack {
     // Lambda functions
     new CfnOutput(this, 'UpdatePositionFunctionArn', {
       value: updatePositionFunction.functionArn,
+    });
+    new CfnOutput(this, 'UpdateAccountBalanceFunctionArn', {
+      value: updateAccountBalanceFunction.functionArn,
     });
   }
 }
