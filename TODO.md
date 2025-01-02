@@ -51,11 +51,15 @@ X Include Buy/Sell transaction type on tranasctions table
 X Create new DLQ for updateAccountBalance
 X Update to nodejs 22
 
+- Display account balance, bookValue, marketValue/P&L (with manual refresh) on account page
+  - Split up updateAccountBalance to updateBankAccountBalance and updateInvestmentAccountBalance
+  - UpdateInvestmentAccountBalance persist the bookValue and PIT-marketValue
+  - Create a new API to invoke a Lambda to update the investment-account balances by calling updatePostion for each unique Symbol in the account (this will be async)
 - Draw diagram
-- Display account balance and positions on pages
 
 ##### Future Task
 
+- switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
 - hide dropdowns after creating a new symbol, payee, category, etc
 - add tests to updatePosition Lambda
 - create L3 constructs for AppSync CDK
