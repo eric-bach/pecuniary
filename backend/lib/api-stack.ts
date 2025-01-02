@@ -633,7 +633,7 @@ export class ApiStack extends Stack {
       runtime: Runtime.NODEJS_22_X,
       functionName: `${props.appName}-${props.envName}-UpdateAccountBalance`,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/updateAccountbalance/main.ts'),
+      entry: path.resolve(__dirname, '../src/lambda/updateAccountBalance/main.ts'),
       memorySize: 384,
       timeout: Duration.seconds(5),
       tracing: Tracing.ACTIVE,
