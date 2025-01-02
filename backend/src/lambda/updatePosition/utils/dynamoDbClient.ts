@@ -1,11 +1,11 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 
 async function dynamoDbCommand(command: any) {
-  var result;
+  let result;
 
   try {
     console.debug(`ℹ️ Initializing DynamoDB client in ${process.env.REGION}`);
-    var client = new DynamoDBClient({ region: process.env.REGION });
+    const client = new DynamoDBClient({ region: process.env.REGION });
 
     console.debug(`ℹ️ Executing DynamoDB command:\n${JSON.stringify(command)}`);
     result = await client.send(command);
