@@ -42,9 +42,14 @@ export class ApiStack extends Stack {
      *** AWS SQS - Dead letter Queues
      ***/
 
-    // Event handler DLQ
+    // UpdatePosition DLQ
     const updatePositionDLQ = new Queue(this, 'UpdatePositionDLQ', {
       queueName: `${props.appName}-${props.envName}-updatePosition-DLQ`,
+    });
+
+    // UpdateAccountBalance DLQ
+    const updateAccountBalanceDLQ = new Queue(this, 'UpdateAccountBalanceDLQ', {
+      queueName: `${props.appName}-${props.envName}-updateAccountBalance-DLQ`,
     });
 
     /***
@@ -55,8 +60,15 @@ export class ApiStack extends Stack {
       topicName: `${props.appName}-${props.envName}-updatePosition-Notification`,
       displayName: 'Update Postion DLQ Notification',
     });
+
+    const updateAccountBalanceNotification = new Topic(this, 'UpdateAccountBalanceNotification', {
+      topicName: `${props.appName}-${props.envName}-updateAccountBalance-Notification`,
+      displayName: 'Update Account Balance DLQ Notification',
+    });
+
     if (props.params.dlqNotifications) {
       updatePositionNotification.addSubscription(new EmailSubscription(props.params.dlqNotifications));
+      updateAccountBalanceNotification.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     /***
@@ -64,7 +76,7 @@ export class ApiStack extends Stack {
      ***/
 
     // Generic metric
-    const dlqMetric = new Metric({
+    const updatePositionDlqMetric = new Metric({
       namespace: 'AWS/SQS',
       metricName: 'ApproximateNumberOfMessagesVisible',
       dimensionsMap: {
@@ -73,11 +85,10 @@ export class ApiStack extends Stack {
       period: Duration.minutes(1),
       statistic: 'Sum',
     });
-
     const updatePositionAlarm = new Alarm(this, 'UpdatePositionAlarm', {
       alarmName: `${props.appName}-${props.envName}-updatePosition-Alarm`,
       alarmDescription: 'Unable to update one or more positions',
-      metric: dlqMetric,
+      metric: updatePositionDlqMetric,
       datapointsToAlarm: 1,
       evaluationPeriods: 1,
       threshold: 1,
@@ -85,6 +96,27 @@ export class ApiStack extends Stack {
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
     updatePositionAlarm.addAlarmAction(new SnsAction(updatePositionNotification));
+
+    const updateAccountBalanceDlqMetric = new Metric({
+      namespace: 'AWS/SQS',
+      metricName: 'ApproximateNumberOfMessagesVisible',
+      dimensionsMap: {
+        QueueName: updateAccountBalanceDLQ.queueName,
+      },
+      period: Duration.minutes(1),
+      statistic: 'Sum',
+    });
+    const updateAccountBalanceAlarm = new Alarm(this, 'UpdateAccountBalanceAlarm', {
+      alarmName: `${props.appName}-${props.envName}-updateAccountBalance-Alarm`,
+      alarmDescription: 'Unable to update account balance',
+      metric: updateAccountBalanceDlqMetric,
+      datapointsToAlarm: 1,
+      evaluationPeriods: 1,
+      threshold: 1,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
+    updateAccountBalanceAlarm.addAlarmAction(new SnsAction(updateAccountBalanceNotification));
 
     /***
      *** AWS EventBridge - Event Bus
@@ -597,6 +629,31 @@ export class ApiStack extends Stack {
       })
     );
 
+    const updateAccountBalanceFunction = new NodejsFunction(this, 'UpdateAccountBalance', {
+      runtime: Runtime.NODEJS_22_X,
+      functionName: `${props.appName}-${props.envName}-UpdateAccountBalance`,
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/updateAccountBalance/main.ts'),
+      memorySize: 384,
+      timeout: Duration.seconds(5),
+      tracing: Tracing.ACTIVE,
+      layers: [adotJavscriptLayer],
+      environment: {
+        REGION: Stack.of(this).region,
+        DATA_TABLE_NAME: dataTable.tableName,
+        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
+      },
+      deadLetterQueue: updateAccountBalanceDLQ,
+    });
+    // Add permissions to call DynamoDB
+    updateAccountBalanceFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:UpdateItem'],
+        resources: [dataTable.tableArn],
+      })
+    );
+
     /***
      *** AWS EventBridge - Event Bus Rules
      ***/
@@ -613,12 +670,27 @@ export class ApiStack extends Stack {
     });
     investmentTransactionSavedRule.addTarget(
       new LambdaFunction(updatePositionFunction, {
-        //deadLetterQueue: SqsQueue,
         maxEventAge: Duration.hours(2),
         retryAttempts: 2,
       })
     );
 
+    // EventBus Rule - PositionUpdatedEvent and BankTransactionSavedEvent
+    const transactionUpdatedEventRule = new Rule(this, 'PositionUpdatedEvent', {
+      ruleName: `${props.appName}-TransactionUpdatedEvent-${props.envName}`,
+      description: 'TransactionUdpatedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['PositionUpdatedEvent', 'BankTransactionSavedEvent'],
+      },
+    });
+    transactionUpdatedEventRule.addTarget(
+      new LambdaFunction(updateAccountBalanceFunction, {
+        maxEventAge: Duration.hours(2),
+        retryAttempts: 2,
+      })
+    );
     /***
      *** Outputs
      ***/
@@ -628,9 +700,14 @@ export class ApiStack extends Stack {
       value: updatePositionDLQ.queueArn,
       exportName: `${props.appName}-${props.envName}-updatePositionDLQArn`,
     });
+    new CfnOutput(this, 'UpdateAccountBalanceDLQArn', {
+      value: updateAccountBalanceDLQ.queueArn,
+      exportName: `${props.appName}-${props.envName}-updateAccountBalanceDLQArn`,
+    });
 
     // SNS Topics
     new CfnOutput(this, 'UpdatePositionNotificationArn', { value: updatePositionNotification.topicArn });
+    new CfnOutput(this, 'UpdateAccountBalanceNotificationArn', { value: updateAccountBalanceNotification.topicArn });
 
     // AppSync API
     new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
@@ -640,10 +717,16 @@ export class ApiStack extends Stack {
     new CfnOutput(this, 'InvestmentTransactionSavedRuleArn', {
       value: investmentTransactionSavedRule.ruleArn,
     });
+    new CfnOutput(this, 'TransactionUpdatedEventRule', {
+      value: transactionUpdatedEventRule.ruleArn,
+    });
 
     // Lambda functions
     new CfnOutput(this, 'UpdatePositionFunctionArn', {
       value: updatePositionFunction.functionArn,
+    });
+    new CfnOutput(this, 'UpdateAccountBalanceFunctionArn', {
+      value: updateAccountBalanceFunction.functionArn,
     });
   }
 }

@@ -33,18 +33,22 @@ export default function DisplayAccount() {
   const bankTransactions = bankTransactionsQuery.data.items as [BankTransaction];
   const investmentTransactions = investmentTransactionsQuery.data.items as [InvestmentTransaction];
 
+  const isBankingAccount = account.category.toLowerCase() !== 'investment';
+
   return (
     <div className='mx-auto w-full max-w-screen-2xl pb-10'>
       <div className='flex flex-col space-y-1 5 p-6 gap-y-2 justify-between'>
         <h3 className='text-2xl font-semibold leading-none tracking-tight text-xl-line-clamp-1'>{account.name}</h3>
         <p className='text-sm text-muted-foreground'>{account.type}</p>
+        <p className='font-bold text-lg'>
+          {isBankingAccount ? 'Balance: ' : 'Market Value: '}
+          <span className='font-bold text-lg text-green-600'>${account.balance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>
+        </p>
       </div>
 
-      {(account.category.toLowerCase() === 'banking' || account.category.toLowerCase() === 'credit card') && (
-        <BankingTransactions accountId={accountId} transactions={bankTransactions as [BankTransaction]} />
-      )}
+      {isBankingAccount && <BankingTransactions accountId={accountId} transactions={bankTransactions as [BankTransaction]} />}
 
-      {account.category.toLowerCase() === 'investment' && (
+      {!isBankingAccount && (
         <InvestmentTransactions accountId={accountId} transactions={investmentTransactions as [InvestmentTransaction]} />
       )}
     </div>

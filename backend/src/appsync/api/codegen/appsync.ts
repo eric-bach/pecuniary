@@ -26,6 +26,7 @@ export type Scalars = {
 export type Account = {
   __typename?: 'Account';
   accountId: Scalars['ID']['output'];
+  balance: Scalars['Float']['output'];
   category: Scalars['String']['output'];
   createdAt: Scalars['AWSDateTime']['output'];
   entity: Scalars['String']['output'];
@@ -91,9 +92,9 @@ export type CreateInvestmentTransactionInput = {
 
 export type Data = {
   __typename?: 'Data';
-  acb?: Maybe<Scalars['Float']['output']>;
   accountId: Scalars['ID']['output'];
   amount?: Maybe<Scalars['Float']['output']>;
+  balance?: Maybe<Scalars['Float']['output']>;
   bookValue?: Maybe<Scalars['Float']['output']>;
   category?: Maybe<Scalars['String']['output']>;
   commission?: Maybe<Scalars['Float']['output']>;
@@ -287,7 +288,6 @@ export type Payee = {
 
 export type Position = {
   __typename?: 'Position';
-  acb: Scalars['Float']['output'];
   accountId: Scalars['ID']['output'];
   bookValue: Scalars['Float']['output'];
   createdAt: Scalars['AWSDateTime']['output'];

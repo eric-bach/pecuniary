@@ -1,11 +1,12 @@
 import { EventBridgeEvent } from 'aws-lambda';
-import { QueryCommand, QueryCommandInput, PutItemCommand, PutItemCommandInput } from '@aws-sdk/client-dynamodb';
+import { QueryCommand, QueryCommandInput, PutItemCommand, PutItemCommandInput, AttributeValue } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 import { InvestmentTransaction } from '../../appsync/api/codegen/appsync';
 import dynamoDbCommand from './utils/dynamoDbClient';
 import { getQuoteSummary } from './utils/yahooFinance';
 import { PositionReadModel } from './types/PositionReadModel';
+import publishEventAsync from './utils/eventBridgeClient';
 
 exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>) => {
   const detail = parseEvent(event);
@@ -14,13 +15,19 @@ exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>)
   const transactions = await getTransactions(detail);
 
   // Calculate ACB
-  const { shares, acb, bookValue } = calculateAdjustedCostBase(transactions);
+  const { shares, bookValue } = calculateAdjustedCostBase(transactions);
 
   // Get current position (if exists)
   let position = await getPosition(detail);
 
   // Save Position - create if not exists, update if exists
-  position = await savePosition(position, detail, shares, acb, bookValue);
+  position = await savePosition(position, detail, shares, bookValue);
+
+  // Publish PositionUpdatedEvent
+  await publishEventAsync('PositionUpdatedEvent', {
+    accountId: position.accountId,
+    amount: position.marketValueChange,
+  });
 
   return position;
 };
@@ -43,7 +50,13 @@ export async function getTransactions(detail: InvestmentTransaction): Promise<In
   const result = await dynamoDbCommand(new QueryCommand(params));
 
   if (result.$metadata.httpStatusCode === 200) {
-    const transactions = result.Items?.map((Item: Record<string, any>) => unmarshall(Item));
+    // Sort transactions in ascending order by transactionDate and then createdAt in case multiple transactions with the same transactionDate
+    const transactions = result.Items?.map((Item: Record<string, AttributeValue>) => unmarshall(Item)).sort(
+      (a: InvestmentTransaction, b: InvestmentTransaction) => {
+        const dateCompare = new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime();
+        return dateCompare === 0 ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime() : dateCompare;
+      }
+    );
 
     console.info(`🔔 Found ${transactions.length} Transactions: ${JSON.stringify(transactions)}`);
 
@@ -73,48 +86,46 @@ async function getPosition(detail: InvestmentTransaction): Promise<PositionReadM
     position = result.Items?.map((Item: Record<string, any>) => unmarshall(Item))[0];
   }
 
-  position
-    ? console.log(`🔔 Found existing Position: ${JSON.stringify(position)}`)
-    : console.log(`🔔 No existing Position found: ${result}`);
+  position ? console.log(`🔔 Found existing Position: ${position}`) : console.log(`🔔 No existing Position found: ${result}`);
 
   return position as PositionReadModel;
 }
 
 export function calculateAdjustedCostBase(transactions: InvestmentTransaction[]) {
-  let acb = 0;
   let shares = 0;
   let bookValue = 0;
 
   for (const t of transactions) {
     const transactionType = t.type.toUpperCase();
 
-    console.debug(`START-${transactionType} acb: $${acb} positions: ${shares}`);
+    console.debug(`START-${transactionType} positions: ${shares}`);
 
     if (transactionType.localeCompare('buy', undefined, { sensitivity: 'base' }) === 0) {
-      // BUY:  acb = prevAcb + (shares * price + commission)
-      acb = acb + (t.shares * t.price + t.commission);
+      // increase bookValue (ACB) by cost of new shares
+      bookValue = bookValue + (t.shares * t.price + t.commission);
 
+      // increase number of shares
       shares = shares + t.shares;
-      bookValue = bookValue + (t.shares * t.price - t.commission);
     } else if (transactionType.localeCompare('sell', undefined, { sensitivity: 'base' }) === 0) {
-      // SELL:  acb = prevAcb * ((prevPositions - shares) / prevPositions)
-      acb = acb * ((shares - t.shares) / shares);
+      // const capitalGainLoss = (t.shares * t.price - t.commission) - (t.shares * (bookValue / shares););
 
+      // decrease bookValue by number of shares sold * bookValue per share
+      bookValue = bookValue - t.shares * (bookValue / shares);
+
+      // decrease number of shares
       shares = shares - t.shares;
-      bookValue = bookValue - (t.shares * t.price - t.commission);
     }
 
-    console.debug(`END-${transactionType} acb: $${acb} positions: ${shares}`);
+    console.debug(`END-${transactionType} positions: ${shares}`);
   }
 
-  return { shares, acb, bookValue };
+  return { shares, bookValue };
 }
 
 async function savePosition(
   position: PositionReadModel,
   detail: InvestmentTransaction,
   shares: number,
-  acb: number,
   bookValue: number
 ): Promise<PositionReadModel> {
   const quote = await getQuoteSummary(detail.symbol);
@@ -124,7 +135,7 @@ async function savePosition(
   }
 
   // Calculate market value
-  const marketValue = quote.close ?? 0 * position.shares;
+  const marketValue = quote.close * shares;
 
   const item: PositionReadModel = {
     pk: position ? position.pk : 'pos#' + detail.accountId,
@@ -137,10 +148,11 @@ async function savePosition(
     description: quote.description ?? '',
     exchange: quote.exchange ?? '',
     currency: quote.currency,
-    marketValue: marketValue,
     shares: shares,
-    acb: acb,
     bookValue: bookValue,
+    bookValueChange: position ? bookValue - position.bookValue : bookValue,
+    marketValue: marketValue,
+    marketValueChange: position ? marketValue - position.marketValue : marketValue,
   };
 
   console.log(`Saving Position: ${JSON.stringify(item)}`);

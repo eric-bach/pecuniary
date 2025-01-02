@@ -36,6 +36,7 @@ export const createAccount = `mutation CreateAccount($input: CreateAccountInput!
       name
       category
       type
+      balance
       createdAt
       updatedAt
     }
@@ -47,6 +48,7 @@ export const updateAccount = `mutation UpdateAccount($input: UpdateAccountInput!
       name
       type
       entity
+      balance
       createdAt
       updatedAt
     }
@@ -59,6 +61,7 @@ export const deleteAccount = `mutation DeleteAccount($accountId: String!) {
         name
         type
         entity
+        balance
         createdAt
         updatedAt
       }
