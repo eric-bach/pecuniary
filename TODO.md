@@ -40,49 +40,33 @@ X Switch to sonner
 X Add tests to validate APIs and workflows
 X Switch frontend to use NextJS 14 with turbo
 X Switch transactionsResolver to use AppSync JS pipeline resolvers
+X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 
 ##### Current Task
 
-X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
-X BUG: Creates multiple symbols in drop down
-X Ensure updatePositions updates on investment transactions create/update
+- UI: Hide dropdowns after creating a new symbol, payee, category, etc
+- UI: Remove "Loading..." on screens
+- UI: Improve landing page with Bolt
+- TD: Create L3 constructs for AppSync CDK
 
-- Create updateBalances updates on bank transactions create/update
-- simulate failure in updatePosition Lambda to ensure it goes to DLQ (i.e. set the pk to undefined L133)
-- add tests to updatePosition Lambda
-- Update dashboard to pull positions and totals - requires new API getPositions(userId)
+##### Future Tasks
 
-##### Future Task
-
-- create L3 constructs for AppSync CDK
-- Update to nodejs 22
-- Frontend - remove "Loading..." on screens, remove landing page for login page, improvements to FE
-
-- Events
-  `- Create/Update Position on InvestmentTransactionCreated
-      - Update createBankTransaction to publish BankTransactionCreated
-      - Update createInvestmentTransaction to publish InvestmentTransactionCreated
-      - Update api-stack eventbridge rules to listen to these events
-      - Add updateAccount to update Account balances when BankTransactionCreated
-      - Update updatePositions to upsert Positions when InvestmentTransactionCreated
-`- Create TimeSeries data when SymbolCreated
-  `- Update Account on BankTransactionCreated and InvestmentTransactionCreated
-- Build dashboard to display account summaries
-- Build way to regenerate positions and networth for an account using it's past transactions
-- Add more seed data tied to user
+- UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
+- TD: Add additional tests to updateBankAccount and updateInvestmentAccount Lambdas
+- UI: (Tanstack) Refresh balance and book/marketValue on Account page when a transaction is added/updated/deleted
+- Arch: All account types (banking/investment) requires balance, bookValue, and marketValue to be defined
+- UI: Build dashboard to display account summaries
+- Arch: Build way to regenerate positions and networth for an account using it's past transactions
+- BE: Add more seed data tied to user
   - Build script to generate transaction data from Quicken export
     - Export Quicken
     - Put into CSV (manually)
     - Write script to parse CSV
     - Maintain CSV
-- Build lambda process to re-generate positions and point-in-time networth for an account
-- Build dashboard to display account summaries
-- Switch from Sheet to Dialog for Account and Transactions
-  `- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item
-`- BUG: Prevent creating duplicate Payees/Categories in backend especially when editing item (frontend creatable prevents it)
-- Improve error message when creating/updating items fails
-- Style creatable select to match shadcn
-- Style currency input field
+- Arch: Build lambda process to re-generate positions and point-in-time networth for an account
+- UI: Improve error message when creating/updating items fails
+- UI: Style creatable select to match shadcn
+- UI: Style currency input field and remove double tab
 
 #### Tech Debt
 

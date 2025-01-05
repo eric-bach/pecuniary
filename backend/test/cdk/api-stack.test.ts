@@ -25,10 +25,15 @@ describe('Api Stack contains expected resources', () => {
   const template = Template.fromStack(stack);
 
   test('should have SQS Queues and SNS Topics', () => {
-    template.hasResourceProperties('AWS::SQS::Queue', Match.objectLike({ QueueName: `pecuniary-${props.envName}-updatePosition-DLQ` }));
+    template.hasResourceProperties('AWS::SQS::Queue', Match.objectLike({ QueueName: `pecuniary-${props.envName}-updateBankAccountDLQ` }));
+    template.hasResourceProperties(
+      'AWS::SQS::Queue',
+      Match.objectLike({ QueueName: `pecuniary-${props.envName}-updateInvestmentAccountDLQ` })
+    );
+    template.hasResourceProperties('AWS::SNS::Topic', Match.objectLike({ TopicName: `pecuniary-${props.envName}-updateBankAccountTopic` }));
     template.hasResourceProperties(
       'AWS::SNS::Topic',
-      Match.objectLike({ TopicName: `pecuniary-${props.envName}-updatePosition-Notification` })
+      Match.objectLike({ TopicName: `pecuniary-${props.envName}-updateInvestmentAccountTopic` })
     );
     template.hasResourceProperties('AWS::SNS::Subscription', Match.objectLike({ Protocol: 'email' }));
 
@@ -37,11 +42,25 @@ describe('Api Stack contains expected resources', () => {
       Match.objectLike({
         ComparisonOperator: 'GreaterThanOrEqualToThreshold',
         EvaluationPeriods: 1,
-        AlarmName: `pecuniary-${props.envName}-updatePosition-Alarm`,
+        AlarmName: `pecuniary-${props.envName}-updateBankAccountAlarm`,
         DatapointsToAlarm: 1,
         MetricName: 'ApproximateNumberOfMessagesVisible',
         Namespace: 'AWS/SQS',
-        Period: 60,
+        Period: 300,
+        Statistic: 'Sum',
+        Threshold: 1,
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::CloudWatch::Alarm',
+      Match.objectLike({
+        ComparisonOperator: 'GreaterThanOrEqualToThreshold',
+        EvaluationPeriods: 1,
+        AlarmName: `pecuniary-${props.envName}-updateInvestmentAccountAlarm`,
+        DatapointsToAlarm: 1,
+        MetricName: 'ApproximateNumberOfMessagesVisible',
+        Namespace: 'AWS/SQS',
+        Period: 300,
         Statistic: 'Sum',
         Threshold: 1,
       })
@@ -135,51 +154,45 @@ describe('Api Stack contains expected resources', () => {
     );
   });
 
-  // test('should have EventBridge Rules', () => {
-  //   template.hasResourceProperties(
-  //     'AWS::Events::Rule',
-  //     Match.objectLike({
-  //       Name: `pecuniary-TransactionSavedEvent-${props.envName}`,
-  //       EventPattern: {
-  //         source: ['custom.pecuniary'],
-  //         'detail-type': ['TransactionSavedEvent'],
-  //       },
-  //     })
-  //   );
-  // });
+  test('should have EventBridge Rules', () => {
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
+        Name: `pecuniary-BankTransactionSavedEvent-${props.envName}`,
+        EventPattern: {
+          source: ['custom.pecuniary'],
+          'detail-type': ['BankTransactionSavedEvent'],
+        },
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
+        Name: `pecuniary-InvestmentTransactionSavedEvent-${props.envName}`,
+        EventPattern: {
+          source: ['custom.pecuniary'],
+          'detail-type': ['InvestmentTransactionSavedEvent'],
+        },
+      })
+    );
+  });
 
-  // test('should have Lambda Functions', () => {
-  //   template.hasResourceProperties(
-  //     'AWS::Lambda::Function',
-  //     Match.objectLike({
-  //       FunctionName: `pecuniary-${props.envName}-AccountsResolver`,
-  //       Handler: 'index.handler',
-  //       Runtime: 'nodejs18.x',
-  //     })
-  //   );
-  //   template.hasResourceProperties(
-  //     'AWS::Lambda::Function',
-  //     Match.objectLike({
-  //       FunctionName: `pecuniary-${props.envName}-TransactionsResolver`,
-  //       Handler: 'index.handler',
-  //       Runtime: 'nodejs18.x',
-  //     })
-  //   );
-  //   template.hasResourceProperties(
-  //     'AWS::Lambda::Function',
-  //     Match.objectLike({
-  //       FunctionName: `pecuniary-${props.envName}-PositionsResolver`,
-  //       Handler: 'index.handler',
-  //       Runtime: 'nodejs18.x',
-  //     })
-  //   );
-  //   template.hasResourceProperties(
-  //     'AWS::Lambda::Function',
-  //     Match.objectLike({
-  //       FunctionName: `pecuniary-${props.envName}-UpdatePositions`,
-  //       Handler: 'index.handler',
-  //       Runtime: 'nodejs18.x',
-  //     })
-  //   );
-  // });
+  test('should have Lambda Functions', () => {
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
+        FunctionName: `pecuniary-${props.envName}-UpdateBankAccount`,
+        Handler: 'index.handler',
+        Runtime: 'nodejs22.x',
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
+        FunctionName: `pecuniary-${props.envName}-UpdateInvestmentAccount`,
+        Handler: 'index.handler',
+        Runtime: 'nodejs22.x',
+      })
+    );
+  });
 });

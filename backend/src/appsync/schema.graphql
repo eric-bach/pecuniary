@@ -13,9 +13,9 @@ type Data {
   commission: Float
   exchange: String
   currency: String
+  balance: Float
   bookValue: Float
   marketValue: Float
-  acb: Float
   payee: String
   amount: Float
   createdAt: AWSDateTime!
@@ -98,6 +98,9 @@ type Account {
   category: String!
   type: String!
   name: String!
+  balance: Float!
+  bookValue: Float!
+  marketValue: Float!
   userId: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
@@ -147,7 +150,6 @@ type Position {
   currency: String!
   bookValue: Float!
   marketValue: Float!
-  acb: Float!
   userId: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!

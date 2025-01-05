@@ -1,5 +1,5 @@
 {
-  "name": "update-position",
+  "name": "update-investment-account",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -17,6 +17,6 @@
     "yahoo-finance2": "^2.13.3"
   },
   "devDependencies": {
-    "@types/node": "^20.12.12"
+    "@types/node": "^22.10.5"
   }
 }
