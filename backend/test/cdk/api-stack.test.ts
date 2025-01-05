@@ -154,51 +154,45 @@ describe('Api Stack contains expected resources', () => {
     );
   });
 
-  // test('should have EventBridge Rules', () => {
-  //   template.hasResourceProperties(
-  //     'AWS::Events::Rule',
-  //     Match.objectLike({
-  //       Name: `pecuniary-TransactionSavedEvent-${props.envName}`,
-  //       EventPattern: {
-  //         source: ['custom.pecuniary'],
-  //         'detail-type': ['TransactionSavedEvent'],
-  //       },
-  //     })
-  //   );
-  // });
+  test('should have EventBridge Rules', () => {
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
+        Name: `pecuniary-BankTransactionSavedEvent-${props.envName}`,
+        EventPattern: {
+          source: ['custom.pecuniary'],
+          'detail-type': ['BankTransactionSavedEvent'],
+        },
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::Events::Rule',
+      Match.objectLike({
+        Name: `pecuniary-InvestmentTransactionSavedEvent-${props.envName}`,
+        EventPattern: {
+          source: ['custom.pecuniary'],
+          'detail-type': ['InvestmentTransactionSavedEvent'],
+        },
+      })
+    );
+  });
 
-  // test('should have Lambda Functions', () => {
-  //   template.hasResourceProperties(
-  //     'AWS::Lambda::Function',
-  //     Match.objectLike({
-  //       FunctionName: `pecuniary-${props.envName}-AccountsResolver`,
-  //       Handler: 'index.handler',
-  //       Runtime: 'nodejs18.x',
-  //     })
-  //   );
-  //   template.hasResourceProperties(
-  //     'AWS::Lambda::Function',
-  //     Match.objectLike({
-  //       FunctionName: `pecuniary-${props.envName}-TransactionsResolver`,
-  //       Handler: 'index.handler',
-  //       Runtime: 'nodejs18.x',
-  //     })
-  //   );
-  //   template.hasResourceProperties(
-  //     'AWS::Lambda::Function',
-  //     Match.objectLike({
-  //       FunctionName: `pecuniary-${props.envName}-PositionsResolver`,
-  //       Handler: 'index.handler',
-  //       Runtime: 'nodejs18.x',
-  //     })
-  //   );
-  //   template.hasResourceProperties(
-  //     'AWS::Lambda::Function',
-  //     Match.objectLike({
-  //       FunctionName: `pecuniary-${props.envName}-UpdatePositions`,
-  //       Handler: 'index.handler',
-  //       Runtime: 'nodejs18.x',
-  //     })
-  //   );
-  // });
+  test('should have Lambda Functions', () => {
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
+        FunctionName: `pecuniary-${props.envName}-UpdateBankAccount`,
+        Handler: 'index.handler',
+        Runtime: 'nodejs22.x',
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::Lambda::Function',
+      Match.objectLike({
+        FunctionName: `pecuniary-${props.envName}-UpdateInvestmentAccount`,
+        Handler: 'index.handler',
+        Runtime: 'nodejs22.x',
+      })
+    );
+  });
 });

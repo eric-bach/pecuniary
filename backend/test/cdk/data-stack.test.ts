@@ -30,7 +30,7 @@ describe('Data Stack contains expected resources', () => {
       Match.objectLike({
         FunctionName: `pecuniary-${props.envName}-CognitoPostConfirmationTrigger`,
         Handler: 'index.handler',
-        Runtime: 'nodejs18.x',
+        Runtime: 'nodejs22.x',
       })
     );
   });

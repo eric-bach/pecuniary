@@ -674,10 +674,10 @@ export class ApiStack extends Stack {
       })
     );
 
-    // EventBus Rule - PositionUpdatedEvent and BankTransactionSavedEvent
-    const transactionUpdatedEventRule = new Rule(this, 'PositionUpdatedEvent', {
-      ruleName: `${props.appName}-TransactionUpdatedEvent-${props.envName}`,
-      description: 'TransactionUdpatedEvent',
+    // EventBus Rule - BankTransactionSavedEvent
+    const transactionUpdatedEventRule = new Rule(this, 'BankTransactionSavedEvent', {
+      ruleName: `${props.appName}-BankTransactionSavedEvent-${props.envName}`,
+      description: 'BankTransactionSavedEvent',
       eventBus: eventBus,
       eventPattern: {
         source: ['custom.pecuniary'],
