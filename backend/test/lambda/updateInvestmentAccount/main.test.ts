@@ -1,11 +1,11 @@
-import { calculateAdjustedCostBase } from '../../../src/lambda/updatePosition/main';
+import { calculateBookValue } from '../../../src/lambda/updateInvestmentAccount/main';
 import { InvestmentTransaction } from '../../../src/appsync/api/codegen/appsync';
 
-describe('calculateAdjustedCostBase', () => {
+describe('calculateBookValue', () => {
   it('should handle empty transactions array', () => {
     const transactions: InvestmentTransaction[] = [];
 
-    const { shares, bookValue } = calculateAdjustedCostBase(transactions);
+    const { shares, bookValue } = calculateBookValue(transactions);
 
     expect(shares).toBe(0);
     expect(bookValue).toBe(0);
@@ -30,7 +30,7 @@ describe('calculateAdjustedCostBase', () => {
       },
     ];
 
-    const { shares, bookValue } = calculateAdjustedCostBase(transactions);
+    const { shares, bookValue } = calculateBookValue(transactions);
 
     expect(shares).toBe(10);
     expect(bookValue).toBeCloseTo(1010, 2); // Book value after transactions
@@ -115,7 +115,7 @@ describe('calculateAdjustedCostBase', () => {
       },
     ];
 
-    const { shares, bookValue } = calculateAdjustedCostBase(transactions);
+    const { shares, bookValue } = calculateBookValue(transactions);
 
     expect(shares).toBe(8);
     expect(bookValue).toBeCloseTo(874.44, 2); // Book value after transactions
@@ -170,7 +170,7 @@ describe('calculateAdjustedCostBase', () => {
       },
     ];
 
-    const { shares, bookValue } = calculateAdjustedCostBase(transactions);
+    const { shares, bookValue } = calculateBookValue(transactions);
 
     expect(shares).toBe(150);
     expect(bookValue).toBeCloseTo(2410, 2); // Book value after transactions

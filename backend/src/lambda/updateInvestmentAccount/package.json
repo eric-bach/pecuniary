@@ -1,5 +1,5 @@
 {
-  "name": "update-account-balance",
+  "name": "update-investment-account",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,9 +13,10 @@
     "@aws-sdk/client-dynamodb": "^3.716.0",
     "@aws-sdk/util-dynamodb": "^3.716.0",
     "@types/aws-lambda": "^8.10.138",
-    "aws-lambda": "^1.0.7"
+    "aws-lambda": "^1.0.7",
+    "yahoo-finance2": "^2.13.3"
   },
   "devDependencies": {
-    "@types/node": "^20.12.12"
+    "@types/node": "^22.10.5"
   }
 }

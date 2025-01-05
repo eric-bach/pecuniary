@@ -54,11 +54,16 @@ X Draw diagram
 
 - Display account balance, bookValue, marketValue/P&L (with manual refresh) on account page
 
-  - Rename updateAccountBalance to updateBankAccountBalance
-  - Create updateInvestmentAccountBalance with an EventBridge rule on InvestmentTransactionSavedEvent
-  - Update EventBridge rules
-    - Add updateInvestmentAccountBalanceFunction to investmentTransactionSavedRule
-    - Remove PositionUpdatedEvent from transactionUpdatedEventRule
+  X Rename updateAccountBalance to updateBankAccount
+  X Rename updatePositions to updateInvestmentAccount
+  X Update updateInvestmentAccount to update account with new book/market values
+  X Rename the DLQs
+  X Add DLQs to updateBankAccount
+  X Test
+  X Move dynamodbclient to common utils
+
+  - Refresh balance and book/marketValue when transaction is added/updated/deleted
+  - Figure out a better way than making balance, bookValue, and marketValue required for all account types
 
 ##### Future Task
 

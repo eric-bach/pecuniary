@@ -99,6 +99,8 @@ type Account {
   type: String!
   name: String!
   balance: Float!
+  bookValue: Float!
+  marketValue: Float!
   userId: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!

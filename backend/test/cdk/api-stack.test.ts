@@ -25,10 +25,15 @@ describe('Api Stack contains expected resources', () => {
   const template = Template.fromStack(stack);
 
   test('should have SQS Queues and SNS Topics', () => {
-    template.hasResourceProperties('AWS::SQS::Queue', Match.objectLike({ QueueName: `pecuniary-${props.envName}-updatePosition-DLQ` }));
+    template.hasResourceProperties('AWS::SQS::Queue', Match.objectLike({ QueueName: `pecuniary-${props.envName}-updateBankAccountDLQ` }));
+    template.hasResourceProperties(
+      'AWS::SQS::Queue',
+      Match.objectLike({ QueueName: `pecuniary-${props.envName}-updateInvestmentAccountDLQ` })
+    );
+    template.hasResourceProperties('AWS::SNS::Topic', Match.objectLike({ TopicName: `pecuniary-${props.envName}-updateBankAccountTopic` }));
     template.hasResourceProperties(
       'AWS::SNS::Topic',
-      Match.objectLike({ TopicName: `pecuniary-${props.envName}-updatePosition-Notification` })
+      Match.objectLike({ TopicName: `pecuniary-${props.envName}-updateInvestmentAccountTopic` })
     );
     template.hasResourceProperties('AWS::SNS::Subscription', Match.objectLike({ Protocol: 'email' }));
 
@@ -37,11 +42,25 @@ describe('Api Stack contains expected resources', () => {
       Match.objectLike({
         ComparisonOperator: 'GreaterThanOrEqualToThreshold',
         EvaluationPeriods: 1,
-        AlarmName: `pecuniary-${props.envName}-updatePosition-Alarm`,
+        AlarmName: `pecuniary-${props.envName}-updateBankAccountAlarm`,
         DatapointsToAlarm: 1,
         MetricName: 'ApproximateNumberOfMessagesVisible',
         Namespace: 'AWS/SQS',
-        Period: 60,
+        Period: 300,
+        Statistic: 'Sum',
+        Threshold: 1,
+      })
+    );
+    template.hasResourceProperties(
+      'AWS::CloudWatch::Alarm',
+      Match.objectLike({
+        ComparisonOperator: 'GreaterThanOrEqualToThreshold',
+        EvaluationPeriods: 1,
+        AlarmName: `pecuniary-${props.envName}-updateInvestmentAccountAlarm`,
+        DatapointsToAlarm: 1,
+        MetricName: 'ApproximateNumberOfMessagesVisible',
+        Namespace: 'AWS/SQS',
+        Period: 300,
         Statistic: 'Sum',
         Threshold: 1,
       })

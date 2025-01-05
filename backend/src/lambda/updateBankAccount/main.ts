@@ -1,14 +1,14 @@
 import { EventBridgeEvent } from 'aws-lambda';
 import { UpdateItemCommandInput, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
-import dynamoDbCommand from './utils/dynamoDbClient';
+import dynamoDbCommand from '../../utils/dynamoDbClient';
 
 type EventData = {
   accountId: string;
   amount: number;
 };
 
-const handler = async (event: EventBridgeEvent<string, EventData>) => {
+const handler = async (event: EventBridgeEvent<string, EventData>): Promise<UpdateItemCommandInput> => {
   const data = parseEvent(event);
 
   console.log(`🔔 Received event: ${JSON.stringify(data)}`);
@@ -18,7 +18,7 @@ const handler = async (event: EventBridgeEvent<string, EventData>) => {
   }
 
   // update dynamodb account
-  const params: UpdateItemCommandInput = {
+  const input: UpdateItemCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     Key: marshall({ pk: `acc#${data.accountId}` }),
     UpdateExpression: 'SET balance = balance + :amount, updatedAt = :updatedAt',
@@ -28,11 +28,13 @@ const handler = async (event: EventBridgeEvent<string, EventData>) => {
     }),
     ReturnValues: 'UPDATED_NEW',
   };
-  const result = await dynamoDbCommand(new UpdateItemCommand(params));
+  const result = await dynamoDbCommand(new UpdateItemCommand(input));
 
   if (result.$metadata.httpStatusCode !== 200) {
-    throw new Error(`🛑 Could not update account ${data.accountId}`);
+    throw new Error(`🛑 Could not update bank account ${data.accountId}`);
   }
+
+  return input;
 };
 
 function parseEvent(event: EventBridgeEvent<string, EventData>): EventData {
