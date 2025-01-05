@@ -8,7 +8,13 @@ import { getQuoteSummary } from './utils/yahooFinance';
 import { PositionReadModel } from './types/PositionReadModel';
 import publishEventAsync from './utils/eventBridgeClient';
 
-exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>) => {
+type UpdatePositionEvent = {
+  accountId: string;
+  symbol: string;
+  userId: string;
+};
+
+exports.handler = async (event: EventBridgeEvent<string, UpdatePositionEvent>) => {
   const detail = parseEvent(event);
 
   // Get all transactions
@@ -33,7 +39,7 @@ exports.handler = async (event: EventBridgeEvent<string, InvestmentTransaction>)
 };
 
 // Returns all transactions for the symbol sorted in ascending order
-export async function getTransactions(detail: InvestmentTransaction): Promise<InvestmentTransaction[]> {
+export async function getTransactions(detail: UpdatePositionEvent): Promise<InvestmentTransaction[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'transaction-gsi',
@@ -66,7 +72,7 @@ export async function getTransactions(detail: InvestmentTransaction): Promise<In
   throw new Error(`🛑 Could not find any transactions: ${result}`);
 }
 
-async function getPosition(detail: InvestmentTransaction): Promise<PositionReadModel> {
+async function getPosition(detail: UpdatePositionEvent): Promise<PositionReadModel> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'accountId-gsi',
@@ -124,7 +130,7 @@ export function calculateAdjustedCostBase(transactions: InvestmentTransaction[])
 
 async function savePosition(
   position: PositionReadModel,
-  detail: InvestmentTransaction,
+  detail: UpdatePositionEvent,
   shares: number,
   bookValue: number
 ): Promise<PositionReadModel> {
@@ -172,7 +178,7 @@ async function savePosition(
   throw new Error(`🛑 Could not save Position ${detail.symbol}: ${result}`);
 }
 
-function parseEvent(event: EventBridgeEvent<string, InvestmentTransaction>): InvestmentTransaction {
+function parseEvent(event: EventBridgeEvent<string, UpdatePositionEvent>): UpdatePositionEvent {
   const eventString: string = JSON.stringify(event);
 
   console.debug(`🕧 Received event: ${eventString}`);

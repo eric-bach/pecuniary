@@ -50,12 +50,15 @@ X Fixed and simplified bookValue and ACB calculations
 X Include Buy/Sell transaction type on tranasctions table
 X Create new DLQ for updateAccountBalance
 X Update to nodejs 22
+X Draw diagram
 
 - Display account balance, bookValue, marketValue/P&L (with manual refresh) on account page
-  - Split up updateAccountBalance to updateBankAccountBalance and updateInvestmentAccountBalance
-  - UpdateInvestmentAccountBalance persist the bookValue and PIT-marketValue
-  - Create a new API to invoke a Lambda to update the investment-account balances by calling updatePostion for each unique Symbol in the account (this will be async)
-- Draw diagram
+
+  - Rename updateAccountBalance to updateBankAccountBalance
+  - Create updateInvestmentAccountBalance with an EventBridge rule on InvestmentTransactionSavedEvent
+  - Update EventBridge rules
+    - Add updateInvestmentAccountBalanceFunction to investmentTransactionSavedRule
+    - Remove PositionUpdatedEvent from transactionUpdatedEventRule
 
 ##### Future Task
 
