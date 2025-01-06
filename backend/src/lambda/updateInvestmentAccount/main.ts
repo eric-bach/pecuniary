@@ -167,7 +167,7 @@ async function updatePosition(
     Item: marshall(item),
   };
 
-  let result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
+  const result = await dynamoDbCommand(new PutItemCommand(putItemCommandInput));
 
   if (result.$metadata.httpStatusCode === 200) {
     console.log(`✅ Saved/Updated Position: { result: ${JSON.stringify(result)}`);
