@@ -47,7 +47,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['payees'] });
     },
-    onError: (error) => {
+    onError: () => {
       // TODO Handle error
     },
   });
@@ -57,7 +57,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
-    onError: (error) => {
+    onError: () => {
       // TODO Handle error
     },
   });
@@ -89,7 +89,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
     onSubmit(data);
   };
 
-  if (payeesQuery.isPending || categoriesQuery.isPending) return <div>Loading...</div>;
+  if (payeesQuery.isPending || categoriesQuery.isPending) return <></>;
 
   const payees: Payee[] = payeesQuery.data;
   const categories: Category[] = categoriesQuery.data;
@@ -153,7 +153,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
         <FormField
           control={form.control}
           name='payee'
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Payee</FormLabel>
               <FormControl>
@@ -173,7 +173,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
         <FormField
           control={form.control}
           name='category'
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Category</FormLabel>
               <FormControl>

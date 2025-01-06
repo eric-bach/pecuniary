@@ -15,7 +15,7 @@ export default function Payees() {
     refetchOnWindowFocus: false,
   });
 
-  if (payeesQuery.isPending) return <div>Loading...</div>;
+  if (payeesQuery.isPending) return <></>;
 
   return <DataTable filterKey='name' title='Payees' columns={columns} data={payeesQuery.data as Payee[]} onClick={newPayee.onOpen} />;
 }

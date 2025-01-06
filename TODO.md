@@ -41,68 +41,35 @@ X Add tests to validate APIs and workflows
 X Switch frontend to use NextJS 14 with turbo
 X Switch transactionsResolver to use AppSync JS pipeline resolvers
 X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
+X UI: (Tanstack) Refresh balance and book/marketValue on Account page when a transaction is added/updated/deleted
+X UI: Close dropdown after creating a new symbol, payee, category, etc
 
 ##### Current Task
 
-<<<<<<< HEAD
-- On PositionUpdatedEvent, update account balance with Position.marketvalue
-- On BankTransactionSavedEvent, update account balance with Transaction.amount
-
-##### Future Task
-
-- add tests to updatePosition Lambda
-- Update dashboard to pull positions and totals - requires new API getPositions(userId)
-- create L3 constructs for AppSync CDK
-- Update to nodejs 22
-- Frontend - remove "Loading..." on screens, remove landing page for login page, improvements to FE
-
-- Events
-  `- Create/Update Position on InvestmentTransactionCreated
-      - Update createBankTransaction to publish BankTransactionCreated
-      - Update createInvestmentTransaction to publish InvestmentTransactionCreated
-      - Update api-stack eventbridge rules to listen to these events
-      - Add updateAccount to update Account balances when BankTransactionCreated
-      - Update updatePositions to upsert Positions when InvestmentTransactionCreated
-`- Create TimeSeries data when SymbolCreated
-  `- Update Account on BankTransactionCreated and InvestmentTransactionCreated
-- Build dashboard to display account summaries
-- Build way to regenerate positions and networth for an account using it's past transactions
-- Add more seed data tied to user
-=======
-- UI: Hide dropdowns after creating a new symbol, payee, category, etc
-- UI: Remove "Loading..." on screens
-- UI: Improve landing page with Bolt
-- TD: Create L3 constructs for AppSync CDK
+- Arch: Add manual refresh for account balance and bookValue/marketValue, including positions and networth
 
 ##### Future Tasks
 
+- TD: Create L3 constructs for AppSync CDK
+- UI: Style currency input field and remove double tab
+- UI: Improve landing page with Bolt
 - UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
-- TD: Add additional tests to updateBankAccount and updateInvestmentAccount Lambdas
-- UI: (Tanstack) Refresh balance and book/marketValue on Account page when a transaction is added/updated/deleted
-- Arch: All account types (banking/investment) requires balance, bookValue, and marketValue to be defined
 - UI: Build dashboard to display account summaries
-- Arch: Build way to regenerate positions and networth for an account using it's past transactions
 - BE: Add more seed data tied to user
->>>>>>> 6c9985882aa5cbe43c30824903279986f8e15b31
-  - Build script to generate transaction data from Quicken export
-    - Export Quicken
-    - Put into CSV (manually)
-    - Write script to parse CSV
-    - Maintain CSV
-- Arch: Build lambda process to re-generate positions and point-in-time networth for an account
+- BE: Build script to generate transaction data from Quicken export
+  - Export Quicken
+  - Put into CSV (manually)
+  - Write script to parse CSV
+  - Maintain CSV
+- TD: Add additional tests to updateBankAccount and updateInvestmentAccount Lambdas
+- Arch: All account types (banking/investment) requires balance, bookValue, and marketValue to be defined
 - UI: Improve error message when creating/updating items fails
 - UI: Style creatable select to match shadcn
-- UI: Style currency input field and remove double tab
-
-#### Tech Debt
-
-- Switch to Next-Auth using CredentialsProvider - https://github.com/dango0812/nextauth-cognito/tree/main
-- Switch to using Amplify UI Authenticator component - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
 
 ##### References
 
 - Budget Tracker
-  - https://github.com/monirhabderabby/budget-tracker - Ppb!hZ$#3\*Q9UL
+  - https://github.com/monirhabderabby/budget-tracker
   - https://github.com/AyushGlitch/budget-tracker
 - Finance Dashboard
   - https://appfinance.vercel.app/
@@ -110,8 +77,8 @@ X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 - Shadcn UI examples
   - https://github.com/shadcn-ui/ui
 - Auth
-  - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
-  - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
+  - AmplifyUI Authenticator - https://github.com/focusOtter/fullstack-nextjs-cdk-starter/tree/main
+  - Next-Auth - https://github.com/alexrusin/nextjs-cognito-auth/tree/5-reset-password-end
 - Dashboard Template
   - Shadcn
     - https://github.com/bradtraversy/traversypress-ui

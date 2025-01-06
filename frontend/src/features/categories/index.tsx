@@ -15,7 +15,7 @@ export default function Categories() {
     refetchOnWindowFocus: false,
   });
 
-  if (categoriesQuery.isPending) return <div>Loading...</div>;
+  if (categoriesQuery.isPending) return <></>;
 
   const categories: Category[] = categoriesQuery.data;
 

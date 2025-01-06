@@ -6,7 +6,7 @@ import { Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Props<TData> {
-  type: String;
+  type: string;
   items: TData[];
   defaultValue?: string;
   onCreate: (name: string) => void;
@@ -33,6 +33,7 @@ function Combobox<TData>({ type, items, defaultValue, onCreate, onChange }: Prop
       setValue(event.target.value);
 
       onCreate(event.target.value);
+      setOpen((prev) => !prev);
     }
   }
 
@@ -62,7 +63,7 @@ function Combobox<TData>({ type, items, defaultValue, onCreate, onChange }: Prop
               {items.map((item: any) => (
                 <CommandItem
                   key={item.pk}
-                  onSelect={(currentvalue) => {
+                  onSelect={() => {
                     setValue(item.name);
                     setOpen((prev) => !prev);
                   }}
