@@ -6,7 +6,7 @@ import { Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Props<TData> {
-  type: String;
+  type: string;
   items: TData[];
   defaultValue?: string;
   onCreate: (name: string) => void;
