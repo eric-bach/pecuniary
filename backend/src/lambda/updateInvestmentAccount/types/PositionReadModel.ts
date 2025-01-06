@@ -10,7 +10,6 @@ export type PositionReadModel = {
   exchange: string;
   currency: string;
   shares: number;
-  acb: number;
   bookValue: number;
   marketValue: number;
 };

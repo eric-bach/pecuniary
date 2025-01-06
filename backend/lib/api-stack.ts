@@ -42,21 +42,33 @@ export class ApiStack extends Stack {
      *** AWS SQS - Dead letter Queues
      ***/
 
-    // Event handler DLQ
-    const updatePositionDLQ = new Queue(this, 'UpdatePositionDLQ', {
-      queueName: `${props.appName}-${props.envName}-updatePosition-DLQ`,
+    // UpdateInvestmentAccount DLQ
+    const updateInvestmentAccountDLQ = new Queue(this, 'UpdateInvestmentAccountDLQ', {
+      queueName: `${props.appName}-${props.envName}-updateInvestmentAccountDLQ`,
+    });
+
+    // UpdateBankAccount DLQ
+    const updateBankAccountDLQ = new Queue(this, 'UpdateBankAccountDLQ', {
+      queueName: `${props.appName}-${props.envName}-updateBankAccountDLQ`,
     });
 
     /***
      *** AWS SNS - Topics
      ***/
 
-    const updatePositionNotification = new Topic(this, 'UpdatePositionNotification', {
-      topicName: `${props.appName}-${props.envName}-updatePosition-Notification`,
-      displayName: 'Update Postion DLQ Notification',
+    const updateInvestmentAccountTopic = new Topic(this, 'UpdateInvestmentAccountTopic', {
+      topicName: `${props.appName}-${props.envName}-updateInvestmentAccountTopic`,
+      displayName: 'Update Investment Account DLQ Notification',
     });
+
+    const updateBankAccountTopic = new Topic(this, 'UpdateBankAccountTopic', {
+      topicName: `${props.appName}-${props.envName}-updateBankAccountTopic`,
+      displayName: 'Update Bank Account Balance DLQ Notification',
+    });
+
     if (props.params.dlqNotifications) {
-      updatePositionNotification.addSubscription(new EmailSubscription(props.params.dlqNotifications));
+      updateBankAccountTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
+      updateInvestmentAccountTopic.addSubscription(new EmailSubscription(props.params.dlqNotifications));
     }
 
     /***
@@ -64,27 +76,47 @@ export class ApiStack extends Stack {
      ***/
 
     // Generic metric
-    const dlqMetric = new Metric({
+    const updateInvestmentAccountDlqMetric = new Metric({
       namespace: 'AWS/SQS',
       metricName: 'ApproximateNumberOfMessagesVisible',
       dimensionsMap: {
-        QueueName: updatePositionDLQ.queueName,
+        QueueName: updateInvestmentAccountDLQ.queueName,
       },
-      period: Duration.minutes(1),
+      period: Duration.minutes(5),
       statistic: 'Sum',
     });
-
-    const updatePositionAlarm = new Alarm(this, 'UpdatePositionAlarm', {
-      alarmName: `${props.appName}-${props.envName}-updatePosition-Alarm`,
-      alarmDescription: 'Unable to update one or more positions',
-      metric: dlqMetric,
+    const updateInvestmentAccountAlarm = new Alarm(this, 'UpdateInvestmentAccountAlarm', {
+      alarmName: `${props.appName}-${props.envName}-updateInvestmentAccountAlarm`,
+      alarmDescription: 'Unable to update investment account',
+      metric: updateInvestmentAccountDlqMetric,
       datapointsToAlarm: 1,
       evaluationPeriods: 1,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
-    updatePositionAlarm.addAlarmAction(new SnsAction(updatePositionNotification));
+    updateInvestmentAccountAlarm.addAlarmAction(new SnsAction(updateInvestmentAccountTopic));
+
+    const updateBankAccountDlqMetric = new Metric({
+      namespace: 'AWS/SQS',
+      metricName: 'ApproximateNumberOfMessagesVisible',
+      dimensionsMap: {
+        QueueName: updateBankAccountDLQ.queueName,
+      },
+      period: Duration.minutes(5),
+      statistic: 'Sum',
+    });
+    const updateBankAccountAlarm = new Alarm(this, 'UpdateBankAccountAlarm', {
+      alarmName: `${props.appName}-${props.envName}-updateBankAccountAlarm`,
+      alarmDescription: 'Unable to update bank account',
+      metric: updateBankAccountDlqMetric,
+      datapointsToAlarm: 1,
+      evaluationPeriods: 1,
+      threshold: 1,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
+    updateBankAccountAlarm.addAlarmAction(new SnsAction(updateBankAccountTopic));
 
     /***
      *** AWS EventBridge - Event Bus
@@ -548,32 +580,56 @@ export class ApiStack extends Stack {
       `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-nodejs-amd64-ver-1-18-1:4`
     );
 
-    const updatePositionFunction = new NodejsFunction(this, 'UpdatePosition', {
+    const updateBankAccountFunction = new NodejsFunction(this, 'UpdateBankBalance', {
       runtime: Runtime.NODEJS_22_X,
-      functionName: `${props.appName}-${props.envName}-UpdatePosition`,
+      functionName: `${props.appName}-${props.envName}-UpdateBankAccount`,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/updatePosition/main.ts'),
-      memorySize: 1024,
-      timeout: Duration.seconds(10),
+      entry: path.resolve(__dirname, '../src/lambda/updateBankAccount/main.ts'),
+      memorySize: 384,
+      timeout: Duration.seconds(5),
       tracing: Tracing.ACTIVE,
       layers: [adotJavscriptLayer],
       environment: {
         REGION: Stack.of(this).region,
         DATA_TABLE_NAME: dataTable.tableName,
-        EVENTBUS_PECUNIARY_NAME: eventBus.eventBusName,
         AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
       },
-      deadLetterQueue: updatePositionDLQ,
+      deadLetterQueue: updateBankAccountDLQ,
     });
     // Add permissions to call DynamoDB
-    updatePositionFunction.addToRolePolicy(
+    updateBankAccountFunction.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['dynamodb:UpdateItem'],
+        resources: [dataTable.tableArn],
+      })
+    );
+
+    const updateInvestmentAccountFunction = new NodejsFunction(this, 'UpdateInvestmentAccount', {
+      runtime: Runtime.NODEJS_22_X,
+      functionName: `${props.appName}-${props.envName}-UpdateInvestmentAccount`,
+      handler: 'handler',
+      entry: path.resolve(__dirname, '../src/lambda/updateInvestmentAccount/main.ts'),
+      memorySize: 1024,
+      timeout: Duration.seconds(10),
+      tracing: Tracing.ACTIVE,
+      // layers: [adotJavscriptLayer],
+      environment: {
+        REGION: Stack.of(this).region,
+        DATA_TABLE_NAME: dataTable.tableName,
+        // AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
+      },
+      deadLetterQueue: updateInvestmentAccountDLQ,
+    });
+    // Add permissions to call DynamoDB
+    updateInvestmentAccountFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:Query'],
         resources: [dataTable.tableArn, dataTable.tableArn + '/index/accountId-gsi', dataTable.tableArn + '/index/transaction-gsi'],
       })
     );
-    updatePositionFunction.addToRolePolicy(
+    updateInvestmentAccountFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem'],
@@ -581,7 +637,7 @@ export class ApiStack extends Stack {
       })
     );
     // Add permission to send to EventBridge
-    updatePositionFunction.addToRolePolicy(
+    updateInvestmentAccountFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['events:PutEvents'],
@@ -589,11 +645,11 @@ export class ApiStack extends Stack {
       })
     );
     // Add permission send message to SQS
-    updatePositionFunction.addToRolePolicy(
+    updateInvestmentAccountFunction.addToRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         actions: ['SQS:SendMessage', 'SNS:Publish'],
-        resources: [updatePositionDLQ.queueArn],
+        resources: [updateInvestmentAccountDLQ.queueArn],
       })
     );
 
@@ -612,25 +668,45 @@ export class ApiStack extends Stack {
       },
     });
     investmentTransactionSavedRule.addTarget(
-      new LambdaFunction(updatePositionFunction, {
-        //deadLetterQueue: SqsQueue,
+      new LambdaFunction(updateInvestmentAccountFunction, {
         maxEventAge: Duration.hours(2),
         retryAttempts: 2,
       })
     );
 
+    // EventBus Rule - BankTransactionSavedEvent
+    const transactionUpdatedEventRule = new Rule(this, 'BankTransactionSavedEvent', {
+      ruleName: `${props.appName}-BankTransactionSavedEvent-${props.envName}`,
+      description: 'BankTransactionSavedEvent',
+      eventBus: eventBus,
+      eventPattern: {
+        source: ['custom.pecuniary'],
+        detailType: ['BankTransactionSavedEvent'],
+      },
+    });
+    transactionUpdatedEventRule.addTarget(
+      new LambdaFunction(updateBankAccountFunction, {
+        maxEventAge: Duration.hours(2),
+        retryAttempts: 2,
+      })
+    );
     /***
      *** Outputs
      ***/
 
     // Dead Letter Queues
-    new CfnOutput(this, 'UpdatePositionDLQArn', {
-      value: updatePositionDLQ.queueArn,
-      exportName: `${props.appName}-${props.envName}-updatePositionDLQArn`,
+    new CfnOutput(this, 'UpdateInvestmentAccountDLQArn', {
+      value: updateInvestmentAccountDLQ.queueArn,
+      exportName: `${props.appName}-${props.envName}-updateInvestmentAccountDLQ`,
+    });
+    new CfnOutput(this, 'UpdateBankAccountDLQArn', {
+      value: updateBankAccountDLQ.queueArn,
+      exportName: `${props.appName}-${props.envName}-updateBankAccountDLQ`,
     });
 
     // SNS Topics
-    new CfnOutput(this, 'UpdatePositionNotificationArn', { value: updatePositionNotification.topicArn });
+    new CfnOutput(this, 'UpdateBankAccountTopicArn', { value: updateBankAccountTopic.topicArn });
+    new CfnOutput(this, 'UpdateInvestmentAccountTopicArn', { value: updateInvestmentAccountTopic.topicArn });
 
     // AppSync API
     new CfnOutput(this, 'GraphQLApiUrl', { value: api.graphqlUrl });
@@ -640,10 +716,8 @@ export class ApiStack extends Stack {
     new CfnOutput(this, 'InvestmentTransactionSavedRuleArn', {
       value: investmentTransactionSavedRule.ruleArn,
     });
-
-    // Lambda functions
-    new CfnOutput(this, 'UpdatePositionFunctionArn', {
-      value: updatePositionFunction.functionArn,
+    new CfnOutput(this, 'TransactionUpdatedEventRule', {
+      value: transactionUpdatedEventRule.ruleArn,
     });
   }
 }

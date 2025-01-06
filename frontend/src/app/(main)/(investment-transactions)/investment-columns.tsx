@@ -27,6 +27,10 @@ export const investmentColumns: ColumnDef<InvestmentTransaction>[] = [
     header: 'Symbol',
   },
   {
+    accessorKey: 'type',
+    header: 'Type',
+  },
+  {
     accessorKey: 'shares',
     header: 'Shres',
   },

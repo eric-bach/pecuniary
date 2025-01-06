@@ -44,6 +44,7 @@ X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 
 ##### Current Task
 
+<<<<<<< HEAD
 - On PositionUpdatedEvent, update account balance with Position.marketvalue
 - On BankTransactionSavedEvent, update account balance with Transaction.amount
 
@@ -67,19 +68,31 @@ X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 - Build dashboard to display account summaries
 - Build way to regenerate positions and networth for an account using it's past transactions
 - Add more seed data tied to user
+=======
+- UI: Hide dropdowns after creating a new symbol, payee, category, etc
+- UI: Remove "Loading..." on screens
+- UI: Improve landing page with Bolt
+- TD: Create L3 constructs for AppSync CDK
+
+##### Future Tasks
+
+- UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
+- TD: Add additional tests to updateBankAccount and updateInvestmentAccount Lambdas
+- UI: (Tanstack) Refresh balance and book/marketValue on Account page when a transaction is added/updated/deleted
+- Arch: All account types (banking/investment) requires balance, bookValue, and marketValue to be defined
+- UI: Build dashboard to display account summaries
+- Arch: Build way to regenerate positions and networth for an account using it's past transactions
+- BE: Add more seed data tied to user
+>>>>>>> 6c9985882aa5cbe43c30824903279986f8e15b31
   - Build script to generate transaction data from Quicken export
     - Export Quicken
     - Put into CSV (manually)
     - Write script to parse CSV
     - Maintain CSV
-- Build lambda process to re-generate positions and point-in-time networth for an account
-- Build dashboard to display account summaries
-- Switch from Sheet to Dialog for Account and Transactions
-  `- BUG: After adding new Creatable type, the newly added type doesn't show up with editing the item
-`- BUG: Prevent creating duplicate Payees/Categories in backend especially when editing item (frontend creatable prevents it)
-- Improve error message when creating/updating items fails
-- Style creatable select to match shadcn
-- Style currency input field
+- Arch: Build lambda process to re-generate positions and point-in-time networth for an account
+- UI: Improve error message when creating/updating items fails
+- UI: Style creatable select to match shadcn
+- UI: Style currency input field and remove double tab
 
 #### Tech Debt
 
