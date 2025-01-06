@@ -35,7 +35,7 @@ const NewBankingTransactionSheet = () => {
         await queryClient.invalidateQueries({ queryKey: ['account', accountId] });
       }, 1000);
     },
-    onError: (error) => {
+    onError: () => {
       setIsPending(false);
 
       toast.error('Failed to create transaction', {

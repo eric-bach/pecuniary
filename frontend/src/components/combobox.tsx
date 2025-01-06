@@ -26,6 +26,7 @@ function Combobox<TData>({ type, items, defaultValue, onCreate, onChange }: Prop
     onChange(value);
   }, [value, onChange]);
 
+  // @ts-ignore: Suppress the warning for 'any' type
   async function handleChange(event: any) {
     if (event.key === 'Enter' || event.key === 'Tab') {
       event.preventDefault();
@@ -60,10 +61,11 @@ function Combobox<TData>({ type, items, defaultValue, onCreate, onChange }: Prop
           </CommandEmpty>
           <CommandGroup>
             <CommandList>
+              // @ts-ignore: Suppress the warning for 'any' type
               {items.map((item: any) => (
                 <CommandItem
                   key={item.pk}
-                  onSelect={(currentvalue) => {
+                  onSelect={() => {
                     setValue(item.name);
                     setOpen((prev) => !prev);
                   }}
@@ -80,6 +82,7 @@ function Combobox<TData>({ type, items, defaultValue, onCreate, onChange }: Prop
   );
 }
 
+// @ts-ignore: Suppress the warning for 'any' type
 function ComboboxRow({ item }: { item: any }) {
   return (
     <div className='flex w-full items-center gap-2'>

@@ -44,7 +44,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['symbols'] });
     },
-    onError: (error) => {
+    onError: () => {
       // TODO Handle error
     },
   });
@@ -128,7 +128,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
         <FormField
           control={form.control}
           name='symbol'
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel className='text-xs font-bold text-zinc-500 dark:text-white'>Symbol</FormLabel>
               <FormControl>

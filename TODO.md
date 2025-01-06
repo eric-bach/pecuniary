@@ -43,43 +43,10 @@ X Switch transactionsResolver to use AppSync JS pipeline resolvers
 X Rearchitect updatePositions/updateBalances to use AppSync JS Resolvers
 X UI: (Tanstack) Refresh balance and book/marketValue on Account page when a transaction is added/updated/deleted
 X UI: Close dropdown after creating a new symbol, payee, category, etc
-UI: Remove "Loading..." on screens
 
 ##### Current Task
 
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-- On PositionUpdatedEvent, update account balance with Position.marketvalue
-- On BankTransactionSavedEvent, update account balance with Transaction.amount
-
-##### Future Task
-
-- add tests to updatePosition Lambda
-- Update dashboard to pull positions and totals - requires new API getPositions(userId)
-- create L3 constructs for AppSync CDK
-- Update to nodejs 22
-- Frontend - remove "Loading..." on screens, remove landing page for login page, improvements to FE
-
-- Events
-  `- Create/Update Position on InvestmentTransactionCreated
-      - Update createBankTransaction to publish BankTransactionCreated
-      - Update createInvestmentTransaction to publish InvestmentTransactionCreated
-      - Update api-stack eventbridge rules to listen to these events
-      - Add updateAccount to update Account balances when BankTransactionCreated
-      - Update updatePositions to upsert Positions when InvestmentTransactionCreated
-`- Create TimeSeries data when SymbolCreated
-  `- Update Account on BankTransactionCreated and InvestmentTransactionCreated
-- Build dashboard to display account summaries
-- Build way to regenerate positions and networth for an account using it's past transactions
-- Add more seed data tied to user
-=======
-- UI: Hide dropdowns after creating a new symbol, payee, category, etc
-- UI: Remove "Loading..." on screens
-- UI: Improve landing page with Bolt
-- TD: Create L3 constructs for AppSync CDK
-=======
 - Arch: Add manual refresh for account balance and bookValue/marketValue, including positions and networth
->>>>>>> Stashed changes
 
 ##### Future Tasks
 
@@ -89,15 +56,6 @@ UI: Remove "Loading..." on screens
 - UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
 - UI: Build dashboard to display account summaries
 - BE: Add more seed data tied to user
-<<<<<<< Updated upstream
->>>>>>> 6c9985882aa5cbe43c30824903279986f8e15b31
-  - Build script to generate transaction data from Quicken export
-    - Export Quicken
-    - Put into CSV (manually)
-    - Write script to parse CSV
-    - Maintain CSV
-- Arch: Build lambda process to re-generate positions and point-in-time networth for an account
-=======
 - BE: Build script to generate transaction data from Quicken export
   - Export Quicken
   - Put into CSV (manually)
@@ -105,7 +63,6 @@ UI: Remove "Loading..." on screens
   - Maintain CSV
 - TD: Add additional tests to updateBankAccount and updateInvestmentAccount Lambdas
 - Arch: All account types (banking/investment) requires balance, bookValue, and marketValue to be defined
->>>>>>> Stashed changes
 - UI: Improve error message when creating/updating items fails
 - UI: Style creatable select to match shadcn
 
