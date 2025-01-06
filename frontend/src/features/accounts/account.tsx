@@ -27,7 +27,7 @@ export default function DisplayAccount() {
     queryFn: () => fetch('/api/investment-transactions?' + new URLSearchParams({ accountId })).then((res) => res.json()),
   });
 
-  if (accountQuery.isPending || bankTransactionsQuery.isPending || investmentTransactionsQuery.isPending) return <div>Loading...</div>;
+  if (accountQuery.isPending || bankTransactionsQuery.isPending || investmentTransactionsQuery.isPending) return <></>;
 
   const account = accountQuery.data as Account;
   const bankTransactions = bankTransactionsQuery.data.items as [BankTransaction];

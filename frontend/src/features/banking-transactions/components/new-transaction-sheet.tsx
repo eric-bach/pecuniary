@@ -29,6 +29,11 @@ const NewBankingTransactionSheet = () => {
       });
 
       await queryClient.invalidateQueries({ queryKey: ['bank-transactions'] });
+
+      // Ivalidate account to refresh balances
+      setTimeout(async () => {
+        await queryClient.invalidateQueries({ queryKey: ['account', accountId] });
+      }, 1000);
     },
     onError: (error) => {
       setIsPending(false);

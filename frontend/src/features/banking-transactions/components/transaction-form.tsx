@@ -89,7 +89,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled }: Pro
     onSubmit(data);
   };
 
-  if (payeesQuery.isPending || categoriesQuery.isPending) return <div>Loading...</div>;
+  if (payeesQuery.isPending || categoriesQuery.isPending) return <></>;
 
   const payees: Payee[] = payeesQuery.data;
   const categories: Category[] = categoriesQuery.data;

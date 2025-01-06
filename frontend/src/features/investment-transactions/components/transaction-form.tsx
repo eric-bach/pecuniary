@@ -65,7 +65,7 @@ const TransactionForm = ({ transaction, defaultValues, onSubmit, disabled, trans
     onSubmit(data);
   };
 
-  if (symbolsQuery.isPending) return <div>Loading...</div>;
+  if (symbolsQuery.isPending) return <></>;
 
   const symbols: Symbol[] = symbolsQuery.data;
 

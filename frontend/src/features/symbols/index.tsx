@@ -15,7 +15,7 @@ export default function Symbols() {
     refetchOnWindowFocus: false,
   });
 
-  if (symbolsQuery.isPending) return <div>Loading...</div>;
+  if (symbolsQuery.isPending) return <></>;
 
   const symbols: Symbol[] = symbolsQuery.data;
 

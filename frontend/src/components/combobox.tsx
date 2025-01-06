@@ -33,6 +33,7 @@ function Combobox<TData>({ type, items, defaultValue, onCreate, onChange }: Prop
       setValue(event.target.value);
 
       onCreate(event.target.value);
+      setOpen((prev) => !prev);
     }
   }
 
