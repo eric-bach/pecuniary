@@ -55,7 +55,7 @@
     "aws-cdk-lib": "^2.173.1",
     "cdk-aws-lambda-powertools-layer": "^3.7.0",
     "constructs": "^10.3.0",
-    "esbuild": "^0.21.5",
+    "esbuild": "^0.25.0",
     "graphql": "^16.10.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
