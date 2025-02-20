@@ -7,20 +7,20 @@ export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> =
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  AWSDate: { input: string; output: string };
-  AWSDateTime: { input: string; output: string };
-  AWSEmail: { input: string; output: string };
-  AWSIPAddress: { input: string; output: string };
-  AWSJSON: { input: string; output: string };
-  AWSPhone: { input: string; output: string };
-  AWSTime: { input: string; output: string };
-  AWSTimestamp: { input: number; output: number };
-  AWSURL: { input: string; output: string };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  AWSDate: { input: string; output: string; }
+  AWSDateTime: { input: string; output: string; }
+  AWSEmail: { input: string; output: string; }
+  AWSIPAddress: { input: string; output: string; }
+  AWSJSON: { input: string; output: string; }
+  AWSPhone: { input: string; output: string; }
+  AWSTime: { input: string; output: string; }
+  AWSTimestamp: { input: number; output: number; }
+  AWSURL: { input: string; output: string; }
 };
 
 export type Account = {
@@ -207,58 +207,72 @@ export type Mutation = {
   updatePayee?: Maybe<Payee>;
 };
 
+
 export type MutationCreateAccountArgs = {
   input: CreateAccountInput;
 };
+
 
 export type MutationCreateBankTransactionArgs = {
   input: CreateBankTransactionInput;
 };
 
+
 export type MutationCreateCategoryArgs = {
   name: Scalars['String']['input'];
 };
+
 
 export type MutationCreateInvestmentTransactionArgs = {
   input: CreateInvestmentTransactionInput;
 };
 
+
 export type MutationCreatePayeeArgs = {
   name: Scalars['String']['input'];
 };
+
 
 export type MutationCreateSymbolArgs = {
   name: Scalars['String']['input'];
 };
 
+
 export type MutationDeleteAccountArgs = {
   accountId: Scalars['String']['input'];
 };
+
 
 export type MutationDeleteBankTransactionArgs = {
   input: DeleteBankTransactionInput;
 };
 
+
 export type MutationDeleteInvestmentTransactionArgs = {
   input: DeleteInvestmentTransactionInput;
 };
+
 
 export type MutationUpdateAccountArgs = {
   input: UpdateAccountInput;
 };
 
+
 export type MutationUpdateBankTransactionArgs = {
   input: UpdateBankTransactionInput;
 };
+
 
 export type MutationUpdateCategoryArgs = {
   name: Scalars['String']['input'];
   pk: Scalars['String']['input'];
 };
 
+
 export type MutationUpdateInvestmentTransactionArgs = {
   input: UpdateInvestmentTransactionInput;
 };
+
 
 export type MutationUpdatePayeeArgs = {
   name: Scalars['String']['input'];
@@ -305,41 +319,50 @@ export type Query = {
   getSymbols?: Maybe<GetSymbolsResponse>;
 };
 
+
 export type QueryGetAccountArgs = {
   accountId: Scalars['String']['input'];
 };
 
+
 export type QueryGetAccountsArgs = {
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 export type QueryGetAggregateArgs = {
   accountId: Scalars['String']['input'];
   type?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 export type QueryGetBankTransactionsArgs = {
   accountId: Scalars['String']['input'];
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 export type QueryGetCategoriesArgs = {
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 export type QueryGetInvestmentTransactionsArgs = {
   accountId: Scalars['String']['input'];
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
 
+
 export type QueryGetPayeesArgs = {
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 export type QueryGetPositionsArgs = {
   accountId: Scalars['String']['input'];
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
 };
+
 
 export type QueryGetSymbolsArgs = {
   lastEvaluatedKey?: InputMaybe<Scalars['String']['input']>;
