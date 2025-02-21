@@ -82,7 +82,7 @@ export class ApiStack extends Stack {
       dimensionsMap: {
         QueueName: updateInvestmentAccountDLQ.queueName,
       },
-      period: Duration.minutes(5),
+      period: Duration.minutes(60),
       statistic: 'Sum',
     });
     const updateInvestmentAccountAlarm = new Alarm(this, 'UpdateInvestmentAccountAlarm', {
@@ -103,7 +103,7 @@ export class ApiStack extends Stack {
       dimensionsMap: {
         QueueName: updateBankAccountDLQ.queueName,
       },
-      period: Duration.minutes(5),
+      period: Duration.minutes(60),
       statistic: 'Sum',
     });
     const updateBankAccountAlarm = new Alarm(this, 'UpdateBankAccountAlarm', {
