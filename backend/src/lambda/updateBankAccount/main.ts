@@ -2,13 +2,9 @@ import { EventBridgeEvent } from 'aws-lambda';
 import { UpdateItemCommandInput, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import dynamoDbCommand from '../../utils/dynamoDbClient';
+import { BankTransaction } from '../../appsync/api/codegen/appsync';
 
-type EventData = {
-  accountId: string;
-  amount: number;
-};
-
-const handler = async (event: EventBridgeEvent<string, EventData>): Promise<UpdateItemCommandInput> => {
+const handler = async (event: EventBridgeEvent<string, BankTransaction>): Promise<UpdateItemCommandInput> => {
   const data = parseEvent(event);
 
   console.log(`🔔 Received event: ${JSON.stringify(data)}`);
@@ -37,7 +33,7 @@ const handler = async (event: EventBridgeEvent<string, EventData>): Promise<Upda
   return input;
 };
 
-function parseEvent(event: EventBridgeEvent<string, EventData>): EventData {
+function parseEvent(event: EventBridgeEvent<string, BankTransaction>): BankTransaction {
   const eventString: string = JSON.stringify(event);
 
   console.debug(`🕧 Received event: ${eventString}`);
