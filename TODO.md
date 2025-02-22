@@ -51,12 +51,15 @@ X UI: Close dropdown after creating a new symbol, payee, category, etc
   X Remove updateAccount (since this will not be persisted in Account anymore)
   X Remove getPosition (since this will just be an UpdateItem)
   X Change updatePosition to create or update the Position and use if_not_exists for createdAt
-  - Create an event PositionUpdatedEvent to trigger another Lambda to updateInvestmentAccount that will getPositions() and update the bookValue/marketValue
-  - Create an event InvestmentAccountUpdatedEvent to trigger another Lambda to getAccounts() and update the User portfolio totals
-  - Rename updateInvestmentAccount to updateInvestmentPosition (and DLQ/Topic)
+
+  - Store the book/market value on the account item
+  - Store the book/market value on the position item so we don't need to get all transactions to calculate the ACB
 
 ##### Future Tasks
 
+- TD: Update to use Powertools Logger
+- TD: Create CW dashboard to display DLQ messages and errors
+- UI: Use AI coding tool to revamp UI to be more like Quicken input - bolt.new, tempolabs.ai
 - Arch: Add manual refresh for account balance and bookValue/marketValue, including positions and networth
 - TD: Create L3 constructs for AppSync CDK
 - UI: Style currency input field and remove double tab
