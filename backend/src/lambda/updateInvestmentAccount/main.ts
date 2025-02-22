@@ -19,7 +19,7 @@ export const handler: Handler = async (event: EventBridgeEvent<string, Investmen
   const transactions = await getTransactions(accountId, symbol, userId);
 
   // Get all positions (not just the position for the current asset symbol)
-  const positions = await getPositions(accountId, symbol, userId);
+  const positions = await getPositions(accountId, userId);
 
   // Save Position (create if not exists, update if exists)
   await updatePosition(accountId, symbol, userId, positions, transactions);
@@ -62,7 +62,7 @@ export async function getTransactions(accountId: string, symbol: string, userId:
   throw new Error(`🛑 Could not find any transactions: ${result}`);
 }
 
-export async function getPositions(accountId: string, symbol: string, userId: string): Promise<PositionReadModel[]> {
+export async function getPositions(accountId: string, userId: string): Promise<PositionReadModel[]> {
   const params: QueryCommandInput = {
     TableName: process.env.DATA_TABLE_NAME,
     IndexName: 'accountId-gsi',

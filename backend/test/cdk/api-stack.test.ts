@@ -46,7 +46,7 @@ describe('Api Stack contains expected resources', () => {
         DatapointsToAlarm: 1,
         MetricName: 'ApproximateNumberOfMessagesVisible',
         Namespace: 'AWS/SQS',
-        Period: 300,
+        Period: 3600,
         Statistic: 'Sum',
         Threshold: 1,
       })
@@ -60,7 +60,7 @@ describe('Api Stack contains expected resources', () => {
         DatapointsToAlarm: 1,
         MetricName: 'ApproximateNumberOfMessagesVisible',
         Namespace: 'AWS/SQS',
-        Period: 300,
+        Period: 3600,
         Statistic: 'Sum',
         Threshold: 1,
       })
