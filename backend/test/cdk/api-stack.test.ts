@@ -79,7 +79,6 @@ describe('Api Stack contains expected resources', () => {
         Name: `pecuniary-${props.envName}-api`,
       })
     );
-    // TODO Add more asserts
     template.hasResourceProperties('AWS::AppSync::GraphQLSchema', Match.objectLike({}));
     template.hasResourceProperties('AWS::AppSync::DataSource', Match.objectLike({}));
     template.hasResourceProperties('AWS::AppSync::Resolver', Match.objectLike({}));
