@@ -1,16 +1,16 @@
-import { AppSyncIdentityCognito, Context, util } from '@aws-appsync/utils';
+import { Context, util } from '@aws-appsync/utils';
 import { MutationCreateBankTransactionArgs } from './api/codegen/appsync';
 
 export function request(ctx: Context<MutationCreateBankTransactionArgs>) {
   console.log('🔔 PublishEvent Request: ', ctx);
 
-  const input = ctx.args.input;
-  const identity = ctx.identity as AppSyncIdentityCognito;
+  // const input = ctx.args.input;
+  // const identity = ctx.identity as AppSyncIdentityCognito;
 
-  const eventDetail = {
-    ...input,
-    userId: identity.username,
-  };
+  // const eventDetail = {
+  //   ...input,
+  //   userId: identity.username,
+  // };
 
   return {
     operation: 'PutEvents',
@@ -18,7 +18,7 @@ export function request(ctx: Context<MutationCreateBankTransactionArgs>) {
       {
         source: 'custom.pecuniary',
         detailType: ctx.prev.result.detailType,
-        detail: eventDetail,
+        detail: ctx.prev.result,
         time: util.time.nowISO8601(),
       },
     ],

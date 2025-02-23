@@ -46,20 +46,15 @@ X UI: Close dropdown after creating a new symbol, payee, category, etc
 
 ##### Current Task
 
-- Reduce dynamoDB calls (4) in updateInvestmentAccount
-  X Change Position pk to be pos#{symbol}#accountId
-  X Remove updateAccount (since this will not be persisted in Account anymore)
-  X Remove getPosition (since this will just be an UpdateItem)
-  X Change updatePosition to create or update the Position and use if_not_exists for createdAt
-  - Create an event PositionUpdatedEvent to trigger another Lambda to updateInvestmentAccount that will getPositions() and update the bookValue/marketValue
-  - Create an event InvestmentAccountUpdatedEvent to trigger another Lambda to getAccounts() and update the User portfolio totals
-  - Rename updateInvestmentAccount to updateInvestmentPosition (and DLQ/Topic)
+- TD: Create CW dashboard to display DLQ messages and errors
+- TD: Update to use Powertools Logger
 
 ##### Future Tasks
 
+- UI: Use AI coding tool to revamp UI to be more like Quicken input - bolt.new, tempolabs.ai
+  - UI: Style currency input field and remove double tab
 - Arch: Add manual refresh for account balance and bookValue/marketValue, including positions and networth
 - TD: Create L3 constructs for AppSync CDK
-- UI: Style currency input field and remove double tab
 - UI: Improve landing page with Bolt
 - UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
 - UI: Build dashboard to display account summaries

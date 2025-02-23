@@ -580,7 +580,7 @@ export class ApiStack extends Stack {
       `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-nodejs-amd64-ver-1-18-1:4`
     );
 
-    const updateBankAccountFunction = new NodejsFunction(this, 'UpdateBankBalance', {
+    const updateBankAccountFunction = new NodejsFunction(this, 'UpdateBankAccount', {
       runtime: Runtime.NODEJS_22_X,
       functionName: `${props.appName}-${props.envName}-UpdateBankAccount`,
       handler: 'handler',
