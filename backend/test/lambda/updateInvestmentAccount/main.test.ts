@@ -175,4 +175,59 @@ describe('calculateBookValue', () => {
     expect(shares).toBe(150);
     expect(bookValue).toBeCloseTo(2410, 2); // Book value after transactions
   });
+
+  it('should calculate bookValue and shares correctly even when a transaction is retroactively added', () => {
+    const transactions: InvestmentTransaction[] = [
+      {
+        pk: '1',
+        type: 'buy',
+        shares: 200,
+        price: 15,
+        commission: 10,
+        accountId: '1',
+        userId: '1',
+        symbol: 'MSFT',
+        transactionDate: '2023-01-01',
+        transactionId: '1',
+        createdAt: '2023-01-01T00:00:00Z',
+        updatedAt: '2023-01-01T00:00:00Z',
+        entity: 'investment-transaction',
+      },
+      {
+        pk: '2',
+        type: 'buy',
+        shares: 100,
+        price: 18,
+        commission: 10,
+        accountId: '1',
+        userId: '1',
+        symbol: 'MSFT',
+        transactionDate: '2023-01-03',
+        transactionId: '2',
+        createdAt: '2023-01-02T00:00:00Z',
+        updatedAt: '2023-01-02T00:00:00Z',
+        entity: 'investment-transaction',
+      },
+      {
+        pk: '3',
+        type: 'sell',
+        shares: 150,
+        price: 20,
+        commission: 10,
+        accountId: '1',
+        userId: '1',
+        symbol: 'MSFT',
+        transactionDate: '2023-01-02',
+        transactionId: '3',
+        createdAt: '2023-01-03T00:00:00Z',
+        updatedAt: '2023-01-03T00:00:00Z',
+        entity: 'investment-transaction',
+      },
+    ];
+
+    const { shares, bookValue } = calculateBookValue(transactions);
+
+    expect(shares).toBe(150);
+    expect(bookValue).toBeCloseTo(2410, 2); // Book value after transactions
+  });
 });
