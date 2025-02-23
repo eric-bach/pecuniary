@@ -118,16 +118,7 @@ export function calculateBookValue(transactions: InvestmentTransaction[]) {
   return { shares, bookValue };
 }
 
-async function updatePosition(
-  accountId: string,
-  symbol: string,
-  userId: string,
-  positions: PositionReadModel[],
-  transactions: InvestmentTransaction[]
-): Promise<PositionReadModel> {
-  // Calculate bookValue
-  const { shares, bookValue } = calculateBookValue(transactions);
-
+export async function calculateMarketValue(symbol: string, shares: number) {
   const quote = await getQuoteSummary(symbol);
 
   if (!quote || !quote.close || !quote.currency) {
@@ -136,6 +127,20 @@ async function updatePosition(
 
   // Calculate market value
   const marketValue = quote.close * shares;
+
+  return { quote, marketValue };
+}
+
+async function updatePosition(
+  accountId: string,
+  symbol: string,
+  userId: string,
+  positions: PositionReadModel[],
+  transactions: InvestmentTransaction[]
+): Promise<PositionReadModel> {
+  // Calculate bookValue and marketValue
+  const { shares, bookValue } = calculateBookValue(transactions);
+  const { quote, marketValue } = await calculateMarketValue(symbol, shares);
 
   // Find the existing position for the symbol (if exists)
   let position = positions.find((pos) => pos.symbol === symbol);
@@ -152,7 +157,7 @@ async function updatePosition(
       marketValue,
       description: quote.description ?? '',
       exchange: quote.exchange ?? '',
-      currency: quote.currency,
+      currency: quote.currency ?? '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -161,6 +166,7 @@ async function updatePosition(
 
     positions.push(position);
   } else {
+    position.shares = shares;
     position.bookValue = bookValue;
     position.marketValue = marketValue;
 
@@ -217,10 +223,7 @@ async function updatePosition(
 async function updateAccount(accountId: string, positions: PositionReadModel[]): Promise<UpdateItemCommandInput> {
   console.log(`Updating account for ${positions.length} positions`);
 
-  const bookValue = positions.reduce((sum, pos) => {
-    console.log(`Here sum: ${sum} pos.bookValue: ${pos.bookValue}`);
-    return sum + pos.bookValue;
-  }, 0);
+  const bookValue = positions.reduce((sum, pos) => sum + pos.bookValue, 0);
   const marketValue = positions.reduce((sum, pos) => sum + pos.marketValue, 0);
 
   console.log('Book Value', bookValue);
