@@ -11,12 +11,8 @@ import {
   Code,
   GraphqlApi,
   FieldLogLevel,
-  InlineCode,
   AuthorizationType,
   DynamoDbDataSource,
-  FunctionRuntime,
-  AppsyncFunction,
-  Resolver,
   Definition,
   EventBridgeDataSource,
 } from 'aws-cdk-lib/aws-appsync';
@@ -27,6 +23,7 @@ import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { PecuniaryApiStackProps } from './types/PecuniaryStackProps';
 import { LayerVersion, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { AppsyncResolver } from './constructs/appsyncResolver';
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -215,358 +212,296 @@ export class ApiStack extends Stack {
     });
 
     // AppSync JS Resolvers
-    const createAccountFunction = new AppsyncFunction(this, 'createAccountFunction', {
-      name: 'createAccount',
-      api: api,
+    const getAggregateResolver = new AppsyncResolver(this, 'getAggregate', {
+      api,
       dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createAccount.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
-    });
-    const updateAccountFunction = new AppsyncFunction(this, 'updateAccountFunction', {
-      name: 'updateAccount',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateAccount.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
-    });
-    const getAccountFunction = new AppsyncFunction(this, 'getAccountFunction', {
-      name: 'getAccount',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getAccount.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
-    });
-    const getAccountsFunction = new AppsyncFunction(this, 'getAccountsFunction', {
-      name: 'getAccounts',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getAccounts.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
-    });
-    const getAggregateFunction = new AppsyncFunction(this, 'getAggregateFunction', {
       name: 'getAggregate',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getAggregate.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getAggregate.js')),
+      },
+      resolver: {
+        typeName: 'Query',
+      },
     });
-    const deleteAccountFunction = new AppsyncFunction(this, 'deleteAccountFunction', {
+
+    const createAccountResolver = new AppsyncResolver(this, 'createAccount', {
+      api,
+      dataSource: dynamoDbDataSource,
+      name: 'createAccount',
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createAccount.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+      },
+    });
+
+    const updateAccountResolver = new AppsyncResolver(this, 'updateAccount', {
+      api,
+      dataSource: dynamoDbDataSource,
+      name: 'updateAccount',
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateAccount.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+      },
+    });
+
+    const deleteAccountResolver = new AppsyncResolver(this, 'deleteAccount', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'deleteAccount',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.deleteAccount.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.deleteAccount.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+        pipelineConfig: { pre: [getAggregateResolver.function] },
+      },
     });
-    const getBankTransactionsFunction = new AppsyncFunction(this, 'getBankTransactionsFunction', {
+
+    const getAccountResolver = new AppsyncResolver(this, 'getAccount', {
+      api,
+      dataSource: dynamoDbDataSource,
+      name: 'getAccount',
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getAccount.js')),
+      },
+      resolver: {
+        typeName: 'Query',
+      },
+    });
+
+    const getAccountsResolver = new AppsyncResolver(this, 'getAccounts', {
+      api,
+      dataSource: dynamoDbDataSource,
+      name: 'getAccounts',
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getAccounts.js')),
+      },
+      resolver: {
+        typeName: 'Query',
+      },
+    });
+
+    const getBankTransactionsResolver = new AppsyncResolver(this, 'getBankTransactions', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'getBankTransactions',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getBankTransactions.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getBankTransactions.js')),
+      },
+      resolver: {
+        typeName: 'Query',
+      },
     });
-    const getInvestmentTransactionsFunction = new AppsyncFunction(this, 'getInvestmentTransactionsFunction', {
+
+    const getInvestmentTransactionsResolver = new AppsyncResolver(this, 'getInvestmentTransactions', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'getInvestmentTransactions',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getInvestmentTransactions.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getInvestmentTransactions.js')),
+      },
+      resolver: {
+        typeName: 'Query',
+      },
     });
-    const createCategoryFunction = new AppsyncFunction(this, 'createCategoryFunction', {
+
+    const createCategoryResolver = new AppsyncResolver(this, 'createCategory', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'createCategory',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createCategory.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createCategory.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+      },
     });
-    const updateCategoryFunction = new AppsyncFunction(this, 'updateCategoryFunction', {
+
+    const updateCategoryResolver = new AppsyncResolver(this, 'updateCategory', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'updateCategory',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateCategory.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateCategory.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+      },
     });
-    const getCategoriesFunction = new AppsyncFunction(this, 'getCategoriesFunction', {
+
+    const getCategoriesResolver = new AppsyncResolver(this, 'getCategories', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'getCategories',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getCategories.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getCategories.js')),
+      },
+      resolver: {
+        typeName: 'Query',
+      },
     });
-    const createPayeeFunction = new AppsyncFunction(this, 'createPayeeFunction', {
+
+    const createPayeeResolver = new AppsyncResolver(this, 'createPayee', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'createPayee',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createPayee.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createPayee.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+      },
     });
-    const updatePayeeFunction = new AppsyncFunction(this, 'updatePayeeFunction', {
+
+    const updatePayeeResolver = new AppsyncResolver(this, 'updatePayee', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'updatePayee',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updatePayee.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updatePayee.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+      },
     });
-    const getPayeesFunction = new AppsyncFunction(this, 'getPayeesFunction', {
+
+    const getPayeesResolver = new AppsyncResolver(this, 'getPayees', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'getPayees',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getPayees.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getPayees.js')),
+      },
+      resolver: {
+        typeName: 'Query',
+      },
     });
-    const createSymbolFunction = new AppsyncFunction(this, 'createSymbolFunction', {
+
+    const createSymbolResolver = new AppsyncResolver(this, 'createSymbol', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'createSymbol',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createSymbol.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createSymbol.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+      },
     });
-    const getSymbolsFunction = new AppsyncFunction(this, 'getSymbolsFunction', {
+
+    const getSymbolsResolver = new AppsyncResolver(this, 'getSymbols', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'getSymbols',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getSymbols.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Query.getSymbols.js')),
+      },
+      resolver: {
+        typeName: 'Query',
+      },
     });
-    const publishEvent = new AppsyncFunction(this, 'publishEvent', {
+
+    const publishEventResolver = new AppsyncResolver(this, 'publishEvent', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'publishEvent',
-      api: api,
-      dataSource: eventBridgeDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Event.publishEvent.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Event.publishEvent.js')),
+      },
     });
 
-    const createBankTransaction = new AppsyncFunction(this, 'createBankTransactionFunction', {
+    const createBankTransactionResolver = new AppsyncResolver(this, 'createBankTransaction', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'createBankTransaction',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createBankTransaction.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createBankTransaction.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+        pipelineConfig: {
+          post: [publishEventResolver.function],
+        },
+      },
     });
-    const updateBankTransaction = new AppsyncFunction(this, 'updateBankTransactionFunction', {
+
+    const upodateBankTransactionResolver = new AppsyncResolver(this, 'updateBankTransaction', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'updateBankTransaction',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateBankTransaction.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateBankTransaction.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+        pipelineConfig: {
+          post: [publishEventResolver.function],
+        },
+      },
     });
-    const deleteBankTransaction = new AppsyncFunction(this, 'deleteBankTransactionFunction', {
+
+    const delteBankTransactionResolver = new AppsyncResolver(this, 'deleteBankTransaction', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'deleteBankTransaction',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.deleteBankTransaction.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.deleteBankTransaction.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+        pipelineConfig: {
+          post: [publishEventResolver.function],
+        },
+      },
     });
-    const createInvestmentTransaction = new AppsyncFunction(this, 'createInvestmentTransactionFunction', {
+
+    const createInvestmentTransactionResolver = new AppsyncResolver(this, 'createInvestmentTransaction', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'createInvestmentTransaction',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createInvestmentTransaction.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.createInvestmentTransaction.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+        pipelineConfig: {
+          post: [publishEventResolver.function],
+        },
+      },
     });
-    const updateInvestmentTransaction = new AppsyncFunction(this, 'updateInvestmentTransactionFunction', {
+
+    const upodateInvestmentTransactionResolver = new AppsyncResolver(this, 'updateInvestmentTransaction', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'updateInvestmentTransaction',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateInvestmentTransaction.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.updateInvestmentTransaction.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+        pipelineConfig: {
+          post: [publishEventResolver.function],
+        },
+      },
     });
-    const deleteInvestmentTransaction = new AppsyncFunction(this, 'deleteInvestmentTransactionFunction', {
+
+    const delteInvestmentTransactionResolver = new AppsyncResolver(this, 'deleteInvestmentTransaction', {
+      api,
+      dataSource: dynamoDbDataSource,
       name: 'deleteInvestmentTransaction',
-      api: api,
-      dataSource: dynamoDbDataSource,
-      code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.deleteInvestmentTransaction.js')),
-      runtime: FunctionRuntime.JS_1_0_0,
-    });
-
-    const passthrough = InlineCode.fromInline(`
-        // The before step
-        export function request(...args) {
-          console.log("📢 Pipeline Request: ", args);
-          return {}
-        }
-
-        // The after step
-        export function response(ctx) {
-          console.log("✅ Pipeline Response: ", ctx.prev.result);
-          return ctx.prev.result
-        }
-    `);
-
-    const createAccountResolver = new Resolver(this, 'createAccountResolver', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'createAccount',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [createAccountFunction],
-      code: passthrough,
-    });
-    const updateAccountResolver = new Resolver(this, 'updateAccountResolver', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'updateAccount',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [updateAccountFunction],
-      code: passthrough,
-    });
-    const getAccountResolver = new Resolver(this, 'getAccountResolver', {
-      api: api,
-      typeName: 'Query',
-      fieldName: 'getAccount',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getAccountFunction],
-      code: passthrough,
-    });
-    const getAccountsResolver = new Resolver(this, 'getAccountsResolver', {
-      api: api,
-      typeName: 'Query',
-      fieldName: 'getAccounts',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getAccountsFunction],
-      code: passthrough,
-    });
-    const getAggregateResolver = new Resolver(this, 'getAggregateResolver', {
-      api: api,
-      typeName: 'Query',
-      fieldName: 'getAggregate',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getAggregateFunction],
-      code: passthrough,
-    });
-    const deleteAccountResolver = new Resolver(this, 'deleteAccountResolver', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'deleteAccount',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getAggregateFunction, deleteAccountFunction],
-      code: passthrough,
-    });
-    const getBankTransactionResolver = new Resolver(this, 'getBankTransactionsResolver', {
-      api: api,
-      typeName: 'Query',
-      fieldName: 'getBankTransactions',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getBankTransactionsFunction],
-      code: passthrough,
-    });
-    const getInvestmentTransactionResolver = new Resolver(this, 'getInvestmentTransactionsResolver', {
-      api: api,
-      typeName: 'Query',
-      fieldName: 'getInvestmentTransactions',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getInvestmentTransactionsFunction],
-      code: passthrough,
-    });
-    const createCategoryResolver = new Resolver(this, 'createCategoryResolver', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'createCategory',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [createCategoryFunction],
-      code: passthrough,
-    });
-    const updateCategoryResolver = new Resolver(this, 'updateCategoryResolver', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'updateCategory',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [updateCategoryFunction],
-      code: passthrough,
-    });
-    const getCategoriesResolver = new Resolver(this, 'getCategoriesResolver', {
-      api: api,
-      typeName: 'Query',
-      fieldName: 'getCategories',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getCategoriesFunction],
-      code: passthrough,
-    });
-    const createPayeeResolver = new Resolver(this, 'createPayeeResolver', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'createPayee',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [createPayeeFunction],
-      code: passthrough,
-    });
-    const updatePayeeResolver = new Resolver(this, 'updatePayeeResolver', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'updatePayee',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [updatePayeeFunction],
-      code: passthrough,
-    });
-    const getPayeesResolver = new Resolver(this, 'getPayeesResolver', {
-      api: api,
-      typeName: 'Query',
-      fieldName: 'getPayees',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getPayeesFunction],
-      code: passthrough,
-    });
-    const createSymbolResolver = new Resolver(this, 'createSymbolResolver', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'createSymbol',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [createSymbolFunction],
-      code: passthrough,
-    });
-    const getSymbolsResolver = new Resolver(this, 'getSymbolsResolver', {
-      api: api,
-      typeName: 'Query',
-      fieldName: 'getSymbols',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [getSymbolsFunction],
-      code: passthrough,
-    });
-    const createBankTransactionResolver = new Resolver(this, 'createBankTransaction', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'createBankTransaction',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [createBankTransaction, publishEvent],
-      code: passthrough,
-    });
-    const updateBankTransactionResolver = new Resolver(this, 'updateBankTransaction', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'updateBankTransaction',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [updateBankTransaction, publishEvent],
-      code: passthrough,
-    });
-    const deleteBankTransactionResolver = new Resolver(this, 'deleteBankTransaction', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'deleteBankTransaction',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [deleteBankTransaction, publishEvent],
-      code: passthrough,
-    });
-    const createInvestmentTransactionResolver = new Resolver(this, 'createInvestmentTransaction', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'createInvestmentTransaction',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [createInvestmentTransaction, publishEvent],
-      code: passthrough,
-    });
-    const updateInvestmentTransactionResolver = new Resolver(this, 'updateInvestmentTransaction', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'updateInvestmentTransaction',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [updateInvestmentTransaction, publishEvent],
-      code: passthrough,
-    });
-    const deleteInvestmentTransactionResolver = new Resolver(this, 'deleteInvestmentTransaction', {
-      api: api,
-      typeName: 'Mutation',
-      fieldName: 'deleteInvestmentTransaction',
-      runtime: FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [deleteInvestmentTransaction, publishEvent],
-      code: passthrough,
+      function: {
+        code: Code.fromAsset(path.join(__dirname, '../src/appsync/build/Mutation.deleteInvestmentTransaction.js')),
+      },
+      resolver: {
+        typeName: 'Mutation',
+        pipelineConfig: {
+          post: [publishEventResolver.function],
+        },
+      },
     });
 
     /***
