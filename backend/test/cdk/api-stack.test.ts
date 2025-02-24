@@ -10,9 +10,10 @@ describe('Api Stack contains expected resources', () => {
     appName: 'pecuniary',
     envName: 'dev',
     params: {
-      dlqNotifications: 'test@test.com',
       userPoolId: 'id',
       dataTableArn: 'arn:aws:dynamodb:us-east-1:123456789012:table/mockTable',
+      updateBankAccountDlqArn: 'arn:aws:sqs:us-east-1:123456789012:queue/mockQueue',
+      updateInvestmentAccountDlqArn: 'arn:aws:sqs:us-east-1:123456789012:queue/mockQueue',
     },
     tags: {
       env: 'dev',
@@ -23,49 +24,6 @@ describe('Api Stack contains expected resources', () => {
   const stack = new ApiStack(app, 'PecuniaryTestStack', props);
 
   const template = Template.fromStack(stack);
-
-  test('should have SQS Queues and SNS Topics', () => {
-    template.hasResourceProperties('AWS::SQS::Queue', Match.objectLike({ QueueName: `pecuniary-${props.envName}-updateBankAccountDLQ` }));
-    template.hasResourceProperties(
-      'AWS::SQS::Queue',
-      Match.objectLike({ QueueName: `pecuniary-${props.envName}-updateInvestmentAccountDLQ` })
-    );
-    template.hasResourceProperties('AWS::SNS::Topic', Match.objectLike({ TopicName: `pecuniary-${props.envName}-updateBankAccountTopic` }));
-    template.hasResourceProperties(
-      'AWS::SNS::Topic',
-      Match.objectLike({ TopicName: `pecuniary-${props.envName}-updateInvestmentAccountTopic` })
-    );
-    template.hasResourceProperties('AWS::SNS::Subscription', Match.objectLike({ Protocol: 'email' }));
-
-    template.hasResourceProperties(
-      'AWS::CloudWatch::Alarm',
-      Match.objectLike({
-        ComparisonOperator: 'GreaterThanOrEqualToThreshold',
-        EvaluationPeriods: 1,
-        AlarmName: `pecuniary-${props.envName}-updateBankAccountAlarm`,
-        DatapointsToAlarm: 1,
-        MetricName: 'ApproximateNumberOfMessagesVisible',
-        Namespace: 'AWS/SQS',
-        Period: 3600,
-        Statistic: 'Sum',
-        Threshold: 1,
-      })
-    );
-    template.hasResourceProperties(
-      'AWS::CloudWatch::Alarm',
-      Match.objectLike({
-        ComparisonOperator: 'GreaterThanOrEqualToThreshold',
-        EvaluationPeriods: 1,
-        AlarmName: `pecuniary-${props.envName}-updateInvestmentAccountAlarm`,
-        DatapointsToAlarm: 1,
-        MetricName: 'ApproximateNumberOfMessagesVisible',
-        Namespace: 'AWS/SQS',
-        Period: 3600,
-        Statistic: 'Sum',
-        Threshold: 1,
-      })
-    );
-  });
 
   test('should have EventBridge', () => {
     template.hasResourceProperties('AWS::Events::EventBus', Match.objectLike({ Name: `pecuniary-bus-${props.envName}` }));
