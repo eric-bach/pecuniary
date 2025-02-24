@@ -10,7 +10,7 @@
 cdk.out
 
 # AppSync
-**/codegen/
+**/codegen/*
 
 # Files to convert to TypeScript - for old client
 !/*client*/src/client.js
