@@ -4,7 +4,7 @@ import { Construct } from 'constructs';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { EmailSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
-import { Alarm, ComparisonOperator, Metric, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
+import { Alarm, ComparisonOperator, Dashboard, GaugeWidget, Metric, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
 import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 
 export class ObservabilityStack extends Stack {
@@ -51,7 +51,7 @@ export class ObservabilityStack extends Stack {
      *** AWS CloudWatch - Alarms
      ***/
 
-    // Generic metric
+    // CloudWatch Metrics
     const updateInvestmentAccountDlqMetric = new Metric({
       namespace: 'AWS/SQS',
       metricName: 'ApproximateNumberOfMessagesVisible',
@@ -61,6 +61,18 @@ export class ObservabilityStack extends Stack {
       period: Duration.minutes(60),
       statistic: 'Sum',
     });
+
+    const updateBankAccountDlqMetric = new Metric({
+      namespace: 'AWS/SQS',
+      metricName: 'ApproximateNumberOfMessagesVisible',
+      dimensionsMap: {
+        QueueName: updateBankAccountDLQ.queueName,
+      },
+      period: Duration.minutes(60),
+      statistic: 'Sum',
+    });
+
+    // CloudWatch Alarms
     const updateInvestmentAccountAlarm = new Alarm(this, 'UpdateInvestmentAccountAlarm', {
       alarmName: `${props.appName}-${props.envName}-updateInvestmentAccountAlarm`,
       alarmDescription: 'Unable to update investment account',
@@ -73,15 +85,6 @@ export class ObservabilityStack extends Stack {
     });
     updateInvestmentAccountAlarm.addAlarmAction(new SnsAction(updateInvestmentAccountTopic));
 
-    const updateBankAccountDlqMetric = new Metric({
-      namespace: 'AWS/SQS',
-      metricName: 'ApproximateNumberOfMessagesVisible',
-      dimensionsMap: {
-        QueueName: updateBankAccountDLQ.queueName,
-      },
-      period: Duration.minutes(60),
-      statistic: 'Sum',
-    });
     const updateBankAccountAlarm = new Alarm(this, 'UpdateBankAccountAlarm', {
       alarmName: `${props.appName}-${props.envName}-updateBankAccountAlarm`,
       alarmDescription: 'Unable to update bank account',
@@ -93,6 +96,27 @@ export class ObservabilityStack extends Stack {
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
     updateBankAccountAlarm.addAlarmAction(new SnsAction(updateBankAccountTopic));
+
+    // CloudWatch Dashboard
+    const dashboard = new Dashboard(this, 'Dashboard', {
+      dashboardName: `${props.appName}-${props.envName}-dashboard`,
+    });
+
+    const bankAccountErrorsWidget = new GaugeWidget({
+      title: 'Bank Account Errors',
+      metrics: [updateBankAccountDlqMetric],
+      width: 6,
+      leftYAxis: { min: 0, max: 100 },
+    });
+
+    const investmentAccountErrorsWidget = new GaugeWidget({
+      title: 'Investment Account Errors',
+      metrics: [updateInvestmentAccountDlqMetric],
+      width: 6,
+      leftYAxis: { min: 0, max: 100 },
+    });
+
+    dashboard.addWidgets(bankAccountErrorsWidget, investmentAccountErrorsWidget);
 
     /***
      *** Outputs

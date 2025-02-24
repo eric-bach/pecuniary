@@ -46,7 +46,6 @@ X UI: Close dropdown after creating a new symbol, payee, category, etc
 
 ##### Current Task
 
-- TD: Create CW dashboard to display DLQ messages and errors
 - TD: Switch to Powertools Logger
 - TD: Remove OTel
 
