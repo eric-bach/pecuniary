@@ -8,11 +8,11 @@ export class PecuniaryAppsyncResolvers extends Construct {
   constructor(scope: Construct, id: string, props: PecuniaryAppsyncResolversProps) {
     super(scope, id);
 
-    const { api, dataSource } = props;
+    const { api, dataSources } = props;
 
     const getAggregateResolver = new AppsyncResolver(this, 'getAggregate', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'getAggregate',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Query.getAggregate.js')),
@@ -24,7 +24,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     const publishEventResolver = new AppsyncResolver(this, 'publishEvent', {
       api,
-      dataSource,
+      dataSource: dataSources.eventBridge,
       name: 'publishEvent',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Event.publishEvent.js')),
@@ -33,7 +33,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'createAccount', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'createAccount',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.createAccount.js')),
@@ -45,7 +45,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'updateAccount', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'updateAccount',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.updateAccount.js')),
@@ -57,7 +57,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'deleteAccount', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'deleteAccount',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.deleteAccount.js')),
@@ -70,7 +70,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'getAccount', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'getAccount',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Query.getAccount.js')),
@@ -82,7 +82,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'getAccounts', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'getAccounts',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Query.getAccounts.js')),
@@ -94,7 +94,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'getBankTransactions', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'getBankTransactions',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Query.getBankTransactions.js')),
@@ -106,7 +106,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'getInvestmentTransactions', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'getInvestmentTransactions',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Query.getInvestmentTransactions.js')),
@@ -118,7 +118,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'createCategory', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'createCategory',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.createCategory.js')),
@@ -130,7 +130,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'updateCategory', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'updateCategory',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.updateCategory.js')),
@@ -142,7 +142,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'getCategories', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'getCategories',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Query.getCategories.js')),
@@ -154,7 +154,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'createPayee', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'createPayee',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.createPayee.js')),
@@ -166,7 +166,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'updatePayee', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'updatePayee',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.updatePayee.js')),
@@ -178,7 +178,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'getPayees', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'getPayees',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Query.getPayees.js')),
@@ -190,7 +190,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'createSymbol', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'createSymbol',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.createSymbol.js')),
@@ -202,7 +202,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'getSymbols', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'getSymbols',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Query.getSymbols.js')),
@@ -214,7 +214,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'createBankTransaction', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'createBankTransaction',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.createBankTransaction.js')),
@@ -229,7 +229,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'updateBankTransaction', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'updateBankTransaction',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.updateBankTransaction.js')),
@@ -244,7 +244,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'deleteBankTransaction', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'deleteBankTransaction',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.deleteBankTransaction.js')),
@@ -259,7 +259,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'createInvestmentTransaction', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'createInvestmentTransaction',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.createInvestmentTransaction.js')),
@@ -274,7 +274,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'updateInvestmentTransaction', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'updateInvestmentTransaction',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.updateInvestmentTransaction.js')),
@@ -289,7 +289,7 @@ export class PecuniaryAppsyncResolvers extends Construct {
 
     new AppsyncResolver(this, 'deleteInvestmentTransaction', {
       api,
-      dataSource,
+      dataSource: dataSources.dynamoDb,
       name: 'deleteInvestmentTransaction',
       function: {
         code: Code.fromAsset(path.join(__dirname, '../../src/appsync/build/Mutation.deleteInvestmentTransaction.js')),

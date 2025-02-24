@@ -6,17 +6,27 @@ export interface PecuniaryBaseStackProps extends StackProps {
   envName: string;
 }
 
-export interface PecuniaryApiStackProps extends PecuniaryBaseStackProps {
+export interface PecuniaryObservabilityStackProps extends PecuniaryBaseStackProps {
   params: {
     dlqNotifications: string;
+  };
+}
+
+export interface PecuniaryApiStackProps extends PecuniaryBaseStackProps {
+  params: {
     userPoolId: string;
     dataTableArn: string;
+    updateBankAccountDlqArn: string;
+    updateInvestmentAccountDlqArn: string;
   };
 }
 
 export interface PecuniaryAppsyncResolversProps {
   api: GraphqlApi;
-  dataSource: BaseDataSource;
+  dataSources: {
+    dynamoDb: BaseDataSource;
+    eventBridge: BaseDataSource;
+  };
 }
 
 export interface AppsyncResolverProps {

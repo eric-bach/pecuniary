@@ -46,9 +46,8 @@ X UI: Close dropdown after creating a new symbol, payee, category, etc
 
 ##### Current Task
 
-- TD: Create L3 constructs for AppSync CDK
 - TD: Create CW dashboard to display DLQ messages and errors
-- TD: Update to use Powertools Logger
+- TD: Switch to Powertools Logger
 
 ##### Future Tasks
 
