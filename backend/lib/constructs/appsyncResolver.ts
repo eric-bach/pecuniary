@@ -1,27 +1,6 @@
 import { Construct } from 'constructs';
-import {
-  AppsyncFunction,
-  BaseDataSource,
-  Code,
-  FunctionRuntime,
-  GraphqlApi,
-  IAppsyncFunction,
-  InlineCode,
-  Resolver,
-} from 'aws-cdk-lib/aws-appsync';
-
-export interface AppsyncResolverProps {
-  api: GraphqlApi;
-  dataSource: BaseDataSource;
-  name: string;
-  function: {
-    code: Code;
-  };
-  resolver?: {
-    typeName: string;
-    pipelineConfig?: { pre?: IAppsyncFunction[]; post?: IAppsyncFunction[] };
-  };
-}
+import { AppsyncFunction, FunctionRuntime, InlineCode, Resolver } from 'aws-cdk-lib/aws-appsync';
+import { AppsyncResolverProps } from '../types/PecuniaryStackProps';
 
 export class AppsyncResolver extends Construct {
   public function: AppsyncFunction;
