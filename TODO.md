@@ -46,17 +46,17 @@ X UI: Close dropdown after creating a new symbol, payee, category, etc
 
 ##### Current Task
 
-- TD: Create CW dashboard to display DLQ messages and errors
-- TD: Update to use Powertools Logger
+- TD: Switch to Powertools Logger
+- TD: Remove OTel
 
 ##### Future Tasks
 
 - UI: Use AI coding tool to revamp UI to be more like Quicken input - bolt.new, tempolabs.ai
   - UI: Style currency input field and remove double tab
+  - UI: Style creatable select to match shadcn
+  - UI: Improve landing page with Bolt
+  - UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
 - Arch: Add manual refresh for account balance and bookValue/marketValue, including positions and networth
-- TD: Create L3 constructs for AppSync CDK
-- UI: Improve landing page with Bolt
-- UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
 - UI: Build dashboard to display account summaries
 - BE: Add more seed data tied to user
 - BE: Build script to generate transaction data from Quicken export
@@ -67,7 +67,6 @@ X UI: Close dropdown after creating a new symbol, payee, category, etc
 - TD: Add additional tests to updateBankAccount and updateInvestmentAccount Lambdas
 - Arch: All account types (banking/investment) requires balance, bookValue, and marketValue to be defined
 - UI: Improve error message when creating/updating items fails
-- UI: Style creatable select to match shadcn
 
 ##### References
 
