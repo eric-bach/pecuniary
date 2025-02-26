@@ -14,6 +14,8 @@ const logger = new Logger({ serviceName: 'updateInvestmentAccount' });
 const lambdaHandler: Handler = async (event: EventBridgeEvent<string, InvestmentTransaction>) => {
   const transaction = parseEvent(event);
 
+  logger.debug('🔔 Received event', { data: transaction });
+
   const { accountId, symbol, userId } = transaction;
 
   // NOTE: This is not the most optimal design but for less than 1,000 transactions the small performance impact outweighs
@@ -260,7 +262,7 @@ async function updateAccount(accountId: string, positions: PositionReadModel[]):
 function parseEvent(event: EventBridgeEvent<string, InvestmentTransaction>): InvestmentTransaction {
   const eventString: string = JSON.stringify(event);
 
-  console.debug(`🕧 Received event: ${eventString}`);
+  logger.debug('Parsing event', { data: eventString });
 
   return JSON.parse(eventString).detail;
 }

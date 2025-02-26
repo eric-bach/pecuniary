@@ -46,7 +46,7 @@ const lambdaHandler = async (event: EventBridgeEvent<string, BankTransaction>): 
 function parseEvent(event: EventBridgeEvent<string, BankTransaction>): BankTransaction {
   const eventString: string = JSON.stringify(event);
 
-  logger.debug(`Parsing event: ${eventString}`);
+  logger.debug('Parsing event', { data: eventString });
 
   return JSON.parse(eventString).detail;
 }
