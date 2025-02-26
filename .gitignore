@@ -22,6 +22,7 @@ aws-exports.js
 
 # Include test configuration
 !jest.config.js
+!babel.config.js
 
 # Exclude cypress test files
 cypress.*.json

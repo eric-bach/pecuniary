@@ -11,8 +11,8 @@ export function request(ctx: Context<string>): DynamoDBBatchDeleteItemRequest {
     runtime.earlyReturn([{}]);
   }
 
-  let data = [];
-  for (var index in aggregates) {
+  const data = [];
+  for (const index in aggregates) {
     data.push(util.dynamodb.toMapValues({ pk: aggregates[index].pk }));
   }
 

@@ -1,13 +1,17 @@
 import { EventBridgeEvent, Handler } from 'aws-lambda';
 import { QueryCommand, QueryCommandInput, AttributeValue, UpdateItemCommandInput, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-
+import { Logger } from '@aws-lambda-powertools/logger';
+import { injectLambdaContext } from '@aws-lambda-powertools/logger/middleware';
+import middy from '@middy/core';
 import { InvestmentTransaction } from '../../appsync/api/codegen/appsync';
 import dynamoDbCommand from '../../utils/dynamoDbClient';
 import { getQuoteSummary } from './utils/yahooFinance';
 import { PositionReadModel } from './types/PositionReadModel';
 
-export const handler: Handler = async (event: EventBridgeEvent<string, InvestmentTransaction>) => {
+const logger = new Logger({ serviceName: 'updateInvestmentAccount' });
+
+const lambdaHandler: Handler = async (event: EventBridgeEvent<string, InvestmentTransaction>) => {
   const transaction = parseEvent(event);
 
   const { accountId, symbol, userId } = transaction;
@@ -260,3 +264,5 @@ function parseEvent(event: EventBridgeEvent<string, InvestmentTransaction>): Inv
 
   return JSON.parse(eventString).detail;
 }
+
+export const handler = middy(lambdaHandler).use(injectLambdaContext(logger));

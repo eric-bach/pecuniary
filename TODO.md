@@ -46,8 +46,10 @@ X UI: Close dropdown after creating a new symbol, payee, category, etc
 
 ##### Current Task
 
-- TD: Switch to Powertools Logger
-- TD: Remove OTel
+X TD: Remove OTel
+X TD: Add Powertools Logger
+
+- TD: Switch logs to powertools Logger
 
 ##### Future Tasks
 

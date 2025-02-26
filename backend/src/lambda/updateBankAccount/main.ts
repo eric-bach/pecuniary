@@ -2,9 +2,14 @@ import { EventBridgeEvent } from 'aws-lambda';
 import { UpdateItemCommandInput, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import dynamoDbCommand from '../../utils/dynamoDbClient';
+import { Logger } from '@aws-lambda-powertools/logger';
+import { injectLambdaContext } from '@aws-lambda-powertools/logger/middleware';
+import middy from '@middy/core';
 import { BankTransaction } from '../../appsync/api/codegen/appsync';
 
-const handler = async (event: EventBridgeEvent<string, BankTransaction>): Promise<UpdateItemCommandInput> => {
+const logger = new Logger({ serviceName: 'updateInvestmentAccount' });
+
+const lambdaHandler = async (event: EventBridgeEvent<string, BankTransaction>): Promise<UpdateItemCommandInput> => {
   const data = parseEvent(event);
 
   console.log(`🔔 Received event: ${JSON.stringify(data)}`);
@@ -41,4 +46,4 @@ function parseEvent(event: EventBridgeEvent<string, BankTransaction>): BankTrans
   return JSON.parse(eventString).detail;
 }
 
-module.exports = { handler };
+export const handler = middy(lambdaHandler).use(injectLambdaContext(logger));
