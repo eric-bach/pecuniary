@@ -1,11 +1,12 @@
 import yahooFinance from 'yahoo-finance2';
 import { HistoricalHistoryResult, HistoricalRowHistory } from 'yahoo-finance2/dist/esm/src/modules/historical';
+import { Logger } from '@aws-lambda-powertools/logger';
+
+const logger = new Logger({ serviceName: 'yahooFinance' });
 
 // Return the quoteSummary
 export async function getQuoteSummary(symbol: string) {
-  console.debug(`Getting quote for ${symbol}`);
-
-  console.log('🕵️ Calling YahooFinance quoteSummary()');
+  logger.debug(`Getting quote for ${symbol}`);
 
   // Get quotes from Yahoo Finance
   // TODO: this is returning ""Unsupported redirect to https://finance.yahoo.com/quote/AAPL/, please report."," and halting the lambda
@@ -15,7 +16,7 @@ export async function getQuoteSummary(symbol: string) {
     modules: ['price'],
   });
 
-  console.log('🕵️ Returned from YahooFinance quoteSummary()', data);
+  logger.debug('🕵️ Returned from YahooFinance quoteSummary()', { data: data });
 
   if (!data || !data.price || !data.price.regularMarketTime) {
     return;
@@ -34,13 +35,13 @@ export async function getQuoteSummary(symbol: string) {
     volume: data.price.regularMarketVolume,
   };
 
-  console.log(`✅ Retrieved quote summary: ${JSON.stringify(result)}`);
+  logger.info('✅ Retrieved quote summary', { data: result });
   return result;
 }
 
 // Return historical quote for date range
 async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
-  console.debug(`Getting quote for ${symbol} from ${startDate} to ${endDate}`);
+  logger.debug(`Getting quote for ${symbol} from ${startDate} to ${endDate}`);
 
   const start = new Date(startDate);
   // Yahoo Finance needs next day
@@ -62,7 +63,7 @@ async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
   data.map((d: HistoricalRowHistory) => {
     const date = d.date.toISOString().substring(0, 10);
 
-    console.debug(`${date}: ${d.close}`);
+    logger.debug(`${date}: ${d.close}`);
 
     result.push({
       date: new Date(date),
@@ -75,6 +76,6 @@ async function getHistorical(symbol: string, startDate: Date, endDate: Date) {
     });
   });
 
-  console.log(`✅ ${JSON.stringify(result)}`);
+  logger.info('✅ Result', { data: result });
   return result;
 }

@@ -32,7 +32,7 @@ const lambdaHandler = async (event: EventBridgeEvent<string, BankTransaction>): 
 
   logger.debug('Updating bank account', { data: input });
 
-  const result = await dynamoDbCommand(new UpdateItemCommand(input));
+  const result = await dynamoDbCommand(logger, new UpdateItemCommand(input));
 
   if (result.$metadata.httpStatusCode !== 200) {
     throw new Error(`🛑 Could not update bank account ${data.accountId}`);

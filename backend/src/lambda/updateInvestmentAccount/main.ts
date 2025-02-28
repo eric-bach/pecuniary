@@ -49,7 +49,7 @@ export async function getTransactions(accountId: string, symbol: string, userId:
       ':v4': { S: symbol },
     },
   };
-  const result = await dynamoDbCommand(new QueryCommand(params));
+  const result = await dynamoDbCommand(logger, new QueryCommand(params));
 
   if (result.$metadata.httpStatusCode === 200) {
     // Sort transactions in ascending order by transactionDate and then createdAt in case multiple transactions with the same transactionDate
@@ -60,7 +60,12 @@ export async function getTransactions(accountId: string, symbol: string, userId:
       }
     );
 
-    console.info(`🔔 Found ${transactions.length} Transactions: ${JSON.stringify(transactions)}`);
+    logger.info('🔔 Found transactions', {
+      data: {
+        transactions: transactions,
+        count: transactions.length,
+      },
+    });
 
     return transactions;
   }
@@ -80,12 +85,12 @@ export async function getPositions(accountId: string, userId: string): Promise<P
       ':v3': { S: 'position' },
     },
   };
-  const result = await dynamoDbCommand(new QueryCommand(params));
+  const result = await dynamoDbCommand(logger, new QueryCommand(params));
 
   if (result.$metadata.httpStatusCode === 200) {
     const positions: PositionReadModel[] = result.Items.map((item: Record<string, AttributeValue>) => unmarshall(item));
 
-    console.info(`🔔 Found ${positions.length} Positions: ${JSON.stringify(positions)}`);
+    logger.info('🔔 Found Positions', { data: { positions: positions, count: positions.length } });
 
     return positions;
   }
@@ -100,7 +105,7 @@ export function calculateBookValue(transactions: InvestmentTransaction[]) {
   for (const t of transactions) {
     const transactionType = t.type.toUpperCase();
 
-    console.debug(`START-${transactionType} ${t.symbol} ${shares} shares`);
+    logger.debug(`START-${transactionType} ${t.symbol} ${shares} shares`);
 
     if (transactionType.localeCompare('buy', undefined, { sensitivity: 'base' }) === 0) {
       // increase bookValue (ACB) by cost of new shares
@@ -118,7 +123,7 @@ export function calculateBookValue(transactions: InvestmentTransaction[]) {
       shares = shares - t.shares;
     }
 
-    console.debug(`END-${transactionType} ${t.symbol} ${shares} shares`);
+    logger.debug(`END-${transactionType} ${t.symbol} ${shares} shares`);
   }
 
   return { shares, bookValue };
@@ -168,7 +173,7 @@ async function updatePosition(
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Creating a new position', position);
+    logger.info('Creating a new position', { data: { position: position } });
 
     positions.push(position);
   } else {
@@ -176,7 +181,7 @@ async function updatePosition(
     position.bookValue = bookValue;
     position.marketValue = marketValue;
 
-    console.log('Updating existing position', position);
+    console.info('Updating existing position', { data: { position: position } });
   }
 
   const updateItemCommandInput: UpdateItemCommandInput = {
@@ -213,12 +218,12 @@ async function updatePosition(
     }),
   };
 
-  console.log(`Saving Position: ${JSON.stringify(updateItemCommandInput)}`);
+  logger.info('Saving Position', { data: updateItemCommandInput });
 
-  const result = await dynamoDbCommand(new UpdateItemCommand(updateItemCommandInput));
+  const result = await dynamoDbCommand(logger, new UpdateItemCommand(updateItemCommandInput));
 
   if (result.$metadata.httpStatusCode === 200) {
-    console.log(`✅ Saved/Updated Position: { result: ${JSON.stringify(result)}`);
+    logger.info('✅ Saved/Updated Position', { result: result });
 
     return position;
   }
@@ -227,13 +232,13 @@ async function updatePosition(
 }
 
 async function updateAccount(accountId: string, positions: PositionReadModel[]): Promise<UpdateItemCommandInput> {
-  console.log(`Updating account for ${positions.length} positions`);
+  logger.info(`Updating account with ${positions.length} positions`);
 
   const bookValue = positions.reduce((sum, pos) => sum + pos.bookValue, 0);
   const marketValue = positions.reduce((sum, pos) => sum + pos.marketValue, 0);
 
-  console.log('Book Value', bookValue);
-  console.log('Market Value', marketValue);
+  logger.debug('Book Value', { bookValue: bookValue });
+  logger.debug('Market Value', { marketValue: marketValue });
 
   // update dynamodb account
   const input: UpdateItemCommandInput = {
@@ -248,9 +253,9 @@ async function updateAccount(accountId: string, positions: PositionReadModel[]):
     ReturnValues: 'UPDATED_NEW',
   };
 
-  console.log(`Updating account: ${JSON.stringify(input)}`);
+  logger.debug('Updating account', { data: input });
 
-  const result = await dynamoDbCommand(new UpdateItemCommand(input));
+  const result = await dynamoDbCommand(logger, new UpdateItemCommand(input));
 
   if (result.$metadata.httpStatusCode !== 200) {
     throw new Error(`🛑 Could not update investment account ${accountId}`);
