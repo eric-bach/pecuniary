@@ -54,6 +54,7 @@ X TD: Add Powertools Logger
 ##### Future Tasks
 
 - UI: Use AI coding tool to revamp UI to be more like Quicken input - bolt.new, tempolabs.ai
+  https://nsui.irung.me/
   - UI: Style currency input field and remove double tab
   - UI: Style creatable select to match shadcn
   - UI: Improve landing page with Bolt
