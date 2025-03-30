@@ -8,7 +8,7 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { injectLambdaContext } from '@aws-lambda-powertools/logger/middleware';
 import middy from '@middy/core';
 
-const logger = new Logger({ serviceName: 'updateInvestmentAccount' });
+const logger = new Logger({ serviceName: 'cognitoPostConfirmation' });
 
 const lambdaHandler: Handler = async (event: PostConfirmationTriggerEvent, _context: Context, callback: Callback): Promise<void> => {
   const { userPoolId, userName } = event;

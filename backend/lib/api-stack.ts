@@ -181,7 +181,7 @@ export class ApiStack extends Stack {
       environment: {
         REGION: Stack.of(this).region,
         DATA_TABLE_NAME: dataTable.tableName,
-        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
+        POWERTOOLS_LOG_LEVEL: 'DEBUG',
       },
       deadLetterQueue: updateInvestmentAccountDlq,
     });
