@@ -1,7 +1,7 @@
 import { CfnOutput, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Table, BillingMode, AttributeType } from 'aws-cdk-lib/aws-dynamodb';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { LayerVersion, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import {
   UserPool,
@@ -33,16 +33,25 @@ export class DataStack extends Stack {
      *** AWS Lambda - Cognito post-confirmation trigger
      ***/
 
+    // AWS Powertools Layer
+    const powertoolsLayer = LayerVersion.fromLayerVersionArn(
+      this,
+      'PowertoolsLayer',
+      `arn:aws:lambda:${Stack.of(this).region}:094274105915:layer:AWSLambdaPowertoolsTypeScriptV2:20`
+    );
+
     // AWS Cognito post-confirmation lambda function
     const cognitoPostConfirmationTrigger = new NodejsFunction(this, 'CognitoPostConfirmationTrigger', {
       runtime: Runtime.NODEJS_22_X,
       functionName: `${props.appName}-${props.envName}-CognitoPostConfirmationTrigger`,
       handler: 'handler',
       entry: path.resolve(__dirname, '../src/lambda/cognitoPostConfirmation/main.ts'),
+      layers: [powertoolsLayer],
       memorySize: 384,
       timeout: Duration.seconds(5),
       environment: {
         REGION: REGION,
+        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
       },
     });
 

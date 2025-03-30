@@ -4,8 +4,13 @@ import {
   AdminAddUserToGroupCommandInput,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { Handler, PostConfirmationTriggerEvent, Context, Callback } from 'aws-lambda';
+import { Logger } from '@aws-lambda-powertools/logger';
+import { injectLambdaContext } from '@aws-lambda-powertools/logger/middleware';
+import middy from '@middy/core';
 
-export const handler: Handler = async (event: PostConfirmationTriggerEvent, _context: Context, callback: Callback): Promise<void> => {
+const logger = new Logger({ serviceName: 'cognitoPostConfirmation' });
+
+const lambdaHandler: Handler = async (event: PostConfirmationTriggerEvent, _context: Context, callback: Callback): Promise<void> => {
   const { userPoolId, userName } = event;
 
   await adminAddUserToGroup({
@@ -52,3 +57,5 @@ export async function adminAddUserToGroup({
   const command = new AdminAddUserToGroupCommand(params);
   return await client.send(command);
 }
+
+export const handler = middy(lambdaHandler).use(injectLambdaContext(logger));

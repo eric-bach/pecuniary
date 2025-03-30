@@ -137,11 +137,11 @@ export class ApiStack extends Stack {
      *** AWS Lambda - Event Handlers
      ***/
 
-    // AWS ADOT Lambda layer
-    const adotJavscriptLayer = LayerVersion.fromLayerVersionArn(
+    // AWS Powertools Layer
+    const powertoolsLayer = LayerVersion.fromLayerVersionArn(
       this,
-      'adotJavascriptLayer',
-      `arn:aws:lambda:${Stack.of(this).region}:901920570463:layer:aws-otel-nodejs-amd64-ver-1-18-1:4`
+      'PowertoolsLayer',
+      `arn:aws:lambda:${Stack.of(this).region}:094274105915:layer:AWSLambdaPowertoolsTypeScriptV2:20`
     );
 
     const updateBankAccountFunction = new NodejsFunction(this, 'UpdateBankAccount', {
@@ -152,11 +152,11 @@ export class ApiStack extends Stack {
       memorySize: 384,
       timeout: Duration.seconds(5),
       tracing: Tracing.ACTIVE,
-      layers: [adotJavscriptLayer],
+      layers: [powertoolsLayer],
       environment: {
         REGION: Stack.of(this).region,
         DATA_TABLE_NAME: dataTable.tableName,
-        AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
+        POWERTOOLS_LOG_LEVEL: 'DEBUG',
       },
       deadLetterQueue: updateBankAccountDlq,
     });
@@ -177,11 +177,11 @@ export class ApiStack extends Stack {
       memorySize: 1024,
       timeout: Duration.seconds(10),
       tracing: Tracing.ACTIVE,
-      // layers: [adotJavscriptLayer],
+      layers: [powertoolsLayer],
       environment: {
         REGION: Stack.of(this).region,
         DATA_TABLE_NAME: dataTable.tableName,
-        // AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
+        POWERTOOLS_LOG_LEVEL: 'DEBUG',
       },
       deadLetterQueue: updateInvestmentAccountDlq,
     });

@@ -1,6 +1,6 @@
 const { EventBridgeClient, PutEventsCommand } = require('@aws-sdk/client-eventbridge');
 
-async function publishEventAsync(detailType: string, detail: any) {
+async function publishEventAsync(logger: any, detailType: string, detail: any) {
   const params = {
     Entries: [
       {
@@ -13,19 +13,19 @@ async function publishEventAsync(detailType: string, detail: any) {
   };
 
   try {
-    console.debug(`🕧 Initializing EventBridge client in ${process.env.REGION}`);
+    logger.debug(`Initializing EventBridge client in ${process.env.REGION}`);
     const client = new EventBridgeClient({ region: process.env.REGION });
 
-    console.debug(`🕧 Sending ${JSON.stringify(params)} event to EventBridge`);
+    logger.debug('Sending event to EventBridge', { event: params });
     const command = new PutEventsCommand(params);
 
     const result = await client.send(command);
-    console.log(`🔔 EventBridge result:\n${JSON.stringify(result)}`);
+    logger.info('🔔 EventBridge result', { data: result });
   } catch (error) {
     throw Error(`🛑 Error sending EventBridge event:\n${error}`);
   }
 
-  console.log(`✅ Sent ${params.Entries.length} event(s) to EventBridge`);
+  logger.info('✅ Sent event(s) to EventBridge', { data: { events: params.Entries.length } });
 }
 
 export default publishEventAsync;
