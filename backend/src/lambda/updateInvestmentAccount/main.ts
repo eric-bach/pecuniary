@@ -181,7 +181,7 @@ async function updatePosition(
     position.bookValue = bookValue;
     position.marketValue = marketValue;
 
-    console.info('Updating existing position', { data: { position: position } });
+    logger.info('Updating existing position', { data: { position: position } });
   }
 
   const updateItemCommandInput: UpdateItemCommandInput = {

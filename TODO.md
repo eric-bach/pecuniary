@@ -46,19 +46,16 @@ X UI: Close dropdown after creating a new symbol, payee, category, etc
 
 ##### Current Task
 
-X TD: Remove OTel
-X TD: Add Powertools Logger
-
-- TD: Switch logs to powertools Logger
+- UI: Switch to NextJS 15 and React 19
+  - UI: Improve landing page with shadcn blocks - https://nsui.irung.me/
+  - UI: Add Amplify UI Authenticator
+- UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
+- UI: Use AI coding tool to revamp UI to be more like Quicken input - bolt.new, tempolabs.ai
+  - UI: Style currency input field and remove double tab
+  - UI: Style creatable select to match shadcn
 
 ##### Future Tasks
 
-- UI: Use AI coding tool to revamp UI to be more like Quicken input - bolt.new, tempolabs.ai
-  https://nsui.irung.me/
-  - UI: Style currency input field and remove double tab
-  - UI: Style creatable select to match shadcn
-  - UI: Improve landing page with Bolt
-  - UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
 - Arch: Add manual refresh for account balance and bookValue/marketValue, including positions and networth
 - UI: Build dashboard to display account summaries
 - BE: Add more seed data tied to user
@@ -68,7 +65,7 @@ X TD: Add Powertools Logger
   - Write script to parse CSV
   - Maintain CSV
 - TD: Add additional tests to updateBankAccount and updateInvestmentAccount Lambdas
-- Arch: All account types (banking/investment) requires balance, bookValue, and marketValue to be defined
+- Arch: Improve design that requires balance, bookValue, and marketValue to be defined for all account types (banking/investment)
 - UI: Improve error message when creating/updating items fails
 
 ##### References
