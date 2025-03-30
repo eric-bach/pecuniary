@@ -2,12 +2,17 @@ import { EventBridgeEvent } from 'aws-lambda';
 import { UpdateItemCommandInput, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall } from '@aws-sdk/util-dynamodb';
 import dynamoDbCommand from '../../utils/dynamoDbClient';
+import { Logger } from '@aws-lambda-powertools/logger';
+import { injectLambdaContext } from '@aws-lambda-powertools/logger/middleware';
+import middy from '@middy/core';
 import { BankTransaction } from '../../appsync/api/codegen/appsync';
 
-const handler = async (event: EventBridgeEvent<string, BankTransaction>): Promise<UpdateItemCommandInput> => {
+const logger = new Logger({ serviceName: 'updateBankAccount' });
+
+const lambdaHandler = async (event: EventBridgeEvent<string, BankTransaction>): Promise<UpdateItemCommandInput> => {
   const data = parseEvent(event);
 
-  console.log(`🔔 Received event: ${JSON.stringify(data)}`);
+  logger.debug('🔔 Received event', { data: data });
 
   if (!data || !data.accountId || !data.amount) {
     throw new Error(`🛑 No data found in event ${data}`);
@@ -24,11 +29,16 @@ const handler = async (event: EventBridgeEvent<string, BankTransaction>): Promis
     }),
     ReturnValues: 'UPDATED_NEW',
   };
-  const result = await dynamoDbCommand(new UpdateItemCommand(input));
+
+  logger.debug('Updating bank account', { data: input });
+
+  const result = await dynamoDbCommand(logger, new UpdateItemCommand(input));
 
   if (result.$metadata.httpStatusCode !== 200) {
     throw new Error(`🛑 Could not update bank account ${data.accountId}`);
   }
+
+  logger.info(`✅ Updated bank account ${data.accountId}`);
 
   return input;
 };
@@ -36,9 +46,9 @@ const handler = async (event: EventBridgeEvent<string, BankTransaction>): Promis
 function parseEvent(event: EventBridgeEvent<string, BankTransaction>): BankTransaction {
   const eventString: string = JSON.stringify(event);
 
-  console.debug(`🕧 Received event: ${eventString}`);
+  logger.debug('Parsing event', { data: eventString });
 
   return JSON.parse(eventString).detail;
 }
 
-module.exports = { handler };
+export const handler = middy(lambdaHandler).use(injectLambdaContext(logger));
