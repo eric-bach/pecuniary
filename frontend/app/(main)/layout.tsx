@@ -5,6 +5,7 @@ import '@aws-amplify/ui-react/styles.css';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import AuthProvider from '@/components/auth/page';
+import RootProviders from '@/providers/root-providers';
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { tokens } = useTheme();
@@ -49,14 +50,16 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <AuthProvider>
-        <SidebarProvider>
-          <AppSidebar />
-          <main className='container mx-auto py-10 px-4 min-h-screen'>{children}</main>
-        </SidebarProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <RootProviders>
+      <ThemeProvider theme={theme}>
+        <AuthProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <main className='container mx-auto py-10 px-4 min-h-screen'>{children}</main>
+          </SidebarProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </RootProviders>
   );
 };
 

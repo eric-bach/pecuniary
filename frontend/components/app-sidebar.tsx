@@ -21,88 +21,29 @@ import { NavUser } from '@/components/nav-user';
 import { PecuniaryLogo } from '@/components/pecuniary-logo';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 
-// This is sample data.
-const data = {
-  teams: [
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    },
-    {
-      name: 'Evil Corp.',
-      logo: Command,
-      plan: 'Free',
-    },
-  ],
-  accounts: [
-    {
-      title: 'Banking',
-      url: '#',
-      icon: Wallet,
-      isActive: true,
-      items: [
-        {
-          title: 'Account 1',
-          url: '#',
-        },
-        {
-          title: 'Account 2',
-          url: '#',
-        },
-        {
-          title: 'Account 3',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Credit Cards',
-      url: '#',
-      icon: CreditCard,
-      items: [],
-    },
-    {
-      title: 'Investments',
-      url: '#',
-      icon: CandlestickChart,
-      items: [],
-    },
-    {
-      title: 'Assets',
-      url: '#',
-      icon: HousePlug,
-      items: [],
-    },
-  ],
-  configuration: [
-    {
-      name: 'Accounts',
-      url: '#',
-      icon: BookUser,
-    },
-    {
-      name: 'Payees',
-      url: '#',
-      icon: Users,
-    },
-    {
-      name: 'Categories',
-      url: '#',
-      icon: SquareMenu,
-    },
-    {
-      name: 'Symbols',
-      url: '#',
-      icon: LineChart,
-    },
-  ],
-};
+// Configuration data
+const configurationData = [
+  {
+    name: 'Accounts',
+    url: '/accounts',
+    icon: BookUser,
+  },
+  {
+    name: 'Payees',
+    url: '/payees',
+    icon: Users,
+  },
+  {
+    name: 'Categories',
+    url: '/categories',
+    icon: SquareMenu,
+  },
+  {
+    name: 'Symbols',
+    url: '/symbols',
+    icon: LineChart,
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -111,8 +52,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <PecuniaryLogo />
       </SidebarHeader>
       <SidebarContent>
-        <NavAccounts items={data.accounts} />
-        <NavConfiguration projects={data.configuration} />
+        <NavAccounts />
+        <NavConfiguration projects={configurationData} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
