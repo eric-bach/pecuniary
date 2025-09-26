@@ -1,175 +1,123 @@
-"use client"
+'use client';
 
-import * as React from "react"
+import * as React from 'react';
 import {
   AudioWaveform,
-  BookOpen,
-  Bot,
+  BookUser,
+  CandlestickChart,
   Command,
-  Frame,
+  CreditCard,
   GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+  HousePlug,
+  LineChart,
+  SquareMenu,
+  Users,
+  Wallet,
+} from 'lucide-react';
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar"
+import { NavAccounts } from '@/components/nav-accounts';
+import { NavConfiguration } from '@/components/nav-configuration';
+import { NavUser } from '@/components/nav-user';
+import { PecuniaryLogo } from '@/components/pecuniary-logo';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
-      name: "Acme Inc",
+      name: 'Acme Inc',
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: 'Enterprise',
     },
     {
-      name: "Acme Corp.",
+      name: 'Acme Corp.',
       logo: AudioWaveform,
-      plan: "Startup",
+      plan: 'Startup',
     },
     {
-      name: "Evil Corp.",
+      name: 'Evil Corp.',
       logo: Command,
-      plan: "Free",
+      plan: 'Free',
     },
   ],
-  navMain: [
+  accounts: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: 'Banking',
+      url: '#',
+      icon: Wallet,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: 'Account 1',
+          url: '#',
         },
         {
-          title: "Starred",
-          url: "#",
+          title: 'Account 2',
+          url: '#',
         },
         {
-          title: "Settings",
-          url: "#",
+          title: 'Account 3',
+          url: '#',
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
+      title: 'Credit Cards',
+      url: '#',
+      icon: CreditCard,
+      items: [],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
+      title: 'Investments',
+      url: '#',
+      icon: CandlestickChart,
+      items: [],
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      title: 'Assets',
+      url: '#',
+      icon: HousePlug,
+      items: [],
     },
   ],
-  projects: [
+  configuration: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
+      name: 'Accounts',
+      url: '#',
+      icon: BookUser,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
+      name: 'Payees',
+      url: '#',
+      icon: Users,
     },
     {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      name: 'Categories',
+      url: '#',
+      icon: SquareMenu,
+    },
+    {
+      name: 'Symbols',
+      url: '#',
+      icon: LineChart,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <PecuniaryLogo />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavAccounts items={data.accounts} />
+        <NavConfiguration projects={data.configuration} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
