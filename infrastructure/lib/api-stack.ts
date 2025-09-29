@@ -50,7 +50,7 @@ export class ApiStack extends Stack {
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
       },
-      definition: Definition.fromFile(path.join(__dirname, '../src/appsync/schema.graphql')),
+      definition: Definition.fromFile(path.join(__dirname, '../../backend/appsync/schema.graphql')),
       environmentVariables: {
         TABLE_NAME: dataTable.tableName,
         EVENTBUS_NAME: eventBus.eventBusName,
@@ -148,7 +148,7 @@ export class ApiStack extends Stack {
       runtime: Runtime.NODEJS_22_X,
       functionName: `${props.appName}-${props.envName}-UpdateBankAccount`,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/updateBankAccount/main.ts'),
+      entry: path.resolve(__dirname, '../../backend/lambda/updateBankAccount/main.ts'),
       memorySize: 384,
       timeout: Duration.seconds(5),
       tracing: Tracing.ACTIVE,
@@ -173,7 +173,7 @@ export class ApiStack extends Stack {
       runtime: Runtime.NODEJS_22_X,
       functionName: `${props.appName}-${props.envName}-UpdateInvestmentAccount`,
       handler: 'handler',
-      entry: path.resolve(__dirname, '../src/lambda/updateInvestmentAccount/main.ts'),
+      entry: path.resolve(__dirname, '../../backend/lambda/updateInvestmentAccount/main.ts'),
       memorySize: 1024,
       timeout: Duration.seconds(10),
       tracing: Tracing.ACTIVE,

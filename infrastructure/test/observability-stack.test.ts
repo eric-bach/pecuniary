@@ -1,7 +1,7 @@
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import * as cdk from 'aws-cdk-lib';
-import { PecuniaryObservabilityStackProps } from '../../lib/types/PecuniaryStackProps';
-import { ObservabilityStack } from '../../lib/observability-stack';
+import { PecuniaryObservabilityStackProps } from '../lib/types/PecuniaryStackProps';
+import { ObservabilityStack } from '../lib/observability-stack';
 
 describe('Api Stack contains expected resources', () => {
   const app = new cdk.App();

@@ -22,8 +22,8 @@ async function seed() {
     const tableName = await getTableName(STACK_NAME);
     console.log(' ✅ Verify table exists:', tableName);
 
-    // Read items to see from data/seeds.json
-    const data: Account[] = getSeedData('./data/seeds.json');
+    // Read items to see from data.json
+    const data: Account[] = getSeedData('./data.json');
     console.log(` ✅ Parsed seed data: ${data.length} objects`);
 
     console.log('\n🚀 Seeding table...\n');
