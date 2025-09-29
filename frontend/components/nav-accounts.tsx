@@ -14,7 +14,7 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Account } from '@/types/account';
+import { Account } from '@/types/generated';
 
 interface AccountCategory {
   title: string;
@@ -50,8 +50,17 @@ const accountCategories: AccountCategory[] = [
 export function NavAccounts() {
   const accountsQuery = useQuery({
     queryKey: ['accounts'],
-    queryFn: () => fetch('/api/accounts').then((res) => res.json()),
+    queryFn: async () => {
+      const response = await fetch('/api/accounts');
+      if (!response.ok) {
+        throw new Error('Failed to fetch accounts');
+      }
+      const data = await response.json();
+      // Handle the new API response format
+      return data.accounts || data; // Fallback for backward compatibility
+    },
     refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
   });
 
   if (accountsQuery.isFetching) {
