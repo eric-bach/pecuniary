@@ -20,7 +20,7 @@
     "install-backend": "find ../backend/lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' -exec echo '💾 Installing {}' ; -execdir sh -c 'npm install' ; && find ./test -mindepth 2 -maxdepth 2 -type f -name 'package.json' -exec echo '💾 Installing {}' ; -execdir sh -c 'npm install' ;",
     "install-frontend": "echo '💾 Installing frontend' && cd ../frontend && npm install",
     "seed": "npm run build && ts-node ./seed/seed.ts",
-    "test": "npm run build && jest --watchAll=false --coverage",
+    "test": "npm run build && npm run build-appsync && jest --watchAll=false --coverage",
     "watch": "tsc -w"
   },
   "devDependencies": {
