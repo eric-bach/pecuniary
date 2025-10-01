@@ -2,22 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { generateClient } from 'aws-amplify/api';
 import { getAccounts, updateAccount, deleteAccount, createAccount } from '@/actions/api/queries';
 import type { Account } from '@/types/account';
+import { CreateAccountInput, UpdateAccountInput } from '@/types/generated';
 
 const client = generateClient();
-
-// Types for mutations
-interface UpdateAccountInput {
-  accountId: string;
-  name: string;
-  type: string;
-  category: string;
-}
-
-interface CreateAccountInput {
-  name: string;
-  type: string;
-  category: string;
-}
 
 // Hook to fetch all accounts
 export function useAccounts() {

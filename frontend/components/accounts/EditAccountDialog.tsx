@@ -78,16 +78,19 @@ export function EditAccountDialog({ account, open, onClose }: EditAccountDialogP
             </div>
 
             <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='category' className='text-right'>
-                Category
-              </Label>
-              <Input
-                id='category'
-                value={category}
-                className='col-span-3 bg-muted text-muted-foreground cursor-not-allowed'
-                readOnly
-                disabled
-              />
+              <Label className='text-right'>Category</Label>
+              <Select value={category} disabled>
+                <SelectTrigger className='col-span-3'>
+                  <SelectValue placeholder='Select a category' />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className='grid grid-cols-4 items-center gap-4'>
