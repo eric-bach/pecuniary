@@ -22,7 +22,7 @@ runs:
     - name: 📥 Install Backend Dependencies
       run: |
         # Install Lambda dependencies
-        find ./src/lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
+        find ./lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
         while IFS= read -r file; do
           echo "💾 Installing dependencies for $file"
           cd "$(dirname "$file")"
