@@ -47,11 +47,6 @@ jobs:
       - name: 📥 Install Infrastructure and Backend
         uses: ./.github/actions/infrastructure
 
-      - name: 🚧 Build AppSync
-        run: |
-          npm run build-appsync
-        working-directory: infrastructure
-
       - name: 🔭 Run CDK Unit Tests
         run: npm run test
         working-directory: infrastructure
