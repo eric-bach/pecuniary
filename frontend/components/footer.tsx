@@ -188,7 +188,7 @@ export default function FooterSection() {
                                 <Input type="email" id="mail" name="mail" placeholder="Your email" className="h-8 text-sm" />
                                 <Button size="sm">Submit</Button>
                             </div>
-                            <span className="text-muted-foreground block text-sm">Don't miss any update!</span>
+                            <span className="text-muted-foreground block text-sm">Don&apos;t miss any update!</span>
                         </div>
                     </form>
                 </div>

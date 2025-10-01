@@ -85,12 +85,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Authenticator formFields={formFields} components={components}>
-      {({ signOut, user }) => (
+      {() => (
         <>
-          {/* <h1>Hello {user?.signInDetails?.loginId}</h1>
-        <button className='primary' onClick={signOut}>
-          Sign out
-        </button> */}
+          {/* Future: Add sign out functionality here if needed */}
           {children}
         </>
       )}

@@ -49,7 +49,7 @@ export function DeleteAccountDialog({ account, open, onClose }: DeleteAccountDia
         <DialogHeader>
           <DialogTitle>Delete Account</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete the account "{account?.name}"? This action cannot be undone and will permanently remove all
+            Are you sure you want to delete the account &quot;{account?.name}&quot;? This action cannot be undone and will permanently remove all
             associated data.
           </DialogDescription>
         </DialogHeader>
