@@ -44,17 +44,17 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      - name: 📥 Install Backend and Sources
-        uses: ./.github/actions/backend
+      - name: 📥 Install Infrastructure and Backend
+        uses: ./.github/actions/infrastructure
 
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
-        working-directory: backend
+        working-directory: infrastructure
 
       - name: 🔭 Run CDK Unit Tests
         run: npm run test
-        working-directory: backend
+        working-directory: infrastructure
 
   integration-tests:
     name: Integration Tests
@@ -133,15 +133,15 @@ jobs:
           VER=`node --version`; echo "Node ver:   $VER"
           VER=`npm --version`; echo "npm ver:    $VER"
 
-      - name: 📥  Install Backend and Sources
-        uses: ./.github/actions/backend
+      - name: 📥  Install Infrastructure and Backend
+        uses: ./.github/actions/infrastructure
 
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
       - name: 🏗 Build Frontend
         run: npm run build-frontend
-        working-directory: backend
+        working-directory: infrastructure
         env:
           NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
           NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
@@ -151,7 +151,7 @@ jobs:
       - name: 🚧 Build AppSync
         run: |
           npm run build-appsync
-        working-directory: backend
+        working-directory: infrastructure
 
       - name: 🚧 Build Backend
         run: |
@@ -168,7 +168,7 @@ jobs:
         run: |
           echo "🚀 Deploying backend dev"
           npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never
-        working-directory: backend
+        working-directory: infrastructure
         env:
           DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
 

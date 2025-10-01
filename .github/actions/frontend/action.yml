@@ -10,13 +10,13 @@ runs:
       id: cdk-cache
       uses: actions/cache@v4
       with:
-        path: backend/node_modules
-        key: backend-${{ hashFiles('backend/package-lock.json') }}
+        path: infrastructure/node_modules
+        key: infrastructure-${{ hashFiles('infrastructure/package-lock.json') }}
 
     - name: 📥 Install CDK
       if: steps.cdk-cache.outputs.cache-hit != 'true'
       run: npm ci
-      working-directory: backend
+      working-directory: infrastructure
       shell: bash
 
     - name: 🔒 Cache Frontend

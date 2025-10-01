@@ -1,6 +1,6 @@
-name: Backend Install
+name: Infrastructure Install
 
-description: 'Installs required dependencies for backend'
+description: 'Installs required dependencies for infrastructure'
 
 runs:
   using: composite
@@ -10,16 +10,16 @@ runs:
       id: cdk-cache
       uses: actions/cache@v4
       with:
-        path: backend/node_modules
-        key: backend-${{ hashFiles('backend/package-lock.json') }}
+        path: infrastructure/node_modules
+        key: infrastructure-${{ hashFiles('infrastructure/package-lock.json') }}
 
-    - name: 📥 Install CDK
+    - name: 📥 Install CDK Dependencies
       if: steps.cdk-cache.outputs.cache-hit != 'true'
       run: npm ci
-      working-directory: backend
+      working-directory: infrastructure
       shell: bash
 
-    - name: 📥 Install Backend
+    - name: 📥 Install Backend Dependencies
       run: |
         # Install Lambda dependencies
         find ./src/lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
