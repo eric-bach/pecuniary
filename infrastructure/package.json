@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "build-appsync": "graphql-codegen && cp ../backend/appsync/api/codegen/appsync.ts ../frontend/types/generated.ts && bash -c \"cd ../backend/appsync && for f in *.ts; do echo '🚧 Building '$f && esbuild \\\"$f\\\" --bundle --sourcemap=inline --sources-content=false --platform=node --target=esnext --format=esm --external:@aws-appsync/utils --resolve-extensions=.ts,.js --outdir=build; done\"",
+    "build-appsync": "graphql-codegen && cp ../backend/appsync/api/codegen/appsync.ts ../frontend/types/generated.ts && cd ../backend/appsync && npx esbuild *.ts --bundle --sourcemap=inline --sources-content=false --platform=node --target=esnext --format=esm --external:@aws-appsync/utils --resolve-extensions=.ts,.js --outdir=build",
     "build-backend": "find ../backend/lambda -mindepth 2 -maxdepth 2 -type f -name 'package.json' -exec echo '🚧 Building {}' ; -execdir sh -c 'npm run build' ;",
     "build-frontend": "echo '🚧 Building frontend' && npm run build --prefix ../frontend",
     "cdk": "cdk",
