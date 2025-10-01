@@ -30,6 +30,8 @@ runs:
       if: steps.frontend-cache.outputs.cache-hit != 'true'
       run: |
         echo "💾 Installing dependencies for ../frontend/package.json"
-        npm ci --prefix ../frontend
+        npm ci --prefix ../frontend --include=optional
+        echo "🔧 Rebuilding native modules"
+        npm rebuild --prefix ../frontend lightningcss 2>/dev/null || true
       working-directory: backend
       shell: bash
