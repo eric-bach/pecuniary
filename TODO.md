@@ -46,10 +46,11 @@ X UI: Close dropdown after creating a new symbol, payee, category, etc
 
 ##### Current Task
 
-- UI: Switch to NextJS 15 and React 19
-  - UI: Improve landing page with shadcn blocks - https://nsui.irung.me/
-  - UI: Add Amplify UI Authenticator
-- UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
+X UI: Switch to NextJS 15 and React 19
+X UI: Improve landing page with shadcn blocks - https://nsui.irung.me/
+X UI: Add Amplify UI Authenticator
+X UI: Switch to use shadcn sidebar - https://ui.shadcn.com/docs/components/sidebar
+
 - UI: Use AI coding tool to revamp UI to be more like Quicken input - bolt.new, tempolabs.ai
   - UI: Style currency input field and remove double tab
   - UI: Style creatable select to match shadcn
