@@ -8,7 +8,7 @@ import { NavConfiguration } from '@/components/nav-configuration';
 import { NavUser } from '@/components/nav-user';
 import { PecuniaryLogo } from '@/components/pecuniary-logo';
 import { ResizableSidebar } from '@/components/resizable-sidebar';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar';
 
 // Configuration data
 const configurationData = [
