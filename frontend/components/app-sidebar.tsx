@@ -1,19 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  AudioWaveform,
-  BookUser,
-  CandlestickChart,
-  Command,
-  CreditCard,
-  GalleryVerticalEnd,
-  HousePlug,
-  LineChart,
-  SquareMenu,
-  Users,
-  Wallet,
-} from 'lucide-react';
+import { BookUser, LineChart, SquareMenu, Users } from 'lucide-react';
 
 import { NavAccounts } from '@/components/nav-accounts';
 import { NavConfiguration } from '@/components/nav-configuration';

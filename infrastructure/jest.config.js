@@ -2,7 +2,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  roots: ['<rootDir>/test', '<rootDir>/src/lambda'],
+  roots: ['<rootDir>/test', '<rootDir>/../backend/test'],
   testMatch: ['**/*.test.ts'],
   transform: {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
@@ -12,4 +12,5 @@ module.exports = {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+  modulePaths: ['<rootDir>/node_modules', '<rootDir>/../backend/test/appsync/node_modules'],
 };
