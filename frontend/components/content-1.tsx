@@ -43,12 +43,11 @@ export default function ContentSection() {
 
                 <div className='mt-6 space-y-3'>
                   <cite className='block font-medium'>John Doe, CEO</cite>
-                  <img
+                  <Image
                     className='h-5 w-fit dark:invert'
                     src='https://html.tailus.io/blocks/customers/nvidia.svg'
                     alt='Nvidia Logo'
                     height='20'
-                    width='auto'
                   />
                 </div>
               </blockquote>
