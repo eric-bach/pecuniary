@@ -57,7 +57,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <div className='flex h-screen w-full'>
               <AppSidebar />
               <main className='flex-1 overflow-auto w-full'>
-                <div className='w-full max-w-none min-h-full'>{children}</div>
+                <div className='w-full max-w-none min-h-full py-6 px-6'>{children}</div>
               </main>
             </div>
           </SidebarProvider>
