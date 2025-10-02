@@ -7,6 +7,7 @@ import { NavAccounts } from '@/components/nav-accounts';
 import { NavConfiguration } from '@/components/nav-configuration';
 import { NavUser } from '@/components/nav-user';
 import { PecuniaryLogo } from '@/components/pecuniary-logo';
+import { ResizableSidebar } from '@/components/resizable-sidebar';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 
 // Configuration data
@@ -35,18 +36,19 @@ const configurationData = [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible='icon' {...props}>
-      <SidebarHeader>
-        <PecuniaryLogo />
-      </SidebarHeader>
-      <SidebarContent>
-        <NavAccounts />
-        <NavConfiguration projects={configurationData} />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+    <ResizableSidebar defaultWidth={280} minWidth={240} maxWidth={480} className='h-screen'>
+      <Sidebar collapsible='none' className='w-full border-none' {...props}>
+        <SidebarHeader>
+          <PecuniaryLogo />
+        </SidebarHeader>
+        <SidebarContent>
+          <NavAccounts />
+          <NavConfiguration projects={configurationData} />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser />
+        </SidebarFooter>
+      </Sidebar>
+    </ResizableSidebar>
   );
 }

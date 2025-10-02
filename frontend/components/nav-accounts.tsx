@@ -34,20 +34,43 @@ const accountCategories: AccountCategory[] = [
     title: 'Credit Cards',
     icon: CreditCard,
     category: 'credit card',
+    isActive: true,
   },
   {
     title: 'Investments',
     icon: CandlestickChart,
     category: 'investment',
+    isActive: true,
   },
   {
     title: 'Assets',
     icon: HousePlug,
     category: 'asset',
+    isActive: true,
   },
 ];
 
 export function NavAccounts() {
+  const formatCurrency = (amount: number | undefined) => {
+    if (typeof amount !== 'number') return '';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const getDisplayValue = (account: Account) => {
+    const category = account.category.toLowerCase();
+    if (category === 'banking' || category === 'credit card') {
+      return formatCurrency(account.balance);
+    } else if (category === 'investment' || category === 'asset') {
+      return formatCurrency(account.marketValue);
+    }
+    return '';
+  };
+
   const accountsQuery = useQuery({
     queryKey: ['accounts'],
     queryFn: async () => {
@@ -92,6 +115,7 @@ export function NavAccounts() {
         .map((account) => ({
           title: account.name,
           url: `/accounts/${account.accountId}`,
+          displayValue: getDisplayValue(account),
         })) || [];
 
     return {
@@ -122,8 +146,11 @@ export function NavAccounts() {
                     category.items.map((account) => (
                       <SidebarMenuSubItem key={account.title}>
                         <SidebarMenuSubButton asChild>
-                          <a href={account.url}>
+                          <a href={account.url} className='flex justify-between items-center w-full'>
                             <span>{account.title}</span>
+                            {account.displayValue && (
+                              <span className='text-xs text-muted-foreground ml-2 tabular-nums'>{account.displayValue}</span>
+                            )}
                           </a>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

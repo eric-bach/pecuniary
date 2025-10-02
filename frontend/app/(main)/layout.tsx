@@ -54,8 +54,12 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       <ThemeProvider theme={theme}>
         <AuthProvider>
           <SidebarProvider>
-            <AppSidebar />
-            <main className='container mx-auto py-10 px-4 min-h-screen'>{children}</main>
+            <div className='flex h-screen'>
+              <AppSidebar />
+              <main className='flex-1 overflow-auto'>
+                <div className='container mx-auto py-10 px-4 min-h-full'>{children}</div>
+              </main>
+            </div>
           </SidebarProvider>
         </AuthProvider>
       </ThemeProvider>
