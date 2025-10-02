@@ -2,7 +2,7 @@ import { AppSyncClient, EvaluateCodeCommand, EvaluateCodeCommandInput } from '@a
 import { readFile } from 'fs/promises';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 
-const file = './src/appsync/build/Query.getPositions.js';
+const file = '../backend/appsync/build/Query.getPositions.js';
 
 const appsync = new AppSyncClient({ region: 'us-east-1' });
 
