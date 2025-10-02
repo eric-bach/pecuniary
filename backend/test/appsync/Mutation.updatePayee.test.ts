@@ -2,7 +2,7 @@ import { AppSyncClient, EvaluateCodeCommand, EvaluateCodeCommandInput } from '@a
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { readFile } from 'fs/promises';
 
-const file = './src/appsync/build/Mutation.updatePayee.js';
+const file = '../backend/appsync/build/Mutation.updatePayee.js';
 
 const appsync = new AppSyncClient({ region: 'us-east-1' });
 

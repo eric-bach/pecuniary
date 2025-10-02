@@ -1,5 +1,5 @@
-import { calculateBookValue } from '../../../src/lambda/updateInvestmentAccount/main';
-import { InvestmentTransaction } from '../../../src/appsync/api/codegen/appsync';
+import { calculateBookValue } from '../../../lambda/updateInvestmentAccount/main';
+import { InvestmentTransaction } from '../../../appsync/api/codegen/appsync';
 
 describe('calculateBookValue', () => {
   it('should handle empty transactions array', () => {

@@ -2,7 +2,7 @@ import { AppSyncClient, EvaluateCodeCommand, EvaluateCodeCommandInput } from '@a
 import { readFile } from 'fs/promises';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 
-const file = './src/appsync/build/Mutation.createCategory.js';
+const file = '../backend/appsync/build/Mutation.createCategory.js';
 
 const appsync = new AppSyncClient({ region: 'us-east-1' });
 

@@ -2,17 +2,8 @@
 
 import { Authenticator, Button, Heading, Image, useAuthenticator, useTheme, View } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
-import { ResourcesConfig } from '@aws-amplify/core';
 import '@aws-amplify/ui-react/styles.css';
-
-const config: ResourcesConfig = {
-  Auth: {
-    Cognito: {
-      userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID!,
-      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID!,
-    },
-  },
-};
+import { config } from '@/awsconfig';
 
 Amplify.configure(config, { ssr: true });
 
@@ -94,12 +85,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Authenticator formFields={formFields} components={components}>
-      {({ signOut, user }) => (
+      {() => (
         <>
-          {/* <h1>Hello {user?.signInDetails?.loginId}</h1>
-        <button className='primary' onClick={signOut}>
-          Sign out
-        </button> */}
+          {/* Future: Add sign out functionality here if needed */}
           {children}
         </>
       )}
