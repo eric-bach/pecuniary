@@ -10,6 +10,7 @@ import {
   AccountRecovery,
   VerificationEmailStyle,
   UserPoolDomain,
+  OAuthScope,
 } from 'aws-cdk-lib/aws-cognito';
 import { PolicyStatement, Policy } from 'aws-cdk-lib/aws-iam';
 import { PecuniaryBaseStackProps } from './types/PecuniaryStackProps';
@@ -37,7 +38,7 @@ export class DataStack extends Stack {
     const powertoolsLayer = LayerVersion.fromLayerVersionArn(
       this,
       'PowertoolsLayer',
-      `arn:aws:lambda:${Stack.of(this).region}:094274105915:layer:AWSLambdaPowertoolsTypeScriptV2:20`
+      `arn:aws:lambda:${Stack.of(this).region}:094274105915:layer:AWSLambdaPowertoolsTypeScriptV2:20`,
     );
 
     // AWS Cognito post-confirmation lambda function
@@ -109,6 +110,18 @@ export class DataStack extends Stack {
       accessTokenValidity: Duration.hours(8),
       idTokenValidity: Duration.hours(8),
       userPool,
+      // generateSecret: true,
+      // oAuth: {
+      //   flows: {
+      //     authorizationCodeGrant: true,
+      //   },
+      //   scopes: [OAuthScope.OPENID, OAuthScope.PROFILE, OAuthScope.EMAIL],
+      //   callbackUrls: [
+      //     'http://localhost:3000/api/auth/callback/cognito', // Local dev (adjust port/path)
+      //     // 'https://your-deployed-domain.com/api/auth/callback/cognito',  // Prod
+      //   ],
+      //   // logoutUrls: ['http://localhost:3000/'],  // Optional
+      // },
     });
 
     // Add permissions to add user to Cognito User Pool
@@ -120,7 +133,7 @@ export class DataStack extends Stack {
             resources: [userPool.userPoolArn],
           }),
         ],
-      })
+      }),
     );
 
     /***
