@@ -2,11 +2,6 @@ import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 
 export default defineSchema({
-  tasks: defineTable({
-    text: v.string(),
-    isCompleted: v.boolean(),
-  }),
-
   accounts: defineTable({
     name: v.string(),
     description: v.optional(v.string()), // Made optional to be safe, but can be required

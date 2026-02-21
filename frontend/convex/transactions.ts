@@ -282,3 +282,37 @@ export const getCategoryBreakdown = query({
     return [...top, { name: 'Other', value: otherTotal }];
   },
 });
+
+export const getCategoryBreakdownByUser = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const accounts = await ctx.db
+      .query('accounts')
+      .withIndex('by_user', (q) => q.eq('userId', args.userId))
+      .collect();
+
+    const totals = new Map<string, number>();
+    for (const account of accounts) {
+      const txs = await ctx.db
+        .query('transactions')
+        .withIndex('by_account', (q) => q.eq('accountId', account._id))
+        .collect();
+      for (const tx of txs) {
+        if (tx.type !== 'debit') continue;
+        const cat = tx.category?.trim() || 'Uncategorized';
+        totals.set(cat, (totals.get(cat) ?? 0) + tx.amount);
+      }
+    }
+
+    const sorted = Array.from(totals.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, value]) => ({ name, value }));
+
+    if (sorted.length <= 6) return sorted;
+    const top = sorted.slice(0, 5);
+    const otherTotal = sorted.slice(5).reduce((s, c) => s + c.value, 0);
+    return [...top, { name: 'Other', value: otherTotal }];
+  },
+});

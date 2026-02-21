@@ -69,21 +69,24 @@ function RouteComponent() {
       </NavbarActions>
 
       {/* Balance Chart */}
-      <Card className='pt-6 mb-6'>
-        <CardContent>
-          <div className='flex justify-between items-start mb-4 px-2'>
-            <div>
-              <div className='text-sm text-gray-500 mb-0.5'>{account?.type ?? ''}</div>
-              <div className='text-xl font-bold text-gray-400'>
+      <Card className='mb-6'>
+        <CardHeader className='pb-2'>
+          <div className='flex items-center justify-between'>
+            <CardTitle className='text-base font-semibold text-gray-700'>Balance</CardTitle>
+            <div className='text-right'>
+              <div className='text-xs text-gray-400 mb-0.5'>{account?.type ?? ''}</div>
+              <span className='text-2xl font-bold text-gray-900'>
                 {balance === undefined
                   ? '$0.00'
                   : (balance < 0 ? '-' : '') +
                     '$' +
                     Math.abs(balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
+              </span>
             </div>
           </div>
-          <div className='h-[250px] w-full mt-4'>
+        </CardHeader>
+        <CardContent>
+          <div className='h-[250px] w-full'>
             {!hasHistory ? (
               <div className='h-full flex items-center justify-center text-sm text-gray-400'>No transaction history yet</div>
             ) : (

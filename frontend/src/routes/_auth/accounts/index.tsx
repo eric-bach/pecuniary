@@ -120,15 +120,15 @@ function AccountsPage() {
       </NavbarActions>
 
       {/* Chart */}
-      <Card className='pt-6 mb-6'>
-        <CardContent>
-          <div className='flex justify-between items-start mb-4 px-2'>
-            <div>
-              <div className='text-xl font-bold text-gray-400'>{formatBalance(totalBalance)}</div>
-            </div>
-            {/* Add chart legends or additional info here if needed */}
+      <Card className='mb-6'>
+        <CardHeader className='pb-2'>
+          <div className='flex items-center justify-between'>
+            <CardTitle className='text-base font-semibold text-gray-700'>Net Worth</CardTitle>
+            <span className='text-2xl font-bold text-gray-900'>{formatBalance(totalBalance)}</span>
           </div>
-          <div className='h-[250px] w-full mt-4'>
+        </CardHeader>
+        <CardContent>
+          <div className='h-[250px] w-full'>
             {!hasHistory ? (
               <div className='h-full flex items-center justify-center text-sm text-gray-400'>No transaction history yet</div>
             ) : (
