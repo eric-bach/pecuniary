@@ -15,25 +15,19 @@ export const Route = createFileRoute('/_auth/accounts/')({
   component: AccountsPage,
 });
 
-const data = [
-  { date: 'Aug 17', value: 745000 },
-  { date: 'Aug 24', value: 752000 },
-  { date: 'Aug 31', value: 760000 },
-  { date: 'Sep 7', value: 765000 },
-  { date: 'Sep 14', value: 769500 },
-];
-
 // Real accounts will be queried from Convex.
 
 function AccountTableSection({
   title,
   accounts,
   colorClass,
+  balances,
   defaultExpanded = true,
 }: {
   title: string;
   accounts: any[];
   colorClass: string;
+  balances: Record<string, number>;
   defaultExpanded?: boolean;
 }) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
@@ -53,7 +47,7 @@ function AccountTableSection({
             {title}
           </h3>
         </div>
-        <div className='font-bold text-xl'>$0.00</div>
+        <div className='font-bold text-xl'>{formatBalance(accounts.reduce((sum, a) => sum + (balances[a._id] ?? 0), 0))}</div>
       </div>
 
       {isExpanded && (
@@ -76,9 +70,7 @@ function AccountTableSection({
                     <div className='text-xs text-gray-500 mt-0.5'>{item.description || item.type}</div>
                   </TableCell>
                   <TableCell className='text-right py-4'>
-                    <div className='font-semibold text-gray-900'>
-                      ${(0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
+                    <div className='font-semibold text-gray-900'>{formatBalance(balances[item._id] ?? 0)}</div>
                     <div className='text-xs text-gray-400 mt-0.5'>-</div>
                   </TableCell>
                 </TableRow>
@@ -91,10 +83,21 @@ function AccountTableSection({
   );
 }
 
+function formatBalance(value: number): string {
+  const abs = Math.abs(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return (value < 0 ? '-' : '') + '$' + abs;
+}
+
 function AccountsPage() {
   const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
   const { user } = useAuthenticator((context) => [context.user]);
   const userAccounts = useQuery(api.accounts.list, user?.username ? { userId: user.username } : 'skip');
+  const balances = useQuery(api.transactions.getBalancesByUser, user?.username ? { userId: user.username } : 'skip') ?? {};
+  const totalHistory = useQuery(api.transactions.getTotalBalanceHistory, user?.username ? { userId: user.username } : 'skip');
+
+  const chartData = totalHistory ?? [];
+  const hasHistory = chartData.length > 0;
+  const totalBalance = Object.values(balances).reduce((s, v) => s + v, 0);
 
   const cashAccounts = userAccounts?.filter((a) => a.type === 'Cash') || [];
   const investmentAccounts = userAccounts?.filter((a) => a.type === 'Investment') || [];
@@ -121,33 +124,42 @@ function AccountsPage() {
         <CardContent>
           <div className='flex justify-between items-start mb-4 px-2'>
             <div>
-              <div className='text-xl font-bold text-gray-400'>$0.00</div>
+              <div className='text-xl font-bold text-gray-400'>{formatBalance(totalBalance)}</div>
             </div>
             {/* Add chart legends or additional info here if needed */}
           </div>
           <div className='h-[250px] w-full mt-4'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <AreaChart data={data} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
-                <defs>
-                  <linearGradient id='colorValue' x1='0' y1='0' x2='0' y2='1'>
-                    <stop offset='5%' stopColor='#bae6fd' stopOpacity={0.8} />
-                    <stop offset='95%' stopColor='#bae6fd' stopOpacity={0.1} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey='date' axisLine={false} tickLine={false} tick={{ fill: '#888888', fontSize: 12 }} dy={10} />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: '#888888', fontSize: 12 }}
-                  tickFormatter={(value) => `$${value / 1000}K`}
-                  domain={['dataMin - 5000', 'auto']}
-                  dx={-10}
-                />
-                <CartesianGrid vertical={false} stroke='#e5e7eb' />
-                <RechartsTooltip />
-                <Area type='monotone' dataKey='value' stroke='#38bdf8' strokeWidth={3} fillOpacity={1} fill='url(#colorValue)' />
-              </AreaChart>
-            </ResponsiveContainer>
+            {!hasHistory ? (
+              <div className='h-full flex items-center justify-center text-sm text-gray-400'>No transaction history yet</div>
+            ) : (
+              <ResponsiveContainer width='100%' height='100%'>
+                <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id='colorValue' x1='0' y1='0' x2='0' y2='1'>
+                      <stop offset='5%' stopColor='#bae6fd' stopOpacity={0.8} />
+                      <stop offset='95%' stopColor='#bae6fd' stopOpacity={0.1} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey='date' axisLine={false} tickLine={false} tick={{ fill: '#888888', fontSize: 12 }} dy={10} />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#888888', fontSize: 12 }}
+                    tickFormatter={(v) => (v >= 1000 || v <= -1000 ? `$${(v / 1000).toFixed(1)}K` : `$${v}`)}
+                    domain={['auto', 'auto']}
+                    dx={-10}
+                  />
+                  <CartesianGrid vertical={false} stroke='#e5e7eb' />
+                  <RechartsTooltip
+                    formatter={(v: number) => [
+                      `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                      'Balance',
+                    ]}
+                  />
+                  <Area type='monotone' dataKey='balance' stroke='#38bdf8' strokeWidth={3} fillOpacity={1} fill='url(#colorValue)' />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -155,11 +167,11 @@ function AccountsPage() {
       <div className='grid gap-6 md:grid-cols-3'>
         {/* Left Column: Accounts List */}
         <div className='md:col-span-2'>
-          <AccountTableSection title='Cash' accounts={cashAccounts} colorClass='bg-emerald-600' />
-          <AccountTableSection title='Credit Cards' accounts={creditCardAccounts} colorClass='bg-red-500' />
-          <AccountTableSection title='Investments' accounts={investmentAccounts} colorClass='bg-blue-600' />
-          <AccountTableSection title='Real Estate' accounts={realEstateAccounts} colorClass='bg-purple-600' />
-          <AccountTableSection title='Loans' accounts={loanAccounts} colorClass='bg-orange-500' />
+          <AccountTableSection title='Cash' accounts={cashAccounts} colorClass='bg-emerald-600' balances={balances} />
+          <AccountTableSection title='Credit Cards' accounts={creditCardAccounts} colorClass='bg-red-500' balances={balances} />
+          <AccountTableSection title='Investments' accounts={investmentAccounts} colorClass='bg-blue-600' balances={balances} />
+          <AccountTableSection title='Real Estate' accounts={realEstateAccounts} colorClass='bg-purple-600' balances={balances} />
+          <AccountTableSection title='Loans' accounts={loanAccounts} colorClass='bg-orange-500' balances={balances} />
         </div>
 
         {/* Right Column: Summary Box */}
@@ -167,71 +179,91 @@ function AccountsPage() {
           <Card className='shadow-sm border-gray-100'>
             <CardHeader className='flex flex-row items-center justify-between pb-4'>
               <CardTitle className='text-xl font-bold'>Summary</CardTitle>
-              <div className='flex space-x-1 text-[10px] bg-gray-100 p-0.5 rounded-md'>
-                <button className='font-semibold bg-white shadow-sm px-2.5 py-1 rounded text-gray-900'>Totals</button>
-                <button className='text-gray-500 hover:text-gray-900 px-2.5 py-1 rounded transition-colors'>Percent</button>
-              </div>
             </CardHeader>
             <CardContent className='space-y-8'>
               {/* Assets Breakdown */}
               <div className='space-y-3'>
-                <div className='flex justify-between items-center text-sm font-bold text-gray-900'>
-                  <span>Assets</span>
-                  <span>$0.00</span>
-                </div>
-                {/* Progress Bar Container */}
-                <div className='h-2.5 w-full rounded-full bg-gray-100 overflow-hidden flex gap-0.5'></div>
-                {/* Legend */}
-                <div className='space-y-2.5 pt-3'>
-                  <div className='flex justify-between items-center text-sm'>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-2 h-2 rounded-full bg-[#27AE60]'></div>
-                      <span className='text-gray-600'>Cash</span>
-                    </div>
-                    <span className='font-medium text-gray-900'>$0.00</span>
-                  </div>
-                  <div className='flex justify-between items-center text-sm'>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-2 h-2 rounded-full bg-[#56CCF2]'></div>
-                      <span className='text-gray-600'>Investments</span>
-                    </div>
-                    <span className='font-medium text-gray-900'>$0.00</span>
-                  </div>
-                  <div className='flex justify-between items-center text-sm'>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-2 h-2 rounded-full bg-[#9B51E0]'></div>
-                      <span className='text-gray-600'>Real Estate</span>
-                    </div>
-                    <span className='font-medium text-gray-900'>$0.00</span>
-                  </div>
-                </div>
+                {(() => {
+                  const cash = cashAccounts.reduce((s, a) => s + (balances[a._id] ?? 0), 0);
+                  const investments = investmentAccounts.reduce((s, a) => s + (balances[a._id] ?? 0), 0);
+                  const realEstate = realEstateAccounts.reduce((s, a) => s + (balances[a._id] ?? 0), 0);
+                  const total = cash + investments + realEstate;
+                  const pct = (v: number) => (total > 0 ? `${((v / total) * 100).toFixed(1)}%` : '0%');
+                  return (
+                    <>
+                      <div className='flex justify-between items-center text-sm font-bold text-gray-900'>
+                        <span>Assets</span>
+                        <span>{formatBalance(total)}</span>
+                      </div>
+                      <div className='h-2.5 w-full rounded-full bg-gray-100 overflow-hidden flex gap-0.5'>
+                        {total > 0 && <div className='h-full bg-[#27AE60] rounded-full' style={{ width: pct(cash) }} />}
+                        {total > 0 && <div className='h-full bg-[#56CCF2] rounded-full' style={{ width: pct(investments) }} />}
+                        {total > 0 && <div className='h-full bg-[#9B51E0] rounded-full' style={{ width: pct(realEstate) }} />}
+                      </div>
+                      <div className='space-y-2.5 pt-3'>
+                        <div className='flex justify-between items-center text-sm'>
+                          <div className='flex items-center gap-2'>
+                            <div className='w-2 h-2 rounded-full bg-[#27AE60]'></div>
+                            <span className='text-gray-600'>Cash</span>
+                          </div>
+                          <span className='font-medium text-gray-900'>{formatBalance(cash)}</span>
+                        </div>
+                        <div className='flex justify-between items-center text-sm'>
+                          <div className='flex items-center gap-2'>
+                            <div className='w-2 h-2 rounded-full bg-[#56CCF2]'></div>
+                            <span className='text-gray-600'>Investments</span>
+                          </div>
+                          <span className='font-medium text-gray-900'>{formatBalance(investments)}</span>
+                        </div>
+                        <div className='flex justify-between items-center text-sm'>
+                          <div className='flex items-center gap-2'>
+                            <div className='w-2 h-2 rounded-full bg-[#9B51E0]'></div>
+                            <span className='text-gray-600'>Real Estate</span>
+                          </div>
+                          <span className='font-medium text-gray-900'>{formatBalance(realEstate)}</span>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
 
               {/* Liabilities Breakdown */}
               <div className='space-y-3 pt-2'>
-                <div className='flex justify-between items-center text-sm font-bold text-gray-900'>
-                  <span>Liabilities</span>
-                  <span>$0.00</span>
-                </div>
-                {/* Progress Bar Container */}
-                <div className='h-2.5 w-full rounded-full bg-gray-100 overflow-hidden flex gap-0.5'></div>
-                {/* Legend */}
-                <div className='space-y-2.5 pt-3'>
-                  <div className='flex justify-between items-center text-sm'>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-2 h-2 rounded-full bg-[#EB5757]'></div>
-                      <span className='text-gray-600'>Credit Cards</span>
-                    </div>
-                    <span className='font-medium text-gray-900'>$0.00</span>
-                  </div>
-                  <div className='flex justify-between items-center text-sm'>
-                    <div className='flex items-center gap-2'>
-                      <div className='w-2 h-2 rounded-full bg-[#F2C94C]'></div>
-                      <span className='text-gray-600'>Loans</span>
-                    </div>
-                    <span className='font-medium text-gray-900'>$0.00</span>
-                  </div>
-                </div>
+                {(() => {
+                  const creditCards = creditCardAccounts.reduce((s, a) => s + (balances[a._id] ?? 0), 0);
+                  const loans = loanAccounts.reduce((s, a) => s + (balances[a._id] ?? 0), 0);
+                  const total = creditCards + loans;
+                  const pct = (v: number) => (total !== 0 ? `${(Math.abs(v / total) * 100).toFixed(1)}%` : '0%');
+                  return (
+                    <>
+                      <div className='flex justify-between items-center text-sm font-bold text-gray-900'>
+                        <span>Liabilities</span>
+                        <span>{formatBalance(total)}</span>
+                      </div>
+                      <div className='h-2.5 w-full rounded-full bg-gray-100 overflow-hidden flex gap-0.5'>
+                        {total !== 0 && <div className='h-full bg-[#EB5757] rounded-full' style={{ width: pct(creditCards) }} />}
+                        {total !== 0 && <div className='h-full bg-[#F2C94C] rounded-full' style={{ width: pct(loans) }} />}
+                      </div>
+                      <div className='space-y-2.5 pt-3'>
+                        <div className='flex justify-between items-center text-sm'>
+                          <div className='flex items-center gap-2'>
+                            <div className='w-2 h-2 rounded-full bg-[#EB5757]'></div>
+                            <span className='text-gray-600'>Credit Cards</span>
+                          </div>
+                          <span className='font-medium text-gray-900'>{formatBalance(creditCards)}</span>
+                        </div>
+                        <div className='flex justify-between items-center text-sm'>
+                          <div className='flex items-center gap-2'>
+                            <div className='w-2 h-2 rounded-full bg-[#F2C94C]'></div>
+                            <span className='text-gray-600'>Loans</span>
+                          </div>
+                          <span className='font-medium text-gray-900'>{formatBalance(loans)}</span>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </CardContent>
           </Card>

@@ -79,7 +79,7 @@ export function AddAccountSheet({ open, onOpenChange }: AddAccountSheetProps) {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder='e.g., Chase Checking' {...field} />
+                    <Input placeholder='Checking Account' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -118,19 +118,19 @@ export function AddAccountSheet({ open, onOpenChange }: AddAccountSheetProps) {
                 <FormItem>
                   <FormLabel>Description (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder='e.g., Joint checking account' {...field} />
+                    <Input placeholder='My checking account' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className='flex justify-end pt-4 space-x-2'>
-              <Button type='button' variant='outline' onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-                Cancel
-              </Button>
+            <div className='flex justify-start pt-4 space-x-2'>
               <Button type='submit' disabled={isSubmitting} className='bg-[#0067c0] hover:bg-[#0067c0]/80'>
                 {isSubmitting ? 'Saving...' : 'Save'}
+              </Button>
+              <Button type='button' variant='outline' onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+                Cancel
               </Button>
             </div>
           </form>

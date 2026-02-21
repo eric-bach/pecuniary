@@ -26,6 +26,7 @@
     "aws-amplify": "^6.16.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "convex": "^1.32.0",
     "lucide-react": "^0.574.0",
     "radix-ui": "^1.4.3",
