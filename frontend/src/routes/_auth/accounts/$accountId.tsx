@@ -32,7 +32,14 @@ function RouteComponent() {
   const { accountId } = Route.useParams();
   const { user } = useAuthenticator((context) => [context.user]);
   const account = useQuery(api.accounts.get, { accountId: accountId as Id<'accounts'> });
-  const transactions = useQuery(api.transactions.listByAccount, { accountId: accountId as Id<'accounts'> });
+  const rawTransactions = useQuery(api.transactions.listByAccount, { accountId: accountId as Id<'accounts'> });
+  // Sort newest first by date string, then by creation time as tiebreaker
+  const transactions = rawTransactions
+    ? [...rawTransactions].sort((a, b) => {
+        const dateDiff = b.date.localeCompare(a.date);
+        return dateDiff !== 0 ? dateDiff : b._creationTime - a._creationTime;
+      })
+    : undefined;
   const balance = useQuery(api.transactions.getBalance, { accountId: accountId as Id<'accounts'> });
   const balanceHistory = useQuery(api.transactions.getBalanceHistory, { accountId: accountId as Id<'accounts'> });
   const categoryBreakdown = useQuery(api.transactions.getCategoryBreakdown, { accountId: accountId as Id<'accounts'> });
@@ -127,49 +134,57 @@ function RouteComponent() {
                 Add Transaction
               </Button>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow className='border-b border-gray-100'>
-                    <TableHead className='text-xs text-gray-500 font-semibold'>Date</TableHead>
-                    <TableHead className='text-xs text-gray-500 font-semibold'>Description</TableHead>
-                    <TableHead className='text-xs text-gray-500 font-semibold'>Category</TableHead>
-                    <TableHead className='text-xs text-gray-500 font-semibold text-right'>Amount</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {transactions === undefined ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className='text-center text-gray-400 py-12 text-sm'>
-                        Loading...
-                      </TableCell>
+            <CardContent className='p-0'>
+              {/* Sticky header + scrollable body */}
+              <div className='overflow-auto max-h-[560px]'>
+                <Table>
+                  <TableHeader className='sticky top-0 z-10 bg-white'>
+                    <TableRow className='border-b border-gray-100'>
+                      <TableHead className='text-xs text-gray-500 font-semibold pl-6'>Date</TableHead>
+                      <TableHead className='text-xs text-gray-500 font-semibold'>Payee / Description</TableHead>
+                      <TableHead className='text-xs text-gray-500 font-semibold'>Category</TableHead>
+                      <TableHead className='text-xs text-gray-500 font-semibold text-right pr-6'>Amount</TableHead>
                     </TableRow>
-                  ) : transactions.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className='text-center text-gray-400 py-12 text-sm'>
-                        No transactions yet
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    transactions.map((tx) => (
-                      <TableRow key={tx._id} className='hover:bg-gray-50/50'>
-                        <TableCell className='text-sm text-gray-600 py-3 whitespace-nowrap'>{tx.date}</TableCell>
-                        <TableCell className='text-sm py-3'>
-                          <div className='font-medium text-gray-900'>{tx.payee}</div>
-                          {tx.description && <div className='text-xs text-gray-400 mt-0.5'>{tx.description}</div>}
-                        </TableCell>
-                        <TableCell className='text-sm text-gray-500 py-3'>{tx.category ?? '—'}</TableCell>
-                        <TableCell className='text-sm text-right py-3 font-semibold'>
-                          <span className={tx.type === 'credit' ? 'text-emerald-600' : 'text-red-500'}>
-                            {tx.type === 'credit' ? '+' : '-'}$
-                            {tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </span>
+                  </TableHeader>
+                  <TableBody>
+                    {transactions === undefined ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className='text-center text-gray-400 py-12 text-sm'>
+                          Loading...
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                    ) : transactions.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className='text-center text-gray-400 py-12 text-sm'>
+                          No transactions yet
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      transactions.map((tx) => (
+                        <TableRow key={tx._id} className='hover:bg-gray-50/50'>
+                          <TableCell className='text-sm text-gray-600 py-3 whitespace-nowrap pl-6'>{tx.date}</TableCell>
+                          <TableCell className='text-sm py-3'>
+                            <div className='font-medium text-gray-900'>{tx.payee}</div>
+                            {tx.description && <div className='text-xs text-gray-400 mt-0.5'>{tx.description}</div>}
+                          </TableCell>
+                          <TableCell className='text-sm text-gray-500 py-3'>{tx.category ?? '—'}</TableCell>
+                          <TableCell className='text-sm text-right py-3 pr-6 font-semibold'>
+                            <span className={tx.type === 'credit' ? 'text-emerald-600' : 'text-red-500'}>
+                              {tx.type === 'credit' ? '+' : '-'}$
+                              {tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              {transactions && transactions.length > 0 && (
+                <div className='px-6 py-2.5 border-t border-gray-100 text-xs text-gray-400'>
+                  {transactions.length} transaction{transactions.length !== 1 ? 's' : ''}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

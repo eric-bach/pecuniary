@@ -175,6 +175,83 @@ export const getPayeeSuggestions = query({
   },
 });
 
+export const getRecentByUser = query({
+  args: {
+    userId: v.string(),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const accounts = await ctx.db
+      .query('accounts')
+      .withIndex('by_user', (q) => q.eq('userId', args.userId))
+      .collect();
+
+    const allTxs: Array<{
+      _id: string;
+      accountId: string;
+      accountName: string;
+      date: string;
+      payee: string;
+      description?: string;
+      category?: string;
+      type: 'debit' | 'credit';
+      amount: number;
+      _creationTime: number;
+    }> = [];
+
+    const accountMap = new Map(accounts.map((a) => [a._id, a.name]));
+
+    for (const account of accounts) {
+      const txs = await ctx.db
+        .query('transactions')
+        .withIndex('by_account', (q) => q.eq('accountId', account._id))
+        .order('desc')
+        .take(args.limit ?? 10);
+      for (const tx of txs) {
+        allTxs.push({ ...tx, accountName: accountMap.get(tx.accountId) ?? '' });
+      }
+    }
+
+    // Sort by creation time descending and take the limit
+    allTxs.sort((a, b) => b._creationTime - a._creationTime);
+    return allTxs.slice(0, args.limit ?? 10);
+  },
+});
+
+export const getSpendingByMonth = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const accounts = await ctx.db
+      .query('accounts')
+      .withIndex('by_user', (q) => q.eq('userId', args.userId))
+      .collect();
+
+    const allTxs: Array<{ date: string; type: 'debit' | 'credit'; amount: number }> = [];
+    for (const account of accounts) {
+      const txs = await ctx.db
+        .query('transactions')
+        .withIndex('by_account', (q) => q.eq('accountId', account._id))
+        .collect();
+      allTxs.push(...txs);
+    }
+
+    // Group spending (debits) by YYYY-MM month
+    const monthMap = new Map<string, number>();
+    for (const tx of allTxs) {
+      if (tx.type !== 'debit') continue;
+      const month = tx.date.substring(0, 7); // "YYYY-MM"
+      monthMap.set(month, (monthMap.get(month) ?? 0) + tx.amount);
+    }
+
+    // Return sorted ascending
+    return Array.from(monthMap.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([month, total]) => ({ month, total }));
+  },
+});
+
 export const getCategoryBreakdown = query({
   args: {
     accountId: v.id('accounts'),
