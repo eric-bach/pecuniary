@@ -1,15 +1,18 @@
 // src/routes/__root.tsx
 /// <reference types="vite/client" />
 import type { ReactNode } from 'react';
-import { Outlet, createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
+import { QueryClient } from '@tanstack/react-query';
+import { createRootRouteWithContext } from '@tanstack/react-router';
+import { Outlet, HeadContent, Scripts } from '@tanstack/react-router';
 import { Amplify } from 'aws-amplify';
-import '@aws-amplify/ui-react/styles.css';
 import { config } from '../amplify-config';
 import appCss from '../index.css?url';
 
 Amplify.configure(config);
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   head: () => ({
     meta: [
       {
@@ -23,7 +26,10 @@ export const Route = createRootRoute({
         title: 'Pecuniary',
       },
     ],
-    links: [{ rel: 'stylesheet', href: appCss }],
+    links: [
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'icon', href: '/favicon.ico' },
+    ],
   }),
   component: RootComponent,
 });

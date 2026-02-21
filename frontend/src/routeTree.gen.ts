@@ -11,8 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthTestIndexRouteImport } from './routes/_auth/test/index'
 import { Route as AuthDashboardIndexRouteImport } from './routes/_auth/dashboard/index'
+import { Route as AuthAccountsIndexRouteImport } from './routes/_auth/accounts/index'
+import { Route as AuthAccountsAccountIdRouteImport } from './routes/_auth/accounts/$accountId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -23,40 +24,54 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthTestIndexRoute = AuthTestIndexRouteImport.update({
-  id: '/test/',
-  path: '/test/',
-  getParentRoute: () => AuthRoute,
-} as any)
 const AuthDashboardIndexRoute = AuthDashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthAccountsIndexRoute = AuthAccountsIndexRouteImport.update({
+  id: '/accounts/',
+  path: '/accounts/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthAccountsAccountIdRoute = AuthAccountsAccountIdRouteImport.update({
+  id: '/accounts/$accountId',
+  path: '/accounts/$accountId',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accounts/$accountId': typeof AuthAccountsAccountIdRoute
+  '/accounts/': typeof AuthAccountsIndexRoute
   '/dashboard/': typeof AuthDashboardIndexRoute
-  '/test/': typeof AuthTestIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accounts/$accountId': typeof AuthAccountsAccountIdRoute
+  '/accounts': typeof AuthAccountsIndexRoute
   '/dashboard': typeof AuthDashboardIndexRoute
-  '/test': typeof AuthTestIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
+  '/_auth/accounts/$accountId': typeof AuthAccountsAccountIdRoute
+  '/_auth/accounts/': typeof AuthAccountsIndexRoute
   '/_auth/dashboard/': typeof AuthDashboardIndexRoute
-  '/_auth/test/': typeof AuthTestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard/' | '/test/'
+  fullPaths: '/' | '/accounts/$accountId' | '/accounts/' | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/test'
-  id: '__root__' | '/' | '/_auth' | '/_auth/dashboard/' | '/_auth/test/'
+  to: '/' | '/accounts/$accountId' | '/accounts' | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/_auth/accounts/$accountId'
+    | '/_auth/accounts/'
+    | '/_auth/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,13 +95,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/test/': {
-      id: '/_auth/test/'
-      path: '/test'
-      fullPath: '/test/'
-      preLoaderRoute: typeof AuthTestIndexRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/_auth/dashboard/': {
       id: '/_auth/dashboard/'
       path: '/dashboard'
@@ -94,17 +102,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardIndexRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/accounts/': {
+      id: '/_auth/accounts/'
+      path: '/accounts'
+      fullPath: '/accounts/'
+      preLoaderRoute: typeof AuthAccountsIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/accounts/$accountId': {
+      id: '/_auth/accounts/$accountId'
+      path: '/accounts/$accountId'
+      fullPath: '/accounts/$accountId'
+      preLoaderRoute: typeof AuthAccountsAccountIdRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
+  AuthAccountsAccountIdRoute: typeof AuthAccountsAccountIdRoute
+  AuthAccountsIndexRoute: typeof AuthAccountsIndexRoute
   AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
-  AuthTestIndexRoute: typeof AuthTestIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthAccountsAccountIdRoute: AuthAccountsAccountIdRoute,
+  AuthAccountsIndexRoute: AuthAccountsIndexRoute,
   AuthDashboardIndexRoute: AuthDashboardIndexRoute,
-  AuthTestIndexRoute: AuthTestIndexRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
