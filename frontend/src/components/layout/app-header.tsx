@@ -19,12 +19,9 @@ export function AppHeader() {
       </div>
 
       {/* Portals Target Container */}
-      <div className='flex flex-1 items-center justify-between px-4'>
+      <div className='flex flex-1 items-center justify-between pl-4 pr-4'>
         <div id='navbar-page-title' className='font-semibold text-lg flex items-center'></div>
-        <div className='flex items-center gap-3'>
-          <div id='navbar-page-actions' className='flex items-center gap-2'></div>
-          <div id='navbar-page-actions' className='flex items-center gap-2'></div>
-        </div>
+        <div id='navbar-page-actions' className='flex items-center gap-2'></div>
       </div>
     </header>
   );

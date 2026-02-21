@@ -5,6 +5,7 @@ import { useQuery } from 'convex/react';
 
 import { api } from '../../../../convex/_generated/api';
 import type { Id } from '../../../../convex/_generated/dataModel';
+import { Pencil } from 'lucide-react';
 
 export const Route = createFileRoute('/_auth/accounts/$accountId')({
   component: RouteComponent,
@@ -27,7 +28,8 @@ function RouteComponent() {
       </NavbarTitle>
       <NavbarActions>
         <Button size='sm' className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none'>
-          Edit
+          <Pencil className='h-3.5 w-3.5 mr-1.5' />
+          Edit Account
         </Button>
       </NavbarActions>
       <div>Hello "/_auth/accounts/$accountId"!</div>
