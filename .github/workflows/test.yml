@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    name: Test & Debug
+    name: Test
     runs-on: ubuntu-latest
     environment: dev
     permissions:

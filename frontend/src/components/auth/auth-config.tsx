@@ -8,8 +8,6 @@ const turnstileSiteKey =
     ? '1x00000000000000000000AA'
     : (import.meta as any).env.VITE_TURNSTILE_SITE_KEY!;
 
-console.log('Turnstile Site Key:', turnstileSiteKey);
-
 export const formFields = {
   signUp: {
     username: {
