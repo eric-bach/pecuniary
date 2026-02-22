@@ -108,6 +108,7 @@ jobs:
 
       - name: 🚀 Deploy Frontend to Cloudflare Pages (preview)
         run: |
+          cp public/_redirects dist/client/_redirects
           npx wrangler pages project create pecuniary --production-branch=main 2>/dev/null || true
           npx wrangler pages deploy dist/client --project-name=pecuniary
         working-directory: frontend
