@@ -137,9 +137,10 @@ jobs:
       - name: 🏗 Build Frontend
         run: npm run build-frontend
         working-directory: infrastructure
-        env:
-          NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
-          NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
+        # env:
+        #   VITE_COGNITO_USERPOOL_ID: ${{ secrets.USER_POOL_ID }}
+        #   VITE_COGNITO_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
+        #   VITE_TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
 
       - name: 🚧 Build Backend
         run: |

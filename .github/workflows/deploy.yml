@@ -72,9 +72,6 @@ jobs:
             cd - >/dev/null
           done
         working-directory: backend
-        env:
-          CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
-          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
 
       - name: 🚀 Deploy Backend
         run: |

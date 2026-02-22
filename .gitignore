@@ -1,42 +1,60 @@
+# Dependencies
 *.js
 *.d.ts
 !remoteTypes.d.ts
 **/node_modules/
+.pnp
+.pnp.js
 /client/build
 **/dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # CDK asset staging directory
 .cdk.staging
 cdk.out
 
-# AppSync
-**/codegen/*
-
-# Files to convert to TypeScript - for old client
-!/*client*/src/client.js
-!/*client*/src/utils/Session.js
-
 # Exclude configuration files (provided with *.example files)
-.env*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+*.env.*
 aws-exports.js
 
-# Include test configuration
-!jest.config.js
-!babel.config.js
+# Testing
+coverage
 
-# Exclude cypress test files
-cypress.*.json
-**/cypress/videos/
-**/coverage
+# Build
+dist
+dist-ssr
+build
+.vinxi
+.output
+.vercel
+.netlify
 
-# dependencies
-/.pnp
-.pnp.js
+# Editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# next.js
-.next/
-/out/
-next-env.d.ts
+# TanStack Router / Start
+# Note: routeTree.gen.ts is often committed, but if you want to ignore it uncomment the next line
+# src/routeTree.gen.ts
 
 # production
 /build
