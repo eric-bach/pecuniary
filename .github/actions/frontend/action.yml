@@ -2,6 +2,11 @@ name: Frontend Install
 
 description: 'Installs required dependencies for frontend'
 
+inputs:
+  convex_deployment:
+    description: 'Convex deployment key'
+    required: true
+
 runs:
   using: composite
 
@@ -39,7 +44,7 @@ runs:
     - name: 🏗 Generate Convex API
       run: |
         touch .env.local
-        echo CONVEX_DEPLOYMENT=${{ secrets.CONVEX_DEPLOYMENT }} >> .env.local
+        echo CONVEX_DEPLOYMENT=${{ inputs.convex_deployment }} >> .env.local
         cat .env.local
         npx convex codegen
       working-directory: frontend

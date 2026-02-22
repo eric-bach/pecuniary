@@ -93,6 +93,8 @@ jobs:
 
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
+        with:
+          convex_deployment: ${{ secrets.CONVEX_DEPLOYMENT }}
 
       - name: 🏗 Build Frontend
         run: npm run build-frontend
