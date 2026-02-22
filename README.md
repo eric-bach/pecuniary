@@ -107,32 +107,42 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
 
 ## Deployment via GitHub Actions
 
-1. Create an AWS role that can be assumed by GitHub Actions
+1. Create an AWS role that can be assumed by GitHub Actions and add it to the `AWS_SERVICE_ROLE_ARN` GitHub Secret.
 
    ```
    $ npm run deploy-cicd prod PROFILE_NAME
    ```
 
-2. Add the following GitHub Secrets to the repository
+2. Create an API token for 'Edit Cloudflare Workers' in the [Cloudflare dashboard](https://dash.cloudflare.com/9bddf6419d27540278319132720bc972/api-tokens) and add it to the `CLOUDFLARE_API_TOKEN` GitHub Secret.
+
+3. Add the following GitHub Secrets to the repository
 
    Common
 
    ```
    AWS_SERVICE_ROLE_ARN - GitHub Actions Role ARN
+   CLOUDFLARE_API_TOKEN - Cloudflare API token
+   CLOUDFLARE_ACCOUNT_ID - Cloudflare account id
+   VITE_TURNSTILE_SITE_KEY - Cloudflare Turnstile site key
+   VITE_CONVEX_URL - Convex deployment url
    ```
 
    Dev environment
 
    ```
-   CONVEX_DEPLOY_KEY - Convex deployment key
    CONVEX_DEPLOYMENT - Convex deployment id
+   CONVEX_DEPLOY_KEY - Convex deployment key
+   VITE_COGNITO_USERPOOL_ID - Cognito user pool id
+   VITE_COGNITO_CLIENT_ID - Cognito client id
    ```
 
    Production environment
 
    ```
-   CONVEX_DEPLOY_KEY - Convex deployment key
    CONVEX_DEPLOYMENT - Convex deployment id
+   CONVEX_DEPLOY_KEY - Convex deployment key
+   VITE_COGNITO_USERPOOL_ID - Cognito user pool id
+   VITE_COGNITO_CLIENT_ID - Cognito client id
    ```
 
 # Event Sourcing and CQRS Architecture
