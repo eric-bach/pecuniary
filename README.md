@@ -120,7 +120,6 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    Common
 
    ```
-   AWS_SERVICE_ROLE_ARN - GitHub Actions Role ARN
    CLOUDFLARE_API_TOKEN - Cloudflare API token
    CLOUDFLARE_ACCOUNT_ID - Cloudflare account id
    VITE_TURNSTILE_SITE_KEY - Cloudflare Turnstile site key
@@ -129,6 +128,7 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    Dev environment
 
    ```
+   AWS_SERVICE_ROLE_ARN - GitHub Actions Role ARN
    CONVEX_DEPLOYMENT - Convex deployment id
    CONVEX_DEPLOY_KEY - Convex deployment key
    VITE_CONVEX_URL - Convex deployment url
@@ -139,6 +139,7 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    Production environment
 
    ```
+   AWS_SERVICE_ROLE_ARN - GitHub Actions Role ARN
    CONVEX_DEPLOYMENT - Convex deployment id
    CONVEX_DEPLOY_KEY - Convex deployment key
    VITE_CONVEX_URL - Convex deployment url
