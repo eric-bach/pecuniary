@@ -38,8 +38,7 @@ runs:
 
     - name: 🏗 Generate Convex API
       run: |
-        echo "CONVEX_DEPLOYMENT=${{ secrets.CONVEX_DEPLOYMENT }}" > frontend/.env.local
-        cd ./frontend
+        echo "CONVEX_DEPLOYMENT=${{ secrets.CONVEX_DEPLOYMENT }}" > .env.local
         npx convex codegen
-      working-directory: backend
+      working-directory: frontend
       shell: bash

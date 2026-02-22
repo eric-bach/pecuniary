@@ -47,19 +47,11 @@ jobs:
       - name: 📥  Install Infrastructure and Backend
         uses: ./.github/actions/infrastructure
 
-      # - name: 📥 Install Frontend
-      #   uses: ./.github/actions/frontend
+      - name: 📥 Install Frontend
+        uses: ./.github/actions/frontend
 
-      # - name: 🏗 Build Frontend
-      #   run: npm run build-frontend
-      #   working-directory: infrastructure
-      #   env:
-      #     NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
-      #     NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
-
-      - name: 🚧 Build AppSync
-        run: |
-          npm run build-appsync
+      - name: 🏗 Build Frontend
+        run: npm run build-frontend
         working-directory: infrastructure
 
       - name: 🚧 Build Backend
