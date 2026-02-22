@@ -134,13 +134,6 @@ jobs:
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
 
-      - name: 🏗 Generate Convex API
-        run: |
-          cd frontend
-          npx convex codegen
-        env:
-          CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
-
       - name: 🏗 Build Frontend
         run: npm run build-frontend
         working-directory: infrastructure
