@@ -42,3 +42,4 @@ runs:
         cd ./frontend
         npx convex codegen
       working-directory: backend
+      shell: bash
