@@ -37,6 +37,8 @@ runs:
       shell: bash
 
     - name: 🏗  Generate Convex API
-      run: npx convex codegen --prefix ../frontend
+      run: |
+        cd ../frontend
+        npx convex codegen
       working-directory: backend
       shell: bash
