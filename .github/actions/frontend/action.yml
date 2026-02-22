@@ -35,12 +35,3 @@ runs:
         npm rebuild --prefix ../frontend lightningcss 2>/dev/null || true
       working-directory: backend
       shell: bash
-
-    - name: 🏗  Generate Convex API
-      run: |
-        cd ../frontend
-        npx convex codegen
-      env:
-        CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
-      working-directory: backend
-      shell: bash
