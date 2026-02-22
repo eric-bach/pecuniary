@@ -36,9 +36,14 @@ runs:
       working-directory: backend
       shell: bash
 
+    - name: Create .env.local file
+      run: |
+        touch .env.local
+        echo CONVEX_DEPLOYMENT=${{ secrets.CONVEX_DEPLOYMENT }} >> .env.local
+      working-directory: frontend
+      shell: bash
+
     - name: 🏗 Generate Convex API
       run: npx convex codegen
       working-directory: frontend
       shell: bash
-      env:
-        CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
