@@ -6,7 +6,7 @@ import { Turnstile } from '@marsidev/react-turnstile';
 const turnstileSiteKey =
   typeof window !== 'undefined' && window.location.hostname === 'localhost'
     ? '1x00000000000000000000AA'
-    : process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!;
+    : (import.meta as any).env.VITE_TURNSTILE_SITE_KEY!;
 
 export const formFields = {
   signUp: {
