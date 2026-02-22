@@ -18,8 +18,13 @@ import {
   PieChart,
   Pie,
   Cell,
+  BarChart,
+  Bar,
+  Legend,
 } from 'recharts';
 import { AddTransactionSheet } from '@/components/accounts/add-transaction-sheet';
+import { EditTransactionSheet } from '@/components/accounts/edit-transaction-sheet';
+import { EditAccountSheet } from '@/components/accounts/edit-account-sheet';
 
 import { api } from '../../../../convex/_generated/api';
 import type { Id } from '../../../../convex/_generated/dataModel';
@@ -43,7 +48,10 @@ function RouteComponent() {
   const balance = useQuery(api.transactions.getBalance, { accountId: accountId as Id<'accounts'> });
   const balanceHistory = useQuery(api.transactions.getBalanceHistory, { accountId: accountId as Id<'accounts'> });
   const categoryBreakdown = useQuery(api.transactions.getCategoryBreakdown, { accountId: accountId as Id<'accounts'> });
+  const incomeVsExpenses = useQuery(api.transactions.getIncomeVsExpensesByMonth, { accountId: accountId as Id<'accounts'> });
   const [isAddTransactionOpen, setIsAddTransactionOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<NonNullable<typeof transactions>[number] | null>(null);
+  const [isEditAccountOpen, setIsEditAccountOpen] = useState(false);
 
   const chartData = balanceHistory ?? [];
   const hasHistory = chartData.length > 0;
@@ -62,65 +70,158 @@ function RouteComponent() {
         </div>
       </NavbarTitle>
       <NavbarActions>
-        <Button size='sm' className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none'>
+        <Button
+          size='sm'
+          className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none'
+          onClick={() => setIsEditAccountOpen(true)}
+        >
           <Pencil className='h-3.5 w-3.5 mr-1.5' />
           Edit Account
         </Button>
       </NavbarActions>
 
-      {/* Balance Chart */}
-      <Card className='mb-6'>
-        <CardHeader className='pb-2'>
-          <div className='flex items-center justify-between'>
-            <CardTitle className='text-base font-semibold text-gray-700'>Balance</CardTitle>
-            <div className='text-right'>
-              <div className='text-xs text-gray-400 mb-0.5'>{account?.type ?? ''}</div>
-              <span className='text-2xl font-bold text-gray-900'>
-                {balance === undefined
-                  ? '$0.00'
-                  : (balance < 0 ? '-' : '') +
-                    '$' +
-                    Math.abs(balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </span>
+      {/* Top Section: Balance Chart + Right Column Charts */}
+      <div className='grid gap-6 md:grid-cols-3 mb-6'>
+        {/* Balance Chart */}
+        <Card className='md:col-span-2'>
+          <CardHeader className='pb-2'>
+            <div className='flex items-center justify-between'>
+              <CardTitle className='text-base font-semibold text-gray-700'>Balance</CardTitle>
+              <div className='text-right'>
+                <div className='text-xs text-gray-400 mb-0.5'>{account?.type ?? ''}</div>
+                <span className='text-2xl font-bold text-gray-900'>
+                  {balance === undefined
+                    ? '$0.00'
+                    : (balance < 0 ? '-' : '') +
+                      '$' +
+                      Math.abs(balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              </div>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className='h-[250px] w-full'>
-            {!hasHistory ? (
-              <div className='h-full flex items-center justify-center text-sm text-gray-400'>No transaction history yet</div>
-            ) : (
-              <ResponsiveContainer width='100%' height='100%'>
-                <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id='colorValue' x1='0' y1='0' x2='0' y2='1'>
-                      <stop offset='5%' stopColor='#bae6fd' stopOpacity={0.8} />
-                      <stop offset='95%' stopColor='#bae6fd' stopOpacity={0.1} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey='date' axisLine={false} tickLine={false} tick={{ fill: '#888888', fontSize: 12 }} dy={10} />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#888888', fontSize: 12 }}
-                    tickFormatter={(v) => (v >= 1000 || v <= -1000 ? `$${(v / 1000).toFixed(1)}K` : `$${v}`)}
-                    domain={['auto', 'auto']}
-                    dx={-10}
-                  />
-                  <CartesianGrid vertical={false} stroke='#e5e7eb' />
-                  <RechartsTooltip
-                    formatter={(v: number) => [
-                      `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-                      'Balance',
-                    ]}
-                  />
-                  <Area type='monotone' dataKey='balance' stroke='#38bdf8' strokeWidth={3} fillOpacity={1} fill='url(#colorValue)' />
-                </AreaChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+          </CardHeader>
+          <CardContent>
+            <div className='h-[250px] w-full'>
+              {!hasHistory ? (
+                <div className='h-full flex items-center justify-center text-sm text-gray-400'>No transaction history yet</div>
+              ) : (
+                <ResponsiveContainer width='100%' height='100%'>
+                  <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id='colorValue' x1='0' y1='0' x2='0' y2='1'>
+                        <stop offset='5%' stopColor='#bae6fd' stopOpacity={0.8} />
+                        <stop offset='95%' stopColor='#bae6fd' stopOpacity={0.1} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey='date' axisLine={false} tickLine={false} tick={{ fill: '#888888', fontSize: 12 }} dy={10} />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#888888', fontSize: 12 }}
+                      tickFormatter={(v) => (v >= 1000 || v <= -1000 ? `$${(v / 1000).toFixed(1)}K` : `$${v}`)}
+                      domain={['auto', 'auto']}
+                      dx={-10}
+                    />
+                    <CartesianGrid vertical={false} stroke='#e5e7eb' />
+                    <RechartsTooltip
+                      formatter={(v: number) => [
+                        `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                        'Balance',
+                      ]}
+                    />
+                    <Area type='monotone' dataKey='balance' stroke='#38bdf8' strokeWidth={3} fillOpacity={1} fill='url(#colorValue)' />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Right Column: Account Info + Income vs Expenses + Top Spending */}
+        <div className='space-y-4'>
+          {/* Account Info */}
+          <Card className='shadow-sm border-gray-100'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-base font-semibold text-gray-700'>Account Info</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-2'>
+              <div className='space-y-1.5'>
+                <div className='flex justify-between items-center text-sm'>
+                  <span className='text-gray-500'>Name</span>
+                  <span className='font-medium text-gray-900'>{account?.name ?? '—'}</span>
+                </div>
+                <div className='flex justify-between items-center text-sm'>
+                  <span className='text-gray-500'>Type</span>
+                  <span className='font-medium text-gray-900'>{account?.type ?? '—'}</span>
+                </div>
+                {account?.description && (
+                  <div className='flex justify-between items-center text-sm'>
+                    <span className='text-gray-500'>Description</span>
+                    <span className='font-medium text-gray-900 text-right max-w-[60%]'>{account.description}</span>
+                  </div>
+                )}
+                <div className='pt-1.5 border-t border-gray-100'>
+                  <div className='flex justify-between items-center text-sm font-bold text-gray-900'>
+                    <span>Balance</span>
+                    <span>
+                      {balance === undefined
+                        ? '$0.00'
+                        : (balance < 0 ? '-' : '') +
+                          '$' +
+                          Math.abs(balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Income vs Expenses Chart */}
+          <Card className='shadow-sm border-gray-100'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-base font-semibold text-gray-700'>Income vs Expenses</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='h-[120px] w-full'>
+                {!incomeVsExpenses || incomeVsExpenses.length === 0 ? (
+                  <div className='h-full flex items-center justify-center text-sm text-gray-400'>No data yet</div>
+                ) : (
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <BarChart data={incomeVsExpenses} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
+                      <CartesianGrid vertical={false} stroke='#e5e7eb' />
+                      <XAxis dataKey='month' axisLine={false} tickLine={false} tick={{ fill: '#888888', fontSize: 10 }} dy={5} />
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#888888', fontSize: 10 }}
+                        tickFormatter={(v) => (v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v}`)}
+                        width={40}
+                      />
+                      <RechartsTooltip
+                        formatter={(v: number, name: string) => [
+                          `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                          name === 'income' ? 'Income' : 'Expenses',
+                        ]}
+                      />
+                      <Bar dataKey='income' fill='#10b981' radius={[2, 2, 0, 0]} />
+                      <Bar dataKey='expenses' fill='#ef4444' radius={[2, 2, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+              <div className='flex justify-center gap-4 mt-2 text-xs'>
+                <div className='flex items-center gap-1.5'>
+                  <div className='w-2.5 h-2.5 rounded-sm bg-emerald-500' />
+                  <span className='text-gray-500'>Income</span>
+                </div>
+                <div className='flex items-center gap-1.5'>
+                  <div className='w-2.5 h-2.5 rounded-sm bg-red-500' />
+                  <span className='text-gray-500'>Expenses</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       {/* Bottom Section */}
       <div className='grid gap-6 md:grid-cols-3'>
@@ -139,7 +240,7 @@ function RouteComponent() {
             </CardHeader>
             <CardContent className='p-0'>
               {/* Sticky header + scrollable body */}
-              <div className='overflow-auto max-h-[560px]'>
+              <div className='overflow-auto min-h-160 max-h-320'>
                 <Table>
                   <TableHeader className='sticky top-0 z-10 bg-white'>
                     <TableRow className='border-b border-gray-100'>
@@ -164,7 +265,7 @@ function RouteComponent() {
                       </TableRow>
                     ) : (
                       transactions.map((tx) => (
-                        <TableRow key={tx._id} className='hover:bg-gray-50/50'>
+                        <TableRow key={tx._id} className='hover:bg-gray-50/50 cursor-pointer' onClick={() => setEditingTransaction(tx)}>
                           <TableCell className='text-sm text-gray-600 py-3 whitespace-nowrap pl-6'>{tx.date}</TableCell>
                           <TableCell className='text-sm py-3'>
                             <div className='font-medium text-gray-900'>{tx.payee}</div>
@@ -192,45 +293,8 @@ function RouteComponent() {
           </Card>
         </div>
 
-        {/* Right Column: Account Info */}
-        <div className='space-y-4'>
-          <Card className='shadow-sm border-gray-100'>
-            <CardHeader className='pb-4'>
-              <CardTitle className='text-xl font-bold'>Account Info</CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-4'>
-              <div className='space-y-3'>
-                <div className='flex justify-between items-center text-sm'>
-                  <span className='text-gray-500'>Name</span>
-                  <span className='font-medium text-gray-900'>{account?.name ?? '—'}</span>
-                </div>
-                <div className='flex justify-between items-center text-sm'>
-                  <span className='text-gray-500'>Type</span>
-                  <span className='font-medium text-gray-900'>{account?.type ?? '—'}</span>
-                </div>
-                {account?.description && (
-                  <div className='flex justify-between items-center text-sm'>
-                    <span className='text-gray-500'>Description</span>
-                    <span className='font-medium text-gray-900 text-right max-w-[60%]'>{account.description}</span>
-                  </div>
-                )}
-                <div className='pt-2 border-t border-gray-100'>
-                  <div className='flex justify-between items-center text-sm font-bold text-gray-900'>
-                    <span>Balance</span>
-                    <span>
-                      {balance === undefined
-                        ? '$0.00'
-                        : (balance < 0 ? '-' : '') +
-                          '$' +
-                          Math.abs(balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Spending Categories Pie Chart */}
+        {/* Right Column: Top Spending */}
+        <div>
           <Card className='shadow-sm border-gray-100'>
             <CardHeader className='pb-2'>
               <CardTitle className='text-xl font-bold'>Top Spending</CardTitle>
@@ -292,6 +356,14 @@ function RouteComponent() {
         accountId={accountId}
         userId={user?.username ?? ''}
       />
+      <EditTransactionSheet
+        open={!!editingTransaction}
+        onOpenChange={(open) => !open && setEditingTransaction(null)}
+        transaction={editingTransaction}
+        userId={user?.username ?? ''}
+        accountName={account?.name}
+      />
+      <EditAccountSheet open={isEditAccountOpen} onOpenChange={setIsEditAccountOpen} account={account ?? null} />
     </div>
   );
 }

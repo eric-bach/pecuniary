@@ -39,3 +39,36 @@ export const get = query({
     return await ctx.db.get(args.accountId);
   },
 });
+
+export const update = mutation({
+  args: {
+    accountId: v.id('accounts'),
+    name: v.string(),
+    description: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const { accountId, ...fields } = args;
+    await ctx.db.patch(accountId, fields);
+    return accountId;
+  },
+});
+
+export const remove = mutation({
+  args: {
+    accountId: v.id('accounts'),
+  },
+  handler: async (ctx, args) => {
+    // Delete all transactions associated with this account
+    const transactions = await ctx.db
+      .query('transactions')
+      .withIndex('by_account', (q) => q.eq('accountId', args.accountId))
+      .collect();
+
+    for (const tx of transactions) {
+      await ctx.db.delete(tx._id);
+    }
+
+    // Delete the account itself
+    await ctx.db.delete(args.accountId);
+  },
+});

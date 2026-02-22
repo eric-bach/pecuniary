@@ -25,6 +25,32 @@ export const create = mutation({
   },
 });
 
+export const update = mutation({
+  args: {
+    transactionId: v.id('transactions'),
+    date: v.string(),
+    payee: v.string(),
+    description: v.optional(v.string()),
+    category: v.optional(v.string()),
+    type: v.union(v.literal('debit'), v.literal('credit')),
+    amount: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const { transactionId, ...fields } = args;
+    await ctx.db.patch(transactionId, fields);
+    return transactionId;
+  },
+});
+
+export const remove = mutation({
+  args: {
+    transactionId: v.id('transactions'),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.transactionId);
+  },
+});
+
 export const listByAccount = query({
   args: {
     accountId: v.id('accounts'),
@@ -175,6 +201,56 @@ export const getPayeeSuggestions = query({
   },
 });
 
+export const listAllByUser = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const accounts = await ctx.db
+      .query('accounts')
+      .withIndex('by_user', (q) => q.eq('userId', args.userId))
+      .collect();
+
+    const allTxs: Array<{
+      _id: string;
+      accountId: string;
+      accountName: string;
+      accountType: string;
+      date: string;
+      payee: string;
+      description?: string;
+      category?: string;
+      type: 'debit' | 'credit';
+      amount: number;
+      _creationTime: number;
+    }> = [];
+
+    const accountMap = new Map(accounts.map((a) => [a._id, { name: a.name, type: a.type }]));
+
+    for (const account of accounts) {
+      const txs = await ctx.db
+        .query('transactions')
+        .withIndex('by_account', (q) => q.eq('accountId', account._id))
+        .collect();
+      for (const tx of txs) {
+        const info = accountMap.get(tx.accountId);
+        allTxs.push({
+          ...tx,
+          accountName: info?.name ?? '',
+          accountType: info?.type ?? '',
+        });
+      }
+    }
+
+    // Sort by date descending, then by creation time as tiebreaker
+    allTxs.sort((a, b) => {
+      const dateDiff = b.date.localeCompare(a.date);
+      return dateDiff !== 0 ? dateDiff : b._creationTime - a._creationTime;
+    });
+    return allTxs;
+  },
+});
+
 export const getRecentByUser = query({
   args: {
     userId: v.string(),
@@ -314,5 +390,46 @@ export const getCategoryBreakdownByUser = query({
     const top = sorted.slice(0, 5);
     const otherTotal = sorted.slice(5).reduce((s, c) => s + c.value, 0);
     return [...top, { name: 'Other', value: otherTotal }];
+  },
+});
+
+export const getIncomeVsExpensesByMonth = query({
+  args: {
+    accountId: v.id('accounts'),
+  },
+  handler: async (ctx, args) => {
+    const txs = await ctx.db
+      .query('transactions')
+      .withIndex('by_account', (q) => q.eq('accountId', args.accountId))
+      .collect();
+
+    // Group by month
+    const monthData = new Map<string, { income: number; expenses: number }>();
+    for (const tx of txs) {
+      const month = tx.date.substring(0, 7); // "YYYY-MM"
+      if (!monthData.has(month)) {
+        monthData.set(month, { income: 0, expenses: 0 });
+      }
+      const data = monthData.get(month)!;
+      if (tx.type === 'credit') {
+        data.income += tx.amount;
+      } else {
+        data.expenses += tx.amount;
+      }
+    }
+
+    // Return sorted ascending by month, with formatted month names
+    return Array.from(monthData.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([month, data]) => {
+        // Format month as "Jan", "Feb", etc.
+        const date = new Date(month + '-01');
+        const shortMonth = date.toLocaleDateString('en-US', { month: 'short' });
+        return {
+          month: shortMonth,
+          income: data.income,
+          expenses: data.expenses,
+        };
+      });
   },
 });
