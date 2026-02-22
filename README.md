@@ -55,20 +55,15 @@ This quick start guide describes how to get the application running. An `AWS acc
     $ npm cinstall-all
     ```
 
-4.  Copy the `./infrastructure/.env.example` file to `./infrastructure/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
+4.  Copy the `./frontend/.env.example` file to `./frontend/.env` and fill in the parameter values from the CDK stack outputs in step 2:
 
     ```
-    DLQ_NOTIFICATIONS - email address to send failed event message notifications to.
-    AWS_SERVICE_ROLE_ARN - ARN of the GitHub actions role to deploy the stack.
-    ```
-
-5.  Copy the `./frontend/.env.example` file to `./frontend/.env` and fill in the parameter values from the CDK stack outputs in step 2:
-
-    ```
-    NEXT_PUBLIC_USER_POOL_ID=
-    NEXT_PUBLIC_USER_POOL_CLIENT_ID=
-    NEXT_PUBLIC_APPSYNC_API_ENDPOINT=
-    NEXT_PUBLIC_APPSYNC_REGION=
+    CONVEX_DEPLOYMENT=
+    VITE_CONVEX_URL=
+    VITE_CONVEX_SITE_URL=
+    VITE_COGNITO_USERPOOL_ID=
+    VITE_COGNITO_CLIENT_ID=
+    VITE_TURNSTILE_SITE_KEY=
     ```
 
 ## Deploy the app
@@ -123,113 +118,22 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    Common
 
    ```
-   CDK_DEFAULT_REGION - AWS default region for all resources to be created
+   AWS_SERVICE_ROLE_ARN - GitHub Actions Role ARN
    ```
 
    Dev environment
 
    ```
-   CLOUDFRONT_DOMAIN_DEV - AWS CloudFront Distribution domain name
-   COGNITO_USERPOOL_ID_DEV - Cognito User Pool Id
-   COGNITO_WEB_CLIENT_ID_DEV - Cognito User Pool Client Id
-   APPSYNC_ENDPOINT_DEV - AWS AppSync GraphQL endpoint URL
-   CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
-   CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
+   CONVEX_DEPLOY_KEY - Convex deployment key
+   CONVEX_DEPLOYMENT - Convex deployment id
    ```
 
    Production environment
 
    ```
-   AWS_SERVICE_ROLE_PROD - AWS ARN of the GitHub Actions Role to Assume (from step 1)
-   CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
-   HOSTED_ZONE_ID - Route53 Hosted Zone ID
-   HOSTED_ZONE_NAME - Route53 Hosted Zone Name
-   DLQ_NOTIFICATIONS - email address to send DLQ messages to
-   CLOUDFRONT_DOMAIN_PROD - AWS CloudFront Distribution domain name
-   COGNITO_USERPOOL_ID_PROD - Cognito User Pool Id
-   COGNITO_WEB_CLIENT_ID_PROD - Cognito User Pool Client Id
-   APPSYNC_ENDPOINT_PROD - AWS AppSync GraphQL endpoint URL
+   CONVEX_DEPLOY_KEY - Convex deployment key
+   CONVEX_DEPLOYMENT - Convex deployment id
    ```
-
-# Testing
-
-## Jest
-
-To be added
-
-## Cypress
-
-To be added
-
-### Locally
-
-Test the frontend using cypress
-
-```
-$ npm run cypress:open
-
-or headless,
-
-$ npm run cypress:run
-```
-
-### GitHub Actions
-
-Ensure to configure the GitHub Secrets to include:
-
-    ```
-    CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
-    CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
-    ```
-
-# Troubleshooting
-
-## Lambda DLQ
-
-To retry the Lambda function
-
-1. Get the message from the SQS DLQ
-
-```
-aws sqs receive-message --queue-url https://sqs.us-east-1.amazonaws.com/524849261220/pecuniary-dev-updatePosition-DLQ --profile bach-dev
-```
-
-2. Save the DLQ message event to a json file
-
-```
-{
-  "version": "0",
-  "id": "26b8f7d1-b141-9baf-8a01-f625b7c3b0bc",
-  "detail-type": "InvestmentTransactionSavedEvent",
-  "source": "custom.pecuniary",
-  "account": "524849261220",
-  "time": "2024-12-31T20:29:49Z",
-  "region": "us-east-1",
-  "resources": [],
-  "detail": {
-      "accountId": "c8df14ba-0bf9-43dc-a92f-0185714336a7",
-      "transactionDate": "2024-12-31",
-      "type": "Buy",
-      "symbol": "FNMA",
-      "shares": 123.0,
-      "price": 12.0,
-      "commission": 12.0,
-      "userId": "a4e824d8-2021-7008-6807-ec5d9400debb"
-  }
-}
-```
-
-3. Run the CLI command to invoke lambda
-
-```
-aws lambda invoke --function-name pecuniary-dev-UpdatePosition --payload fileb://request.json response.json --profile bach-dev
-```
-
-4. Run the CLI command to remove the message from the SQS DLQ
-
-```
-aws sqs delete-message --queue-url https://sqs.us-east-1.amazonaws.com/524849261220/pecuniary-dev-updatePosition-DLQ --receipt-handle <receipt-handle> --profile bach-dev
-```
 
 # Event Sourcing and CQRS Architecture
 
