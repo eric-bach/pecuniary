@@ -107,12 +107,13 @@ jobs:
           VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
 
       - name: 🚀 Deploy Frontend to Cloudflare Pages (preview)
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=pecuniary
-          workingDirectory: frontend
+        run: |
+          npx wrangler pages project create pecuniary --production-branch=main 2>/dev/null || true
+          npx wrangler pages deploy dist --project-name=pecuniary
+        working-directory: frontend
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: 🚧 Build Backend
         run: |
