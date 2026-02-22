@@ -11,8 +11,8 @@ on:
       - synchronize
 
 jobs:
-  unit-tests:
-    name: Unit Tests
+  test:
+    name: Test
     runs-on: ubuntu-latest
     environment: dev
     permissions:
@@ -51,51 +51,11 @@ jobs:
         run: npm run test
         working-directory: infrastructure
 
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    environment: dev
-    permissions:
-      id-token: write
-      contents: read
-      actions: read
-
-    steps:
-      - name: ⬇️ Checkout Code
-        uses: actions/checkout@v4
-
-      - name: ⚒️ Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: 👀 Env
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Git ref:    ${{ github.ref }}"
-          echo "GH actor:   ${{ github.actor }}"
-          echo "SHA:        ${{ github.sha }}"
-          VER=`node --version`; echo "Node ver:   $VER"
-          VER=`npm --version`; echo "npm ver:    $VER"
-
-      # Should not need to deploy to run tests
-      # - name: 📥 Install CDK Dependencies
-      #   run: npm install
-      #   working-directory: infrastructure
-
-      - name: 📥 Install Frontend
-        uses: ./.github/actions/frontend
-
-      # TODO Once there are Cypress frontend tests
-      # - name: Run Cypress Frontend Tests
-      #   run: npx cypress run --env username=${{ secrets.CYPRESS_USERNAME }},password=${{ secrets.CYPRESS_PASSWORD }}
-      #   working-directory: frontend
-
   deploy-dev:
     name: Deploy Dev
     runs-on: ubuntu-latest
     environment: dev
-    needs: [unit-tests, integration-tests]
+    needs: [test]
     permissions:
       actions: write
       contents: read
@@ -137,10 +97,6 @@ jobs:
       - name: 🏗 Build Frontend
         run: npm run build-frontend
         working-directory: infrastructure
-        # env:
-        #   VITE_COGNITO_USERPOOL_ID: ${{ secrets.USER_POOL_ID }}
-        #   VITE_COGNITO_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
-        #   VITE_TURNSTILE_SITE_KEY: ${{ secrets.TURNSTILE_SITE_KEY }}
 
       - name: 🚧 Build Backend
         run: |
