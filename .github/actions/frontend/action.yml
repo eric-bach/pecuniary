@@ -40,5 +40,7 @@ runs:
       run: |
         cd ../frontend
         npx convex codegen
+      env:
+        CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
       working-directory: backend
       shell: bash
