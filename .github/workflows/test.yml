@@ -102,7 +102,7 @@ jobs:
         working-directory: frontend
         env:
           VITE_CONVEX_URL: ${{ secrets.VITE_CONVEX_URL }}
-          VITE_COGNITO_USER_POOL_ID: ${{ secrets.VITE_COGNITO_USER_POOL_ID }}
+          VITE_COGNITO_USERPOOL_ID: ${{ secrets.VITE_COGNITO_USERPOOL_ID }}
           VITE_COGNITO_CLIENT_ID: ${{ secrets.VITE_COGNITO_CLIENT_ID }}
           VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
 
