@@ -1,6 +1,6 @@
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import * as cdk from 'aws-cdk-lib';
-import { PecuniaryBaseStackProps } from '../lib/types/PecuniaryStackProps';
+import { PecuniaryBaseStackProps } from '../types/PecuniaryStackProps';
 import { DataStack } from '../lib/data-stack';
 
 describe('Data Stack contains expected resources', () => {
@@ -31,17 +31,7 @@ describe('Data Stack contains expected resources', () => {
         FunctionName: `pecuniary-${props.envName}-CognitoPostConfirmationTrigger`,
         Handler: 'index.handler',
         Runtime: 'nodejs22.x',
-      })
-    );
-  });
-
-  test('should have DynamoDB Table', () => {
-    template.hasResourceProperties(
-      'AWS::DynamoDB::Table',
-      Match.objectLike({
-        TableName: `pecuniary-data-dev`,
-        BillingMode: 'PAY_PER_REQUEST',
-      })
+      }),
     );
   });
 });

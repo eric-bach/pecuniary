@@ -56,8 +56,6 @@ jobs:
       #   env:
       #     NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
       #     NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
-      #     NEXT_PUBLIC_APPSYNC_API_ENDPOINT: ${{ secrets.APPSYNC_API_ENDPOINT }}
-      #     NEXT_PUBLIC_APPSYNC_REGION: ${{ secrets.REGION }}
 
       - name: 🚧 Build AppSync
         run: |
@@ -83,10 +81,3 @@ jobs:
           echo "🚀 Deploying backend prod"
           npm run cdk -- deploy --all -c stage=backend -c env=prod --require-approval=never
         working-directory: infrastructure
-        env:
-          CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
-          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
-
-      # - name: 🚀 Deploy Frontend
-      #   run: npx sst deploy --stage prod
-      #   working-directory: frontend
