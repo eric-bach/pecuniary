@@ -40,6 +40,7 @@ runs:
       run: |
         touch .env.local
         echo CONVEX_DEPLOYMENT=${{ secrets.CONVEX_DEPLOYMENT }} >> .env.local
+        cat .env.local
       working-directory: frontend
       shell: bash
 
