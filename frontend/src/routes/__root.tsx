@@ -8,7 +8,7 @@ import { Amplify } from 'aws-amplify';
 import { config } from '../amplify-config';
 import appCss from '../index.css?url';
 
-Amplify.configure(config);
+let amplifyConfigured = false;
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -35,6 +35,10 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
+  if (!amplifyConfigured) {
+    Amplify.configure(config);
+    amplifyConfigured = true;
+  }
   return (
     <RootDocument>
       <Outlet />
