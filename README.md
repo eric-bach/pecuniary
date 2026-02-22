@@ -124,7 +124,6 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    CLOUDFLARE_API_TOKEN - Cloudflare API token
    CLOUDFLARE_ACCOUNT_ID - Cloudflare account id
    VITE_TURNSTILE_SITE_KEY - Cloudflare Turnstile site key
-   VITE_CONVEX_URL - Convex deployment url
    ```
 
    Dev environment
@@ -132,6 +131,7 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    ```
    CONVEX_DEPLOYMENT - Convex deployment id
    CONVEX_DEPLOY_KEY - Convex deployment key
+   VITE_CONVEX_URL - Convex deployment url
    VITE_COGNITO_USERPOOL_ID - Cognito user pool id
    VITE_COGNITO_CLIENT_ID - Cognito client id
    ```
@@ -141,6 +141,7 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
    ```
    CONVEX_DEPLOYMENT - Convex deployment id
    CONVEX_DEPLOY_KEY - Convex deployment key
+   VITE_CONVEX_URL - Convex deployment url
    VITE_COGNITO_USERPOOL_ID - Cognito user pool id
    VITE_COGNITO_CLIENT_ID - Cognito client id
    ```

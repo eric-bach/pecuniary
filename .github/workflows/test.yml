@@ -107,7 +107,7 @@ jobs:
           VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
 
       - name: 🚀 Deploy Frontend to Cloudflare Workers
-        run: npx wrangler deploy
+        run: npx wrangler deploy --name pecuniary-dev
         working-directory: frontend
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
