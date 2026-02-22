@@ -65,7 +65,7 @@ jobs:
       - name: 🚀 Deploy Frontend to Cloudflare Pages
         run: |
           npx wrangler pages project create pecuniary --production-branch=main 2>/dev/null || true
-          npx wrangler pages deploy dist --project-name=pecuniary --branch=main
+          npx wrangler pages deploy dist/client --project-name=pecuniary --branch=main
         working-directory: frontend
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
