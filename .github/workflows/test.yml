@@ -11,8 +11,8 @@ on:
       - synchronize
 
 jobs:
-  unit-tests:
-    name: Unit Tests
+  test:
+    name: Test
     runs-on: ubuntu-latest
     environment: dev
     permissions:
@@ -51,51 +51,11 @@ jobs:
         run: npm run test
         working-directory: infrastructure
 
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    environment: dev
-    permissions:
-      id-token: write
-      contents: read
-      actions: read
-
-    steps:
-      - name: ⬇️ Checkout Code
-        uses: actions/checkout@v4
-
-      - name: ⚒️ Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: 👀 Env
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Git ref:    ${{ github.ref }}"
-          echo "GH actor:   ${{ github.actor }}"
-          echo "SHA:        ${{ github.sha }}"
-          VER=`node --version`; echo "Node ver:   $VER"
-          VER=`npm --version`; echo "npm ver:    $VER"
-
-      # Should not need to deploy to run tests
-      # - name: 📥 Install CDK Dependencies
-      #   run: npm install
-      #   working-directory: infrastructure
-
-      - name: 📥 Install Frontend
-        uses: ./.github/actions/frontend
-
-      # TODO Once there are Cypress frontend tests
-      # - name: Run Cypress Frontend Tests
-      #   run: npx cypress run --env username=${{ secrets.CYPRESS_USERNAME }},password=${{ secrets.CYPRESS_PASSWORD }}
-      #   working-directory: frontend
-
   deploy-dev:
     name: Deploy Dev
     runs-on: ubuntu-latest
     environment: dev
-    needs: [unit-tests, integration-tests]
+    needs: [test]
     permissions:
       actions: write
       contents: read
@@ -133,20 +93,25 @@ jobs:
 
       - name: 📥 Install Frontend
         uses: ./.github/actions/frontend
+        with:
+          convex_deployment: ${{ secrets.CONVEX_DEPLOYMENT }}
+          convex_deploy_key: ${{ secrets.CONVEX_DEPLOY_KEY }}
 
       - name: 🏗 Build Frontend
-        run: npm run build-frontend
-        working-directory: infrastructure
+        run: npm run build
+        working-directory: frontend
         env:
-          NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
-          NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
-          NEXT_PUBLIC_APPSYNC_API_ENDPOINT: ${{ secrets.APPSYNC_API_ENDPOINT }}
-          NEXT_PUBLIC_APPSYNC_REGION: ${{ secrets.REGION }}
+          VITE_CONVEX_URL: ${{ secrets.VITE_CONVEX_URL }}
+          VITE_COGNITO_USERPOOL_ID: ${{ secrets.VITE_COGNITO_USERPOOL_ID }}
+          VITE_COGNITO_CLIENT_ID: ${{ secrets.VITE_COGNITO_CLIENT_ID }}
+          VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
 
-      - name: 🚧 Build AppSync
-        run: |
-          npm run build-appsync
-        working-directory: infrastructure
+      - name: 🚀 Deploy Frontend to Cloudflare Workers
+        run: npx wrangler deploy --name pecuniary-dev
+        working-directory: frontend
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: 🚧 Build Backend
         run: |
@@ -164,10 +129,3 @@ jobs:
           echo "🚀 Deploying backend dev"
           npm run cdk -- deploy --all -c stage=backend -c env=dev --require-approval=never
         working-directory: infrastructure
-        env:
-          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
-
-      # TODO Once SST setup to deploy frontend
-      # - name: 🚀 Deploy Frontend
-      #   run: npx sst deploy --stage dev
-      #   working-directory: frontend

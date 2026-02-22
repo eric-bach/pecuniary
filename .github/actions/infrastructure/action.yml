@@ -29,14 +29,5 @@ runs:
           npm ci
           cd - >/dev/null
         done
-
-        # Install AppSync dependencies
-        find ./test -mindepth 2 -maxdepth 2 -type f -name 'package.json' |
-        while IFS= read -r file; do
-          echo "💾 Installing dependencies for $file"
-          cd "$(dirname "$file")"
-          npm ci
-          cd - >/dev/null
-        done
       working-directory: backend
       shell: bash

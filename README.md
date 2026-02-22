@@ -55,20 +55,15 @@ This quick start guide describes how to get the application running. An `AWS acc
     $ npm cinstall-all
     ```
 
-4.  Copy the `./infrastructure/.env.example` file to `./infrastructure/.env` and fill in the parameter values (if the app has not been deployed to AWS yet, the ARN will be empty for now):
+4.  Copy the `./frontend/.env.example` file to `./frontend/.env` and fill in the parameter values from the CDK stack outputs in step 2:
 
     ```
-    DLQ_NOTIFICATIONS - email address to send failed event message notifications to.
-    AWS_SERVICE_ROLE_ARN - ARN of the GitHub actions role to deploy the stack.
-    ```
-
-5.  Copy the `./frontend/.env.example` file to `./frontend/.env` and fill in the parameter values from the CDK stack outputs in step 2:
-
-    ```
-    NEXT_PUBLIC_USER_POOL_ID=
-    NEXT_PUBLIC_USER_POOL_CLIENT_ID=
-    NEXT_PUBLIC_APPSYNC_API_ENDPOINT=
-    NEXT_PUBLIC_APPSYNC_REGION=
+    CONVEX_DEPLOYMENT=
+    VITE_CONVEX_URL=
+    VITE_CONVEX_SITE_URL=
+    VITE_COGNITO_USERPOOL_ID=
+    VITE_COGNITO_CLIENT_ID=
+    VITE_TURNSTILE_SITE_KEY=
     ```
 
 ## Deploy the app
@@ -112,124 +107,45 @@ The Pecuniary application consists of the CDK backend and React frontend, each o
 
 ## Deployment via GitHub Actions
 
-1. Create an AWS role that can be assumed by GitHub Actions
+1. Create an AWS role that can be assumed by GitHub Actions and add it to the `AWS_SERVICE_ROLE_ARN` GitHub Secret.
 
    ```
    $ npm run deploy-cicd prod PROFILE_NAME
    ```
 
-2. Add the following GitHub Secrets to the repository
+2. Create an API token for 'Edit Cloudflare Workers' in the [Cloudflare dashboard](https://dash.cloudflare.com/9bddf6419d27540278319132720bc972/api-tokens) and add it to the `CLOUDFLARE_API_TOKEN` GitHub Secret.
+
+3. Add the following GitHub Secrets to the repository
 
    Common
 
    ```
-   CDK_DEFAULT_REGION - AWS default region for all resources to be created
+   CLOUDFLARE_API_TOKEN - Cloudflare API token
+   CLOUDFLARE_ACCOUNT_ID - Cloudflare account id
+   VITE_TURNSTILE_SITE_KEY - Cloudflare Turnstile site key
    ```
 
    Dev environment
 
    ```
-   CLOUDFRONT_DOMAIN_DEV - AWS CloudFront Distribution domain name
-   COGNITO_USERPOOL_ID_DEV - Cognito User Pool Id
-   COGNITO_WEB_CLIENT_ID_DEV - Cognito User Pool Client Id
-   APPSYNC_ENDPOINT_DEV - AWS AppSync GraphQL endpoint URL
-   CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
-   CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
+   AWS_SERVICE_ROLE_ARN - GitHub Actions Role ARN
+   CONVEX_DEPLOYMENT - Convex deployment id
+   CONVEX_DEPLOY_KEY - Convex deployment key
+   VITE_CONVEX_URL - Convex deployment url
+   VITE_COGNITO_USERPOOL_ID - Cognito user pool id
+   VITE_COGNITO_CLIENT_ID - Cognito client id
    ```
 
    Production environment
 
    ```
-   AWS_SERVICE_ROLE_PROD - AWS ARN of the GitHub Actions Role to Assume (from step 1)
-   CERTIFICATE_ARN - ARN to ACM certificate for CloudFront Distribution
-   HOSTED_ZONE_ID - Route53 Hosted Zone ID
-   HOSTED_ZONE_NAME - Route53 Hosted Zone Name
-   DLQ_NOTIFICATIONS - email address to send DLQ messages to
-   CLOUDFRONT_DOMAIN_PROD - AWS CloudFront Distribution domain name
-   COGNITO_USERPOOL_ID_PROD - Cognito User Pool Id
-   COGNITO_WEB_CLIENT_ID_PROD - Cognito User Pool Client Id
-   APPSYNC_ENDPOINT_PROD - AWS AppSync GraphQL endpoint URL
+   AWS_SERVICE_ROLE_ARN - GitHub Actions Role ARN
+   CONVEX_DEPLOYMENT - Convex deployment id
+   CONVEX_DEPLOY_KEY - Convex deployment key
+   VITE_CONVEX_URL - Convex deployment url
+   VITE_COGNITO_USERPOOL_ID - Cognito user pool id
+   VITE_COGNITO_CLIENT_ID - Cognito client id
    ```
-
-# Testing
-
-## Jest
-
-To be added
-
-## Cypress
-
-To be added
-
-### Locally
-
-Test the frontend using cypress
-
-```
-$ npm run cypress:open
-
-or headless,
-
-$ npm run cypress:run
-```
-
-### GitHub Actions
-
-Ensure to configure the GitHub Secrets to include:
-
-    ```
-    CYPRESS_USERNAME - A valid Cognito username for Cypress integration testing
-    CYPRESS_PASSWORD - The Cognito password for Cypress integration testing
-    ```
-
-# Troubleshooting
-
-## Lambda DLQ
-
-To retry the Lambda function
-
-1. Get the message from the SQS DLQ
-
-```
-aws sqs receive-message --queue-url https://sqs.us-east-1.amazonaws.com/524849261220/pecuniary-dev-updatePosition-DLQ --profile bach-dev
-```
-
-2. Save the DLQ message event to a json file
-
-```
-{
-  "version": "0",
-  "id": "26b8f7d1-b141-9baf-8a01-f625b7c3b0bc",
-  "detail-type": "InvestmentTransactionSavedEvent",
-  "source": "custom.pecuniary",
-  "account": "524849261220",
-  "time": "2024-12-31T20:29:49Z",
-  "region": "us-east-1",
-  "resources": [],
-  "detail": {
-      "accountId": "c8df14ba-0bf9-43dc-a92f-0185714336a7",
-      "transactionDate": "2024-12-31",
-      "type": "Buy",
-      "symbol": "FNMA",
-      "shares": 123.0,
-      "price": 12.0,
-      "commission": 12.0,
-      "userId": "a4e824d8-2021-7008-6807-ec5d9400debb"
-  }
-}
-```
-
-3. Run the CLI command to invoke lambda
-
-```
-aws lambda invoke --function-name pecuniary-dev-UpdatePosition --payload fileb://request.json response.json --profile bach-dev
-```
-
-4. Run the CLI command to remove the message from the SQS DLQ
-
-```
-aws sqs delete-message --queue-url https://sqs.us-east-1.amazonaws.com/524849261220/pecuniary-dev-updatePosition-DLQ --receipt-handle <receipt-handle> --profile bach-dev
-```
 
 # Event Sourcing and CQRS Architecture
 

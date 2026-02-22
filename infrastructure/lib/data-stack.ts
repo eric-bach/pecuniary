@@ -1,6 +1,5 @@
 import { CfnOutput, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { Table, BillingMode, AttributeType } from 'aws-cdk-lib/aws-dynamodb';
 import { LayerVersion, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import {
@@ -12,8 +11,8 @@ import {
   UserPoolDomain,
 } from 'aws-cdk-lib/aws-cognito';
 import { PolicyStatement, Policy } from 'aws-cdk-lib/aws-iam';
-import { PecuniaryBaseStackProps } from './types/PecuniaryStackProps';
-import VERIFICATION_EMAIL_TEMPLATE from './emails/verificationEmail';
+import { PecuniaryBaseStackProps } from '../types/PecuniaryStackProps';
+import VERIFICATION_EMAIL_TEMPLATE from '../data/verificationEmail';
 
 import * as path from 'path';
 const dotenv = require('dotenv');
@@ -22,7 +21,6 @@ dotenv.config();
 
 export class DataStack extends Stack {
   public userPoolId: string;
-  public dataTableArn: string;
 
   constructor(scope: Construct, id: string, props: PecuniaryBaseStackProps) {
     super(scope, id, props);
@@ -37,7 +35,7 @@ export class DataStack extends Stack {
     const powertoolsLayer = LayerVersion.fromLayerVersionArn(
       this,
       'PowertoolsLayer',
-      `arn:aws:lambda:${Stack.of(this).region}:094274105915:layer:AWSLambdaPowertoolsTypeScriptV2:20`
+      `arn:aws:lambda:${Stack.of(this).region}:094274105915:layer:AWSLambdaPowertoolsTypeScriptV2:20`,
     );
 
     // AWS Cognito post-confirmation lambda function
@@ -109,6 +107,18 @@ export class DataStack extends Stack {
       accessTokenValidity: Duration.hours(8),
       idTokenValidity: Duration.hours(8),
       userPool,
+      // generateSecret: true,
+      // oAuth: {
+      //   flows: {
+      //     authorizationCodeGrant: true,
+      //   },
+      //   scopes: [OAuthScope.OPENID, OAuthScope.PROFILE, OAuthScope.EMAIL],
+      //   callbackUrls: [
+      //     'http://localhost:3000/api/auth/callback/cognito', // Local dev (adjust port/path)
+      //     // 'https://your-deployed-domain.com/api/auth/callback/cognito',  // Prod
+      //   ],
+      //   // logoutUrls: ['http://localhost:3000/'],  // Optional
+      // },
     });
 
     // Add permissions to add user to Cognito User Pool
@@ -120,56 +130,8 @@ export class DataStack extends Stack {
             resources: [userPool.userPoolArn],
           }),
         ],
-      })
+      }),
     );
-
-    /***
-     *** AWS DynamoDB
-     ***/
-
-    const dataTable = new Table(this, 'Data', {
-      tableName: `${props.appName}-data-${props.envName}`,
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'pk',
-        type: AttributeType.STRING,
-      },
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
-    // GSIs for Data Table
-    dataTable.addGlobalSecondaryIndex({
-      indexName: 'accountId-gsi',
-      partitionKey: {
-        name: 'accountId',
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'updatedAt',
-        type: AttributeType.STRING,
-      },
-    });
-    dataTable.addGlobalSecondaryIndex({
-      indexName: 'userId-gsi',
-      partitionKey: {
-        name: 'userId',
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'updatedAt',
-        type: AttributeType.STRING,
-      },
-    });
-    dataTable.addGlobalSecondaryIndex({
-      indexName: 'transaction-gsi',
-      partitionKey: {
-        name: 'accountId',
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'transactionDate',
-        type: AttributeType.STRING,
-      },
-    });
 
     /***
      *** Outputs
@@ -179,14 +141,10 @@ export class DataStack extends Stack {
     new CfnOutput(this, 'UserPoolClientId', { value: userPoolClient.userPoolClientId });
     new CfnOutput(this, 'CognitoPostConfirmationFunctionArn', { value: cognitoPostConfirmationTrigger.functionArn });
 
-    new CfnOutput(this, 'DataTableArn', { value: dataTable.tableArn, exportName: `${props.appName}-${props.envName}-dataTableArn` });
-    new CfnOutput(this, 'DataTableName', { value: dataTable.tableName, exportName: `${props.appName}-${props.envName}-dataTableName` });
-
     /***
      *** Properties
      ***/
 
     this.userPoolId = userPool.userPoolId;
-    this.dataTableArn = dataTable.tableArn;
   }
 }

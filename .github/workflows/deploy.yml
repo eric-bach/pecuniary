@@ -47,22 +47,27 @@ jobs:
       - name: 📥  Install Infrastructure and Backend
         uses: ./.github/actions/infrastructure
 
-      # - name: 📥 Install Frontend
-      #   uses: ./.github/actions/frontend
+      - name: 📥 Install Frontend
+        uses: ./.github/actions/frontend
+        with:
+          convex_deployment: ${{ secrets.CONVEX_DEPLOYMENT }}
+          convex_deploy_key: ${{ secrets.CONVEX_DEPLOY_KEY }}
 
-      # - name: 🏗 Build Frontend
-      #   run: npm run build-frontend
-      #   working-directory: infrastructure
-      #   env:
-      #     NEXT_PUBLIC_USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
-      #     NEXT_PUBLIC_USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
-      #     NEXT_PUBLIC_APPSYNC_API_ENDPOINT: ${{ secrets.APPSYNC_API_ENDPOINT }}
-      #     NEXT_PUBLIC_APPSYNC_REGION: ${{ secrets.REGION }}
+      - name: 🏗 Build Frontend
+        run: npm run build
+        working-directory: frontend
+        env:
+          VITE_CONVEX_URL: ${{ secrets.VITE_CONVEX_URL }}
+          VITE_COGNITO_USERPOOL_ID: ${{ secrets.VITE_COGNITO_USERPOOL_ID }}
+          VITE_COGNITO_CLIENT_ID: ${{ secrets.VITE_COGNITO_CLIENT_ID }}
+          VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
 
-      - name: 🚧 Build AppSync
-        run: |
-          npm run build-appsync
-        working-directory: infrastructure
+      - name: 🚀 Deploy Frontend to Cloudflare Workers
+        run: npx wrangler deploy --name pecuniary
+        working-directory: frontend
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: 🚧 Build Backend
         run: |
@@ -74,19 +79,9 @@ jobs:
             cd - >/dev/null
           done
         working-directory: backend
-        env:
-          CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
-          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
 
       - name: 🚀 Deploy Backend
         run: |
           echo "🚀 Deploying backend prod"
           npm run cdk -- deploy --all -c stage=backend -c env=prod --require-approval=never
         working-directory: infrastructure
-        env:
-          CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
-          DLQ_NOTIFICATIONS: ${{ secrets.DLQ_NOTIFICATIONS }}
-
-      # - name: 🚀 Deploy Frontend
-      #   run: npx sst deploy --stage prod
-      #   working-directory: frontend
