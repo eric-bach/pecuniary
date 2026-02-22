@@ -106,11 +106,8 @@ jobs:
           VITE_COGNITO_CLIENT_ID: ${{ secrets.VITE_COGNITO_CLIENT_ID }}
           VITE_TURNSTILE_SITE_KEY: ${{ secrets.VITE_TURNSTILE_SITE_KEY }}
 
-      - name: 🚀 Deploy Frontend to Cloudflare Pages (preview)
-        run: |
-          cp public/_redirects dist/client/_redirects
-          npx wrangler pages project create pecuniary --production-branch=main 2>/dev/null || true
-          npx wrangler pages deploy dist/client --project-name=pecuniary
+      - name: 🚀 Deploy Frontend to Cloudflare Workers
+        run: npx wrangler deploy
         working-directory: frontend
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
