@@ -92,8 +92,8 @@ function AccountsPage() {
   const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
   const { user } = useAuthenticator((context) => [context.user]);
   const userAccounts = useQuery(api.accounts.list, user?.username ? { userId: user.username } : 'skip');
-  const balances = useQuery(api.transactions.getBalancesByUser, user?.username ? { userId: user.username } : 'skip') ?? {};
-  const totalHistory = useQuery(api.transactions.getTotalBalanceHistory, user?.username ? { userId: user.username } : 'skip');
+  const balances = useQuery(api.cashTransactions.getBalancesByUser, user?.username ? { userId: user.username } : 'skip') ?? {};
+  const totalHistory = useQuery(api.cashTransactions.getTotalBalanceHistory, user?.username ? { userId: user.username } : 'skip');
 
   const chartData = totalHistory ?? [];
   const hasHistory = chartData.length > 0;

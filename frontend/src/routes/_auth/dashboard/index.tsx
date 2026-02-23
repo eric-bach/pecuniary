@@ -65,11 +65,11 @@ function DashboardPage() {
   const userId = user?.username;
 
   const userAccounts = useQuery(api.accounts.list, userId ? { userId } : 'skip');
-  const balances = useQuery(api.transactions.getBalancesByUser, userId ? { userId } : 'skip') ?? {};
-  const totalHistory = useQuery(api.transactions.getTotalBalanceHistory, userId ? { userId } : 'skip');
-  const spendingByMonth = useQuery(api.transactions.getSpendingByMonth, userId ? { userId } : 'skip');
-  const recentTransactions = useQuery(api.transactions.getRecentByUser, userId ? { userId, limit: 8 } : 'skip');
-  const categoryBreakdown = useQuery(api.transactions.getCategoryBreakdownByUser, userId ? { userId } : 'skip');
+  const balances = useQuery(api.cashTransactions.getBalancesByUser, userId ? { userId } : 'skip') ?? {};
+  const totalHistory = useQuery(api.cashTransactions.getTotalBalanceHistory, userId ? { userId } : 'skip');
+  const spendingByMonth = useQuery(api.cashTransactions.getSpendingByMonth, userId ? { userId } : 'skip');
+  const recentTransactions = useQuery(api.cashTransactions.getRecentByUser, userId ? { userId, limit: 8 } : 'skip');
+  const categoryBreakdown = useQuery(api.cashTransactions.getCategoryBreakdownByUser, userId ? { userId } : 'skip');
 
   const PIE_COLORS = ['#0067c0', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280'];
   const categoryTotal = (categoryBreakdown ?? []).reduce((s, c) => s + c.value, 0);
@@ -363,26 +363,49 @@ function DashboardPage() {
               <div className='py-12 text-center text-sm text-gray-400'>No transactions yet</div>
             ) : (
               <div className='divide-y divide-gray-50'>
+                {/* Header row */}
+                <div className='flex items-center px-6 py-2 bg-gray-50 text-xs font-medium text-gray-500'>
+                  <div className='w-10 shrink-0'></div>
+                  <div className='w-1/4 min-w-0'>Payee</div>
+                  <div className='w-1/5 min-w-0'>Category</div>
+                  <div className='w-1/5 min-w-0'>Account</div>
+                  <div className='w-1/6 min-w-0'>Date</div>
+                  <div className='w-1/6 min-w-0 text-right'>Amount</div>
+                </div>
                 {recentTransactions.map((tx) => (
-                  <div key={tx._id} className='flex items-center justify-between px-6 py-3 hover:bg-gray-50/60 transition-colors'>
-                    <div className='flex items-center gap-3'>
+                  <div key={tx._id} className='flex items-center px-6 py-2.5 hover:bg-gray-50/60 transition-colors'>
+                    {/* Icon */}
+                    <div className='w-10 shrink-0'>
                       <div
-                        className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
                           tx.type === 'credit' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
                         }`}
                       >
-                        {tx.type === 'credit' ? <ArrowUpRight className='h-4 w-4' /> : <ArrowDownLeft className='h-4 w-4' />}
-                      </div>
-                      <div>
-                        <div className='font-medium text-sm text-gray-900'>{tx.payee}</div>
-                        <div className='text-xs text-gray-400 mt-0.5'>
-                          {tx.accountName} · {tx.category || 'Uncategorized'} · {tx.date}
-                        </div>
+                        {tx.type === 'credit' ? <ArrowUpRight className='h-3.5 w-3.5' /> : <ArrowDownLeft className='h-3.5 w-3.5' />}
                       </div>
                     </div>
-                    <div className={`text-sm font-semibold tabular-nums ${tx.type === 'credit' ? 'text-emerald-600' : 'text-red-500'}`}>
-                      {tx.type === 'credit' ? '+' : '-'}
-                      {formatCurrency(tx.amount)}
+                    {/* Payee */}
+                    <div className='w-1/4 min-w-0 pr-2'>
+                      <div className='font-medium text-sm text-gray-900 truncate'>{tx.payee}</div>
+                    </div>
+                    {/* Category */}
+                    <div className='w-1/5 min-w-0 pr-2'>
+                      <span className='text-sm text-gray-600 truncate block'>{tx.category || 'Uncategorized'}</span>
+                    </div>
+                    {/* Account */}
+                    <div className='w-1/5 min-w-0 pr-2'>
+                      <span className='text-sm text-gray-600 truncate block'>{tx.accountName}</span>
+                    </div>
+                    {/* Date */}
+                    <div className='w-1/6 min-w-0 pr-2'>
+                      <span className='text-sm text-gray-500'>{tx.date}</span>
+                    </div>
+                    {/* Amount */}
+                    <div className='w-1/6 min-w-0 text-right'>
+                      <span className={`text-sm font-semibold tabular-nums ${tx.type === 'credit' ? 'text-emerald-600' : 'text-red-500'}`}>
+                        {tx.type === 'credit' ? '+' : '-'}
+                        {formatCurrency(tx.amount)}
+                      </span>
                     </div>
                   </div>
                 ))}

@@ -9,7 +9,7 @@ export default defineSchema({
     userId: v.string(),
   }).index('by_user', ['userId']),
 
-  transactions: defineTable({
+  cashTransactions: defineTable({
     accountId: v.id('accounts'),
     date: v.string(),
     payee: v.string(),
@@ -18,4 +18,34 @@ export default defineSchema({
     type: v.union(v.literal('debit'), v.literal('credit')),
     amount: v.number(),
   }).index('by_account', ['accountId']),
+
+  investmentTransactions: defineTable({
+    accountId: v.id('accounts'),
+    date: v.string(),
+    type: v.union(
+      v.literal('buy'),
+      v.literal('sell'),
+      v.literal('dividend'),
+      v.literal('split'),
+      v.literal('transfer_in'),
+      v.literal('transfer_out'),
+    ),
+    symbol: v.string(),
+    shares: v.number(),
+    unitPrice: v.number(),
+    commission: v.optional(v.number()),
+    notes: v.optional(v.string()),
+  })
+    .index('by_account', ['accountId'])
+    .index('by_account_symbol', ['accountId', 'symbol']),
+
+  positions: defineTable({
+    accountId: v.id('accounts'),
+    symbol: v.string(),
+    shares: v.number(),
+    costBasis: v.number(),
+    lastUpdated: v.string(),
+  })
+    .index('by_account', ['accountId'])
+    .index('by_account_symbol', ['accountId', 'symbol']),
 });

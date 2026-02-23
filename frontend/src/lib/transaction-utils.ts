@@ -6,6 +6,7 @@ export const CATEGORY_CONFIG: Record<string, { icon: string; color: string }> = 
   Travel: { icon: '✈️', color: 'text-blue-600' },
   Groceries: { icon: '🥬', color: 'text-green-600' },
   Clothing: { icon: '👕', color: 'text-indigo-600' },
+  'Personal Care': { icon: '🧴', color: 'text-red-400' },
   Auto: { icon: '🚗', color: 'text-red-600' },
   Phone: { icon: '📱', color: 'text-gray-600' },
   Mortgage: { icon: '🏠', color: 'text-orange-600' },

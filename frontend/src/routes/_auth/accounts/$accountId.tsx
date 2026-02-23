@@ -29,8 +29,8 @@ import {
   Bar,
   Legend,
 } from 'recharts';
-import { AddTransactionSheet } from '@/components/accounts/add-transaction-sheet';
-import { EditTransactionSheet } from '@/components/accounts/edit-transaction-sheet';
+import { AddCashTransactionSheet } from '@/components/accounts/add-cash-transaction-sheet';
+import { EditCashTransactionSheet } from '@/components/accounts/edit-cash-transaction-sheet';
 import { EditAccountSheet } from '@/components/accounts/edit-account-sheet';
 
 import { api } from '../../../../convex/_generated/api';
@@ -44,7 +44,7 @@ function RouteComponent() {
   const { accountId } = Route.useParams();
   const { user } = useAuthenticator((context) => [context.user]);
   const account = useQuery(api.accounts.get, { accountId: accountId as Id<'accounts'> });
-  const rawTransactions = useQuery(api.transactions.listByAccount, { accountId: accountId as Id<'accounts'> });
+  const rawTransactions = useQuery(api.cashTransactions.listByAccount, { accountId: accountId as Id<'accounts'> });
   // Sort newest first by date string, then by creation time as tiebreaker
   const transactions = rawTransactions
     ? [...rawTransactions].sort((a, b) => {
@@ -52,10 +52,10 @@ function RouteComponent() {
         return dateDiff !== 0 ? dateDiff : b._creationTime - a._creationTime;
       })
     : undefined;
-  const balance = useQuery(api.transactions.getBalance, { accountId: accountId as Id<'accounts'> });
-  const balanceHistory = useQuery(api.transactions.getBalanceHistory, { accountId: accountId as Id<'accounts'> });
-  const categoryBreakdown = useQuery(api.transactions.getCategoryBreakdown, { accountId: accountId as Id<'accounts'> });
-  const incomeVsExpenses = useQuery(api.transactions.getIncomeVsExpensesByMonth, { accountId: accountId as Id<'accounts'> });
+  const balance = useQuery(api.cashTransactions.getBalance, { accountId: accountId as Id<'accounts'> });
+  const balanceHistory = useQuery(api.cashTransactions.getBalanceHistory, { accountId: accountId as Id<'accounts'> });
+  const categoryBreakdown = useQuery(api.cashTransactions.getCategoryBreakdown, { accountId: accountId as Id<'accounts'> });
+  const incomeVsExpenses = useQuery(api.cashTransactions.getIncomeVsExpensesByMonth, { accountId: accountId as Id<'accounts'> });
   const [isAddTransactionOpen, setIsAddTransactionOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<NonNullable<typeof transactions>[number] | null>(null);
   const [isEditAccountOpen, setIsEditAccountOpen] = useState(false);
@@ -386,18 +386,20 @@ function RouteComponent() {
           </Card>
         </div>
       </div>
-      <AddTransactionSheet
+      <AddCashTransactionSheet
         open={isAddTransactionOpen}
         onOpenChange={setIsAddTransactionOpen}
         accountId={accountId}
+        accountType={account?.type}
         userId={user?.username ?? ''}
       />
-      <EditTransactionSheet
+      <EditCashTransactionSheet
         open={!!editingTransaction}
         onOpenChange={(open) => !open && setEditingTransaction(null)}
         transaction={editingTransaction}
         userId={user?.username ?? ''}
         accountName={account?.name}
+        accountType={account?.type}
       />
       <EditAccountSheet open={isEditAccountOpen} onOpenChange={setIsEditAccountOpen} account={account ?? null} />
     </div>

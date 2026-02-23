@@ -7,8 +7,8 @@ import { NavbarTitle, NavbarActions } from '@/components/layout/navbar-portal';
 import { useQuery } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
 import type { Id } from '../../../../convex/_generated/dataModel';
-import { EditTransactionSheet } from '@/components/accounts/edit-transaction-sheet';
-import { AddTransactionSheet } from '@/components/accounts/add-transaction-sheet';
+import { EditCashTransactionSheet } from '@/components/accounts/edit-cash-transaction-sheet';
+import { AddCashTransactionSheet } from '@/components/accounts/add-cash-transaction-sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TransactionFilterPopover, TransactionFilters, DEFAULT_FILTERS } from '@/components/transactions/transaction-filter-popover';
 import { getCategoryDisplay, getPayeeInitial, getPayeeColor, formatDate, formatAmount } from '@/lib/transaction-utils';
@@ -28,16 +28,17 @@ const ACCOUNT_TYPE_COLORS: Record<string, string> = {
 
 function TransactionsPage() {
   const { user } = useAuthenticator((context) => [context.user]);
-  const transactions = useQuery(api.transactions.listAllByUser, user?.username ? { userId: user.username } : 'skip');
+  const transactions = useQuery(api.cashTransactions.listAllByUser, user?.username ? { userId: user.username } : 'skip');
   const accounts = useQuery(api.accounts.list, user?.username ? { userId: user.username } : 'skip');
 
   const [selectedAccount, setSelectedAccount] = useState<string>('all');
   const [isAddTransactionOpen, setIsAddTransactionOpen] = useState(false);
   const [filters, setFilters] = useState<TransactionFilters>(DEFAULT_FILTERS);
   const [editingTransaction, setEditingTransaction] = useState<{
-    _id: Id<'transactions'>;
+    _id: Id<'cashTransactions'>;
     accountId: Id<'accounts'>;
     accountName: string;
+    accountType: string;
     date: string;
     payee: string;
     description?: string;
@@ -174,9 +175,10 @@ function TransactionsPage() {
                     className='flex items-center px-4 py-2 border-b border-gray-50 hover:bg-gray-50/50 cursor-pointer group'
                     onClick={() =>
                       setEditingTransaction({
-                        _id: tx._id as Id<'transactions'>,
+                        _id: tx._id as Id<'cashTransactions'>,
                         accountId: tx.accountId as Id<'accounts'>,
                         accountName: tx.accountName,
+                        accountType: tx.accountType,
                         date: tx.date,
                         payee: tx.payee,
                         description: tx.description,
@@ -236,16 +238,17 @@ function TransactionsPage() {
       )}
 
       {/* Edit Transaction Sheet */}
-      <EditTransactionSheet
+      <EditCashTransactionSheet
         open={!!editingTransaction}
         onOpenChange={(open) => !open && setEditingTransaction(null)}
         transaction={editingTransaction}
         userId={user?.username ?? ''}
         accountName={editingTransaction?.accountName}
+        accountType={editingTransaction?.accountType}
       />
 
       {/* Add Transaction Sheet */}
-      <AddTransactionSheet
+      <AddCashTransactionSheet
         open={isAddTransactionOpen}
         onOpenChange={setIsAddTransactionOpen}
         accounts={accounts?.map((a) => ({ _id: a._id, name: a.name, type: a.type }))}
