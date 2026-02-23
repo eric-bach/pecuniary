@@ -171,6 +171,35 @@ export const listAllByUser = query({
   },
 });
 
+export const getSymbolSuggestions = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const accounts = await ctx.db
+      .query('accounts')
+      .withIndex('by_user', (q) => q.eq('userId', args.userId))
+      .filter((q) => q.eq(q.field('type'), 'Investment'))
+      .collect();
+
+    // Collect all unique symbols across all investment accounts
+    const symbolSet = new Set<string>();
+    for (const account of accounts) {
+      const txs = await ctx.db
+        .query('investmentTransactions')
+        .withIndex('by_account', (q) => q.eq('accountId', account._id))
+        .collect();
+      for (const tx of txs) {
+        symbolSet.add(tx.symbol);
+      }
+    }
+
+    return Array.from(symbolSet)
+      .sort()
+      .map((symbol) => ({ symbol }));
+  },
+});
+
 // Helper function to recalculate position from transactions
 async function updatePosition(ctx: { db: any }, accountId: any, symbol: string) {
   const txs = await ctx.db

@@ -6,6 +6,7 @@ export default defineSchema({
     name: v.string(),
     description: v.optional(v.string()), // Made optional to be safe, but can be required
     type: v.union(v.literal('Cash'), v.literal('Investment'), v.literal('Real Estate'), v.literal('Credit Cards'), v.literal('Loans')),
+    currency: v.optional(v.union(v.literal('USD'), v.literal('CAD'))), // Optional, used for Investment accounts
     userId: v.string(),
   }).index('by_user', ['userId']),
 

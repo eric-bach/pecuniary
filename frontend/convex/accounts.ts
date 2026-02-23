@@ -6,6 +6,7 @@ export const create = mutation({
     name: v.string(),
     description: v.optional(v.string()),
     type: v.union(v.literal('Cash'), v.literal('Investment'), v.literal('Real Estate'), v.literal('Credit Cards'), v.literal('Loans')),
+    currency: v.optional(v.union(v.literal('USD'), v.literal('CAD'))),
     userId: v.string(),
   },
   handler: async (ctx, args) => {
@@ -13,6 +14,7 @@ export const create = mutation({
       name: args.name,
       description: args.description,
       type: args.type,
+      currency: args.type === 'Investment' ? (args.currency ?? 'USD') : undefined,
       userId: args.userId,
     });
     return accountId;
