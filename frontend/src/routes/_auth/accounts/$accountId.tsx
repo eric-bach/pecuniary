@@ -1,11 +1,18 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { NavbarActions, NavbarTitle } from '@/components/layout/navbar-portal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from 'convex/react';
-import { Pencil } from 'lucide-react';
+import { Pencil, ChevronRight } from 'lucide-react';
+import {
+  getCategoryDisplay,
+  getPayeeInitial,
+  getPayeeColor,
+  formatDate,
+  formatAmount,
+  groupTransactionsByDate,
+} from '@/lib/transaction-utils';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import {
   XAxis,
@@ -52,6 +59,12 @@ function RouteComponent() {
   const [isAddTransactionOpen, setIsAddTransactionOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<NonNullable<typeof transactions>[number] | null>(null);
   const [isEditAccountOpen, setIsEditAccountOpen] = useState(false);
+
+  // Group transactions by date
+  const groupedTransactions = useMemo(() => {
+    if (!transactions) return [];
+    return groupTransactionsByDate(transactions);
+  }, [transactions]);
 
   const chartData = balanceHistory ?? [];
   const hasHistory = chartData.length > 0;
@@ -239,50 +252,73 @@ function RouteComponent() {
               </Button>
             </CardHeader>
             <CardContent className='p-0'>
-              {/* Sticky header + scrollable body */}
-              <div className='overflow-auto min-h-160 max-h-320'>
-                <Table>
-                  <TableHeader className='sticky top-0 z-10 bg-white'>
-                    <TableRow className='border-b border-gray-100'>
-                      <TableHead className='text-xs text-gray-500 font-semibold pl-6'>Date</TableHead>
-                      <TableHead className='text-xs text-gray-500 font-semibold'>Payee / Description</TableHead>
-                      <TableHead className='text-xs text-gray-500 font-semibold'>Category</TableHead>
-                      <TableHead className='text-xs text-gray-500 font-semibold text-right pr-6'>Amount</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {transactions === undefined ? (
-                      <TableRow>
-                        <TableCell colSpan={4} className='text-center text-gray-400 py-12 text-sm'>
-                          Loading...
-                        </TableCell>
-                      </TableRow>
-                    ) : transactions.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={4} className='text-center text-gray-400 py-12 text-sm'>
-                          No transactions yet
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      transactions.map((tx) => (
-                        <TableRow key={tx._id} className='hover:bg-gray-50/50 cursor-pointer' onClick={() => setEditingTransaction(tx)}>
-                          <TableCell className='text-sm text-gray-600 py-3 whitespace-nowrap pl-6'>{tx.date}</TableCell>
-                          <TableCell className='text-sm py-3'>
-                            <div className='font-medium text-gray-900'>{tx.payee}</div>
-                            {tx.description && <div className='text-xs text-gray-400 mt-0.5'>{tx.description}</div>}
-                          </TableCell>
-                          <TableCell className='text-sm text-gray-500 py-3'>{tx.category ?? '—'}</TableCell>
-                          <TableCell className='text-sm text-right py-3 pr-6 font-semibold'>
-                            <span className={tx.type === 'credit' ? 'text-emerald-600' : 'text-red-500'}>
-                              {tx.type === 'credit' ? '+' : '-'}$
-                              {tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+              {/* Transactions list */}
+              <div className='overflow-auto max-h-[500px]'>
+                {transactions === undefined ? (
+                  <div className='text-center text-gray-400 py-12 text-sm'>Loading...</div>
+                ) : transactions.length === 0 ? (
+                  <div className='text-center text-gray-400 py-12 text-sm'>No transactions yet</div>
+                ) : (
+                  groupedTransactions.map((group) => (
+                    <div key={group.date}>
+                      {/* Date header */}
+                      <div className='flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-100'>
+                        <span className='text-sm font-medium text-gray-500'>{formatDate(group.date)}</span>
+                        <span className='text-sm font-medium text-gray-500'>
+                          $
+                          {group.dailyTotal.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </span>
+                      </div>
+
+                      {/* Transactions for this date */}
+                      {group.transactions.map((tx) => {
+                        const categoryDisplay = getCategoryDisplay(tx.category);
+
+                        return (
+                          <div
+                            key={tx._id}
+                            className='flex items-center px-4 py-2 border-b border-gray-50 hover:bg-gray-50/50 cursor-pointer group'
+                            onClick={() => setEditingTransaction(tx)}
+                          >
+                            {/* Payee icon */}
+                            <div className='w-10 shrink-0'>
+                              <div
+                                className={`w-7 h-7 rounded-full flex items-center justify-center text-white font-medium text-xs ${getPayeeColor(tx.payee)}`}
+                              >
+                                {getPayeeInitial(tx.payee)}
+                              </div>
+                            </div>
+
+                            {/* Payee name */}
+                            <div className='w-1/3 min-w-0 pr-4'>
+                              <div className='font-medium text-gray-900 truncate'>{tx.payee}</div>
+                              {tx.description && <div className='text-xs text-gray-400 truncate'>{tx.description}</div>}
+                            </div>
+
+                            {/* Category */}
+                            <div className='flex items-center gap-1.5 w-1/3 min-w-0 pr-4'>
+                              <span className='text-sm'>{categoryDisplay.icon}</span>
+                              <span className={`text-sm truncate ${categoryDisplay.color}`}>{categoryDisplay.name}</span>
+                            </div>
+
+                            {/* Amount */}
+                            <div className='flex items-center justify-end gap-2 w-1/3 min-w-0'>
+                              <span
+                                className={`text-sm font-semibold text-right ${tx.type === 'credit' ? 'text-emerald-600' : 'text-gray-900'}`}
+                              >
+                                {formatAmount(tx.amount, tx.type)}
+                              </span>
+                              <ChevronRight className='h-4 w-4 text-gray-300 group-hover:text-gray-400' />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))
+                )}
               </div>
               {transactions && transactions.length > 0 && (
                 <div className='px-6 py-2.5 border-t border-gray-100 text-xs text-gray-400'>
