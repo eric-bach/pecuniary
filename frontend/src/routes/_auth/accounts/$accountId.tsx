@@ -307,7 +307,7 @@ function RouteComponent() {
                             {/* Amount */}
                             <div className='flex items-center justify-end gap-2 w-1/3 min-w-0'>
                               <span
-                                className={`text-sm font-semibold text-right ${tx.type === 'credit' ? 'text-emerald-600' : 'text-gray-900'}`}
+                                className={`text-sm font-semibold text-right ${tx.type === 'credit' ? 'text-emerald-600' : 'text-red-500'}`}
                               >
                                 {formatAmount(tx.amount, tx.type)}
                               </span>
