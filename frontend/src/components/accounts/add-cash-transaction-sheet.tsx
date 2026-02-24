@@ -5,13 +5,14 @@ import * as z from 'zod';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
-import { Check, Trash2 } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
 const transactionFormSchema = z.object({
@@ -29,43 +30,36 @@ const transactionFormSchema = z.object({
 
 type TransactionFormValues = z.infer<typeof transactionFormSchema>;
 
-interface Transaction {
-  _id: Id<'transactions'>;
-  accountId: Id<'accounts'>;
-  accountName?: string;
-  date: string;
-  payee: string;
-  description?: string;
-  category?: string;
-  type: 'debit' | 'credit';
-  amount: number;
+interface Account {
+  _id: Id<'accounts'>;
+  name: string;
+  type: string;
 }
 
-interface EditTransactionSheetProps {
+interface AddCashTransactionSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  transaction: Transaction | null;
+  accountId?: string;
+  accountType?: string;
+  accounts?: Account[];
   userId: string;
-  accountName?: string;
 }
 
-export function EditTransactionSheet({ open, onOpenChange, transaction, userId, accountName }: EditTransactionSheetProps) {
-  const updateTransaction = useMutation(api.transactions.update);
-  const deleteTransaction = useMutation(api.transactions.remove);
-  const payeeSuggestions = useQuery(api.transactions.getPayeeSuggestions, userId ? { userId } : 'skip') ?? [];
+export function AddCashTransactionSheet({ open, onOpenChange, accountId, accountType, accounts, userId }: AddCashTransactionSheetProps) {
+  const createTransaction = useMutation(api.cashTransactions.create);
+  const payeeSuggestions = useQuery(api.cashTransactions.getPayeeSuggestions, userId ? { userId } : 'skip') ?? [];
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [payeeOpen, setPayeeOpen] = useState(false);
   const [payeeInput, setPayeeInput] = useState('');
+  const [selectedAccountId, setSelectedAccountId] = useState<string>(accountId ?? '');
   const payeeInputRef = useRef<HTMLInputElement>(null);
 
-  const displayAccountName = accountName ?? transaction?.accountName ?? '';
+  const today = new Date().toISOString().split('T')[0];
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
-      date: '',
+      date: today,
       payee: '',
       category: '',
       description: '',
@@ -73,54 +67,22 @@ export function EditTransactionSheet({ open, onOpenChange, transaction, userId, 
     },
   });
 
-  // Watch form values for real-time header updates
-  const watchedPayee = form.watch('payee');
-  const watchedAmount = form.watch('amount');
-  const watchedDate = form.watch('date');
-
-  // Format amount for display in header
-  const displayAmount = (() => {
-    const raw = parseFloat((watchedAmount || '0').replace(/,/g, ''));
-    if (isNaN(raw)) return '$0.00';
-    const formatted = Math.abs(raw).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    return `$${formatted}`;
-  })();
-
-  // Format date in long form for display
-  const displayDate = (() => {
-    if (!watchedDate) return '';
-    const date = new Date(watchedDate + 'T00:00:00');
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  })();
-
-  // Populate form when transaction changes or sheet opens
+  // Auto-focus payee when sheet opens
   useEffect(() => {
-    if (open && transaction) {
-      // Format amount with sign: negative for credits (money in), positive for debits (money out)
-      const signedAmount = transaction.type === 'credit' ? -transaction.amount : transaction.amount;
-      const formattedAmount =
-        (signedAmount < 0 ? '-' : '') +
-        Math.abs(signedAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-      form.reset({
-        date: transaction.date,
-        payee: transaction.payee,
-        category: transaction.category ?? '',
-        description: transaction.description ?? '',
-        amount: formattedAmount,
-      });
-      setPayeeInput(transaction.payee);
+    if (open) {
       setTimeout(() => payeeInputRef.current?.focus(), 100);
     }
-  }, [open, transaction]);
+  }, [open]);
 
-  // Reset payee dropdown state when sheet closes
+  // Reset form & payee state when sheet closes
   useEffect(() => {
     if (!open) {
+      form.reset({ date: today, payee: '', category: '', description: '', amount: '' });
+      setPayeeInput('');
       setPayeeOpen(false);
-      setShowDeleteConfirm(false);
+      setSelectedAccountId(accountId ?? '');
     }
-  }, [open]);
+  }, [open, accountId]);
 
   const filteredSuggestions =
     payeeInput.trim().length === 0
@@ -137,38 +99,43 @@ export function EditTransactionSheet({ open, onOpenChange, transaction, userId, 
   }
 
   async function onSubmit(data: TransactionFormValues) {
-    if (!transaction) return;
-
+    const targetAccountId = accountId ?? selectedAccountId;
+    if (!targetAccountId) {
+      return;
+    }
     setIsSubmitting(true);
     const raw = parseFloat(data.amount.replace(/,/g, ''));
+
+    // Determine account type for transaction type inference
+    const effectiveAccountType = accountType ?? accounts?.find((a) => a._id === targetAccountId)?.type;
+
+    // For Cash accounts: positive = credit (deposit), negative = debit (withdrawal)
+    // For Credit Cards: positive = debit (charge), negative = credit (payment)
+    let txType: 'debit' | 'credit';
+    if (effectiveAccountType === 'Credit Cards') {
+      txType = raw < 0 ? 'credit' : 'debit';
+    } else {
+      // Cash and other account types
+      txType = raw < 0 ? 'debit' : 'credit';
+    }
+
     try {
-      await updateTransaction({
-        transactionId: transaction._id,
+      await createTransaction({
+        accountId: targetAccountId as Id<'accounts'>,
         date: data.date,
         payee: data.payee,
         category: data.category || undefined,
         description: data.description || undefined,
-        type: raw < 0 ? 'credit' : 'debit',
+        type: txType,
         amount: Math.abs(raw),
       });
+      form.reset({ date: today, payee: '', category: '', description: '', amount: '' });
+      setPayeeInput('');
       onOpenChange(false);
     } catch (error) {
-      console.error('Failed to update transaction:', error);
+      console.error('Failed to create transaction:', error);
     } finally {
       setIsSubmitting(false);
-    }
-  }
-
-  async function handleDelete() {
-    if (!transaction) return;
-    setIsDeleting(true);
-    try {
-      await deleteTransaction({ transactionId: transaction._id });
-      onOpenChange(false);
-    } catch (error) {
-      console.error('Failed to delete transaction:', error);
-    } finally {
-      setIsDeleting(false);
     }
   }
 
@@ -176,27 +143,31 @@ export function EditTransactionSheet({ open, onOpenChange, transaction, userId, 
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className='overflow-y-auto min-w-[600px] sm:max-w-[480px]'>
         <SheetHeader className='mb-6'>
-          <SheetTitle>Edit Transaction</SheetTitle>
-          <SheetDescription>Update the transaction details. Click save when you're done.</SheetDescription>
+          <SheetTitle>Add Transaction</SheetTitle>
+          <SheetDescription>Enter the details for the new transaction. Click save when you're done.</SheetDescription>
         </SheetHeader>
-        {/* Header with payee and amount */}
-        <div className='flex items-start justify-between mb-6 px-4 pt-2'>
-          <div>
-            <h2 className='text-xl font-semibold text-gray-900'>{watchedPayee || 'Payee'}</h2>
-          </div>
-          <div className='text-right'>
-            <div className='text-xl font-semibold text-gray-900'>{displayAmount}</div>
-            {displayAccountName && (
-              <div className='flex items-center justify-end gap-1.5 mt-1'>
-                <div className='w-2 h-2 rounded-full bg-purple-500' />
-                <span className='text-sm text-gray-500'>{displayAccountName}</span>
-              </div>
-            )}
-          </div>
-        </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 pl-4 pr-4'>
+            {/* Account selector (only shown when accountId is not provided) */}
+            {!accountId && accounts && accounts.length > 0 && (
+              <div className='space-y-2'>
+                <FormLabel>Account</FormLabel>
+                <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select an account' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accounts.map((account) => (
+                      <SelectItem key={account._id} value={account._id}>
+                        {account.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             {/* Date */}
             <FormField
               control={form.control}
@@ -207,7 +178,6 @@ export function EditTransactionSheet({ open, onOpenChange, transaction, userId, 
                   <FormControl>
                     <Input type='date' {...field} />
                   </FormControl>
-                  {displayDate && <p className='text-sm text-gray-500 mt-1'>{displayDate}</p>}
                   <FormMessage />
                 </FormItem>
               )}
@@ -374,43 +344,18 @@ export function EditTransactionSheet({ open, onOpenChange, transaction, userId, 
               )}
             />
 
-            <div className='flex justify-between pt-4'>
-              <div className='flex space-x-2'>
-                <Button type='submit' disabled={isSubmitting || isDeleting} className='bg-[#0067c0] hover:bg-[#0067c0]/80'>
-                  {isSubmitting ? 'Saving...' : 'Save'}
-                </Button>
-                <Button type='button' variant='outline' onClick={() => onOpenChange(false)} disabled={isSubmitting || isDeleting}>
-                  Cancel
-                </Button>
-              </div>
-              {!showDeleteConfirm && (
-                <Button
-                  type='button'
-                  variant='destructive'
-                  disabled={isSubmitting || isDeleting}
-                  onClick={() => setShowDeleteConfirm(true)}
-                >
-                  <Trash2 className='h-4 w-4 mr-1.5' />
-                  Delete
-                </Button>
-              )}
+            <div className='flex justify-start pt-4 space-x-2'>
+              <Button
+                type='submit'
+                disabled={isSubmitting || (!accountId && !selectedAccountId)}
+                className='bg-[#0067c0] hover:bg-[#0067c0]/80'
+              >
+                {isSubmitting ? 'Saving...' : 'Save'}
+              </Button>
+              <Button type='button' variant='outline' onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+                Cancel
+              </Button>
             </div>
-
-            {/* Delete Confirmation */}
-            {showDeleteConfirm && (
-              <div className='mt-6 p-4 border border-red-200 rounded-lg bg-red-50'>
-                <div className='text-sm font-semibold text-red-800 mb-2'>Delete Transaction</div>
-                <p className='text-sm text-red-700 mb-3'>Are you sure you want to delete this transaction? This action cannot be undone.</p>
-                <div className='flex space-x-2'>
-                  <Button type='button' variant='destructive' disabled={isDeleting} onClick={handleDelete}>
-                    {isDeleting ? 'Deleting...' : 'Yes, Delete'}
-                  </Button>
-                  <Button type='button' variant='outline' disabled={isDeleting} onClick={() => setShowDeleteConfirm(false)}>
-                    No, Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
           </form>
         </Form>
       </SheetContent>

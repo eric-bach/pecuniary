@@ -12,7 +12,7 @@ export const create = mutation({
     amount: v.number(),
   },
   handler: async (ctx, args) => {
-    const transactionId = await ctx.db.insert('transactions', {
+    const transactionId = await ctx.db.insert('cashTransactions', {
       accountId: args.accountId,
       date: args.date,
       payee: args.payee,
@@ -27,7 +27,7 @@ export const create = mutation({
 
 export const update = mutation({
   args: {
-    transactionId: v.id('transactions'),
+    transactionId: v.id('cashTransactions'),
     date: v.string(),
     payee: v.string(),
     description: v.optional(v.string()),
@@ -44,7 +44,7 @@ export const update = mutation({
 
 export const remove = mutation({
   args: {
-    transactionId: v.id('transactions'),
+    transactionId: v.id('cashTransactions'),
   },
   handler: async (ctx, args) => {
     await ctx.db.delete(args.transactionId);
@@ -57,7 +57,7 @@ export const listByAccount = query({
   },
   handler: async (ctx, args) => {
     return await ctx.db
-      .query('transactions')
+      .query('cashTransactions')
       .withIndex('by_account', (q) => q.eq('accountId', args.accountId))
       .order('desc')
       .collect();
@@ -70,7 +70,7 @@ export const getBalance = query({
   },
   handler: async (ctx, args) => {
     const txs = await ctx.db
-      .query('transactions')
+      .query('cashTransactions')
       .withIndex('by_account', (q) => q.eq('accountId', args.accountId))
       .collect();
     return txs.reduce((sum, tx) => {
@@ -94,7 +94,7 @@ export const getBalancesByUser = query({
     const balances: Record<string, number> = {};
     for (const account of accounts) {
       const txs = await ctx.db
-        .query('transactions')
+        .query('cashTransactions')
         .withIndex('by_account', (q) => q.eq('accountId', account._id))
         .collect();
       balances[account._id] = txs.reduce((sum, tx) => {
@@ -132,7 +132,7 @@ export const getBalanceHistory = query({
   },
   handler: async (ctx, args) => {
     const txs = await ctx.db
-      .query('transactions')
+      .query('cashTransactions')
       .withIndex('by_account', (q) => q.eq('accountId', args.accountId))
       .collect();
     return runningBalance(txs);
@@ -153,7 +153,7 @@ export const getTotalBalanceHistory = query({
     const allTxs: Array<{ date: string; type: 'debit' | 'credit'; amount: number }> = [];
     for (const account of accounts) {
       const txs = await ctx.db
-        .query('transactions')
+        .query('cashTransactions')
         .withIndex('by_account', (q) => q.eq('accountId', account._id))
         .collect();
       allTxs.push(...txs);
@@ -177,7 +177,7 @@ export const getPayeeSuggestions = query({
     const allTxs: Array<{ payee: string; category?: string; _creationTime: number }> = [];
     for (const account of accounts) {
       const txs = await ctx.db
-        .query('transactions')
+        .query('cashTransactions')
         .withIndex('by_account', (q) => q.eq('accountId', account._id))
         .collect();
       allTxs.push(...txs);
@@ -229,7 +229,7 @@ export const listAllByUser = query({
 
     for (const account of accounts) {
       const txs = await ctx.db
-        .query('transactions')
+        .query('cashTransactions')
         .withIndex('by_account', (q) => q.eq('accountId', account._id))
         .collect();
       for (const tx of txs) {
@@ -279,7 +279,7 @@ export const getRecentByUser = query({
 
     for (const account of accounts) {
       const txs = await ctx.db
-        .query('transactions')
+        .query('cashTransactions')
         .withIndex('by_account', (q) => q.eq('accountId', account._id))
         .order('desc')
         .take(args.limit ?? 10);
@@ -307,7 +307,7 @@ export const getSpendingByMonth = query({
     const allTxs: Array<{ date: string; type: 'debit' | 'credit'; amount: number }> = [];
     for (const account of accounts) {
       const txs = await ctx.db
-        .query('transactions')
+        .query('cashTransactions')
         .withIndex('by_account', (q) => q.eq('accountId', account._id))
         .collect();
       allTxs.push(...txs);
@@ -334,7 +334,7 @@ export const getCategoryBreakdown = query({
   },
   handler: async (ctx, args) => {
     const txs = await ctx.db
-      .query('transactions')
+      .query('cashTransactions')
       .withIndex('by_account', (q) => q.eq('accountId', args.accountId))
       .collect();
 
@@ -372,7 +372,7 @@ export const getCategoryBreakdownByUser = query({
     const totals = new Map<string, number>();
     for (const account of accounts) {
       const txs = await ctx.db
-        .query('transactions')
+        .query('cashTransactions')
         .withIndex('by_account', (q) => q.eq('accountId', account._id))
         .collect();
       for (const tx of txs) {
@@ -399,7 +399,7 @@ export const getIncomeVsExpensesByMonth = query({
   },
   handler: async (ctx, args) => {
     const txs = await ctx.db
-      .query('transactions')
+      .query('cashTransactions')
       .withIndex('by_account', (q) => q.eq('accountId', args.accountId))
       .collect();
 
