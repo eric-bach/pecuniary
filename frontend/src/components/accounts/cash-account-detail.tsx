@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from 'convex/react';
-import { Pencil, ChevronRight } from 'lucide-react';
+import { Pencil, ChevronRight, Plus } from 'lucide-react';
 import {
   getCategoryDisplay,
   getPayeeInitial,
@@ -89,6 +89,14 @@ export function CashAccountDetail({ accountId, account, userId }: CashAccountDet
       <NavbarActions>
         <Button
           size='sm'
+          className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none mr-2'
+          onClick={() => setIsAddTransactionOpen(true)}
+        >
+          <Plus className='h-3.5 w-3.5 mr-1.5' />
+          Add Transaction
+        </Button>
+        <Button
+          size='sm'
           className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none'
           onClick={() => setIsEditAccountOpen(true)}
         >
@@ -100,24 +108,24 @@ export function CashAccountDetail({ accountId, account, userId }: CashAccountDet
       {/* Top Section: Balance Chart + Right Column Charts */}
       <div className='grid gap-6 md:grid-cols-3 mb-6'>
         {/* Balance Chart */}
-        <Card className='md:col-span-2'>
+        <Card className='md:col-span-2 h-full'>
           <CardHeader className='pb-2'>
             <div className='flex items-center justify-between'>
-              <CardTitle className='text-base font-semibold text-gray-700'>Balance</CardTitle>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Balance</CardTitle>
               <div className='text-right'>
-                <div className='text-xs text-gray-400 mb-0.5'>{account.type}</div>
-                <span className='text-2xl font-bold text-gray-900'>
+                <span className='text-xl font-bold text-gray-900'>
                   {balance === undefined
                     ? '$0.00'
                     : (balance < 0 ? '-' : '') +
                       '$' +
                       Math.abs(balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
+                <div className='text-xs text-gray-400 mb-0.5'>{account.type}</div>
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className='h-62.5 w-full'>
+          <CardContent className='h-72'>
+            <div className='h-full w-full'>
               {!hasHistory ? (
                 <div className='h-full flex items-center justify-center text-sm text-gray-400'>No transaction history yet</div>
               ) : (
@@ -154,11 +162,11 @@ export function CashAccountDetail({ accountId, account, userId }: CashAccountDet
         </Card>
 
         {/* Right Column: Account Info + Income vs Expenses */}
-        <div className='space-y-4'>
+        <div className='space-y-4 h-full'>
           {/* Account Info */}
           <Card className='shadow-sm border-gray-100'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-base font-semibold text-gray-700'>Account Info</CardTitle>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Account Info</CardTitle>
             </CardHeader>
             <CardContent className='space-y-2'>
               <div className='space-y-1.5'>
@@ -195,7 +203,7 @@ export function CashAccountDetail({ accountId, account, userId }: CashAccountDet
           {/* Income vs Expenses Chart */}
           <Card className='shadow-sm border-gray-100'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-base font-semibold text-gray-700'>Income vs Expenses</CardTitle>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Income vs Expenses</CardTitle>
             </CardHeader>
             <CardContent>
               <div className='h-30 w-full'>
@@ -246,14 +254,7 @@ export function CashAccountDetail({ accountId, account, userId }: CashAccountDet
         <div className='md:col-span-2'>
           <Card className='shadow-sm border-gray-100'>
             <CardHeader className='flex flex-row items-center justify-between pb-4'>
-              <CardTitle className='text-xl font-bold'>Transactions</CardTitle>
-              <Button
-                size='sm'
-                className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none'
-                onClick={() => setIsAddTransactionOpen(true)}
-              >
-                Add Transaction
-              </Button>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Transactions</CardTitle>
             </CardHeader>
             <CardContent className='p-0'>
               <div className='overflow-auto max-h-125'>
@@ -321,7 +322,7 @@ export function CashAccountDetail({ accountId, account, userId }: CashAccountDet
         <div>
           <Card className='shadow-sm border-gray-100'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-xl font-bold'>Top Spending</CardTitle>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Top Spending</CardTitle>
             </CardHeader>
             <CardContent>
               {!categoryBreakdown || categoryBreakdown.length === 0 ? (

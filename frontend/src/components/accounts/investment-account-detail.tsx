@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 import { NavbarActions, NavbarTitle } from '@/components/layout/navbar-portal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from 'convex/react';
-import { Pencil } from 'lucide-react';
+import { Pencil, Plus } from 'lucide-react';
 import { formatDate } from '@/lib/transaction-utils';
 import { AddInvestmentTransactionSheet } from '@/components/accounts/add-investment-transaction-sheet';
 import { EditAccountSheet } from '@/components/accounts/edit-account-sheet';
@@ -37,6 +38,31 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
     : undefined;
   const positions = useQuery(api.positions.listByAccount, { accountId: accountId as Id<'accounts'> });
   const accountSummary = useQuery(api.positions.getAccountSummary, { accountId: accountId as Id<'accounts'> });
+
+  // Pie chart colors
+  const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280', '#f472b6', '#facc15'];
+
+  // Asset Allocation Data
+  const assetAllocation = useMemo(() => {
+    if (!positions) return [];
+    const map = new Map();
+    for (const pos of positions) {
+      const key = pos.assetType || 'Other';
+      map.set(key, (map.get(key) || 0) + pos.costBasis);
+    }
+    return Array.from(map.entries()).map(([name, value]) => ({ name, value }));
+  }, [positions]);
+
+  // Sector Exposure Data
+  const sectorExposure = useMemo(() => {
+    if (!positions) return [];
+    const map = new Map();
+    for (const pos of positions) {
+      const key = pos.sector || 'Other';
+      map.set(key, (map.get(key) || 0) + pos.costBasis);
+    }
+    return Array.from(map.entries()).map(([name, value]) => ({ name, value }));
+  }, [positions]);
 
   const [isAddTransactionOpen, setIsAddTransactionOpen] = useState(false);
   const [isEditAccountOpen, setIsEditAccountOpen] = useState(false);
@@ -76,6 +102,14 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
       <NavbarActions>
         <Button
           size='sm'
+          className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none mr-2'
+          onClick={() => setIsAddTransactionOpen(true)}
+        >
+          <Plus className='h-3.5 w-3.5 mr-1.5' />
+          Add Transaction
+        </Button>
+        <Button
+          size='sm'
           className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none'
           onClick={() => setIsEditAccountOpen(true)}
         >
@@ -84,53 +118,27 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
         </Button>
       </NavbarActions>
 
-      {/* Top Section: Holdings + Right Column */}
+      {/* Top Section: Balance Graph + Right Column */}
       <div className='grid gap-6 md:grid-cols-3 mb-6'>
-        {/* Holdings Card */}
+        {/* Balance Graph Placeholder */}
         <Card className='md:col-span-2'>
           <CardHeader className='pb-2'>
             <div className='flex items-center justify-between'>
-              <CardTitle className='text-base font-semibold text-gray-700'>Holdings</CardTitle>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Balance</CardTitle>
               <div className='text-right'>
                 <div className='text-xs text-gray-400 mb-0.5'>
                   {account.type}
                   {account.currency ? ` (${account.currency})` : ''}
                 </div>
-                <span className='text-2xl font-bold text-gray-900'>
-                  ${(accountSummary?.totalCostBasis ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                <div className='text-xs text-gray-400 mt-0.5'>Cost Basis</div>
+                <span className='text-2xl font-bold text-gray-900'>$0.00</span>
+                <div className='text-xs text-gray-400 mt-0.5'>Market Value</div>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className='space-y-3'>
-              {!positions || positions.length === 0 ? (
-                <div className='h-48 flex items-center justify-center text-sm text-gray-400'>No positions yet</div>
-              ) : (
-                <div className='space-y-2'>
-                  {positions.map((pos) => {
-                    const avgCost = pos.shares > 0 ? pos.costBasis / pos.shares : 0;
-                    return (
-                      <div key={pos._id} className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'>
-                        <div>
-                          <div className='font-semibold text-gray-900 font-mono'>{pos.symbol}</div>
-                          <div className='text-xs text-gray-500'>
-                            {pos.shares.toLocaleString(undefined, { maximumFractionDigits: 4 })} shares @ $
-                            {avgCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} avg
-                          </div>
-                        </div>
-                        <div className='text-right'>
-                          <div className='font-semibold text-gray-900'>
-                            ${pos.costBasis.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </div>
-                          <div className='text-xs text-gray-400'>cost basis</div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+            <div className='h-62.5 w-full flex items-center justify-center text-sm text-gray-400'>
+              {/* Placeholder for balance graph */}
+              Balance graph coming soon
             </div>
           </CardContent>
         </Card>
@@ -140,7 +148,7 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
           {/* Account Info */}
           <Card className='shadow-sm border-gray-100'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-base font-semibold text-gray-700'>Account Info</CardTitle>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Account Info</CardTitle>
             </CardHeader>
             <CardContent className='space-y-2'>
               <div className='space-y-1.5'>
@@ -183,7 +191,7 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
           {/* Portfolio Stats */}
           <Card className='shadow-sm border-gray-100'>
             <CardHeader className='pb-2'>
-              <CardTitle className='text-base font-semibold text-gray-700'>Portfolio Stats</CardTitle>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Portfolio Stats</CardTitle>
             </CardHeader>
             <CardContent className='space-y-2'>
               <div className='flex justify-between items-center text-sm'>
@@ -219,19 +227,162 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
         </div>
       </div>
 
+      {/* Holdings and Charts Section */}
+      <div className='mb-6 grid gap-6 md:grid-cols-3'>
+        {/* Holdings Table */}
+        <div className='md:col-span-2'>
+          <Card className='shadow-sm border-gray-100 h-full'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Holdings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='overflow-auto max-h-125'>
+                {!positions || positions.length === 0 ? (
+                  <div className='h-48 flex items-center justify-center text-sm text-gray-400'>No positions yet</div>
+                ) : (
+                  <table className='min-w-full text-sm text-left'>
+                    <thead>
+                      <tr className='bg-gray-50'>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Symbol</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Shares</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Avg Cost</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Cost Basis</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {positions.map((pos) => {
+                        const avgCost = pos.shares > 0 ? pos.costBasis / pos.shares : 0;
+                        return (
+                          <tr key={pos._id} className='border-b border-gray-100'>
+                            <td className='px-4 py-2 font-mono text-gray-900'>{pos.symbol}</td>
+                            <td className='px-4 py-2 text-gray-900'>
+                              {pos.shares.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                            </td>
+                            <td className='px-4 py-2 text-gray-900'>
+                              ${avgCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td className='px-4 py-2 text-gray-900'>
+                              ${pos.costBasis.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        {/* Charts Column */}
+        <div className='flex flex-col gap-6'>
+          {/* Asset Allocation Pie Chart */}
+          <Card className='shadow-sm border-gray-100'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Asset Allocation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='h-48'>
+                {!positions || positions.length === 0 || assetAllocation.length === 0 ? (
+                  <div className='h-full flex items-center justify-center text-sm text-gray-400'>No data</div>
+                ) : (
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <PieChart>
+                      <Pie data={assetAllocation} cx='50%' cy='50%' innerRadius={40} outerRadius={70} paddingAngle={2} dataKey='value'>
+                        {assetAllocation.map((_, i) => (
+                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip
+                        formatter={(v: number) => [
+                          `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                          'Value',
+                        ]}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+              <div className='space-y-2 mt-2'>
+                {assetAllocation.map((cat, i) => {
+                  const total = assetAllocation.reduce((s, c) => s + c.value, 0);
+                  const pct = total > 0 ? ((cat.value / total) * 100).toFixed(1) : '0';
+                  return (
+                    <div key={cat.name} className='flex items-center justify-between text-sm'>
+                      <div className='flex items-center gap-2'>
+                        <div className='w-2.5 h-2.5 rounded-full shrink-0' style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                        <span className='text-gray-600 truncate max-w-30'>{cat.name}</span>
+                      </div>
+                      <div className='flex items-center gap-2 shrink-0'>
+                        <span className='text-gray-400 text-xs'>{pct}%</span>
+                        <span className='font-medium text-gray-900'>
+                          ${cat.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+          {/* Sector Exposure Pie Chart */}
+          <Card className='shadow-sm border-gray-100'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Sector Exposure</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='h-48'>
+                {!positions || positions.length === 0 || sectorExposure.length === 0 ? (
+                  <div className='h-full flex items-center justify-center text-sm text-gray-400'>No data</div>
+                ) : (
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <PieChart>
+                      <Pie data={sectorExposure} cx='50%' cy='50%' innerRadius={40} outerRadius={70} paddingAngle={2} dataKey='value'>
+                        {sectorExposure.map((_, i) => (
+                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip
+                        formatter={(v: number) => [
+                          `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                          'Value',
+                        ]}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+              <div className='space-y-2 mt-2'>
+                {sectorExposure.map((cat, i) => {
+                  const total = sectorExposure.reduce((s, c) => s + c.value, 0);
+                  const pct = total > 0 ? ((cat.value / total) * 100).toFixed(1) : '0';
+                  return (
+                    <div key={cat.name} className='flex items-center justify-between text-sm'>
+                      <div className='flex items-center gap-2'>
+                        <div className='w-2.5 h-2.5 rounded-full shrink-0' style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                        <span className='text-gray-600 truncate max-w-30'>{cat.name}</span>
+                      </div>
+                      <div className='flex items-center gap-2 shrink-0'>
+                        <span className='text-gray-400 text-xs'>{pct}%</span>
+                        <span className='font-medium text-gray-900'>
+                          ${cat.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       {/* Bottom Section: Transactions */}
       <div className='grid gap-6 md:grid-cols-3'>
         <div className='md:col-span-2'>
           <Card className='shadow-sm border-gray-100'>
             <CardHeader className='flex flex-row items-center justify-between pb-4'>
-              <CardTitle className='text-xl font-bold'>Transactions</CardTitle>
-              <Button
-                size='sm'
-                className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none'
-                onClick={() => setIsAddTransactionOpen(true)}
-              >
-                Add Transaction
-              </Button>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Transactions</CardTitle>
             </CardHeader>
             <CardContent className='p-0'>
               <div className='overflow-auto max-h-125'>

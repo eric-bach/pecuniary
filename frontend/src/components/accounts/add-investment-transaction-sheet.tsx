@@ -170,7 +170,7 @@ export function AddInvestmentTransactionSheet({
     }
   }
 
-  // Helper for numeric input handling
+  // Helper for numeric input handling (restrict decimals)
   const handleNumericKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, allowNegative = false, decimalPlaces = 6) => {
     const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Enter', 'Home', 'End'];
     if (allowed.includes(e.key)) return;
@@ -351,14 +351,20 @@ export function AddInvestmentTransactionSheet({
                         placeholder='0.00'
                         className='pl-7'
                         value={field.value}
-                        onKeyDown={(e) => handleNumericKeyDown(e, false, 4)}
+                        onKeyDown={(e) => handleNumericKeyDown(e, false, 2)}
                         onChange={(e) => field.onChange(e.target.value)}
                         onBlur={(e) => {
                           const raw = e.target.value.replace(/,/g, '');
                           const num = parseFloat(raw);
                           if (!isNaN(num)) {
-                            field.onChange(num.toFixed(4));
+                            // Format to 2 decimal places, like cash transaction
+                            field.onChange(num.toFixed(2));
                           }
+                        }}
+                        onFocus={(e) => {
+                          // Strip commas so the user can edit the raw number
+                          const raw = e.target.value.replace(/,/g, '');
+                          field.onChange(raw);
                         }}
                       />
                     </div>
@@ -392,8 +398,14 @@ export function AddInvestmentTransactionSheet({
                           const raw = e.target.value.replace(/,/g, '');
                           const num = parseFloat(raw);
                           if (!isNaN(num)) {
+                            // Format to 2 decimal places, like cash transaction
                             field.onChange(num.toFixed(2));
                           }
+                        }}
+                        onFocus={(e) => {
+                          // Strip commas so the user can edit the raw number
+                          const raw = e.target.value.replace(/,/g, '');
+                          field.onChange(raw);
                         }}
                       />
                     </div>

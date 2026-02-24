@@ -46,6 +46,25 @@ export default defineSchema({
     shares: v.number(),
     costBasis: v.number(),
     lastUpdated: v.string(),
+    assetType: v.optional(
+      v.union(
+        v.literal('Stock'),
+        v.literal('ETF'),
+        v.literal('Bond'),
+        v.literal('Cash'),
+        v.literal('Other')
+      )
+    ),
+    sector: v.optional(
+      v.union(
+        v.literal('Technology'),
+        v.literal('Finance'),
+        v.literal('Healthcare'),
+        v.literal('Energy'),
+        v.literal('Consumer'),
+        v.literal('Other')
+      )
+    ),
   })
     .index('by_account', ['accountId'])
     .index('by_account_symbol', ['accountId', 'symbol']),
