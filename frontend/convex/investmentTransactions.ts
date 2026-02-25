@@ -1,5 +1,6 @@
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+import { api } from './_generated/api';
 
 export const create = mutation({
   args: {
@@ -33,6 +34,13 @@ export const create = mutation({
 
     // Update position after transaction
     await updatePosition(ctx, args.accountId, args.symbol.toUpperCase());
+
+    // Fetch historical prices from transaction date to today
+    await ctx.scheduler.runAfter(0, api.quotes.fetchHistoricalQuotes, {
+      symbol: args.symbol.toUpperCase(),
+      startDate: args.date,
+      endDate: new Date().toISOString().split('T')[0],
+    });
 
     return transactionId;
   },
@@ -74,6 +82,13 @@ export const update = mutation({
     if (oldSymbol !== newSymbol) {
       await updatePosition(ctx, existing.accountId, newSymbol);
     }
+
+    // Fetch historical prices from transaction date to today for the new symbol
+    await ctx.scheduler.runAfter(0, api.quotes.fetchHistoricalQuotes, {
+      symbol: newSymbol,
+      startDate: args.date,
+      endDate: new Date().toISOString().split('T')[0],
+    });
 
     return transactionId;
   },
@@ -201,34 +216,62 @@ export const getSymbolSuggestions = query({
 });
 
 // Helper function to recalculate position from transactions
-async function updatePosition(ctx: { db: any }, accountId: any, symbol: string) {
+async function updatePosition(ctx: any, accountId: any, symbol: string) {
   const txs = await ctx.db
     .query('investmentTransactions')
     .withIndex('by_account_symbol', (q: any) => q.eq('accountId', accountId).eq('symbol', symbol))
     .collect();
 
+  // Sort transactions chronologically.
+  // Tie-breaker for same day: Buy/TransferIn > Dividend/Split > Sell/TransferOut
+  const typeOrder = {
+    buy: 1,
+    transfer_in: 1,
+    dividend: 2,
+    split: 2,
+    sell: 3,
+    transfer_out: 3,
+  };
+
+  txs.sort((a: any, b: any) => {
+    const dateCompare = a.date.localeCompare(b.date);
+    if (dateCompare !== 0) return dateCompare;
+
+    // If same date, use type order
+    const typeA = typeOrder[a.type as keyof typeof typeOrder] || 99;
+    const typeB = typeOrder[b.type as keyof typeof typeOrder] || 99;
+
+    if (typeA !== typeB) return typeA - typeB;
+
+    // Fallback to creation time
+    return a._creationTime - b._creationTime;
+  });
+
   // Calculate total shares and cost basis
-  let totalShares = 0;
-  let totalCostBasis = 0;
+  let runningShares = 0;
+  let runningCostBasis = 0;
 
   for (const tx of txs) {
     const amount = tx.shares * tx.unitPrice;
     const commission = tx.commission ?? 0;
+    let realizedGain: number | undefined = undefined;
 
     switch (tx.type) {
       case 'buy':
       case 'transfer_in':
-        totalShares += tx.shares;
-        totalCostBasis += amount + commission;
+        runningShares += tx.shares;
+        runningCostBasis += amount + commission;
         break;
       case 'sell':
       case 'transfer_out':
-        // Proportionally reduce cost basis
-        if (totalShares > 0) {
-          const ratio = tx.shares / totalShares;
-          totalCostBasis -= totalCostBasis * ratio;
+        if (runningShares > 0) {
+          const averageCostBeforeSell = runningCostBasis / runningShares;
+          const costOfSharesSold = averageCostBeforeSell * tx.shares;
+          realizedGain = tx.unitPrice * tx.shares - costOfSharesSold - commission;
+
+          runningCostBasis -= costOfSharesSold;
         }
-        totalShares -= tx.shares;
+        runningShares -= tx.shares;
         break;
       case 'dividend':
         // Dividends don't affect shares or cost basis directly
@@ -237,9 +280,18 @@ async function updatePosition(ctx: { db: any }, accountId: any, symbol: string) 
       case 'split':
         // For splits, shares increase but cost basis stays same
         // The shares field represents the multiplier (e.g., 2 for a 2:1 split)
-        totalShares = totalShares * tx.shares;
+        runningShares = runningShares * tx.shares;
         break;
     }
+
+    // Save snapshot on the transaction itself
+    const averageCost = runningShares > 0 ? runningCostBasis / runningShares : 0;
+    await ctx.db.patch(tx._id, {
+      runningShares,
+      runningCostBasis,
+      averageCost,
+      realizedGain,
+    });
   }
 
   // Find existing position
@@ -250,7 +302,7 @@ async function updatePosition(ctx: { db: any }, accountId: any, symbol: string) 
 
   const today = new Date().toISOString().split('T')[0];
 
-  if (totalShares <= 0) {
+  if (runningShares <= 0) {
     // Remove position if no shares remaining
     if (existingPosition) {
       await ctx.db.delete(existingPosition._id);
@@ -258,8 +310,8 @@ async function updatePosition(ctx: { db: any }, accountId: any, symbol: string) 
   } else if (existingPosition) {
     // Update existing position
     await ctx.db.patch(existingPosition._id, {
-      shares: totalShares,
-      costBasis: totalCostBasis,
+      shares: runningShares,
+      costBasis: runningCostBasis,
       lastUpdated: today,
     });
   } else {
@@ -267,9 +319,14 @@ async function updatePosition(ctx: { db: any }, accountId: any, symbol: string) 
     await ctx.db.insert('positions', {
       accountId,
       symbol,
-      shares: totalShares,
-      costBasis: totalCostBasis,
+      shares: runningShares,
+      costBasis: runningCostBasis,
       lastUpdated: today,
+    });
+
+    // Trigger auto-classification for brand new positions
+    await ctx.scheduler.runAfter(0, api.classification.fetchAndSaveProfile, {
+      symbol,
     });
   }
 }

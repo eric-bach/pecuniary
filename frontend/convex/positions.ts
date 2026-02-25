@@ -1,4 +1,4 @@
-import { query } from './_generated/server';
+import { query, internalMutation } from './_generated/server';
 import { v } from 'convex/values';
 
 export const listByAccount = query({
@@ -195,47 +195,53 @@ export const getSymbolHistory = query({
       .withIndex('by_account_symbol', (q) => q.eq('accountId', args.accountId).eq('symbol', args.symbol.toUpperCase()))
       .collect();
 
-    // Sort by date ascending
-    transactions.sort((a, b) => a.date.localeCompare(b.date));
-
-    // Build running position history
-    let runningShares = 0;
-    let runningCostBasis = 0;
+    // Sort by date ascending for chronologoical display
+    transactions.sort((a, b) => {
+      const dateCompare = a.date.localeCompare(b.date);
+      if (dateCompare !== 0) return dateCompare;
+      return a._creationTime - b._creationTime;
+    });
 
     return transactions.map((tx) => {
-      const amount = tx.shares * tx.unitPrice;
-      const commission = tx.commission ?? 0;
-
-      switch (tx.type) {
-        case 'buy':
-        case 'transfer_in':
-          runningShares += tx.shares;
-          runningCostBasis += amount + commission;
-          break;
-        case 'sell':
-        case 'transfer_out':
-          if (runningShares > 0) {
-            const ratio = tx.shares / runningShares;
-            runningCostBasis -= runningCostBasis * ratio;
-          }
-          runningShares -= tx.shares;
-          break;
-        case 'split':
-          runningShares = runningShares * tx.shares;
-          break;
-      }
-
       return {
         date: tx.date,
         type: tx.type,
         shares: tx.shares,
         unitPrice: tx.unitPrice,
-        total: amount,
-        commission,
-        runningShares,
-        runningCostBasis,
-        averageCost: runningShares > 0 ? runningCostBasis / runningShares : 0,
+        total: tx.shares * tx.unitPrice,
+        commission: tx.commission ?? 0,
+        runningShares: tx.runningShares ?? 0,
+        runningCostBasis: tx.runningCostBasis ?? 0,
+        averageCost: tx.averageCost ?? 0,
+        realizedGain: tx.realizedGain,
       };
     });
+  },
+});
+
+export const updatePositionClassification = internalMutation({
+  args: {
+    symbol: v.string(),
+    sector: v.string(),
+    assetType: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Find all positions for this symbol
+    const positions = await ctx.db
+      .query('positions')
+      .filter((q: any) => q.eq(q.field('symbol'), args.symbol))
+      .collect();
+
+    // Patch them all with the fetched classification
+    for (const pos of positions) {
+      // Only overwrite if they are currently blank to avoid overwriting user manual edits later
+      const patch: any = {};
+      if (!pos.sector) patch.sector = args.sector;
+      if (!pos.assetType) patch.assetType = args.assetType;
+
+      if (Object.keys(patch).length > 0) {
+        await ctx.db.patch(pos._id, patch);
+      }
+    }
   },
 });
