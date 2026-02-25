@@ -36,6 +36,11 @@ export default defineSchema({
     unitPrice: v.number(),
     commission: v.optional(v.number()),
     notes: v.optional(v.string()),
+    // Derived performance metrics populated dynamically upon creation/update
+    runningShares: v.optional(v.number()),
+    runningCostBasis: v.optional(v.number()),
+    averageCost: v.optional(v.number()),
+    realizedGain: v.optional(v.number()), // Only relevant for sell transactions
   })
     .index('by_account', ['accountId'])
     .index('by_account_symbol', ['accountId', 'symbol']),
@@ -46,26 +51,15 @@ export default defineSchema({
     shares: v.number(),
     costBasis: v.number(),
     lastUpdated: v.string(),
-    assetType: v.optional(
-      v.union(
-        v.literal('Stock'),
-        v.literal('ETF'),
-        v.literal('Bond'),
-        v.literal('Cash'),
-        v.literal('Other')
-      )
-    ),
-    sector: v.optional(
-      v.union(
-        v.literal('Technology'),
-        v.literal('Finance'),
-        v.literal('Healthcare'),
-        v.literal('Energy'),
-        v.literal('Consumer'),
-        v.literal('Other')
-      )
-    ),
+    assetType: v.optional(v.string()),
+    sector: v.optional(v.string()),
   })
     .index('by_account', ['accountId'])
     .index('by_account_symbol', ['accountId', 'symbol']),
+
+  historicalQuotes: defineTable({
+    symbol: v.string(),
+    date: v.string(), // YYYY-MM-DD format
+    closePrice: v.number(),
+  }).index('by_symbol_date', ['symbol', 'date']),
 });

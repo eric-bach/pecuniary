@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation, useQuery, useAction } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
 import { Check } from 'lucide-react';
@@ -85,9 +85,12 @@ export function AddInvestmentTransactionSheet({
 }: AddInvestmentTransactionSheetProps) {
   const createTransaction = useMutation(api.investmentTransactions.create);
   const symbolSuggestions = useQuery(api.investmentTransactions.getSymbolSuggestions, userId ? { userId } : 'skip') ?? [];
+  const searchSymbolsAction = useAction(api.quotes.searchSymbols);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [symbolOpen, setSymbolOpen] = useState(false);
   const [symbolInput, setSymbolInput] = useState('');
+  const [searchResults, setSearchResults] = useState<{ symbol: string; shortname?: string; exchange?: string }[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState<string>(accountId ?? '');
   const symbolInputRef = useRef<HTMLInputElement>(null);
 
@@ -126,10 +129,34 @@ export function AddInvestmentTransactionSheet({
     if (!open) {
       form.reset({ date: today, type: 'buy', symbol: '', shares: '', unitPrice: '', commission: '', notes: '' });
       setSymbolInput('');
+      setSearchResults([]);
       setSymbolOpen(false);
       setSelectedAccountId(accountId ?? '');
     }
   }, [open, accountId]);
+
+  // Debounced search for symbols
+  useEffect(() => {
+    if (symbolInput.trim().length < 2) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const results = await searchSymbolsAction({ query: symbolInput });
+        setSearchResults(results);
+      } catch (error) {
+        console.error('Error searching symbols:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [symbolInput, searchSymbolsAction]);
 
   const filteredSuggestions =
     symbolInput.trim().length === 0
@@ -283,6 +310,11 @@ export function AddInvestmentTransactionSheet({
                         ref={symbolInputRef}
                         placeholder='AAPL'
                         value={symbolInput}
+                        onFocus={() => {
+                          if (symbolInput.trim().length > 0) {
+                            setSymbolOpen(true);
+                          }
+                        }}
                         onValueChange={(val) => {
                           setSymbolInput(val.toUpperCase());
                           field.onChange(val.toUpperCase());
@@ -293,18 +325,41 @@ export function AddInvestmentTransactionSheet({
                         }}
                         className='h-9 text-sm uppercase'
                       />
-                      {symbolOpen && filteredSuggestions.length > 0 && (
+                      {symbolOpen && (filteredSuggestions.length > 0 || searchResults.length > 0 || isSearching) && (
                         <div className='relative'>
                           <CommandList className='absolute z-50 top-1 left-0 right-0 max-h-48 overflow-auto rounded-md border bg-white shadow-md'>
-                            <CommandEmpty>No matches</CommandEmpty>
-                            <CommandGroup>
-                              {filteredSuggestions.map((s) => (
-                                <CommandItem key={s.symbol} value={s.symbol} onSelect={() => selectSymbol(s.symbol)}>
-                                  <Check className={cn('mr-2 h-4 w-4 shrink-0', field.value === s.symbol ? 'opacity-100' : 'opacity-0')} />
-                                  <span className='font-mono'>{s.symbol}</span>
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
+                            {isSearching && <div className='p-4 text-sm text-gray-500 text-center'>Searching...</div>}
+                            {!isSearching && searchResults.length === 0 && filteredSuggestions.length === 0 && (
+                              <CommandEmpty>No matches</CommandEmpty>
+                            )}
+                            {!isSearching && (searchResults.length > 0 || filteredSuggestions.length > 0) && (
+                              <CommandGroup>
+                                {symbolInput.trim().length < 2
+                                  ? filteredSuggestions.map((s) => (
+                                      <CommandItem key={s.symbol} value={s.symbol} onSelect={() => selectSymbol(s.symbol)}>
+                                        <Check
+                                          className={cn('mr-2 h-4 w-4 shrink-0', field.value === s.symbol ? 'opacity-100' : 'opacity-0')}
+                                        />
+                                        <span className='font-mono'>{s.symbol}</span>
+                                      </CommandItem>
+                                    ))
+                                  : searchResults.map((s) => (
+                                      <CommandItem key={s.symbol} value={s.symbol} onSelect={() => selectSymbol(s.symbol)}>
+                                        <Check
+                                          className={cn('mr-2 h-4 w-4 shrink-0', field.value === s.symbol ? 'opacity-100' : 'opacity-0')}
+                                        />
+                                        <div className='flex flex-col'>
+                                          <span className='font-mono font-medium'>{s.symbol}</span>
+                                          {s.shortname && (
+                                            <span className='text-xs text-gray-500'>
+                                              {s.shortname} {s.exchange ? `(${s.exchange})` : ''}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </CommandItem>
+                                    ))}
+                              </CommandGroup>
+                            )}
                           </CommandList>
                         </div>
                       )}

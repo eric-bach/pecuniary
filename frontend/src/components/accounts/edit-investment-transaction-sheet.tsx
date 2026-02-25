@@ -11,7 +11,6 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
@@ -91,13 +90,9 @@ export function EditInvestmentTransactionSheet({
 }: EditInvestmentTransactionSheetProps) {
   const updateTransaction = useMutation(api.investmentTransactions.update);
   const deleteTransaction = useMutation(api.investmentTransactions.remove);
-  const symbolSuggestions = useQuery(api.investmentTransactions.getSymbolSuggestions, userId ? { userId } : 'skip') ?? [];
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [symbolOpen, setSymbolOpen] = useState(false);
-  const [symbolInput, setSymbolInput] = useState('');
-  const symbolInputRef = useRef<HTMLInputElement>(null);
 
   const displayAccountName = accountName ?? transaction?.accountName ?? '';
   const currencySymbol = accountCurrency === 'CAD' ? 'C$' : '$';
@@ -147,28 +142,14 @@ export function EditInvestmentTransactionSheet({
         commission: transaction.commission ? transaction.commission.toString() : '',
         notes: transaction.notes || '',
       });
-      setSymbolInput(transaction.symbol);
-      setTimeout(() => symbolInputRef.current?.focus(), 100);
     }
   }, [open, transaction]);
 
   useEffect(() => {
     if (!open) {
-      setSymbolOpen(false);
       setShowDeleteConfirm(false);
     }
   }, [open]);
-
-  const filteredSuggestions =
-    symbolInput.trim().length === 0
-      ? symbolSuggestions
-      : symbolSuggestions.filter((s) => s.symbol.toLowerCase().includes(symbolInput.toLowerCase()));
-
-  function selectSymbol(symbol: string) {
-    form.setValue('symbol', symbol, { shouldValidate: true });
-    setSymbolInput(symbol);
-    setSymbolOpen(false);
-  }
 
   async function onSubmit(data: InvestmentTransactionFormValues) {
     if (!transaction) return;
@@ -264,7 +245,7 @@ export function EditInvestmentTransactionSheet({
               control={form.control}
               name='date'
               render={({ field }) => (
-               <FormItem>
+                <FormItem>
                   <FormLabel>Date</FormLabel>
                   <FormControl>
                     <Input type='date' {...field} />
@@ -308,37 +289,7 @@ export function EditInvestmentTransactionSheet({
                 <FormItem>
                   <FormLabel>Symbol</FormLabel>
                   <FormControl>
-                    <Command className='border rounded-md overflow-visible bg-white' shouldFilter={false}>
-                      <CommandInput
-                        ref={symbolInputRef}
-                        placeholder='AAPL'
-                        value={symbolInput}
-                        onValueChange={(val) => {
-                          setSymbolInput(val.toUpperCase());
-                          field.onChange(val.toUpperCase());
-                          setSymbolOpen(val.trim().length > 0);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Escape') setSymbolOpen(false);
-                        }}
-                        className='h-9 text-sm uppercase'
-                      />
-                      {symbolOpen && filteredSuggestions.length > 0 && (
-                        <div className='relative'>
-                          <CommandList className='absolute z-50 top-1 left-0 right-0 max-h-48 overflow-auto rounded-md border bg-white shadow-md'>
-                            <CommandEmpty>No matches</CommandEmpty>
-                            <CommandGroup>
-                              {filteredSuggestions.map((s) => (
-                                <CommandItem key={s.symbol} value={s.symbol} onSelect={() => selectSymbol(s.symbol)}>
-                                  <Check className={cn('mr-2 h-4 w-4 shrink-0', field.value === s.symbol ? 'opacity-100' : 'opacity-0')} />
-                                  <span className='font-mono'>{s.symbol}</span>
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </div>
-                      )}
-                    </Command>
+                    <Input {...field} disabled={true} className='uppercase bg-gray-50' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

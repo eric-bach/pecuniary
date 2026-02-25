@@ -1,5 +1,16 @@
 import { useState, useMemo } from 'react';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip as RechartsTooltip,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from 'recharts';
 import { NavbarActions, NavbarTitle } from '@/components/layout/navbar-portal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,6 +50,44 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
     : undefined;
   const positions = useQuery(api.positions.listByAccount, { accountId: accountId as Id<'accounts'> });
   const accountSummary = useQuery(api.positions.getAccountSummary, { accountId: accountId as Id<'accounts'> });
+  const performance = useQuery(api.metrics.calculateAccountPerformance, { accountId: accountId as Id<'accounts'> });
+
+  const [timeScale, setTimeScale] = useState<'1D' | '1W' | '1M' | '3M' | 'YTD' | '1Y' | 'All'>('1M');
+
+  const daysToReport = useMemo(() => {
+    switch (timeScale) {
+      case '1D':
+        return 1;
+      case '1W':
+        return 7;
+      case '1M':
+        return 30;
+      case '3M':
+        return 90;
+      case 'YTD': {
+        const now = new Date();
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        return Math.max(1, Math.ceil((now.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)));
+      }
+      case '1Y':
+        return 365;
+      case 'All': {
+        if (!transactions || transactions.length === 0) return 30;
+        const oldestTx = transactions[transactions.length - 1];
+        const oldestDate = new Date(oldestTx.date);
+        const now = new Date();
+        const days = Math.ceil((now.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24));
+        return Math.max(30, days);
+      }
+      default:
+        return 30;
+    }
+  }, [timeScale, transactions]);
+
+  const historicalBalance = useQuery(api.metrics.getAccountHistoricalBalance, {
+    accountId: accountId as Id<'accounts'>,
+    days: daysToReport,
+  });
 
   // Pie chart colors
   const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280', '#f472b6', '#facc15'];
@@ -129,28 +178,117 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
             <CardHeader className='pb-2'>
               <div className='flex items-center justify-between'>
                 <CardTitle className='text-lg font-semibold text-gray-700'>Balance</CardTitle>
+                <div className='hidden sm:flex items-center gap-1 bg-gray-100/50 p-1 rounded-md'>
+                  {(['1D', '1W', '1M', '3M', 'YTD', '1Y', 'All'] as const).map((scale) => (
+                    <button
+                      key={scale}
+                      onClick={() => setTimeScale(scale)}
+                      className={`text-xs px-2.5 py-1 rounded-sm transition-all ${
+                        timeScale === scale
+                          ? 'bg-white text-gray-900 shadow-sm font-medium'
+                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                      }`}
+                    >
+                      {scale}
+                    </button>
+                  ))}
+                </div>
                 <div className='text-right'>
                   <div className='text-xs text-gray-400 mb-0.5'>
                     {account.type}
                     {account.currency ? ` (${account.currency})` : ''}
                   </div>
-                  <span className='text-2xl font-bold text-gray-900'>$0.00</span>
+                  <span className='text-2xl font-bold text-gray-900'>
+                    $
+                    {(performance?.totalMarketValue ?? 0).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
                   <div className='text-xs text-gray-400 mt-0.5'>Market Value</div>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className='h-62.5 w-full flex items-center justify-center text-sm text-gray-400'>
-                {/* Placeholder for balance graph */}
-                Balance graph coming soon
+              <div className='h-64 w-full flex items-center justify-center text-sm text-gray-400'>
+                {!historicalBalance ? (
+                  <div>Loading...</div>
+                ) : historicalBalance.length === 0 ? (
+                  <div>No balance history available</div>
+                ) : (
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <AreaChart data={historicalBalance} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id='colorValue' x1='0' y1='0' x2='0' y2='1'>
+                          <stop offset='5%' stopColor='#3b82f6' stopOpacity={0.3} />
+                          <stop offset='95%' stopColor='#3b82f6' stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray='3 3' vertical={false} stroke='#f0f0f0' />
+                      <XAxis
+                        dataKey='date'
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                        tickFormatter={(val) => {
+                          const date = new Date(val);
+                          if (timeScale === 'All' || timeScale === '1Y') {
+                            return `${date.getMonth() + 1}/${date.getFullYear().toString().slice(2)}`;
+                          }
+                          return `${date.getMonth() + 1}/${date.getDate()}`;
+                        }}
+                        minTickGap={timeScale === '1D' ? 1 : timeScale === '1W' ? 10 : 30}
+                      />
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                        tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`}
+                        domain={['auto', 'auto']}
+                        width={60}
+                      />
+                      <RechartsTooltip
+                        contentStyle={{ borderRadius: '8px', border: '1px solid #f3f4f6', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        formatter={(value: number) => [
+                          `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                          'Market Value',
+                        ]}
+                        labelFormatter={(label) => formatDate(label as string)}
+                      />
+                      <Area
+                        type='monotone'
+                        dataKey='totalMarketValue'
+                        stroke='#3b82f6'
+                        strokeWidth={2}
+                        fillOpacity={1}
+                        fill='url(#colorValue)'
+                        isAnimationActive={true}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </CardContent>
           </Card>
 
           {/* Holdings Table */}
           <Card className='shadow-sm border-gray-100 flex flex-col'>
-            <CardHeader className='pb-2'>
+            <CardHeader className='flex flex-row items-baseline justify-between pb-2 space-y-0'>
               <CardTitle className='text-lg font-semibold text-gray-700'>Holdings</CardTitle>
+              <div className='flex items-center gap-4 text-sm font-normal'>
+                <div className='flex items-center gap-1.5'>
+                  <span className='text-gray-500'>Realized P&L:</span>
+                  <span className={`font-medium ${(performance?.totalRealizedPl ?? 0) >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                    ${(performance?.totalRealizedPl ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className='flex items-center gap-1.5'>
+                  <span className='text-gray-500'>Unrealized P&L:</span>
+                  <span className={`font-medium ${(performance?.unrealizedPl ?? 0) >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                    ${(performance?.unrealizedPl ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className='overflow-auto max-h-[320px] pr-2'>
@@ -162,13 +300,21 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
                       <tr className='bg-gray-50'>
                         <th className='px-4 py-2 font-semibold text-gray-700'>Symbol</th>
                         <th className='px-4 py-2 font-semibold text-gray-700'>Shares</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Price</th>
                         <th className='px-4 py-2 font-semibold text-gray-700'>Avg Cost</th>
-                        <th className='px-4 py-2 font-semibold text-gray-700'>Cost Basis</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Market Value</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Return</th>
                       </tr>
                     </thead>
                     <tbody>
                       {positions.map((pos) => {
                         const avgCost = pos.shares > 0 ? pos.costBasis / pos.shares : 0;
+                        const perfPos = performance?.currentPositions.find((p) => p.symbol === pos.symbol);
+                        const currentPrice = perfPos?.currentPrice ?? 0;
+                        const marketValue = perfPos?.marketValue ?? 0;
+                        const returnValue = marketValue > 0 ? marketValue - pos.costBasis : 0;
+                        const returnPct = pos.costBasis > 0 ? (returnValue / pos.costBasis) * 100 : 0;
+
                         return (
                           <tr key={pos._id} className='border-b border-gray-100'>
                             <td className='px-4 py-2 font-mono text-gray-900'>{pos.symbol}</td>
@@ -176,10 +322,31 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
                               {pos.shares.toLocaleString(undefined, { maximumFractionDigits: 4 })}
                             </td>
                             <td className='px-4 py-2 text-gray-900'>
+                              {currentPrice > 0
+                                ? `$${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                : '-'}
+                            </td>
+                            <td className='px-4 py-2 text-gray-900'>
                               ${avgCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </td>
                             <td className='px-4 py-2 text-gray-900'>
-                              ${pos.costBasis.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              {marketValue > 0
+                                ? `$${marketValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                : '-'}
+                            </td>
+                            <td className={`px-4 py-2 ${returnValue >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                              {marketValue > 0 ? (
+                                <>
+                                  {returnValue >= 0 ? '+' : ''}$
+                                  {returnValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  <span className='text-xs ml-1'>
+                                    ({returnValue >= 0 ? '+' : ''}
+                                    {returnPct.toFixed(2)}%)
+                                  </span>
+                                </>
+                              ) : (
+                                '-'
+                              )}
                             </td>
                           </tr>
                         );
@@ -228,7 +395,11 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
                         const total = tx.shares * tx.unitPrice + (tx.commission ?? 0);
 
                         return (
-                          <div key={tx._id} className='flex items-center px-4 py-2 border-b border-gray-50 hover:bg-gray-50/50 cursor-pointer group' onClick={() => setEditingTransaction(tx)}>
+                          <div
+                            key={tx._id}
+                            className='flex items-center px-4 py-2 border-b border-gray-50 hover:bg-gray-50/50 cursor-pointer group'
+                            onClick={() => setEditingTransaction(tx)}
+                          >
                             <div className='w-10 shrink-0'>
                               <div
                                 className={`w-7 h-7 rounded-full flex items-center justify-center text-white font-medium text-xs ${typeColors[tx.type]}`}
@@ -287,20 +458,16 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
                   <span className='text-gray-500'>Name</span>
                   <span className='font-medium text-gray-900'>{account.name}</span>
                 </div>
-                <div className='flex justify-between items-center text-sm'>
-                  <span className='text-gray-500'>Type</span>
-                  <span className='font-medium text-gray-900'>{account.type}</span>
-                </div>
-                {account.currency && (
-                  <div className='flex justify-between items-center text-sm'>
-                    <span className='text-gray-500'>Currency</span>
-                    <span className='font-medium text-gray-900'>{account.currency}</span>
-                  </div>
-                )}
                 {account.description && (
                   <div className='flex justify-between items-center text-sm'>
                     <span className='text-gray-500'>Description</span>
                     <span className='font-medium text-gray-900 text-right max-w-[60%]'>{account.description}</span>
+                  </div>
+                )}
+                {account.currency && (
+                  <div className='flex justify-between items-center text-sm'>
+                    <span className='text-gray-500'>Currency</span>
+                    <span className='font-medium text-gray-900'>{account.currency}</span>
                   </div>
                 )}
                 <div className='flex justify-between items-center text-sm'>
@@ -310,30 +477,18 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
                     {(accountSummary?.totalDividends ?? 0).toLocaleString(undefined, {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
-                  })}
-                </span>
-              </div>
-              <div className='flex justify-between items-center text-sm'>
-                <span className='text-gray-500'>Total Commissions</span>
-                <span className='font-medium text-red-500'>
-                  $
-                  {(accountSummary?.totalCommissions ?? 0).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
-              </div>
-                <div className='pt-1.5 border-t border-gray-100'>
-                  <div className='flex justify-between items-center text-sm font-bold text-gray-900'>
-                    <span>Cost Basis</span>
-                    <span>
-                      $
-                      {(accountSummary?.totalCostBasis ?? 0).toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                  </div>
+                    })}
+                  </span>
+                </div>
+                <div className='flex justify-between items-center text-sm'>
+                  <span className='text-gray-500'>Total Commissions</span>
+                  <span className='font-medium text-red-500'>
+                    $
+                    {(accountSummary?.totalCommissions ?? 0).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -371,10 +526,12 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
                   const total = assetAllocation.reduce((s, c) => s + c.value, 0);
                   const pct = total > 0 ? ((cat.value / total) * 100).toFixed(1) : '0';
                   return (
-                    <div key={cat.name} className='flex items-center justify-between text-sm'>
-                      <div className='flex items-center gap-2'>
+                    <div key={cat.name} className='flex items-center justify-between text-sm gap-2'>
+                      <div className='flex items-center gap-2 min-w-0 pr-2'>
                         <div className='w-2.5 h-2.5 rounded-full shrink-0' style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                        <span className='text-gray-600 truncate max-w-30'>{cat.name}</span>
+                        <span className='text-gray-600 truncate' title={cat.name}>
+                          {cat.name}
+                        </span>
                       </div>
                       <div className='flex items-center gap-2 shrink-0'>
                         <span className='text-gray-400 text-xs'>{pct}%</span>
@@ -421,10 +578,12 @@ export function InvestmentAccountDetail({ accountId, account, userId }: Investme
                   const total = sectorExposure.reduce((s, c) => s + c.value, 0);
                   const pct = total > 0 ? ((cat.value / total) * 100).toFixed(1) : '0';
                   return (
-                    <div key={cat.name} className='flex items-center justify-between text-sm'>
-                      <div className='flex items-center gap-2'>
+                    <div key={cat.name} className='flex items-center justify-between text-sm gap-2'>
+                      <div className='flex items-center gap-2 min-w-0 pr-2'>
                         <div className='w-2.5 h-2.5 rounded-full shrink-0' style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                        <span className='text-gray-600 truncate max-w-30'>{cat.name}</span>
+                        <span className='text-gray-600 truncate' title={cat.name}>
+                          {cat.name}
+                        </span>
                       </div>
                       <div className='flex items-center gap-2 shrink-0'>
                         <span className='text-gray-400 text-xs'>{pct}%</span>

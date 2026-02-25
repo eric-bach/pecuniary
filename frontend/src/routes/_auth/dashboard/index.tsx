@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useQuery } from 'convex/react';
@@ -64,9 +65,38 @@ function DashboardPage() {
 
   const userId = user?.username;
 
+  const [timeScale, setTimeScale] = useState<'1D' | '1W' | '1M' | '3M' | 'YTD' | '1Y' | 'All'>('1M');
+
+  const daysToReport = useMemo(() => {
+    switch (timeScale) {
+      case '1D':
+        return 1;
+      case '1W':
+        return 7;
+      case '1M':
+        return 30;
+      case '3M':
+        return 90;
+      case 'YTD': {
+        const now = new Date();
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        return Math.max(1, Math.ceil((now.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)));
+      }
+      case '1Y':
+        return 365;
+      case 'All': {
+        // Find earliest transaction creation time if needed, or default to a reasonable max
+        return 365 * 5; // e.g., 5 years max historical
+      }
+      default:
+        return 30;
+    }
+  }, [timeScale]);
+
   const userAccounts = useQuery(api.accounts.list, userId ? { userId } : 'skip');
   const balances = useQuery(api.cashTransactions.getBalancesByUser, userId ? { userId } : 'skip') ?? {};
-  const totalHistory = useQuery(api.cashTransactions.getTotalBalanceHistory, userId ? { userId } : 'skip');
+  const investmentBalances = useQuery(api.metrics.getInvestmentBalancesByUser, userId ? { userId } : 'skip') ?? {};
+  const totalHistory = useQuery(api.metrics.getUserNetWorthHistory, userId ? { userId, days: daysToReport } : 'skip');
   const spendingByMonth = useQuery(api.cashTransactions.getSpendingByMonth, userId ? { userId } : 'skip');
   const recentTransactions = useQuery(api.cashTransactions.getRecentByUser, userId ? { userId, limit: 8 } : 'skip');
   const categoryBreakdown = useQuery(api.cashTransactions.getCategoryBreakdownByUser, userId ? { userId } : 'skip');
@@ -74,7 +104,12 @@ function DashboardPage() {
   const PIE_COLORS = ['#0067c0', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280'];
   const categoryTotal = (categoryBreakdown ?? []).reduce((s, c) => s + c.value, 0);
 
-  const totalNetWorth = Object.values(balances).reduce((s, v) => s + v, 0);
+  const combinedBalances: Record<string, number> = {};
+  for (const a of userAccounts ?? []) {
+    combinedBalances[a._id] = (balances[a._id] ?? 0) + (investmentBalances[a._id] ?? 0);
+  }
+
+  const totalNetWorth = Object.values(combinedBalances).reduce((s, v) => s + v, 0);
   const chartData = totalHistory ?? [];
   const spendingData = (spendingByMonth ?? []).slice(-6).map((d) => ({
     ...d,
@@ -87,10 +122,12 @@ function DashboardPage() {
 
   const assetTypes = ['Cash', 'Investment', 'Real Estate'];
   const liabilityTypes = ['Credit Cards', 'Loans'];
-  const totalAssets = (userAccounts ?? []).filter((a) => assetTypes.includes(a.type)).reduce((s, a) => s + (balances[a._id] ?? 0), 0);
+  const totalAssets = (userAccounts ?? [])
+    .filter((a) => assetTypes.includes(a.type))
+    .reduce((s, a) => s + (combinedBalances[a._id] ?? 0), 0);
   const totalLiabilities = (userAccounts ?? [])
     .filter((a) => liabilityTypes.includes(a.type))
-    .reduce((s, a) => s + (balances[a._id] ?? 0), 0);
+    .reduce((s, a) => s + (combinedBalances[a._id] ?? 0), 0);
 
   return (
     <div className='flex-1 pb-10'>
@@ -121,6 +158,21 @@ function DashboardPage() {
           <CardHeader className='pb-2'>
             <div className='flex items-center justify-between'>
               <CardTitle className='text-base font-semibold text-gray-700'>Net Worth</CardTitle>
+              <div className='hidden sm:flex items-center gap-1 bg-gray-100/50 p-1 rounded-md'>
+                {(['1D', '1W', '1M', '3M', 'YTD', '1Y', 'All'] as const).map((scale) => (
+                  <button
+                    key={scale}
+                    onClick={() => setTimeScale(scale)}
+                    className={`text-xs px-2.5 py-1 rounded-sm transition-all ${
+                      timeScale === scale
+                        ? 'bg-white text-gray-900 shadow-sm font-medium'
+                        : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                    }`}
+                  >
+                    {scale}
+                  </button>
+                ))}
+              </div>
               <span className='text-2xl font-bold text-gray-900'>{formatCurrency(totalNetWorth)}</span>
             </div>
           </CardHeader>
@@ -138,7 +190,21 @@ function DashboardPage() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid vertical={false} stroke='#f0f0f0' />
-                    <XAxis dataKey='date' axisLine={false} tickLine={false} tick={{ fill: '#9ca3af', fontSize: 11 }} dy={8} />
+                    <XAxis
+                      dataKey='date'
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#9ca3af', fontSize: 11 }}
+                      tickFormatter={(val) => {
+                        const date = new Date(val);
+                        if (timeScale === 'All' || timeScale === '1Y') {
+                          return `${date.getMonth() + 1}/${date.getFullYear().toString().slice(2)}`;
+                        }
+                        return `${date.getMonth() + 1}/${date.getDate()}`;
+                      }}
+                      dy={8}
+                      minTickGap={timeScale === '1D' ? 1 : timeScale === '1W' ? 10 : 30}
+                    />
                     <YAxis
                       axisLine={false}
                       tickLine={false}
@@ -179,7 +245,7 @@ function DashboardPage() {
               const cash = (userAccounts ?? []).filter((a) => a.type === 'Cash').reduce((s, a) => s + (balances[a._id] ?? 0), 0);
               const investments = (userAccounts ?? [])
                 .filter((a) => a.type === 'Investment')
-                .reduce((s, a) => s + (balances[a._id] ?? 0), 0);
+                .reduce((s, a) => s + (combinedBalances[a._id] ?? 0), 0);
               const realEstate = (userAccounts ?? [])
                 .filter((a) => a.type === 'Real Estate')
                 .reduce((s, a) => s + (balances[a._id] ?? 0), 0);
@@ -425,7 +491,7 @@ function DashboardPage() {
             ) : (
               <div className='divide-y divide-gray-50'>
                 {userAccounts.map((account) => {
-                  const balance = balances[account._id] ?? 0;
+                  const balance = combinedBalances[account._id] ?? 0;
                   const colorMap: Record<string, string> = {
                     Cash: 'bg-emerald-600',
                     Investment: 'bg-blue-600',

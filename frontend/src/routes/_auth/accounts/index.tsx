@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -90,14 +90,54 @@ function formatBalance(value: number): string {
 
 function AccountsPage() {
   const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
+  const [timeScale, setTimeScale] = useState<'1D' | '1W' | '1M' | '3M' | 'YTD' | '1Y' | 'All'>('1M');
+
+  const daysToReport = useMemo(() => {
+    switch (timeScale) {
+      case '1D':
+        return 1;
+      case '1W':
+        return 7;
+      case '1M':
+        return 30;
+      case '3M':
+        return 90;
+      case 'YTD': {
+        const now = new Date();
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        return Math.max(1, Math.ceil((now.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)));
+      }
+      case '1Y':
+        return 365;
+      case 'All': {
+        return 365 * 5; // e.g., 5 years max historical
+      }
+      default:
+        return 30;
+    }
+  }, [timeScale]);
+
   const { user } = useAuthenticator((context) => [context.user]);
   const userAccounts = useQuery(api.accounts.list, user?.username ? { userId: user.username } : 'skip');
   const balances = useQuery(api.cashTransactions.getBalancesByUser, user?.username ? { userId: user.username } : 'skip') ?? {};
-  const totalHistory = useQuery(api.cashTransactions.getTotalBalanceHistory, user?.username ? { userId: user.username } : 'skip');
+  const investmentBalances = useQuery(api.metrics.getInvestmentBalancesByUser, user?.username ? { userId: user.username } : 'skip') ?? {};
+  const totalHistory = useQuery(
+    api.metrics.getUserNetWorthHistory,
+    user?.username ? { userId: user.username, days: daysToReport } : 'skip',
+  );
 
   const chartData = totalHistory ?? [];
   const hasHistory = chartData.length > 0;
-  const totalBalance = Object.values(balances).reduce((s, v) => s + v, 0);
+
+  // Total balance combines cash balances from all accounts + market value of investments
+  const totalCashBalance = Object.values(balances).reduce((s, v) => s + v, 0);
+  const totalInvestmentMarketValue = Object.values(investmentBalances).reduce((s, v) => s + v, 0);
+  const totalBalance = totalCashBalance + totalInvestmentMarketValue;
+
+  const combinedBalances: Record<string, number> = {};
+  for (const a of userAccounts ?? []) {
+    combinedBalances[a._id] = (balances[a._id] ?? 0) + (investmentBalances[a._id] ?? 0);
+  }
 
   const cashAccounts = userAccounts?.filter((a) => a.type === 'Cash') || [];
   const investmentAccounts = userAccounts?.filter((a) => a.type === 'Investment') || [];
@@ -124,6 +164,21 @@ function AccountsPage() {
         <CardHeader className='pb-2'>
           <div className='flex items-center justify-between'>
             <CardTitle className='text-base font-semibold text-gray-700'>Net Worth</CardTitle>
+            <div className='hidden sm:flex items-center gap-1 bg-gray-100/50 p-1 rounded-md'>
+              {(['1D', '1W', '1M', '3M', 'YTD', '1Y', 'All'] as const).map((scale) => (
+                <button
+                  key={scale}
+                  onClick={() => setTimeScale(scale)}
+                  className={`text-xs px-2.5 py-1 rounded-sm transition-all ${
+                    timeScale === scale
+                      ? 'bg-white text-gray-900 shadow-sm font-medium'
+                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  {scale}
+                </button>
+              ))}
+            </div>
             <span className='text-2xl font-bold text-gray-900'>{formatBalance(totalBalance)}</span>
           </div>
         </CardHeader>
@@ -140,7 +195,21 @@ function AccountsPage() {
                       <stop offset='95%' stopColor='#bae6fd' stopOpacity={0.1} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey='date' axisLine={false} tickLine={false} tick={{ fill: '#888888', fontSize: 12 }} dy={10} />
+                  <XAxis
+                    dataKey='date'
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#888888', fontSize: 12 }}
+                    dy={10}
+                    tickFormatter={(val) => {
+                      const date = new Date(val);
+                      if (timeScale === 'All' || timeScale === '1Y') {
+                        return `${date.getMonth() + 1}/${date.getFullYear().toString().slice(2)}`;
+                      }
+                      return `${date.getMonth() + 1}/${date.getDate()}`;
+                    }}
+                    minTickGap={timeScale === '1D' ? 1 : timeScale === '1W' ? 10 : 30}
+                  />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
@@ -169,7 +238,8 @@ function AccountsPage() {
         <div className='md:col-span-2'>
           <AccountTableSection title='Cash' accounts={cashAccounts} colorClass='bg-emerald-600' balances={balances} />
           <AccountTableSection title='Credit Cards' accounts={creditCardAccounts} colorClass='bg-red-500' balances={balances} />
-          <AccountTableSection title='Investments' accounts={investmentAccounts} colorClass='bg-blue-600' balances={balances} />
+          {/* Include investment market values in balances prop by combining balances and investmentBalances */}
+          <AccountTableSection title='Investments' accounts={investmentAccounts} colorClass='bg-blue-600' balances={combinedBalances} />
           <AccountTableSection title='Real Estate' accounts={realEstateAccounts} colorClass='bg-purple-600' balances={balances} />
           <AccountTableSection title='Loans' accounts={loanAccounts} colorClass='bg-orange-500' balances={balances} />
         </div>
@@ -185,7 +255,7 @@ function AccountsPage() {
               <div className='space-y-3'>
                 {(() => {
                   const cash = cashAccounts.reduce((s, a) => s + (balances[a._id] ?? 0), 0);
-                  const investments = investmentAccounts.reduce((s, a) => s + (balances[a._id] ?? 0), 0);
+                  const investments = investmentAccounts.reduce((s, a) => s + (combinedBalances[a._id] ?? 0), 0); // Cash + market values
                   const realEstate = realEstateAccounts.reduce((s, a) => s + (balances[a._id] ?? 0), 0);
                   const total = cash + investments + realEstate;
                   const pct = (v: number) => (total > 0 ? `${((v / total) * 100).toFixed(1)}%` : '0%');
