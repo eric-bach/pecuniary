@@ -16,6 +16,7 @@ const accountFormSchema = z.object({
   name: z.string().min(1, 'Account name is required.').max(50, 'Account name must be less than 50 characters.'),
   description: z.string().max(200, 'Description must be less than 200 characters.').optional(),
   type: z.enum(['Cash', 'Investment', 'Real Estate', 'Credit Cards', 'Loans']),
+  currency: z.enum(['USD', 'CAD']).optional(),
 });
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
@@ -35,8 +36,11 @@ export function AddAccountSheet({ open, onOpenChange }: AddAccountSheetProps) {
     defaultValues: {
       name: '',
       description: '',
+      currency: 'USD',
     },
   });
+
+  const watchedType = form.watch('type');
 
   async function onSubmit(data: AccountFormValues) {
     if (!user?.username) {
@@ -50,6 +54,7 @@ export function AddAccountSheet({ open, onOpenChange }: AddAccountSheetProps) {
         name: data.name,
         description: data.description || '',
         type: data.type,
+        currency: data.type === 'Investment' ? data.currency : undefined,
         userId: user.username,
       });
       form.reset();
@@ -64,7 +69,7 @@ export function AddAccountSheet({ open, onOpenChange }: AddAccountSheetProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className='overflow-y-auto min-w-[600px] sm:max-w-[480px]'>
+      <SheetContent className='overflow-y-auto min-w-150 sm:max-w-120'>
         <SheetHeader className='mb-6'>
           <SheetTitle>Add Account</SheetTitle>
           <SheetDescription>Enter the details for the new account. Click save when you're done.</SheetDescription>
@@ -110,6 +115,31 @@ export function AddAccountSheet({ open, onOpenChange }: AddAccountSheetProps) {
                 </FormItem>
               )}
             />
+
+            {/* Currency - only show for Investment accounts */}
+            {watchedType === 'Investment' && (
+              <FormField
+                control={form.control}
+                name='currency'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Currency</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value ?? 'USD'}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select currency' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value='USD'>USD - US Dollar</SelectItem>
+                        <SelectItem value='CAD'>CAD - Canadian Dollar</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
