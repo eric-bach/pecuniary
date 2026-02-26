@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
-import { Check } from 'lucide-react';
+import { Check, Trash2 } from 'lucide-react';
 
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -29,27 +29,51 @@ const transactionFormSchema = z.object({
 
 type TransactionFormValues = z.infer<typeof transactionFormSchema>;
 
-interface AddTransactionSheetProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  accountId: string;
-  userId: string;
+interface Transaction {
+  _id: Id<'cashTransactions'>;
+  accountId: Id<'accounts'>;
+  accountName?: string;
+  date: string;
+  payee: string;
+  description?: string;
+  category?: string;
+  type: 'debit' | 'credit';
+  amount: number;
 }
 
-export function AddTransactionSheet({ open, onOpenChange, accountId, userId }: AddTransactionSheetProps) {
-  const createTransaction = useMutation(api.transactions.create);
-  const payeeSuggestions = useQuery(api.transactions.getPayeeSuggestions, userId ? { userId } : 'skip') ?? [];
+interface EditCashTransactionSheetProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  transaction: Transaction | null;
+  userId: string;
+  accountName?: string;
+  accountType?: string;
+}
+
+export function EditCashTransactionSheet({
+  open,
+  onOpenChange,
+  transaction,
+  userId,
+  accountName,
+  accountType,
+}: EditCashTransactionSheetProps) {
+  const updateTransaction = useMutation(api.cashTransactions.update);
+  const deleteTransaction = useMutation(api.cashTransactions.remove);
+  const payeeSuggestions = useQuery(api.cashTransactions.getPayeeSuggestions, userId ? { userId } : 'skip') ?? [];
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [payeeOpen, setPayeeOpen] = useState(false);
   const [payeeInput, setPayeeInput] = useState('');
   const payeeInputRef = useRef<HTMLInputElement>(null);
 
-  const today = new Date().toISOString().split('T')[0];
+  const displayAccountName = accountName ?? transaction?.accountName ?? '';
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
-      date: today,
+      date: '',
       payee: '',
       category: '',
       description: '',
@@ -57,19 +81,60 @@ export function AddTransactionSheet({ open, onOpenChange, accountId, userId }: A
     },
   });
 
-  // Auto-focus payee when sheet opens
+  // Watch form values for real-time header updates
+  const watchedPayee = form.watch('payee');
+  const watchedAmount = form.watch('amount');
+  const watchedDate = form.watch('date');
+
+  // Format amount for display in header
+  const displayAmount = (() => {
+    const raw = parseFloat((watchedAmount || '0').replace(/,/g, ''));
+    if (isNaN(raw)) return '$0.00';
+    const formatted = Math.abs(raw).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return `$${formatted}`;
+  })();
+
+  // Format date in long form for display
+  const displayDate = (() => {
+    if (!watchedDate) return '';
+    const date = new Date(watchedDate + 'T00:00:00');
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  })();
+
+  // Populate form when transaction changes or sheet opens
   useEffect(() => {
-    if (open) {
+    if (open && transaction) {
+      // Format amount with sign based on account type:
+      // For Cash accounts: credit (deposit) = positive display, debit (withdrawal) = negative display
+      // For Credit Cards: debit (charge) = positive display, credit (payment) = negative display
+      let signedAmount: number;
+      if (accountType === 'Credit Cards') {
+        signedAmount = transaction.type === 'credit' ? -transaction.amount : transaction.amount;
+      } else {
+        // Cash and other account types
+        signedAmount = transaction.type === 'credit' ? transaction.amount : -transaction.amount;
+      }
+      const formattedAmount =
+        (signedAmount < 0 ? '-' : '') +
+        Math.abs(signedAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      form.reset({
+        date: transaction.date,
+        payee: transaction.payee,
+        category: transaction.category ?? '',
+        description: transaction.description ?? '',
+        amount: formattedAmount,
+      });
+      setPayeeInput(transaction.payee);
       setTimeout(() => payeeInputRef.current?.focus(), 100);
     }
-  }, [open]);
+  }, [open, transaction, accountType]);
 
-  // Reset form & payee state when sheet closes
+  // Reset payee dropdown state when sheet closes
   useEffect(() => {
     if (!open) {
-      form.reset({ date: today, payee: '', category: '', description: '', amount: '' });
-      setPayeeInput('');
       setPayeeOpen(false);
+      setShowDeleteConfirm(false);
     }
   }, [open]);
 
@@ -88,25 +153,50 @@ export function AddTransactionSheet({ open, onOpenChange, accountId, userId }: A
   }
 
   async function onSubmit(data: TransactionFormValues) {
+    if (!transaction) return;
+
     setIsSubmitting(true);
     const raw = parseFloat(data.amount.replace(/,/g, ''));
+
+    // Determine transaction type based on account type:
+    // For Cash accounts: positive = credit (deposit), negative = debit (withdrawal)
+    // For Credit Cards: positive = debit (charge), negative = credit (payment)
+    let txType: 'debit' | 'credit';
+    if (accountType === 'Credit Cards') {
+      txType = raw < 0 ? 'credit' : 'debit';
+    } else {
+      // Cash and other account types
+      txType = raw < 0 ? 'debit' : 'credit';
+    }
+
     try {
-      await createTransaction({
-        accountId: accountId as Id<'accounts'>,
+      await updateTransaction({
+        transactionId: transaction._id,
         date: data.date,
         payee: data.payee,
         category: data.category || undefined,
         description: data.description || undefined,
-        type: raw < 0 ? 'credit' : 'debit',
+        type: txType,
         amount: Math.abs(raw),
       });
-      form.reset({ date: today, payee: '', category: '', description: '', amount: '' });
-      setPayeeInput('');
       onOpenChange(false);
     } catch (error) {
-      console.error('Failed to create transaction:', error);
+      console.error('Failed to update transaction:', error);
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!transaction) return;
+    setIsDeleting(true);
+    try {
+      await deleteTransaction({ transactionId: transaction._id });
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Failed to delete transaction:', error);
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -114,9 +204,24 @@ export function AddTransactionSheet({ open, onOpenChange, accountId, userId }: A
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className='overflow-y-auto min-w-[600px] sm:max-w-[480px]'>
         <SheetHeader className='mb-6'>
-          <SheetTitle>Add Transaction</SheetTitle>
-          <SheetDescription>Enter the details for the new transaction. Click save when you're done.</SheetDescription>
+          <SheetTitle>Edit Transaction</SheetTitle>
+          <SheetDescription>Update the transaction details. Click save when you're done.</SheetDescription>
         </SheetHeader>
+        {/* Header with payee and amount */}
+        <div className='flex items-start justify-between mb-6 px-4 pt-2'>
+          <div>
+            <h2 className='text-xl font-semibold text-gray-900'>{watchedPayee || 'Payee'}</h2>
+          </div>
+          <div className='text-right'>
+            <div className='text-xl font-semibold text-gray-900'>{displayAmount}</div>
+            {displayAccountName && (
+              <div className='flex items-center justify-end gap-1.5 mt-1'>
+                <div className='w-2 h-2 rounded-full bg-purple-500' />
+                <span className='text-sm text-gray-500'>{displayAccountName}</span>
+              </div>
+            )}
+          </div>
+        </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 pl-4 pr-4'>
@@ -130,6 +235,7 @@ export function AddTransactionSheet({ open, onOpenChange, accountId, userId }: A
                   <FormControl>
                     <Input type='date' {...field} />
                   </FormControl>
+                  {displayDate && <p className='text-sm text-gray-500 mt-1'>{displayDate}</p>}
                   <FormMessage />
                 </FormItem>
               )}
@@ -247,8 +353,20 @@ export function AddTransactionSheet({ open, onOpenChange, accountId, userId }: A
                           if (allowed.includes(e.key)) return;
                           // Allow Ctrl/Cmd combinations (copy, paste, etc.)
                           if (e.ctrlKey || e.metaKey) return;
-                          // Allow digits
-                          if (/^\d$/.test(e.key)) return;
+                          // Allow digits (but check decimal places limit)
+                          if (/^\d$/.test(e.key)) {
+                            const dotIndex = field.value.indexOf('.');
+                            const cursorPos = (e.currentTarget as HTMLInputElement).selectionStart ?? 0;
+                            // If there's a decimal and cursor is after it, check if we already have 2 decimal places
+                            if (dotIndex !== -1 && cursorPos > dotIndex) {
+                              const decimals = field.value.substring(dotIndex + 1);
+                              if (decimals.length >= 2) {
+                                e.preventDefault();
+                                return;
+                              }
+                            }
+                            return;
+                          }
                           // Allow decimal point only if none exists yet
                           if (e.key === '.' && !field.value.includes('.')) return;
                           // Allow minus only at the very start
@@ -284,14 +402,43 @@ export function AddTransactionSheet({ open, onOpenChange, accountId, userId }: A
               )}
             />
 
-            <div className='flex justify-start pt-4 space-x-2'>
-              <Button type='submit' disabled={isSubmitting} className='bg-[#0067c0] hover:bg-[#0067c0]/80'>
-                {isSubmitting ? 'Saving...' : 'Save'}
-              </Button>
-              <Button type='button' variant='outline' onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-                Cancel
-              </Button>
+            <div className='flex justify-between pt-4'>
+              <div className='flex space-x-2'>
+                <Button type='submit' disabled={isSubmitting || isDeleting} className='bg-[#0067c0] hover:bg-[#0067c0]/80'>
+                  {isSubmitting ? 'Saving...' : 'Save'}
+                </Button>
+                <Button type='button' variant='outline' onClick={() => onOpenChange(false)} disabled={isSubmitting || isDeleting}>
+                  Cancel
+                </Button>
+              </div>
+              {!showDeleteConfirm && (
+                <Button
+                  type='button'
+                  variant='destructive'
+                  disabled={isSubmitting || isDeleting}
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <Trash2 className='h-4 w-4 mr-1.5' />
+                  Delete
+                </Button>
+              )}
             </div>
+
+            {/* Delete Confirmation */}
+            {showDeleteConfirm && (
+              <div className='mt-6 p-4 border border-red-200 rounded-lg bg-red-50'>
+                <div className='text-sm font-semibold text-red-800 mb-2'>Delete Transaction</div>
+                <p className='text-sm text-red-700 mb-3'>Are you sure you want to delete this transaction? This action cannot be undone.</p>
+                <div className='flex space-x-2'>
+                  <Button type='button' variant='destructive' disabled={isDeleting} onClick={handleDelete}>
+                    {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                  </Button>
+                  <Button type='button' variant='outline' disabled={isDeleting} onClick={() => setShowDeleteConfirm(false)}>
+                    No, Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
           </form>
         </Form>
       </SheetContent>
