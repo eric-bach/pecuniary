@@ -1,0 +1,621 @@
+import { useState, useMemo } from 'react';
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip as RechartsTooltip,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from 'recharts';
+import { NavbarActions, NavbarTitle } from '@/components/layout/navbar-portal';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from '@tanstack/react-router';
+import { useQuery } from 'convex/react';
+import { ChevronRight, Pencil, Plus } from 'lucide-react';
+import { formatDate } from '@/lib/transaction-utils';
+import { AddInvestmentTransactionSheet } from '@/components/accounts/add-investment-transaction-sheet';
+import { EditAccountSheet } from '@/components/accounts/edit-account-sheet';
+import { EditInvestmentTransactionSheet } from '@/components/accounts/edit-investment-transaction-sheet';
+
+import { api } from '../../../convex/_generated/api';
+import type { Id } from '../../../convex/_generated/dataModel';
+
+interface Account {
+  _id: Id<'accounts'>;
+  name: string;
+  description?: string;
+  type: 'Cash' | 'Investment' | 'Real Estate' | 'Credit Cards' | 'Loans';
+  currency?: 'USD' | 'CAD';
+  userId: string;
+}
+
+interface InvestmentAccountDetailProps {
+  accountId: string;
+  account: Account;
+  userId: string;
+}
+
+export function InvestmentAccountDetail({ accountId, account, userId }: InvestmentAccountDetailProps) {
+  const rawTransactions = useQuery(api.investmentTransactions.listByAccount, { accountId: accountId as Id<'accounts'> });
+  const transactions = rawTransactions
+    ? [...rawTransactions].sort((a, b) => {
+        const dateDiff = b.date.localeCompare(a.date);
+        return dateDiff !== 0 ? dateDiff : b._creationTime - a._creationTime;
+      })
+    : undefined;
+  const positions = useQuery(api.positions.listByAccount, { accountId: accountId as Id<'accounts'> });
+  const accountSummary = useQuery(api.positions.getAccountSummary, { accountId: accountId as Id<'accounts'> });
+  const performance = useQuery(api.metrics.calculateAccountPerformance, { accountId: accountId as Id<'accounts'> });
+
+  const [timeScale, setTimeScale] = useState<'1D' | '1W' | '1M' | '3M' | 'YTD' | '1Y' | 'All'>('1M');
+
+  const daysToReport = useMemo(() => {
+    switch (timeScale) {
+      case '1D':
+        return 1;
+      case '1W':
+        return 7;
+      case '1M':
+        return 30;
+      case '3M':
+        return 90;
+      case 'YTD': {
+        const now = new Date();
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        return Math.max(1, Math.ceil((now.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)));
+      }
+      case '1Y':
+        return 365;
+      case 'All': {
+        if (!transactions || transactions.length === 0) return 30;
+        const oldestTx = transactions[transactions.length - 1];
+        const oldestDate = new Date(oldestTx.date);
+        const now = new Date();
+        const days = Math.ceil((now.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24));
+        return Math.max(30, days);
+      }
+      default:
+        return 30;
+    }
+  }, [timeScale, transactions]);
+
+  const historicalBalance = useQuery(api.metrics.getAccountHistoricalBalance, {
+    accountId: accountId as Id<'accounts'>,
+    days: daysToReport,
+  });
+
+  // Pie chart colors
+  const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280', '#f472b6', '#facc15'];
+
+  // Asset Allocation Data
+  const assetAllocation = useMemo(() => {
+    if (!positions) return [];
+    const map = new Map();
+    for (const pos of positions) {
+      const key = pos.assetType || 'Other';
+      map.set(key, (map.get(key) || 0) + pos.costBasis);
+    }
+    return Array.from(map.entries()).map(([name, value]) => ({ name, value }));
+  }, [positions]);
+
+  // Sector Exposure Data
+  const sectorExposure = useMemo(() => {
+    if (!positions) return [];
+    const map = new Map();
+    for (const pos of positions) {
+      const key = pos.sector || 'Other';
+      map.set(key, (map.get(key) || 0) + pos.costBasis);
+    }
+    return Array.from(map.entries()).map(([name, value]) => ({ name, value }));
+  }, [positions]);
+
+  const [isAddTransactionOpen, setIsAddTransactionOpen] = useState(false);
+  const [isEditAccountOpen, setIsEditAccountOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<NonNullable<typeof transactions>[number] | null>(null);
+
+  const groupedTransactions = useMemo(() => {
+    if (!transactions) return [];
+    const groups: { date: string; transactions: typeof transactions }[] = [];
+    const dateMap = new Map<string, typeof transactions>();
+
+    for (const tx of transactions) {
+      const existing = dateMap.get(tx.date);
+      if (existing) {
+        existing.push(tx);
+      } else {
+        dateMap.set(tx.date, [tx]);
+      }
+    }
+
+    for (const [date, txs] of dateMap) {
+      groups.push({ date, transactions: txs });
+    }
+
+    return groups.sort((a, b) => b.date.localeCompare(a.date));
+  }, [transactions]);
+
+  return (
+    <div className='flex-1'>
+      <NavbarTitle>
+        <div className='flex items-center gap-1.5 text-lg font-semibold'>
+          <Link to='/accounts' className='text-gray-400 hover:text-gray-700 transition-colors'>
+            Accounts
+          </Link>
+          <span className='text-gray-400'>/</span>
+          <span>{account.name}</span>
+        </div>
+      </NavbarTitle>
+      <NavbarActions>
+        <Button
+          size='sm'
+          className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none mr-2'
+          onClick={() => setIsAddTransactionOpen(true)}
+        >
+          <Plus className='h-3.5 w-3.5 mr-1.5' />
+          Add Transaction
+        </Button>
+        <Button
+          size='sm'
+          className='bg-[#0067c0] hover:bg-[#005bb5] text-white h-8 text-sm px-3 shadow-none'
+          onClick={() => setIsEditAccountOpen(true)}
+        >
+          <Pencil className='h-3.5 w-3.5 mr-1.5' />
+          Edit Account
+        </Button>
+      </NavbarActions>
+
+      {/* Main Two-Column Layout */}
+      <div className='grid gap-6 md:grid-cols-3 mb-6'>
+        {/* Left Column: Balance, Holdings, Transactions */}
+        <div className='md:col-span-2 flex flex-col gap-6'>
+          {/* Balance Graph Placeholder */}
+          <Card className='shadow-sm border-gray-100'>
+            <CardHeader className='pb-2'>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='text-lg font-semibold text-gray-700'>Balance</CardTitle>
+                <div className='hidden sm:flex items-center gap-1 bg-gray-100/50 p-1 rounded-md'>
+                  {(['1D', '1W', '1M', '3M', 'YTD', '1Y', 'All'] as const).map((scale) => (
+                    <button
+                      key={scale}
+                      onClick={() => setTimeScale(scale)}
+                      className={`text-xs px-2.5 py-1 rounded-sm transition-all ${
+                        timeScale === scale
+                          ? 'bg-white text-gray-900 shadow-sm font-medium'
+                          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                      }`}
+                    >
+                      {scale}
+                    </button>
+                  ))}
+                </div>
+                <div className='text-right'>
+                  <div className='text-xs text-gray-400 mb-0.5'>
+                    {account.type}
+                    {account.currency ? ` (${account.currency})` : ''}
+                  </div>
+                  <span className='text-2xl font-bold text-gray-900'>
+                    $
+                    {(performance?.totalMarketValue ?? 0).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                  <div className='text-xs text-gray-400 mt-0.5'>Market Value</div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className='h-64 w-full flex items-center justify-center text-sm text-gray-400'>
+                {!historicalBalance ? (
+                  <div>Loading...</div>
+                ) : historicalBalance.length === 0 ? (
+                  <div>No balance history available</div>
+                ) : (
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <AreaChart data={historicalBalance} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id='colorValue' x1='0' y1='0' x2='0' y2='1'>
+                          <stop offset='5%' stopColor='#3b82f6' stopOpacity={0.3} />
+                          <stop offset='95%' stopColor='#3b82f6' stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray='3 3' vertical={false} stroke='#f0f0f0' />
+                      <XAxis
+                        dataKey='date'
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                        tickFormatter={(val) => {
+                          const date = new Date(val);
+                          if (timeScale === 'All' || timeScale === '1Y') {
+                            return `${date.getMonth() + 1}/${date.getFullYear().toString().slice(2)}`;
+                          }
+                          return `${date.getMonth() + 1}/${date.getDate()}`;
+                        }}
+                        minTickGap={timeScale === '1D' ? 1 : timeScale === '1W' ? 10 : 30}
+                      />
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                        tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`}
+                        domain={['auto', 'auto']}
+                        width={60}
+                      />
+                      <RechartsTooltip
+                        contentStyle={{ borderRadius: '8px', border: '1px solid #f3f4f6', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        formatter={(value: number) => [
+                          `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                          'Market Value',
+                        ]}
+                        labelFormatter={(label) => formatDate(label as string)}
+                      />
+                      <Area
+                        type='monotone'
+                        dataKey='totalMarketValue'
+                        stroke='#3b82f6'
+                        strokeWidth={2}
+                        fillOpacity={1}
+                        fill='url(#colorValue)'
+                        isAnimationActive={true}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Holdings Table */}
+          <Card className='shadow-sm border-gray-100 flex flex-col'>
+            <CardHeader className='flex flex-row items-baseline justify-between pb-2 space-y-0'>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Holdings</CardTitle>
+              <div className='flex items-center gap-4 text-sm font-normal'>
+                <div className='flex items-center gap-1.5'>
+                  <span className='text-gray-500'>Realized P&L:</span>
+                  <span className={`font-medium ${(performance?.totalRealizedPl ?? 0) >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                    ${(performance?.totalRealizedPl ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className='flex items-center gap-1.5'>
+                  <span className='text-gray-500'>Unrealized P&L:</span>
+                  <span className={`font-medium ${(performance?.unrealizedPl ?? 0) >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                    ${(performance?.unrealizedPl ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className='overflow-auto max-h-[320px] pr-2'>
+                {!positions || positions.length === 0 ? (
+                  <div className='h-32 flex items-center justify-center text-sm text-gray-400'>No positions yet</div>
+                ) : (
+                  <table className='min-w-full text-sm text-left relative'>
+                    <thead className='sticky top-0 bg-white z-10'>
+                      <tr className='bg-gray-50'>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Symbol</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Shares</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Price</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Avg Cost</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Market Value</th>
+                        <th className='px-4 py-2 font-semibold text-gray-700'>Return</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {positions.map((pos) => {
+                        const avgCost = pos.shares > 0 ? pos.costBasis / pos.shares : 0;
+                        const perfPos = performance?.currentPositions.find((p) => p.symbol === pos.symbol);
+                        const currentPrice = perfPos?.currentPrice ?? 0;
+                        const marketValue = perfPos?.marketValue ?? 0;
+                        const returnValue = marketValue > 0 ? marketValue - pos.costBasis : 0;
+                        const returnPct = pos.costBasis > 0 ? (returnValue / pos.costBasis) * 100 : 0;
+
+                        return (
+                          <tr key={pos._id} className='border-b border-gray-100'>
+                            <td className='px-4 py-2 font-mono text-gray-900'>{pos.symbol}</td>
+                            <td className='px-4 py-2 text-gray-900'>
+                              {pos.shares.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                            </td>
+                            <td className='px-4 py-2 text-gray-900'>
+                              {currentPrice > 0
+                                ? `$${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                : '-'}
+                            </td>
+                            <td className='px-4 py-2 text-gray-900'>
+                              ${avgCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td className='px-4 py-2 text-gray-900'>
+                              {marketValue > 0
+                                ? `$${marketValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                : '-'}
+                            </td>
+                            <td className={`px-4 py-2 ${returnValue >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                              {marketValue > 0 ? (
+                                <>
+                                  {returnValue >= 0 ? '+' : ''}$
+                                  {returnValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  <span className='text-xs ml-1'>
+                                    ({returnValue >= 0 ? '+' : ''}
+                                    {returnPct.toFixed(2)}%)
+                                  </span>
+                                </>
+                              ) : (
+                                '-'
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Transactions Table */}
+          <Card className='shadow-sm border-gray-100 flex flex-col h-full'>
+            <CardHeader className='flex flex-row items-center justify-between pb-4'>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Transactions</CardTitle>
+            </CardHeader>
+            <CardContent className='p-0 flex-1 relative'>
+              <div className='overflow-auto max-h-[500px]'>
+                {transactions === undefined ? (
+                  <div className='text-center text-gray-400 py-12 text-sm'>Loading...</div>
+                ) : transactions.length === 0 ? (
+                  <div className='text-center text-gray-400 py-12 text-sm'>No transactions yet</div>
+                ) : (
+                  groupedTransactions.map((group) => (
+                    <div key={group.date}>
+                      <div className='flex items-center px-4 py-2 bg-gray-50 border-b border-gray-100 sticky top-0 z-10'>
+                        <span className='text-sm font-medium text-gray-500'>{formatDate(group.date)}</span>
+                      </div>
+                      {group.transactions.map((tx) => {
+                        const typeColors: Record<string, string> = {
+                          buy: 'bg-emerald-500',
+                          sell: 'bg-red-500',
+                          dividend: 'bg-blue-500',
+                          split: 'bg-purple-500',
+                          transfer_in: 'bg-teal-500',
+                          transfer_out: 'bg-orange-500',
+                        };
+                        const typeLabels: Record<string, string> = {
+                          buy: 'Buy',
+                          sell: 'Sell',
+                          dividend: 'Dividend',
+                          split: 'Split',
+                          transfer_in: 'Transfer In',
+                          transfer_out: 'Transfer Out',
+                        };
+                        const total = tx.shares * tx.unitPrice + (tx.commission ?? 0);
+
+                        return (
+                          <div
+                            key={tx._id}
+                            className='flex items-center px-4 py-2 border-b border-gray-50 hover:bg-gray-50/50 cursor-pointer group'
+                            onClick={() => setEditingTransaction(tx)}
+                          >
+                            <div className='w-10 shrink-0'>
+                              <div
+                                className={`w-7 h-7 rounded-full flex items-center justify-center text-white font-medium text-xs ${typeColors[tx.type]}`}
+                              >
+                                {tx.symbol.slice(0, 2)}
+                              </div>
+                            </div>
+                            <div className='w-1/4 min-w-0 pr-4'>
+                              <div className='font-semibold text-gray-900 font-mono'>{tx.symbol}</div>
+                              <div className='text-xs text-gray-400'>{typeLabels[tx.type]}</div>
+                            </div>
+                            <div className='w-1/3 min-w-0 pr-4'>
+                              <div className='text-sm text-gray-700'>
+                                {tx.shares.toLocaleString(undefined, { maximumFractionDigits: 4 })} shares
+                              </div>
+                              <div className='text-xs text-gray-400'>
+                                @ ${tx.unitPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
+                              </div>
+                            </div>
+                            <div className='flex items-center justify-end gap-2 flex-1 min-w-0'>
+                              <span
+                                className={`text-sm font-semibold text-right ${
+                                  tx.type === 'sell' || tx.type === 'dividend' ? 'text-emerald-600' : 'text-gray-900'
+                                }`}
+                              >
+                                ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </span>
+                              <ChevronRight className='h-4 w-4 text-gray-300 group-hover:text-gray-400' />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))
+                )}
+              </div>
+              {transactions && transactions.length > 0 && (
+                <div className='px-6 py-2.5 border-t border-gray-100 text-xs text-gray-400 sticky bottom-0 bg-white z-10'>
+                  {transactions.length} transaction{transactions.length !== 1 ? 's' : ''}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column: Account Info + Charts */}
+        <div className='flex flex-col gap-6'>
+          {/* Account Info */}
+          <Card className='shadow-sm border-gray-100'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Account Info</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-2'>
+              <div className='space-y-1.5'>
+                <div className='flex justify-between items-center text-sm'>
+                  <span className='text-gray-500'>Name</span>
+                  <span className='font-medium text-gray-900'>{account.name}</span>
+                </div>
+                {account.description && (
+                  <div className='flex justify-between items-center text-sm'>
+                    <span className='text-gray-500'>Description</span>
+                    <span className='font-medium text-gray-900 text-right max-w-[60%]'>{account.description}</span>
+                  </div>
+                )}
+                {account.currency && (
+                  <div className='flex justify-between items-center text-sm'>
+                    <span className='text-gray-500'>Currency</span>
+                    <span className='font-medium text-gray-900'>{account.currency}</span>
+                  </div>
+                )}
+                <div className='flex justify-between items-center text-sm'>
+                  <span className='text-gray-500'>Total Dividends</span>
+                  <span className='font-medium text-emerald-600'>
+                    $
+                    {(accountSummary?.totalDividends ?? 0).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+                <div className='flex justify-between items-center text-sm'>
+                  <span className='text-gray-500'>Total Commissions</span>
+                  <span className='font-medium text-red-500'>
+                    $
+                    {(accountSummary?.totalCommissions ?? 0).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Asset Allocation Pie Chart */}
+          <Card className='shadow-sm border-gray-100'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Asset Allocation</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='h-48'>
+                {!positions || positions.length === 0 || assetAllocation.length === 0 ? (
+                  <div className='h-full flex items-center justify-center text-sm text-gray-400'>No data</div>
+                ) : (
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <PieChart>
+                      <Pie data={assetAllocation} cx='50%' cy='50%' innerRadius={40} outerRadius={70} paddingAngle={2} dataKey='value'>
+                        {assetAllocation.map((_, i) => (
+                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip
+                        formatter={(v: number) => [
+                          `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                          'Value',
+                        ]}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+              <div className='space-y-2 mt-2'>
+                {assetAllocation.map((cat, i) => {
+                  const total = assetAllocation.reduce((s, c) => s + c.value, 0);
+                  const pct = total > 0 ? ((cat.value / total) * 100).toFixed(1) : '0';
+                  return (
+                    <div key={cat.name} className='flex items-center justify-between text-sm gap-2'>
+                      <div className='flex items-center gap-2 min-w-0 pr-2'>
+                        <div className='w-2.5 h-2.5 rounded-full shrink-0' style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                        <span className='text-gray-600 truncate' title={cat.name}>
+                          {cat.name}
+                        </span>
+                      </div>
+                      <div className='flex items-center gap-2 shrink-0'>
+                        <span className='text-gray-400 text-xs'>{pct}%</span>
+                        <span className='font-medium text-gray-900'>
+                          ${cat.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Sector Exposure Pie Chart */}
+          <Card className='shadow-sm border-gray-100'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-lg font-semibold text-gray-700'>Sector Exposure</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='h-48'>
+                {!positions || positions.length === 0 || sectorExposure.length === 0 ? (
+                  <div className='h-full flex items-center justify-center text-sm text-gray-400'>No data</div>
+                ) : (
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <PieChart>
+                      <Pie data={sectorExposure} cx='50%' cy='50%' innerRadius={40} outerRadius={70} paddingAngle={2} dataKey='value'>
+                        {sectorExposure.map((_, i) => (
+                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip
+                        formatter={(v: number) => [
+                          `$${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                          'Value',
+                        ]}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+              <div className='space-y-2 mt-2'>
+                {sectorExposure.map((cat, i) => {
+                  const total = sectorExposure.reduce((s, c) => s + c.value, 0);
+                  const pct = total > 0 ? ((cat.value / total) * 100).toFixed(1) : '0';
+                  return (
+                    <div key={cat.name} className='flex items-center justify-between text-sm gap-2'>
+                      <div className='flex items-center gap-2 min-w-0 pr-2'>
+                        <div className='w-2.5 h-2.5 rounded-full shrink-0' style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                        <span className='text-gray-600 truncate' title={cat.name}>
+                          {cat.name}
+                        </span>
+                      </div>
+                      <div className='flex items-center gap-2 shrink-0'>
+                        <span className='text-gray-400 text-xs'>{pct}%</span>
+                        <span className='font-medium text-gray-900'>
+                          ${cat.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <AddInvestmentTransactionSheet
+        open={isAddTransactionOpen}
+        onOpenChange={setIsAddTransactionOpen}
+        accountId={accountId}
+        accountCurrency={account.currency}
+        userId={userId}
+      />
+      <EditInvestmentTransactionSheet
+        open={!!editingTransaction}
+        onOpenChange={(open) => !open && setEditingTransaction(null)}
+        transaction={editingTransaction}
+        userId={userId}
+        accountName={account.name}
+        accountCurrency={account.currency}
+      />
+      <EditAccountSheet open={isEditAccountOpen} onOpenChange={setIsEditAccountOpen} account={account} />
+    </div>
+  );
+}
