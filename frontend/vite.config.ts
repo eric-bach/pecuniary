@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   server: {
-    port: 3003,
+    port: 3000,
   },
   plugins: [
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
