@@ -87,14 +87,34 @@ export const getAccountSummary = query({
     // Calculate total cost basis
     const totalCostBasis = positions.reduce((sum, pos) => sum + pos.costBasis, 0);
 
-    // Calculate total dividends received
-    const totalDividends = transactions.filter((tx) => tx.type === 'dividend').reduce((sum, tx) => sum + tx.shares * tx.unitPrice, 0);
-
     // Calculate total commissions paid
     const totalCommissions = transactions.reduce((sum, tx) => sum + (tx.commission ?? 0), 0);
 
-    // Get unique symbols
+    // Get unique symbols and their latest prices
     const symbols = [...new Set(positions.map((p) => p.symbol))];
+    const latestPrices = new Map<string, number>();
+    
+    for (const symbol of symbols) {
+      const latestQuote = await ctx.db
+        .query('historicalQuotes')
+        .withIndex('by_symbol_date', (q) => q.eq('symbol', symbol))
+        .order('desc')
+        .first();
+      if (latestQuote) {
+        latestPrices.set(symbol, latestQuote.closePrice);
+      }
+    }
+
+    // Map dividends by symbol
+    const dividendsBySymbol = new Map<string, number>();
+    let totalDividends = 0;
+    for (const tx of transactions) {
+      if (tx.type === 'dividend') {
+        const divAmount = tx.shares * tx.unitPrice;
+        totalDividends += divAmount;
+        dividendsBySymbol.set(tx.symbol, (dividendsBySymbol.get(tx.symbol) || 0) + divAmount);
+      }
+    }
 
     return {
       positionCount: positions.length,
@@ -102,12 +122,20 @@ export const getAccountSummary = query({
       totalDividends,
       totalCommissions,
       symbols,
-      positions: positions.map((p) => ({
-        symbol: p.symbol,
-        shares: p.shares,
-        costBasis: p.costBasis,
-        averageCost: p.shares > 0 ? p.costBasis / p.shares : 0,
-      })),
+      positions: positions.map((p) => {
+        const currentPrice = latestPrices.get(p.symbol) || 0;
+        const currentValue = currentPrice * p.shares;
+        return {
+          symbol: p.symbol,
+          shares: p.shares,
+          costBasis: p.costBasis,
+          averageCost: p.shares > 0 ? p.costBasis / p.shares : 0,
+          currentPrice,
+          currentValue,
+          unrealizedGain: currentValue - p.costBasis,
+          totalDividends: dividendsBySymbol.get(p.symbol) || 0,
+        };
+      }),
     };
   },
 });
@@ -127,7 +155,7 @@ export const getPortfolioSummary = query({
     let totalCostBasis = 0;
     let totalDividends = 0;
     let totalCommissions = 0;
-    const symbolMap = new Map<string, { shares: number; costBasis: number }>();
+    const symbolMap = new Map<string, { shares: number; costBasis: number; totalDividends: number }>();
 
     for (const account of accounts) {
       const positions = await ctx.db
@@ -145,6 +173,7 @@ export const getPortfolioSummary = query({
           symbolMap.set(pos.symbol, {
             shares: pos.shares,
             costBasis: pos.costBasis,
+            totalDividends: 0,
           });
         }
       }
@@ -156,21 +185,54 @@ export const getPortfolioSummary = query({
 
       for (const tx of transactions) {
         if (tx.type === 'dividend') {
-          totalDividends += tx.shares * tx.unitPrice;
+          const divAmount = tx.shares * tx.unitPrice;
+          totalDividends += divAmount;
+          
+          const existing = symbolMap.get(tx.symbol);
+          if (existing) {
+            existing.totalDividends += divAmount;
+          } else {
+             symbolMap.set(tx.symbol, {
+              shares: 0,
+              costBasis: 0,
+              totalDividends: divAmount,
+            });
+          }
         }
         totalCommissions += tx.commission ?? 0;
       }
     }
 
+    // Get latest prices for all symbols
+    const latestPrices = new Map<string, number>();
+    for (const symbol of symbolMap.keys()) {
+      const latestQuote = await ctx.db
+        .query('historicalQuotes')
+        .withIndex('by_symbol_date', (q) => q.eq('symbol', symbol))
+        .order('desc')
+        .first();
+      if (latestQuote) {
+        latestPrices.set(symbol, latestQuote.closePrice);
+      }
+    }
+
     // Convert symbol map to sorted array
     const holdings = Array.from(symbolMap.entries())
-      .map(([symbol, data]) => ({
-        symbol,
-        shares: data.shares,
-        costBasis: data.costBasis,
-        averageCost: data.shares > 0 ? data.costBasis / data.shares : 0,
-      }))
-      .sort((a, b) => b.costBasis - a.costBasis);
+      .map(([symbol, data]) => {
+        const currentPrice = latestPrices.get(symbol) || 0;
+        const currentValue = currentPrice * data.shares;
+        return {
+          symbol,
+          shares: data.shares,
+          costBasis: data.costBasis,
+          averageCost: data.shares > 0 ? data.costBasis / data.shares : 0,
+          currentPrice,
+          currentValue,
+          unrealizedGain: currentValue - data.costBasis,
+          totalDividends: data.totalDividends,
+        };
+      })
+      .sort((a, b) => b.currentValue - a.currentValue);
 
     return {
       accountCount: accounts.length,

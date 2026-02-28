@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthTransactionsIndexRouteImport } from './routes/_auth/transactions/index'
+import { Route as AuthInvestmentsIndexRouteImport } from './routes/_auth/investments/index'
 import { Route as AuthDashboardIndexRouteImport } from './routes/_auth/dashboard/index'
 import { Route as AuthAccountsIndexRouteImport } from './routes/_auth/accounts/index'
 import { Route as AuthAccountsAccountIdRouteImport } from './routes/_auth/accounts/$accountId'
@@ -28,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthTransactionsIndexRoute = AuthTransactionsIndexRouteImport.update({
   id: '/transactions/',
   path: '/transactions/',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthInvestmentsIndexRoute = AuthInvestmentsIndexRouteImport.update({
+  id: '/investments/',
+  path: '/investments/',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthDashboardIndexRoute = AuthDashboardIndexRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/accounts/$accountId': typeof AuthAccountsAccountIdRoute
   '/accounts/': typeof AuthAccountsIndexRoute
   '/dashboard/': typeof AuthDashboardIndexRoute
+  '/investments/': typeof AuthInvestmentsIndexRoute
   '/transactions/': typeof AuthTransactionsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -58,6 +65,7 @@ export interface FileRoutesByTo {
   '/accounts/$accountId': typeof AuthAccountsAccountIdRoute
   '/accounts': typeof AuthAccountsIndexRoute
   '/dashboard': typeof AuthDashboardIndexRoute
+  '/investments': typeof AuthInvestmentsIndexRoute
   '/transactions': typeof AuthTransactionsIndexRoute
 }
 export interface FileRoutesById {
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   '/_auth/accounts/$accountId': typeof AuthAccountsAccountIdRoute
   '/_auth/accounts/': typeof AuthAccountsIndexRoute
   '/_auth/dashboard/': typeof AuthDashboardIndexRoute
+  '/_auth/investments/': typeof AuthInvestmentsIndexRoute
   '/_auth/transactions/': typeof AuthTransactionsIndexRoute
 }
 export interface FileRouteTypes {
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
     | '/accounts/$accountId'
     | '/accounts/'
     | '/dashboard/'
+    | '/investments/'
     | '/transactions/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -83,6 +93,7 @@ export interface FileRouteTypes {
     | '/accounts/$accountId'
     | '/accounts'
     | '/dashboard'
+    | '/investments'
     | '/transactions'
   id:
     | '__root__'
@@ -91,6 +102,7 @@ export interface FileRouteTypes {
     | '/_auth/accounts/$accountId'
     | '/_auth/accounts/'
     | '/_auth/dashboard/'
+    | '/_auth/investments/'
     | '/_auth/transactions/'
   fileRoutesById: FileRoutesById
 }
@@ -122,6 +134,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthTransactionsIndexRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/investments/': {
+      id: '/_auth/investments/'
+      path: '/investments'
+      fullPath: '/investments/'
+      preLoaderRoute: typeof AuthInvestmentsIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/dashboard/': {
       id: '/_auth/dashboard/'
       path: '/dashboard'
@@ -150,6 +169,7 @@ interface AuthRouteChildren {
   AuthAccountsAccountIdRoute: typeof AuthAccountsAccountIdRoute
   AuthAccountsIndexRoute: typeof AuthAccountsIndexRoute
   AuthDashboardIndexRoute: typeof AuthDashboardIndexRoute
+  AuthInvestmentsIndexRoute: typeof AuthInvestmentsIndexRoute
   AuthTransactionsIndexRoute: typeof AuthTransactionsIndexRoute
 }
 
@@ -157,6 +177,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthAccountsAccountIdRoute: AuthAccountsAccountIdRoute,
   AuthAccountsIndexRoute: AuthAccountsIndexRoute,
   AuthDashboardIndexRoute: AuthDashboardIndexRoute,
+  AuthInvestmentsIndexRoute: AuthInvestmentsIndexRoute,
   AuthTransactionsIndexRoute: AuthTransactionsIndexRoute,
 }
 

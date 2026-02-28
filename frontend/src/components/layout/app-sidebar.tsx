@@ -1,5 +1,5 @@
 import { Link, useLocation } from '@tanstack/react-router';
-import { Home, BookA, ChevronUp, User2, ArrowRightLeft } from 'lucide-react';
+import { Home, BookA, ChevronUp, User2, ArrowRightLeft, TrendingUp } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -39,6 +39,12 @@ export const navItems = [
     title: 'Transactions',
     url: '/transactions',
     icon: ArrowRightLeft,
+    exact: false,
+  },
+  {
+    title: 'Investments',
+    url: '/investments',
+    icon: TrendingUp, // will import TrendingUp
     exact: false,
   },
 ];
